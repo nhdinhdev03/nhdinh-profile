@@ -1,12 +1,34 @@
-import React from 'react';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Fragment } from "react";
+import { privateRoutes, publicRoutes } from "router"; // hoặc "./routes"
+import PrivateRoute from "components/User/PrivateRoute";
 
-function App() {
+export default function App() {
+  const renderRoute = ({ path, component: Component, layout: Layout }, key, isPrivate = false) => {
+    if (!Component) {
+      throw new Error(`Component is undefined at path "${path}". Check your exports.`);
+    }
+    const Wrapper = Layout || Fragment;
+    const element = (
+      <Wrapper>
+        <Component />
+      </Wrapper>
+    );
+    return (
+      <Route
+        key={`${isPrivate ? "private" : "public"}-${key}-${path}`}
+        path={path}
+        element={isPrivate ? <PrivateRoute>{element}</PrivateRoute> : element}
+      />
+    );
+  };
+
   return (
-    <div className="App">
-      <h1>Hello React</h1>
-      <p>Đây là file App.jsx mặc định, không phụ thuộc vào file khác.</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {publicRoutes.map((r, i) => renderRoute(r, i, false))}
+        {privateRoutes.map((r, i) => renderRoute(r, i, true))}
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;

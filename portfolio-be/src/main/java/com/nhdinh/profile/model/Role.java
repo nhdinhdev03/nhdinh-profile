@@ -1,7 +1,5 @@
 package com.nhdinh.profile.model;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,23 +12,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "projects")
+@Table(name = "roles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Project {
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    @Column(length = 2000)
-
-    
-private String summary;
-    private String coverImageUrl;
-    private String githubUrl;
-    private String liveUrl;
-    private LocalDate startedAt;
+    @Column(unique = true, nullable = false)
+    private String name; // ROLE_USER, ROLE_ADMIN
 }

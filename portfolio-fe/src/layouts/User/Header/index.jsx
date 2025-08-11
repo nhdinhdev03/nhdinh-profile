@@ -1,38 +1,44 @@
-import React from "react";
+// Header.jsx
+import React, { useEffect, useState } from "react";
 import "./Header.scss";
+import { ROUTES } from "router/routeConstants";
 
-function Header() {
+function Header({ brand = "Tên của bạn" }) {
+  const [light, setLight] = useState(() => localStorage.getItem("theme") === "light");
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (light) { root.classList.add("light"); localStorage.setItem("theme", "light"); }
+    else { root.classList.remove("light"); localStorage.setItem("theme", "dark"); }
+  }, [light]);
+
   return (
     <header>
       <div className="container nav" role="navigation" aria-label="Chính">
         <div className="brand">
-          <div className="logo" aria-hidden="true"></div>
-          <a href="#home" className="brand-name">
-            Tên của bạn
-          </a>
+          <div className="logo" aria-hidden="true" />
+          <a href={`${ROUTES.HOME}#`} className="brand-name">{brand}</a>
         </div>
-        <nav className="row">
-          <a href="#projects">Dự án</a>
-          <a href="#blog">Blog</a>
-          <a href="#about">Giới thiệu</a>
-          <a href="#contact">Liên hệ</a>
+
+        <nav className="row" aria-label="Liên kết chính">
+          <a href={`${ROUTES.HOME}#projects`} className="nav-link">Dự án</a>
+          <a href={`${ROUTES.HOME}#blog`} className="nav-link">Blog</a>
+          <a href={`${ROUTES.HOME}#about`} className="nav-link">Giới thiệu</a>
+          <a href={`${ROUTES.HOME}#contact`} className="nav-link">Liên hệ</a>
         </nav>
+
         <div className="actions">
           <button
-            id="themeBtn"
+            type="button"
             className="btn"
-            aria-pressed="false"
+            aria-pressed={light ? "true" : "false"}
             aria-label="Chuyển giao diện"
-          >
-            🌗
-          </button>
-          <a className="btn primary" href="#contact">
-            Hire me
-          </a>
+            onClick={() => setLight(v => !v)}
+          >🌗</button>
+          <a className="btn primary" href={`${ROUTES.LOGIN}#Login`}>Login</a>
         </div>
       </div>
     </header>
   );
 }
-
 export default Header;

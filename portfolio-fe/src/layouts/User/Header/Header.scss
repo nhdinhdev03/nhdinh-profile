@@ -1,46 +1,48 @@
+
 header {
   position: sticky;
   top: 0;
   z-index: 50;
   background: white;
   border-bottom: 1px solid #ddd;
-
   .container.nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 64px;
   }
-
   .brand {
     display: flex;
     align-items: center;
     gap: 10px;
-
-    .logo {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #0ea5e9, #22d3ee);
-      border-radius: 8px;
-    }
-    .brand-name {
-      font-weight: bold;
-      color: inherit;
-      text-decoration: none;
-    }
+  }
+  .logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0ea5e9, #22d3ee);
+  }
+  .brand-name {
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
   }
 
   nav.row {
     display: flex;
     gap: 12px;
-    a {
-      padding: 8px 10px;
-      border-radius: 6px;
-      text-decoration: none;
-      color: #333;
-      &:hover {
-        background: #f2f2f2;
-      }
+  }
+  .nav-link {
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    &.active {
+      background: #f2f6ff;
+      outline: 2px solid rgba(14, 165, 233, 0.35);
+    }
+    &:hover {
+      background: #f2f2f2;
     }
   }
 
@@ -49,9 +51,9 @@ header {
     gap: 10px;
     .btn {
       padding: 8px 14px;
-      border-radius: 6px;
       border: 1px solid #ccc;
       background: #f9f9f9;
+      border-radius: 10px;
       cursor: pointer;
     }
     .btn.primary {
@@ -59,5 +61,26 @@ header {
       color: white;
       border: none;
     }
+  }
+}
+
+/* Skip link for accessibility */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  &:focus {
+    left: 12px;
+    top: 12px;
+    width: auto;
+    height: auto;
+    padding: 8px 12px;
+    background: #000;
+    color: #fff;
+    border-radius: 8px;
+    z-index: 9999;
   }
 }

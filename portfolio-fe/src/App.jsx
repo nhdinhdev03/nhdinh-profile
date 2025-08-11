@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Fragment } from "react";
 import { publicRoutes, privateRoutes } from "./router"; // file chứa mảng routes
 import NotFound from "./pages/NotFound";
+import ScrollToHash from "router/ScrollToHash";
 
 // (Tuỳ chọn) Guard cho private routes
 function RequireAuth({ children }) {
@@ -28,6 +29,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+     <ScrollToHash offset={70} />
       <Routes>
         {publicRoutes.map((r, i) => renderRoute(r, i, false))}
         {privateRoutes.map((r, i) => renderRoute(r, i, true))}

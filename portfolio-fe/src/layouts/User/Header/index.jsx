@@ -1,79 +1,38 @@
+import React from "react";
+import "./Header.scss";
+
 function Header() {
   return (
-    <header
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "16px 32px",
-        borderBottom: "1px solid #eee",
-        backgroundColor: "#fff",
-        position: "sticky",
-        top: 0,
-        zIndex: 1000,
-      }}
-    >
-      {/* Logo + Tên */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <img
-          src="/logo.png"
-          alt="Logo"
-          style={{ width: "40px", height: "40px", borderRadius: "50%" }}
-        />
-        <span
-          style={{
-            fontSize: "1.2rem",
-            fontWeight: "bold",
-            color: "#333",
-          }}
-        >
-          Nguyễn Văn A
-        </span>
+    <header>
+      <div className="container nav" role="navigation" aria-label="Chính">
+        <div className="brand">
+          <div className="logo" aria-hidden="true"></div>
+          <a href="#home" className="brand-name">
+            Tên của bạn
+          </a>
+        </div>
+        <nav className="row">
+          <a href="#projects">Dự án</a>
+          <a href="#blog">Blog</a>
+          <a href="#about">Giới thiệu</a>
+          <a href="#contact">Liên hệ</a>
+        </nav>
+        <div className="actions">
+          <button
+            id="themeBtn"
+            className="btn"
+            aria-pressed="false"
+            aria-label="Chuyển giao diện"
+          >
+            🌗
+          </button>
+          <a className="btn primary" href="#contact">
+            Hire me
+          </a>
+        </div>
       </div>
-
-      {/* Menu */}
-      <nav>
-        <ul
-          style={{
-            listStyle: "none",
-            display: "flex",
-            gap: "24px",
-            margin: 0,
-            padding: 0,
-          }}
-        >
-          <li>
-            <a href="/" style={linkStyle}>
-              Trang chủ
-            </a>
-          </li>
-          <li>
-            <a href="/about" style={linkStyle}>
-              Giới thiệu
-            </a>
-          </li>
-          <li>
-            <a href="/projects" style={linkStyle}>
-              Dự án
-            </a>
-          </li>
-          <li>
-            <a href="/contact" style={linkStyle}>
-              Liên hệ
-            </a>
-          </li>
-        </ul>
-      </nav>
     </header>
   );
 }
-
-// Style link tách riêng để tái sử dụng
-const linkStyle = {
-  textDecoration: "none",
-  color: "#333",
-  fontWeight: 500,
-  transition: "color 0.3s",
-};
 
 export default Header;

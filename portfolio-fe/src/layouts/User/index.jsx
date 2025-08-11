@@ -1,11 +1,17 @@
+import { About, Blog, HomeIndex, Projects ,Contact } from "pages/User";
 import Footer from "./Footer";
 import Header from "./Header";
 
-function UserLayout({ children }) {
+
+function UserLayout() {
   return (
     <div>
       <Header />
-      <main>{children}</main>
+      <HomeIndex />;
+      <Projects />
+      <Blog />
+      <About />
+      <Contact />
       <Footer />
     </div>
   );

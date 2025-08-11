@@ -1,0 +1,63 @@
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: white;
+  border-bottom: 1px solid #ddd;
+
+  .container.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #0ea5e9, #22d3ee);
+      border-radius: 8px;
+    }
+    .brand-name {
+      font-weight: bold;
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+
+  nav.row {
+    display: flex;
+    gap: 12px;
+    a {
+      padding: 8px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #333;
+      &:hover {
+        background: #f2f2f2;
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    .btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      cursor: pointer;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, #0ea5e9, #22d3ee);
+      color: white;
+      border: none;
+    }
+  }
+}

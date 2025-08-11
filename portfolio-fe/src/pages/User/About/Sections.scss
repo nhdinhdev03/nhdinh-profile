@@ -1,0 +1,129 @@
+/* Áp dụng cùng hệ màu/biến như phần Header/HomeIndex */
+/* Layout & utilities */
+section {
+  padding: 56px 0;
+}
+.section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.section-title {
+  font-size: clamp(20px, 3.2vw, 28px);
+}
+.section-desc {
+  color: var(--muted);
+}
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Grid & cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+.card {
+  background: color-mix(in oklab, var(--card) 96%, transparent);
+  border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 30px -20px var(--ring);
+}
+
+/* Projects */
+.project {
+  grid-column: span 6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.thumb {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
+}
+.thumb img {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  filter: saturate(1.05);
+}
+.chip {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Blog */
+.post {
+  grid-column: span 4;
+}
+.post h3 {
+  margin: 0.2rem 0;
+}
+
+/* About */
+.about {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 18px;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--brand-2);
+  background: color-mix(in oklab, var(--brand) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--brand) 40%, transparent);
+}
+.muted {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--text) 15%, transparent);
+  background: color-mix(in oklab, var(--card) 92%, transparent);
+  cursor: pointer;
+}
+.btn:hover {
+  border-color: color-mix(in oklab, var(--brand) 40%, transparent);
+}
+.btn.primary {
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: white;
+  border-color: transparent;
+}
+.btn.active {
+  outline: 2px solid var(--brand);
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .about {
+    grid-template-columns: 1fr;
+  }
+  .project,
+  .post {
+    grid-column: span 12;
+  }
+}

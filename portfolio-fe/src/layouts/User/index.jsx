@@ -1,9 +1,12 @@
+import Footer from "./Footer";
+import Header from "./Header";
+
 function UserLayout({ children }) {
   return (
     <div>
-      <header>Header...</header>
+      <Header />
       <main>{children}</main>
-      <footer>Footer...</footer>
+      <Footer />
     </div>
   );
 }

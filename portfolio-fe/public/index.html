@@ -40,4 +40,31 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <!-- <script>
+  // ===== Chặn chuột phải =====
+  document.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+    alert("⚠️ Chuột phải đã bị vô hiệu hóa!");
+  });
+
+  // ===== Chặn phím tắt DevTools =====
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "F12" ||
+       (event.ctrlKey && event.shiftKey && (event.key === "I" || event.key === "J")) ||
+       (event.ctrlKey && event.key.toLowerCase() === "u")) {
+      event.preventDefault();
+      alert("⚠️ DevTools đã bị chặn!");
+    }
+  });
+
+  // ===== Phát hiện DevTools mở qua kích thước =====
+  setInterval(function () {
+    if (window.outerWidth - window.innerWidth > 160 || 
+        window.outerHeight - window.innerHeight > 160) {
+      alert("⚠️ Bạn đang mở DevTools! Hãy đóng lại.");
+    }
+  }, 1000);
+</script> -->
+
+
 </html>

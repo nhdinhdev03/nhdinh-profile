@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import { ROUTES } from "router/routeConstants";
+import img from "assets/Img";
 
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -23,7 +24,7 @@ function Header() {
     { name: "Giới thiệu", path: ROUTES.ABOUT, id: "about" },
     { name: "Dự án", path: ROUTES.PROJECTS, id: "projects" },
     { name: "Blog", path: ROUTES.BLOG, id: "blog" },
-    { name: "Liên hệ", path: ROUTES.CONTACT, id: "contact" }
+    { name: "Liên hệ", path: ROUTES.CONTACT, id: "contact" },
   ];
 
   const handleNavigation = (path) => {
@@ -39,11 +40,16 @@ function Header() {
     <header className={`header ${isScrolled ? "header--scrolled" : ""}`}>
       <div className="header__container">
         {/* Logo */}
-        <Link to="/" className="header__logo">
-          <h2 className="header__logo-text">NH.Dinh</h2>
-          <span className="header__logo-subtitle">Full Stack Developer</span>
-        </Link>
 
+        <Link to="/" className="header__logo">
+          <div className="header__logo-container">
+            <img width={50} height={50} src={img.Logo} alt="Nguyen Hoang Dinh - Portfolio" />
+            <div className="header__logo-text-container">
+              <h1 className="header__logo-text">Nguyen Hoang Dinh</h1>
+              <span className="header__logo-subtitle">Full Stack Developer</span>
+            </div>
+          </div>
+        </Link>
         {/* Desktop Navigation */}
         <nav className="header__nav">
           <ul className="header__nav-list">
@@ -72,7 +78,9 @@ function Header() {
         </button>
 
         {/* Mobile Navigation */}
-        <div className={`header__mobile-menu ${isMobileMenuOpen ? "header__mobile-menu--open" : ""}`}>
+        <div
+          className={`header__mobile-menu ${isMobileMenuOpen ? "header__mobile-menu--open" : ""}`}
+        >
           <ul className="header__mobile-nav-list">
             {navItems.map((item) => (
               <li key={item.id} className="header__mobile-nav-item">
@@ -89,9 +97,11 @@ function Header() {
 
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div 
-            className="header__mobile-overlay" 
+          <button
+            className="header__mobile-overlay"
             onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="Close mobile menu"
+            type="button"
           />
         )}
       </div>

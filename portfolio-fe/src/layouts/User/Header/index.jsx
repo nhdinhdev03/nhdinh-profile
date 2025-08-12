@@ -3,12 +3,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import { ROUTES } from "router/routeConstants";
 import img from "assets/Img";
+import { useTheme } from "theme/ThemeProvider";
 
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { light, toggle } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,7 +45,13 @@ function Header() {
 
         <Link to="/" className="header__logo">
           <div className="header__logo-container">
-            <img width={50} height={50} src={img.Logo} alt="Nguyen Hoang Dinh - Portfolio" />
+            <img
+              width={50}
+              height={50}
+              src={light ? img.Logo : img.Logo2}
+              alt="Nguyen Hoang Dinh - Portfolio"
+            />
+ 
             <div className="header__logo-text-container">
               <h1 className="header__logo-text">Nguyen Hoang Dinh</h1>
               <span className="header__logo-subtitle">Full Stack Developer</span>
@@ -65,6 +73,16 @@ function Header() {
             ))}
           </ul>
         </nav>
+
+        {/* Theme Toggle (Desktop) */}
+        <button
+          type="button"
+          className={`header__theme-toggle ${light ? "" : "header__theme-toggle--dark"}`}
+          onClick={toggle}
+          aria-label={light ? "Bật chế độ tối" : "Tắt chế độ tối"}
+          aria-pressed={!light}
+          title={light ? "Bật chế độ tối" : "Tắt chế độ tối"}
+        />
 
         {/* Mobile Menu Button */}
         <button
@@ -92,6 +110,22 @@ function Header() {
                 </button>
               </li>
             ))}
+            {/* Theme Toggle (Mobile) */}
+            <li key="theme" className="header__mobile-nav-item">
+              <button
+                type="button"
+                className="header__mobile-nav-link"
+                onClick={() => {
+                  toggle();
+                  // keep menu state as is; close only if you want auto-close
+                }}
+                aria-pressed={!light}
+                aria-label={light ? "Bật chế độ tối" : "Tắt chế độ tối"}
+                title="Chuyển chế độ sáng/tối"
+              >
+                Chế độ tối: {light ? "Tắt" : "Bật"}
+              </button>
+            </li>
           </ul>
         </div>
 

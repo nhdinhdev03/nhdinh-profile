@@ -1,45 +1,153 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./HomeIndex.scss";
 
-function HomeIndex({
-  role = "Front-end/Full-stack Dev",
-  title = "Xây sản phẩm web mượt mà, hiện đại & dễ mở rộng.",
-  lead = "Tôi biến ý tưởng thành sản phẩm hoàn thiện: từ thiết kế UI, tối ưu hiệu năng đến triển khai production.",
-  stats = ["5+ năm kinh nghiệm", "20+ dự án thực tế", "100% tận tâm"],
-  highlights = [
-    <>Phát hành <strong>UI kit</strong> mã nguồn mở.</>,
-    <>Tối ưu Core Web Vitals cho một e-commerce (TTFB ↓40%).</>,
-    <>Viết chuỗi bài <em>React Performance Patterns 2025</em>.</>,
-  ],
-}) {
+function useTypewriter(words = [], speed = 80, pause = 1200) {
+  const seq = useMemo(() => (Array.isArray(words) ? words : []), [words]);
+  const [index, setIndex] = useState(0); // which word
+  const [subIndex, setSubIndex] = useState(0); // how many chars
+  const [deleting, setDeleting] = useState(false);
+  const [text, setText] = useState("");
+
+  useEffect(() => {
+    if (seq.length === 0) return;
+    const current = seq[index % seq.length] ?? "";
+    const atWordEnd = !deleting && subIndex === current.length;
+    const atWordStart = deleting && subIndex === 0;
+
+    const timeout = setTimeout(() => {
+      if (atWordEnd) {
+        setDeleting(true);
+      } else if (atWordStart) {
+        setDeleting(false);
+        setIndex((i) => (i + 1) % seq.length);
+      } else {
+        setSubIndex((s) => s + (deleting ? -1 : 1));
+      }
+    }, atWordEnd ? pause : deleting ? Math.max(40, speed / 2) : speed);
+
+    setText(current.slice(0, subIndex));
+    return () => clearTimeout(timeout);
+  }, [seq, index, subIndex, deleting, speed, pause]);
+
+  return text;
+}
+
+function HomeIndex() {
+  const heroRef = useRef(null);
+  const rafRef = useRef(0);
+  const targetVars = useRef({ x: 0, y: 0 });
+
+  // Parallax: update CSS vars --mx/--my in range [-1, 1]
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+    const rect = () => el.getBoundingClientRect();
+    const onMove = (e) => {
+      const r = rect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = (e.clientX - cx) / (r.width / 2);
+      const dy = (e.clientY - cy) / (r.height / 2);
+      targetVars.current.x = Math.max(-1, Math.min(1, dx));
+      targetVars.current.y = Math.max(-1, Math.min(1, dy));
+      if (!rafRef.current) loop();
+    };
+    const onLeave = () => {
+      targetVars.current.x = 0;
+      targetVars.current.y = 0;
+      if (!rafRef.current) loop();
+    };
+    const loop = () => {
+      const step = 0.08; // easing
+      const sx = parseFloat(getComputedStyle(el).getPropertyValue("--mx")) || 0;
+      const sy = parseFloat(getComputedStyle(el).getPropertyValue("--my")) || 0;
+      const nx = sx + (targetVars.current.x - sx) * step;
+      const ny = sy + (targetVars.current.y - sy) * step;
+      el.style.setProperty("--mx", nx.toFixed(4));
+      el.style.setProperty("--my", ny.toFixed(4));
+      if (Math.abs(nx - targetVars.current.x) > 0.002 || Math.abs(ny - targetVars.current.y) > 0.002) {
+        rafRef.current = requestAnimationFrame(loop);
+      } else {
+        rafRef.current = 0;
+      }
+    };
+
+    // Only enable on pointer devices
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    if (mq.matches) {
+      el.addEventListener("mousemove", onMove);
+      el.addEventListener("mouseleave", onLeave);
+    }
+    return () => {
+      el.removeEventListener("mousemove", onMove);
+      el.removeEventListener("mouseleave", onLeave);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+  const typed = useTypewriter([
+    "Lập Trình Viên Full Stack",
+    "Front‑end Developer",
+    "React/Node.js Engineer",
+  ]);
+
+  const scrollTo = (hash) => {
+    const id = (hash || "").replace("#", "");
+    const el = id ? document.getElementById(id) : null;
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
-    <section className="hero">
-      <div className="hero-grid">
-        <div>
-          <span className="tag">
-            Xin chào! Tôi là <strong>{role}</strong>
+    <section className="hero" aria-label="Phần giới thiệu" ref={heroRef}>
+      <div className="hero__bg" aria-hidden="true">
+        <div className="hero__scene" aria-hidden>
+          <div className="hero__layer layer--0">
+            <span className="blob blob--a" />
+            <span className="blob blob--b" />
+          </div>
+          <div className="hero__layer layer--1">
+            <span className="orb orb--a" />
+            <span className="orb orb--b" />
+          </div>
+          <div className="hero__layer layer--2">
+            <span className="ring ring--a" />
+          </div>
+          <div className="hero__layer layer--grid" />
+        </div>
+      </div>
+      <div className="hero__container">
+        <h1 className="hero__title">
+          <span>Xin chào, tôi là</span>
+          <span className="hero__name">Nhdinh</span>
+        </h1>
+
+        <p className="hero__subtitle">
+          <span className="typewriter" aria-live="polite" aria-atomic="true">
+            {typed}
+            <span className="caret" aria-hidden="true">|</span>
           </span>
-          <h1>{title}</h1>
-          <p className="lead">{lead}</p>
+        </p>
 
-          <div className="stats">
-            {stats.map((s, i) => (
-              <div className="stat" key={i}>{s}</div>
-            ))}
-          </div>
+        <p className="hero__lead">
+          Tôi tạo ra những trang web đẹp, tương thích với mọi thiết bị và mang lại trải
+          nghiệm người dùng tuyệt vời. Chuyên môn về công nghệ web hiện đại và các
+          giải pháp sáng tạo.
+        </p>
 
-          <div className="row">
-            <a className="btn primary" href="#projects">Xem dự án</a>
-            <a className="btn" href="#blog">Đọc blog</a>
-          </div>
+        <div className="hero__ctas">
+          <a className="btn btn--primary" href="#projects" onClick={(e) => { e.preventDefault(); scrollTo("#projects"); }}>
+            Xem Dự Án
+          </a>
+          <a className="btn" href="#contact" onClick={(e) => { e.preventDefault(); scrollTo("#contact"); }}>
+            Liên Hệ
+          </a>
         </div>
 
-        <div className="card" aria-label="Thành tựu nổi bật">
-          <h3 style={{ marginTop: 0 }}>Nổi bật gần đây</h3>
-          <ul style={{ margin: 0, paddingLeft: 18, color: "var(--muted)" }}>
-            {highlights.map((item, i) => <li key={i}>{item}</li>)}
-          </ul>
-        </div>
+        <button className="hero__scroll" type="button" aria-label="Cuộn xuống" onClick={() => scrollTo("#projects")}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <path d="M12 5v14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            <path d="M6 13l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
       </div>
     </section>
   );

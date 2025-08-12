@@ -3,7 +3,6 @@ import { publicRoutes, privateRoutes } from "./router";
 import NotFound from "pages/NotFound";
 import ScrollToTop from "router/ScrollToHash";
 
-
 export default function App() {
   return (
     <BrowserRouter>

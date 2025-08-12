@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import NeuroGrid from "./NeuroGrid";
 import "./HomeIndex.scss";
 
 function useTypewriter(words = [], speed = 80, pause = 1200) {
@@ -99,25 +100,12 @@ function HomeIndex() {
   return (
     <section className="hero" aria-label="Phần giới thiệu" ref={heroRef}>
       <div className="hero__bg" aria-hidden="true">
-        <div className="hero__scene" aria-hidden>
-          <div className="hero__layer layer--0">
-            <span className="blob blob--a" />
-            <span className="blob blob--b" />
-          </div>
-          <div className="hero__layer layer--1">
-            <span className="orb orb--a" />
-            <span className="orb orb--b" />
-          </div>
-          <div className="hero__layer layer--2">
-            <span className="ring ring--a" />
-          </div>
-          <div className="hero__layer layer--grid" />
-        </div>
+        <NeuroGrid parentRef={heroRef} />
       </div>
       <div className="hero__container">
         <h1 className="hero__title">
           <span>Xin chào, tôi là</span>
-          <span className="hero__name">Nhdinh</span>
+          <span className="hero__name" data-text="Nhdinh">Nhdinh</span>
         </h1>
 
         <p className="hero__subtitle">

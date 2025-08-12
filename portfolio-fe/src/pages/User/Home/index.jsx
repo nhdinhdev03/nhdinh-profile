@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import NeuroGrid from "./NeuroGrid";
+import NeuroGrid from "./HIHI";
 import "./HomeIndex.scss";
 
 function useTypewriter(words = [], speed = 80, pause = 1200) {

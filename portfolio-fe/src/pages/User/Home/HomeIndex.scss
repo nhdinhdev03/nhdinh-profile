@@ -11,8 +11,8 @@
 
 .hero__bg {
   position: absolute;
-  inset: -20% -10% auto -10%;
-  height: 80%;
+  inset: 0;
+  height: 100%;
   pointer-events: none;
   opacity: 0.9;
 }
@@ -25,7 +25,7 @@
   height: 100%;
   pointer-events: none;
   mix-blend-mode: screen;
-  opacity: 0.55;
+  opacity: 0.45;
   filter: drop-shadow(
     0 10px 30px
       color-mix(in srgb, var(--brand, var(--brand-fallback)) 30%, transparent)

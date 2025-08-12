@@ -1,8 +1,9 @@
+
+// ===== router/index.js =====
 import { AdminLayout, UserLayout } from "layouts";
 import * as PageAdmin from "pages/Admin";
 import * as PageUser from "pages/User";
 import { ROUTES } from "./routeConstants";
-
 
 // Mẹo: luôn dùng ROUTES.* để không hard-code chuỗi
 export const publicRoutes = [
@@ -18,7 +19,7 @@ export const privateRoutes = [
     path: ROUTES.ADMIN.LOGIN,
     component: PageAdmin.AdminLogin,
     layout: AdminLayout,
-  }, // ✅ AdminLayout
+  },
   {
     path: ROUTES.ADMIN.PORTAL,
     component: PageAdmin.AdminIndex,

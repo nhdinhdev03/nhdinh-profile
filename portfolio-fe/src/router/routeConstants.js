@@ -1,5 +1,5 @@
 export const API_VERSION = "v1";
-export const ADMIN_PREFIX = "/dashboard-management-sys";
+export const ADMIN_PREFIX = "/dashboard-management-sys"; // luôn có /
 
 export const ROUTES = {
   HOME: `/${API_VERSION}`,

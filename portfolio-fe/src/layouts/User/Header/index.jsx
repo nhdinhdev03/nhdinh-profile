@@ -1,8 +1,7 @@
-// Header.jsx
 import React, { useEffect, useState } from "react";
 import "./Header.scss";
-import { ADMINROUTES, ROUTES } from "router/routeConstants";
-import { Link } from "react-router-dom";
+import { ROUTES } from "router/routeConstants";
+import { Link, NavLink } from "react-router-dom";
 
 function Header({ brand = "Tên của bạn" }) {
   const [light, setLight] = useState(
@@ -20,29 +19,35 @@ function Header({ brand = "Tên của bạn" }) {
     }
   }, [light]);
 
+  const navItems = [
+    { to: ROUTES.PROJECTS, label: "Dự án" },
+    { to: ROUTES.BLOG, label: "Blog" },
+    { to: ROUTES.ABOUT, label: "Giới thiệu" },
+    { to: ROUTES.CONTACT, label: "Liên hệ" },
+  ];
+
   return (
     <header>
       <div className="container nav" role="navigation" aria-label="Chính">
         <div className="brand">
           <div className="logo" aria-hidden="true" />
-          <a href={`${ROUTES.HOME}#`} className="brand-name">
+          <Link to={ROUTES.HOME} className="brand-name">
             {brand}
-          </a>
+          </Link>
         </div>
 
         <nav className="row" aria-label="Liên kết chính">
-          <a href={`${ROUTES.HOME}#projects`} className="nav-link">
-            Dự án
-          </a>
-          <a href={`${ROUTES.HOME}#blog`} className="nav-link">
-            Blog
-          </a>
-          <a href={`${ROUTES.HOME}#about`} className="nav-link">
-            Giới thiệu
-          </a>
-          <a href={`${ROUTES.HOME}#contact`} className="nav-link">
-            Liên hệ
-          </a>
+          {navItems.map((n) => (
+            <NavLink
+              key={n.to}
+              to={n.to}
+              className={({ isActive }) =>
+                `nav-link${isActive ? " active" : ""}`
+              }
+            >
+              {n.label}
+            </NavLink>
+          ))}
         </nav>
 
         <div className="actions">
@@ -55,7 +60,7 @@ function Header({ brand = "Tên của bạn" }) {
           >
             🌗
           </button>
-          <Link className="btn primary" to={`${ROUTES.ADMIN.LOGIN}`}>
+          <Link className="btn primary" to={ROUTES.ADMIN.LOGIN}>
             Login
           </Link>
         </div>

@@ -84,3 +84,5 @@ header {
     z-index: 9999;
   }
 }
+.nav-link.active { font-weight: 700; text-decoration: underline; }
+.page-container { min-height: 60vh; padding: 24px 0; }

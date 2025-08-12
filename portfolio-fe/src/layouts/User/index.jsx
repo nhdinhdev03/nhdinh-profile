@@ -1,17 +1,16 @@
-import { About, Blog, HomeIndex, Projects ,Contact } from "pages/User";
-import Footer from "./Footer";
+// ===== layouts/UserLayout.jsx =====
+import React from "react";
 import Header from "./Header";
+import Footer from "./Footer";
 
 
-function UserLayout() {
+function UserLayout({ children }) {
   return (
-    <div>
+    <div className="layout">
       <Header />
-      <HomeIndex />;
-      <Projects />
-      <Blog />
-      <About />
-      <Contact />
+      <main id="content" className="page-container">
+        {children}
+      </main>
       <Footer />
     </div>
   );

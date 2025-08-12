@@ -1,11 +1,13 @@
-// App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { publicRoutes, privateRoutes } from "./router";
 import NotFound from "pages/NotFound";
+import ScrollToTop from "router/ScrollToHash";
+
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {publicRoutes.map(({ path, component: Component, layout: Layout }) => (
           <Route

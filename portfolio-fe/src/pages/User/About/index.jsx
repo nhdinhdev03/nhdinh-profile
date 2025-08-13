@@ -248,10 +248,7 @@ function About() {
               Tóm tắt năng lực & thế mạnh nổi bật
             </p>
           </div>
-          <div className="availability-badge" aria-live="polite">
-            <span className="status-dot" aria-hidden="true"></span>
-            <span>Đang sẵn sàng nhận dự án</span>
-          </div>
+       
         </header>
         <div className="gradient-line" aria-hidden="true" />
 

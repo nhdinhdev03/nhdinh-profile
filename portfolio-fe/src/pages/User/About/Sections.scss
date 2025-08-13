@@ -95,28 +95,7 @@ section {
     }
   }
 
-  .availability-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: color-mix(in oklab, var(--brand) 10%, transparent);
-    border: 1px solid color-mix(in oklab, var(--brand) 30%, transparent);
-    border-radius: 999px;
-    font-size: 14px;
-    color: var(--brand-2);
-    font-weight: 500;
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background: #22c55e;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-      box-shadow: 0 0 0 6px color-mix(in oklab, #22c55e 20%, transparent),
-        0 0 12px #22c55e;
-    }
-  }
+ 
 }
 
 .gradient-line {

@@ -2,7 +2,7 @@ import React from "react";
 import "./sections.scss";
 import { Link } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
-import { Center } from "@chakra-ui/react";
+
 
 // Simple featured projects (placeholder data, can integrate with real API later)
 const featured = [

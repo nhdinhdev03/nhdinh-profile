@@ -13,14 +13,15 @@
   content: "";
   position: absolute;
   inset: 0;
+  /* Unified hero radial gradients (match About / Projects / Blog) */
   background: radial-gradient(
-      1000px 340px at 8% -8%,
-      color-mix(in oklab, var(--brand) 14%, transparent),
+      1100px 360px at 10% -10%,
+      color-mix(in oklab, var(--brand) 16%, transparent),
       transparent 60%
     ),
     radial-gradient(
-      820px 300px at 92% 0%,
-      color-mix(in oklab, var(--brand-2) 12%, transparent),
+      900px 320px at 90% 0%,
+      color-mix(in oklab, var(--brand-2) 14%, transparent),
       transparent 55%
     );
   z-index: -2;
@@ -30,21 +31,22 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* Unified subtle brand grid overlay */
   background: repeating-linear-gradient(
       90deg,
-      color-mix(in oklab, var(--brand) 10%, transparent) 0px,
-      color-mix(in oklab, var(--brand) 10%, transparent) 1px,
+      color-mix(in oklab, var(--brand) 11%, transparent) 0px,
+      color-mix(in oklab, var(--brand) 11%, transparent) 1px,
       transparent 1px,
       transparent 22px
     ),
     repeating-linear-gradient(
       0deg,
-      color-mix(in oklab, var(--brand) 7%, transparent) 0px,
-      color-mix(in oklab, var(--brand) 7%, transparent) 1px,
+      color-mix(in oklab, var(--brand) 8%, transparent) 0px,
+      color-mix(in oklab, var(--brand) 8%, transparent) 1px,
       transparent 1px,
       transparent 22px
     );
-  opacity: 0.38;
+  opacity: 0.42; /* aligned with About */
   z-index: -1;
 }
 

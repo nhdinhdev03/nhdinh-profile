@@ -61,9 +61,11 @@ function Projects({ projects = DEFAULT_PROJECTS }) {
             </button>
           ))}
         </div>
+        
       </div>
-
+ <div className="gradient-line" aria-hidden="true" />
       <div className="grid" aria-live="polite">
+        
         {filtered.map((p, idx) => (
           <article
             className="project card"
@@ -83,6 +85,7 @@ function Projects({ projects = DEFAULT_PROJECTS }) {
             <div className="row chip" aria-label="Công nghệ">
               {p.tags.slice(0,3).map(t => <span key={t} className="tag">{t}</span>)}
             </div>
+            
             <h3 className="project-title">{p.title}</h3>
             <p className="section-desc project-desc">{p.desc}</p>
             <div className="row actions">

@@ -45,7 +45,17 @@
   opacity: 0.42;
   z-index: -1;
 }
-
+.gradient-line {
+  height: 2px;
+  margin: 16px 0 32px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--brand) 80%, transparent),
+    transparent
+  );
+  border-radius: 999px;
+}
 #blog .section-head {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -189,5 +199,9 @@
   #blog * {
     transition: none !important;
     animation: none !important;
+  }
+    #blog .card {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

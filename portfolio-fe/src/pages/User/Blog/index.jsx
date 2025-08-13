@@ -35,7 +35,7 @@ function Blog({ posts = DEFAULT_POSTS, viewAllHref = "#" }) {
         </div>
         <a className="btn primary" href={viewAllHref} aria-label="Xem tất cả bài viết">Xem tất cả</a>
       </div>
-
+ <div className="gradient-line" aria-hidden="true" />
       <div className="grid" aria-live="polite">
         {posts.map((p, idx) => (
           <article

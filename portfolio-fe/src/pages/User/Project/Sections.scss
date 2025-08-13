@@ -22,6 +22,17 @@
   color: var(--text);
   isolation: isolate;
 }
+.gradient-line {
+  height: 2px;
+  margin: 16px 0 32px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--brand) 80%, transparent),
+    transparent
+  );
+  border-radius: 999px;
+}
 
 #projects::before {
   content: "";
@@ -66,13 +77,16 @@
   z-index: -1; /* sits above ::before background but below content */
 }
 
+
+
+
 #projects .section-head {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 24px;
+  gap: 20px;
   align-items: end;
-  margin-bottom: 28px;
-  padding: 16px clamp(12px, 3vw, 20px);
+  margin-bottom: 18px;
+  padding: 0 clamp(12px, 3vw, 20px);
   width: min(92vw, var(--container-max));
   margin-left: auto;
   margin-right: auto;

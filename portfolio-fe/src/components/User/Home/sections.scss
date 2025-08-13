@@ -1,5 +1,10 @@
 @use "sass:color";
 
+/* Shared container max width (aligned with #blog section) */
+:root {
+  --container-max: 1280px; /* unify across home + blog */
+}
+
 .hm-section {
   padding: clamp(40px, 8vw, 96px) 0;
   position: relative;
@@ -8,9 +13,11 @@
   background: color-mix(in srgb, var(--card) 94%, transparent);
 }
 .container {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 0 24px;
+  /* Use same sizing strategy as #blog: slightly inset (92vw) and capped by --container-max */
+  width: min(92vw, var(--container-max));
+  margin-inline: auto; /* Shorthand for left/right margins */
+  padding-inline: clamp(16px, 2.4vw, 24px); /* Shorthand for left/right padding */
+  box-sizing: border-box;
 }
 .sec-title {
   text-align: center;
@@ -111,11 +118,14 @@
 /* Stats */
 .stats {
   --gap: clamp(16px, 4vw, 46px);
+  /* Use consistent container width from root */
+  width: min(92vw, var(--container-max));
+  margin-inline: auto;
 }
 .stats__grid {
   display: grid;
   gap: var(--gap);
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
 }
 .stat {
   text-align: center;
@@ -161,13 +171,20 @@
 }
 
 /* Showcase */
+.showcase {
+  /* Use consistent container sizing */
+  width: min(92vw, var(--container-max));
+  margin-inline: auto;
+}
 .showcase__head {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: space-between; /* better spacing control */
   flex-wrap: wrap;
   gap: 20px;
   margin-bottom: 34px;
+  position: relative;
+  padding-inline: clamp(16px, 2.4vw, 24px);
 }
 .show-all {
   text-decoration: none;
@@ -195,6 +212,22 @@
 .show-all:hover::after {
   transform: scaleX(1);
   opacity: 1;
+}
+.showcase__head .show-all {
+  position: absolute;
+  right: 0;
+  bottom: 6px; /* align baseline visually */
+  font-size: 14px;
+}
+@media (max-width: 640px) {
+  .showcase__head {
+    justify-content: center;
+    padding-bottom: 8px;
+  }
+  .showcase__head .show-all {
+    position: static; /* stack under heading on small screens */
+    order: 2;
+  }
 }
 .showcase__grid {
   display: grid;

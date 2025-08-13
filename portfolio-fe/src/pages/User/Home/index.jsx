@@ -42,6 +42,49 @@ function useTypewriter(words = [], speed = 80, pause = 1200) {
   return text;
 }
 
+// Simple intersection observer hook
+function useInView(options) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || inView) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setInView(true);
+            obs.disconnect();
+          }
+        });
+      },
+      { threshold: 0.35, ...(options || {}) }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [options, inView]);
+  return [ref, inView];
+}
+
+// Count up animation hook
+function useCountUp(target = 0, duration = 1400, start = false) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (now) => {
+      const progress = Math.min(1, (now - t0) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.round(eased * target));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration, start]);
+  return value;
+}
+
 function HomeIndex() {
   const heroRef = useRef(null);
   const rafRef = useRef(0);
@@ -98,9 +141,9 @@ function HomeIndex() {
     };
   }, []);
   const typed = useTypewriter([
-    "Lập Trình Viên Full Stack",
-    "Front‑end Developer",
-    "React/Node.js Engineer",
+    "Full Stack Engineer",
+    "Front‑end Specialist",
+    "React / Node.js Developer",
   ]);
 
   // Split name into letters for stagger animation
@@ -108,15 +151,23 @@ function HomeIndex() {
 
   // (removed unused scrollTo helper)
 
+  // Animated stats trigger
+  const [statsRef, statsInView] = useInView();
+  const projCount = useCountUp(50, 1300, statsInView);
+  const yearCount = useCountUp(5, 1300, statsInView);
+  const satCount = useCountUp(99, 1300, statsInView);
+
   return (
     <>
-      <section className="hero" aria-label="Phần giới thiệu" ref={heroRef}>
+      <header className="hero" aria-label="Giới thiệu tổng quan" ref={heroRef}>
         <div className="hero__bg" aria-hidden="true">
           <NeuroGrid parentRef={heroRef} />
         </div>
         <div className="hero__container">
           <h1 className="hero__title" aria-label="Xin chào, tôi là Nhdinh">
-            <span className="hero__intro">Xin chào, tôi là</span>
+            <span className="hero__intro">
+              <span className="highlight">👋</span> Xin chào, tôi là
+            </span>
             <span className="hero__name" data-text="Nhdinh" aria-hidden="true">
               {nameLetters.map((ch, i) => (
                 <span className="letter" style={{ "--i": i }} key={i}>{ch}</span>
@@ -133,22 +184,70 @@ function HomeIndex() {
             </span>
           </p>
 
-          <p className="hero__lead fade-in">
-            Tôi tạo ra những trang web đẹp, tương thích với mọi thiết bị và mang lại
-            trải nghiệm người dùng tuyệt vời. Chuyên môn về công nghệ web hiện đại và
-            các giải pháp sáng tạo.
+          <p className="hero__lead fade-in" aria-label="Tóm tắt năng lực">
+            <span className="highlight-text">Kỹ sư Full Stack</span> tập trung vào hiệu năng, trải nghiệm và khả năng mở rộng. 
+            Tôi thiết kế & triển khai <span className="highlight-text">kiến trúc linh hoạt</span>, tối ưu UI/UX và tự động hóa quy trình phát triển 
+            để rút ngắn thời gian ra mắt sản phẩm. Cam kết tạo ra <span className="highlight-text">giải pháp bền vững</span> và 
+            dễ bảo trì cho doanh nghiệp.
           </p>
+
+          <ul className="hero__meta" aria-label="Công nghệ chính">
+            <li>React</li>
+            <li>Node.js</li>
+            <li>TypeScript</li>
+            <li>REST / GraphQL</li>
+            <li>Performance</li>
+          </ul>
+
+          <div className="availability-badge" aria-label="Trạng thái nhận dự án">
+            <span className="pulse" aria-hidden="true" /> Đang mở nhận hợp tác
+          </div>
 
           <div className="hero__ctas">
             <Link className="btn btn--primary" to={ROUTES.PROJECTS}>
-              Xem Dự Án
+              <span>Khám Phá Dự Án</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="icon">
+                <path d="M6 12l4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </Link>
-            <Link className="btn" to={ROUTES.CONTACT}>
-              Liên Hệ
+            <Link className="btn btn--secondary" to={ROUTES.CONTACT}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="icon-mail">
+                <path d="M2 4l6 4 6-4M2 4v8h12V4H2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Liên Hệ Ngay
             </Link>
+            <a className="btn btn--outline" href="/cv.pdf" target="_blank" rel="noopener" aria-label="Tải CV PDF">
+              CV PDF
+            </a>
+          </div>
+          <div className="hero__stats" ref={statsRef} aria-label="Chỉ số chính">
+            <div className="stat-item" aria-label="Dự án hoàn thành">
+              <span className="stat-number" data-animated={statsInView}>{projCount}<span className="plus">+</span></span>
+              <span className="stat-label">Dự án</span>
+            </div>
+            <div className="stat-item" aria-label="Số năm kinh nghiệm">
+              <span className="stat-number" data-animated={statsInView}>{yearCount}<span className="plus">+</span></span>
+              <span className="stat-label">Năm kinh nghiệm</span>
+            </div>
+            <div className="stat-item" aria-label="Mức độ hài lòng khách hàng">
+              <span className="stat-number" data-animated={statsInView}>{satCount}<span className="percent">%</span></span>
+              <span className="stat-label">Hài lòng</span>
+            </div>
+          </div>
+
+          <div className="hero__scroll" onClick={() => {
+            window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+          }} aria-label="Cuộn xuống">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 15V5m0 10l-4-4m4 4l4-4" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"/>
+            </svg>
           </div>
         </div>
-      </section>
+  </header>
 
       {/* Tech stack marquee */}
       <TechMarquee />

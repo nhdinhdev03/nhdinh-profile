@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import NeuroGrid from "./HIHI";
+import NeuroGrid from "./NeuroGrid/NeuroGrid";
 import "./HomeIndex.scss";
 import { Link } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";

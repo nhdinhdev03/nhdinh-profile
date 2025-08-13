@@ -1,4 +1,4 @@
-export const API_VERSION = "v1ssssssssssss";
+export const API_VERSION = "nhdinh";
 export const ADMIN_PREFIX = "/dashboard-management-sys"; // luôn có /
 
 export const ROUTES = {

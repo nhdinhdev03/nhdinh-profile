@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import "./Sections.scss";
+import { Link } from "react-router-dom";
+import { ROUTES } from "router/routeConstants";
 
 
 const cx = (...cls) => cls.filter(Boolean).join(" ");
@@ -389,7 +391,7 @@ function About() {
                 <div className="mini-card">
                   <h4>Liên hệ</h4>
                   <div className="contact-links">
-                    <a className="btn primary" href="mailto:nhdinh.dev03@gmail.com">Liên hệ hợp tác</a>
+                    <Link className="btn primary" to={ROUTES.CONTACT}>Liên hệ hợp tác</Link>
                     <a className="btn" href="https://fb.com/nhdinh03" target="_blank" rel="noreferrer">Facebook</a>
                     <a className="btn" href="https://instagram.com/nhdinhdz" target="_blank" rel="noreferrer">Instagram</a>
                     <a className="btn" href="https://www.tiktok.com/@nhdinh.dev03" target="_blank" rel="noreferrer">TikTok</a>

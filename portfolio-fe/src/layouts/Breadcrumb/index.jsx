@@ -4,13 +4,13 @@ import { Link, useLocation } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
 
 
-function Breadcrumb({ className, separator, labels: labelsOverride }) {
+function Breadcrumb({ className, separator, labels: labelsOverride, showOnHome = false }) {
   const location = useLocation();
 
   // Default labels from route constants
   const defaultLabels = useMemo(
     () => ({
-      [ROUTES.HOME]: "Home",
+
       [ROUTES.ABOUT]: "About",
       [ROUTES.BLOG]: "Blog",
       [ROUTES.CONTACT]: "Contact",
@@ -23,57 +23,52 @@ function Breadcrumb({ className, separator, labels: labelsOverride }) {
 
   const labels = labelsOverride || defaultLabels;
 
-  // Build a list of cumulative paths from the current URL
+  // Build a list of cumulative paths from the current URL (basename-aware)
   const crumbs = useMemo(() => {
     const { pathname } = location;
+    const homePath = ROUTES.HOME || "/";
 
-    // Ensure Home is always the first crumb
     const segments = pathname.split("/").filter(Boolean);
-
-    // Rebuild cumulative paths and filter out technical segments
     const cumulative = [];
     let current = "";
-    segments.forEach((seg) => {
+    for (const seg of segments) {
       current += `/${seg}`;
       cumulative.push(current);
-    });
+    }
 
-    // Always start with root
-    const full = [ROUTES.HOME, ...cumulative];
+    // Start with homePath and append cumulative excluding duplicate
+    const full = [homePath, ...cumulative.filter((p) => p !== homePath)];
 
-    // De-duplicate (in case pathname is "/") and map to objects
     const seen = new Set();
+    const prettify = (path) => {
+      const last = decodeURIComponent(path.split("/").filter(Boolean).pop() || "");
+      return last.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    };
+
     const items = full
       .filter((p) => {
         if (seen.has(p)) return false;
         seen.add(p);
         return true;
       })
-      .map((path) => ({
+      .map((path, idx) => ({
         path,
-        label:
-          labels[path] ||
-          // Fallback: prettify last segment
-          path === "/"
-            ? labels[ROUTES.HOME] || "Home"
-            : decodeURIComponent(path.split("/").pop() || "")
-                .replace(/[-_]+/g, " ")
-                .replace(/\b\w/g, (c) => c.toUpperCase()),
+        label: idx === 0 ? (labels[homePath] || "Home") : (labels[path] || prettify(path)),
       }))
-      // Hide intermediary technical segments like API prefix if not labeled
-      .filter((item, idx, arr) => {
-        // keep first and last always
-        if (idx === 0 || idx === arr.length - 1) return true;
-        // keep if we explicitly have a label for it
-        return Boolean(labels[item.path]);
-      });
+      // Keep first & last; middle ones must be explicitly labeled
+      .filter((item, idx, arr) => (idx === 0 || idx === arr.length - 1) ? true : Boolean(labels[item.path]));
+
+    // Guard against accidental duplicate 'Home' as last label
+    if (items.length > 1 && /home/i.test(items[items.length - 1].label) && items[items.length - 1].path !== homePath) {
+      items[items.length - 1].label = prettify(items[items.length - 1].path);
+    }
 
     return items;
   }, [location, labels]);
 
-  // If only Home and we're on Home, you can choose to hide the breadcrumb
-  const isOnlyHome = crumbs.length === 1 && crumbs[0]?.path === ROUTES.HOME;
-  if (isOnlyHome) return null;
+  // If only Home and configured to hide, don't render
+  const isOnlyHome = crumbs.length === 1 && (crumbs[0]?.path === ROUTES.HOME || crumbs[0]?.path === "/");
+  if (!showOnHome && isOnlyHome) return null;
 
   return (
     <nav
@@ -114,12 +109,14 @@ Breadcrumb.propTypes = {
   className: PropTypes.string,
   separator: PropTypes.node,
   labels: PropTypes.objectOf(PropTypes.string),
+  showOnHome: PropTypes.bool,
 };
 
 Breadcrumb.defaultProps = {
   className: "",
   separator: "/",
   labels: undefined,
+  showOnHome: false,
 };
 
 export default React.memo(Breadcrumb);

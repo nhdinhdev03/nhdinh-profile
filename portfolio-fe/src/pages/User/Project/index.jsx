@@ -39,19 +39,21 @@ function Projects({ projects = DEFAULT_PROJECTS }) {
   }, [filter, projects]);
 
   return (
-    <section id="projects">
+    <section id="projects" data-filter={filter} aria-labelledby="projects-title">
       <div className="section-head">
         <div>
-          <div className="section-title">Dự án</div>
-          <div className="section-desc">Một vài dự án tiêu biểu tôi đã làm.</div>
+          <h2 id="projects-title" className="section-title">Dự án</h2>
+          <p className="section-desc">Một vài dự án tiêu biểu tôi đã làm.</p>
         </div>
-        <div className="row" role="group" aria-label="Lọc dự án">
+        <div className="row filters" role="group" aria-label="Lọc dự án">
           {["all","frontend","backend","fullstack"].map(key => (
             <button
               key={key}
+              type="button"
               className={`btn${filter===key ? " active" : ""}`}
               onClick={() => setFilter(key)}
               data-filter={key}
+              aria-pressed={filter === key}
             >
               {key === "all" ? "Tất cả" :
                key === "frontend" ? "Front-end" :
@@ -61,20 +63,40 @@ function Projects({ projects = DEFAULT_PROJECTS }) {
         </div>
       </div>
 
-      <div className="grid">
-        {filtered.map(p => (
-          <article className="project card" data-tags={p.tags.join(",")} key={p.id}>
-            <div className="thumb">
-              <img src={p.img} alt={p.title} />
+      <div className="grid" aria-live="polite">
+        {filtered.map((p, idx) => (
+          <article
+            className="project card"
+            data-tags={p.tags.join(",")}
+            key={p.id}
+            style={{"--stagger": `${idx}`}}
+            onMouseMove={(e) => {
+              const target = e.currentTarget;
+              const rect = target.getBoundingClientRect();
+              const x = ((e.clientX - rect.left) / rect.width) * 100;
+              target.style.setProperty("--mx", `${x}%`);
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.setProperty("--mx", `50%`);
+            }}
+          >
+            <div className="thumb" aria-hidden="true">
+              <img
+                src={p.img}
+                alt={p.title}
+                loading="lazy"
+                decoding="async"
+                sizes="(max-width: 600px) 100vw, 50vw"
+              />
             </div>
-            <div className="row chip">
-              {p.tags.slice(0,3).map(t => <span key={t}>{t}</span>)}
+            <div className="row chip" aria-label="Công nghệ">
+              {p.tags.slice(0,3).map(t => <span key={t} className="tag">{t}</span>)}
             </div>
-            <h3>{p.title}</h3>
-            <p className="section-desc">{p.desc}</p>
-            <div className="row">
-              <a className="btn" href={p.demo}>Demo</a>
-              <a className="btn" href={p.source}>Source</a>
+            <h3 className="project-title">{p.title}</h3>
+            <p className="section-desc project-desc">{p.desc}</p>
+            <div className="row actions">
+              <a className="btn ghost" href={p.demo} target="_blank" rel="noopener noreferrer" aria-label={`Xem demo ${p.title}`}>Demo</a>
+              <a className="btn primary" href={p.source} target="_blank" rel="noopener noreferrer" aria-label={`Xem source ${p.title}`}>Source</a>
             </div>
           </article>
         ))}

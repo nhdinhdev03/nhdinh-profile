@@ -14,6 +14,7 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
     error: "",
   });
   const [botField, setBotField] = useState(""); // honeypot
+  const [copied, setCopied] = useState(false);
 
   const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -47,6 +48,21 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
   };
 
+  const copyEmail = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(email);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      } else {
+        // Fallback: open mailto as a gentle fallback UX
+        window.location.href = `mailto:${email}`;
+      }
+    } catch (_) {
+      // ignore
+    }
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     if (botField) return; // bot -> bỏ qua
@@ -71,13 +87,28 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
           <p className="section-desc">Sẵn sàng cho cơ hội hợp tác mới ✨</p>
         </div>
       </div>
+      <div className="gradient-line" aria-hidden="true" />
 
       <div className="grid" aria-live="polite">
         <div
           className="card"
           style={{ gridColumn: "span 7" }}
         >
-          <form onSubmit={onSubmit} id="contactForm" noValidate>
+          <h3 style={{ marginTop: 4, marginBottom: 12 }}>Gửi tin nhắn</h3>
+
+          {status.ok && (
+            <div className="banner success" role="status">Đã gửi thành công! Cảm ơn bạn 🙌</div>
+          )}
+          {!status.ok && status.error && (
+            <div className="banner error" role="alert">{status.error}</div>
+          )}
+
+          <form
+            onSubmit={onSubmit}
+            id="contactForm"
+            noValidate
+            aria-busy={status.sending ? "true" : "false"}
+          >
             {/* Honeypot (ẩn) */}
             <input
               type="text"
@@ -97,48 +128,64 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
             />
 
             <div className="row">
+              <div className="field">
+                <label htmlFor="name">Họ tên</label>
+                <input
+                  id="name"
+                  name="name"
+                  placeholder="VD: Nguyễn Văn A"
+                  value={form.name}
+                  onChange={onChange}
+                  required
+                  aria-invalid={!form.name.trim() ? "true" : "false"}
+                  autoComplete="name"
+                  disabled={status.sending}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="email">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="ban@example.com"
+                  value={form.email}
+                  onChange={onChange}
+                  required
+                  aria-invalid={!form.email.trim() ? "true" : "false"}
+                  autoComplete="email"
+                  disabled={status.sending}
+                />
+              </div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="subject">Tiêu đề <span className="muted">(không bắt buộc)</span></label>
               <input
-                name="name"
-                placeholder="Họ tên"
-                value={form.name}
+                id="subject"
+                name="subject"
+                placeholder="VD: Hợp tác dự án website"
+                value={form.subject}
                 onChange={onChange}
-                required
-                aria-label="Họ tên"
-                aria-invalid={!form.name.trim() ? "true" : "false"}
-                autoComplete="name"
-              />
-              <input
-                name="email"
-                type="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={onChange}
-                required
-                aria-label="Email"
-                aria-invalid={!form.email.trim() ? "true" : "false"}
-                autoComplete="email"
+                autoComplete="subject"
+                disabled={status.sending}
               />
             </div>
 
-            <input
-              name="subject"
-              placeholder="Tiêu đề"
-              value={form.subject}
-              onChange={onChange}
-              aria-label="Tiêu đề"
-              autoComplete="subject"
-            />
-
-            <textarea
-              name="message"
-              placeholder="Nội dung"
-              value={form.message}
-              onChange={onChange}
-              required
-              aria-label="Nội dung"
-              aria-invalid={!form.message.trim() ? "true" : "false"}
-              rows={6}
-            />
+            <div className="field">
+              <label htmlFor="message">Nội dung</label>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Mô tả ngắn gọn nhu cầu hoặc câu hỏi của bạn..."
+                value={form.message}
+                onChange={onChange}
+                required
+                aria-invalid={!form.message.trim() ? "true" : "false"}
+                rows={6}
+                disabled={status.sending}
+              />
+            </div>
 
             <div className="row">
               <button
@@ -146,6 +193,7 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
                 type="submit"
                 disabled={status.sending}
               >
+                {status.sending && <span className="spinner" aria-hidden="true" />}
                 {status.sending ? "Đang gửi..." : "Gửi"}
               </button>
               {actionUrl && (
@@ -180,6 +228,21 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
             <br />
             GitHub: {info.github || "/yourhandle"}
           </p>
+
+          <div className="methods">
+            <button type="button" className="btn" onClick={() => (window.location.href = `mailto:${email}`)}>
+              ✉️ Gửi email trực tiếp
+            </button>
+            {info.linkedin && (
+              <a className="btn" href={`https://www.linkedin.com${info.linkedin}`} target="_blank" rel="noreferrer">💼 Mở LinkedIn</a>
+            )}
+            {info.github && (
+              <a className="btn" href={`https://github.com/${info.github.replace(/^\//, "")}`} target="_blank" rel="noreferrer">🐱‍💻 Mở GitHub</a>
+            )}
+            <button type="button" className="btn" onClick={copyEmail} aria-live="polite">
+              {copied ? "✅ Đã sao chép email" : "📋 Sao chép email"}
+            </button>
+          </div>
         </aside>
       </div>
     </section>

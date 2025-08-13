@@ -28,6 +28,13 @@
 }
 #contact .section-desc { color: var(--muted); }
 
+.gradient-line {
+  height: 2px;
+  margin: 16px 0 24px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--brand) 80%, transparent), transparent);
+  border-radius: 999px;
+}
+
 /* Grid */
 #contact .grid {
   --gap: clamp(16px, 3vw, 24px);
@@ -58,6 +65,25 @@
 /* Minimal hover */
 #contact .card:hover { border-color: rgba(255,255,255,0.18); }
 
+/* Banners */
+#contact .banner {
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  border: 1px solid transparent;
+}
+#contact .banner.success {
+  background: color-mix(in oklab, #10b981 12%, transparent);
+  border-color: color-mix(in oklab, #10b981 30%, transparent);
+  color: #caffeb;
+}
+#contact .banner.error {
+  background: color-mix(in oklab, #ef4444 12%, transparent);
+  border-color: color-mix(in oklab, #ef4444 30%, transparent);
+  color: #ffe6e6;
+}
+
 /* Form */
 #contact form { display: grid; gap: 12px; }
 #contact .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -70,16 +96,31 @@
   outline: none;
   transition: border-color .15s ease, background .15s ease;
 }
+#contact .field { display: grid; gap: 6px; }
+#contact label { font-size: 13px; color: var(--muted); }
 #contact input::placeholder, #contact textarea::placeholder { color: color-mix(in oklab, var(--muted) 70%, transparent); }
 #contact input:focus, #contact textarea:focus {
   border-color: color-mix(in oklab, var(--brand) 40%, transparent);
 }
 #contact [aria-invalid="true"] { border-color: color-mix(in oklab, red 40%, transparent); }
+#contact [disabled] { opacity: .7; cursor: not-allowed; }
+
+/* Spinner */
+#contact .spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.5);
+  border-top-color: rgba(255,255,255,1);
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* Buttons */
 #contact .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; border:1px solid color-mix(in oklab, var(--text) 15%, transparent); background: color-mix(in oklab, var(--card) 92%, transparent); cursor:pointer; transition: border-color .15s ease; }
 #contact .btn:hover { border-color: color-mix(in oklab, var(--brand) 40%, transparent); }
 #contact .btn.primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color:white; border-color:transparent; }
+
+/* Methods */
+#contact .methods { display: grid; gap: 8px; margin-top: 10px; }
 
 /* Responsive */
 @media (max-width: 1200px) {

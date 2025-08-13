@@ -3,6 +3,10 @@ import NeuroGrid from "./HIHI";
 import "./HomeIndex.scss";
 import { Link } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
+// New highlight sections
+import TechMarquee from "./sections/TechMarquee";
+import StatsStrip from "./sections/StatsStrip";
+import ProjectShowcase from "./sections/ProjectShowcase";
 
 function useTypewriter(words = [], speed = 80, pause = 1200) {
   const seq = useMemo(() => (Array.isArray(words) ? words : []), [words]);
@@ -105,45 +109,54 @@ function HomeIndex() {
   // (removed unused scrollTo helper)
 
   return (
-    <section className="hero" aria-label="Phần giới thiệu" ref={heroRef}>
-      <div className="hero__bg" aria-hidden="true">
-        <NeuroGrid parentRef={heroRef} />
-      </div>
-      <div className="hero__container">
-        <h1 className="hero__title" aria-label="Xin chào, tôi là Nhdinh">
-          <span className="hero__intro">Xin chào, tôi là</span>
-          <span className="hero__name" data-text="Nhdinh" aria-hidden="true">
-            {nameLetters.map((ch, i) => (
-              <span className="letter" style={{ "--i": i }} key={i}>{ch}</span>
-            ))}
-          </span>
-        </h1>
-
-        <p className="hero__subtitle">
-          <span className="typewriter" aria-live="polite" aria-atomic="true">
-            {typed}
-            <span className="caret" aria-hidden="true">
-              |
-            </span>
-          </span>
-        </p>
-
-        <p className="hero__lead fade-in">
-          Tôi tạo ra những trang web đẹp, tương thích với mọi thiết bị và mang lại
-          trải nghiệm người dùng tuyệt vời. Chuyên môn về công nghệ web hiện đại và
-          các giải pháp sáng tạo.
-        </p>
-
-        <div className="hero__ctas">
-          <Link className="btn btn--primary" to={ROUTES.PROJECTS}>
-            Xem Dự Án
-          </Link>
-          <Link className="btn" to={ROUTES.CONTACT}>
-            Liên Hệ
-          </Link>
+    <>
+      <section className="hero" aria-label="Phần giới thiệu" ref={heroRef}>
+        <div className="hero__bg" aria-hidden="true">
+          <NeuroGrid parentRef={heroRef} />
         </div>
-      </div>
-    </section>
+        <div className="hero__container">
+          <h1 className="hero__title" aria-label="Xin chào, tôi là Nhdinh">
+            <span className="hero__intro">Xin chào, tôi là</span>
+            <span className="hero__name" data-text="Nhdinh" aria-hidden="true">
+              {nameLetters.map((ch, i) => (
+                <span className="letter" style={{ "--i": i }} key={i}>{ch}</span>
+              ))}
+            </span>
+          </h1>
+
+          <p className="hero__subtitle">
+            <span className="typewriter" aria-live="polite" aria-atomic="true">
+              {typed}
+              <span className="caret" aria-hidden="true">
+                |
+              </span>
+            </span>
+          </p>
+
+          <p className="hero__lead fade-in">
+            Tôi tạo ra những trang web đẹp, tương thích với mọi thiết bị và mang lại
+            trải nghiệm người dùng tuyệt vời. Chuyên môn về công nghệ web hiện đại và
+            các giải pháp sáng tạo.
+          </p>
+
+          <div className="hero__ctas">
+            <Link className="btn btn--primary" to={ROUTES.PROJECTS}>
+              Xem Dự Án
+            </Link>
+            <Link className="btn" to={ROUTES.CONTACT}>
+              Liên Hệ
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Tech stack marquee */}
+      <TechMarquee />
+      {/* Quick stats strip */}
+      <StatsStrip />
+      {/* Project highlights */}
+      <ProjectShowcase />
+    </>
   );
 }
 

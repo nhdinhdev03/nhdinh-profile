@@ -65,8 +65,7 @@
   -webkit-text-fill-color: transparent;
   background-size: 200% 100%;
   animation: gradientShift 8s linear infinite;
-  text-shadow:
-    0 0 22px
+  text-shadow: 0 0 22px
       color-mix(in srgb, var(--brand, var(--brand-fallback)) 25%, transparent),
     0 0 36px
       color-mix(
@@ -80,8 +79,8 @@
 .hero__name .letter {
   display: inline-block;
   opacity: 0;
-  transform: translateY(22px) scale(.94);
-  animation: letterIn 640ms cubic-bezier(.22,1,.36,1) forwards;
+  transform: translateY(22px) scale(0.94);
+  animation: letterIn 640ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
   animation-delay: calc(var(--i) * 70ms + 120ms);
   position: relative;
 }
@@ -91,7 +90,13 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,.55) 45%, rgba(255,255,255,.15) 55%, transparent 70%);
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 45%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 70%
+  );
   mix-blend-mode: overlay;
   transform: translateX(-120%) skewX(-12deg);
   animation: shimmer 3.6s ease-in-out 900ms infinite;
@@ -154,8 +159,18 @@
 }
 
 /* Intro line and paragraph fade-in */
-.hero__intro { display: inline-block; font-size: clamp(16px,2.4vw,26px); font-weight: 500; color: var(--muted); opacity: 0; animation: introFade 800ms ease forwards 100ms; }
-.fade-in { opacity: 0; animation: fadeInUp .9s ease forwards .4s; }
+.hero__intro {
+  display: inline-block;
+  font-size: clamp(16px, 2.4vw, 26px);
+  font-weight: 500;
+  color: var(--muted);
+  opacity: 0;
+  animation: introFade 800ms ease forwards 100ms;
+}
+.fade-in {
+  opacity: 0;
+  animation: fadeInUp 0.9s ease forwards 0.4s;
+}
 
 .hero__ctas {
   display: inline-flex;
@@ -175,10 +190,7 @@
   text-decoration: none;
   font-weight: 700;
   box-shadow: 0 8px 18px -12px color-mix(in srgb, var(--ring) 70%, transparent);
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    background 160ms ease,
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease,
     border-color 160ms ease;
 }
 .btn:hover {
@@ -210,9 +222,7 @@
   border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   box-shadow: 0 10px 22px -14px color-mix(in srgb, var(--ring) 80%, transparent);
   cursor: pointer;
-  transition:
-    transform 160ms ease,
-    background 160ms ease,
+  transition: transform 160ms ease, background 160ms ease,
     border-color 160ms ease;
 }
 .hero__scroll:hover {
@@ -255,21 +265,63 @@
 }
 
 @keyframes letterIn {
-  0% { opacity: 0; transform: translateY(26px) scale(.88) rotate(4deg); filter: blur(4px); }
-  60% { opacity: 1; transform: translateY(-4px) scale(1.02); filter: blur(0); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(26px) scale(0.88) rotate(4deg);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.02);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
-  8% { opacity: 1; }
-  55% { transform: translateX(120%) skewX(-12deg); opacity: 0.9; }
-  70% { opacity: 0; }
-  100% { opacity: 0; transform: translateX(120%) skewX(-12deg); }
+  0% {
+    transform: translateX(-120%) skewX(-12deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  55% {
+    transform: translateX(120%) skewX(-12deg);
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%) skewX(-12deg);
+  }
 }
 
-@keyframes introFade { from { opacity: 0; transform: translateY(8px);} to { opacity:1; transform: translateY(0);} }
-@keyframes fadeInUp { from { opacity:0; transform: translateY(12px);} to { opacity:1; transform: translateY(0);} }
+@keyframes introFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 @keyframes floatA {
   0% {
@@ -328,10 +380,23 @@
   .hero__name {
     animation: none;
   }
-  .hero__name::before { animation: none; display: none; }
-  .hero__name .letter { animation: none; opacity: 1; transform: none; }
-  .fade-in { animation: none; opacity: 1; }
-  .hero__intro { animation: none; opacity: 1; }
+  .hero__name::before {
+    animation: none;
+    display: none;
+  }
+  .hero__name .letter {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .fade-in {
+    animation: none;
+    opacity: 1;
+  }
+  .hero__intro {
+    animation: none;
+    opacity: 1;
+  }
   .orb--a,
   .orb--b,
   .ring--a {

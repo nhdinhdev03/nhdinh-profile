@@ -64,16 +64,19 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
   };
 
   return (
-    <section id="contact">
+    <section id="contact" aria-labelledby="contact-title">
       <div className="section-head">
         <div>
-          <div className="section-title">Liên hệ</div>
-          <div className="section-desc">Sẵn sàng cho cơ hội hợp tác mới ✨</div>
+          <h2 id="contact-title" className="section-title">Liên hệ</h2>
+          <p className="section-desc">Sẵn sàng cho cơ hội hợp tác mới ✨</p>
         </div>
       </div>
 
-      <div className="grid">
-        <div className="card" style={{ gridColumn: "span 7" }}>
+      <div className="grid" aria-live="polite">
+        <div
+          className="card"
+          style={{ gridColumn: "span 7" }}
+        >
           <form onSubmit={onSubmit} id="contactForm" noValidate>
             {/* Honeypot (ẩn) */}
             <input
@@ -102,6 +105,7 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
                 required
                 aria-label="Họ tên"
                 aria-invalid={!form.name.trim() ? "true" : "false"}
+                autoComplete="name"
               />
               <input
                 name="email"
@@ -112,6 +116,7 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
                 required
                 aria-label="Email"
                 aria-invalid={!form.email.trim() ? "true" : "false"}
+                autoComplete="email"
               />
             </div>
 
@@ -121,6 +126,7 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
               value={form.subject}
               onChange={onChange}
               aria-label="Tiêu đề"
+              autoComplete="subject"
             />
 
             <textarea
@@ -131,6 +137,7 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
               required
               aria-label="Nội dung"
               aria-invalid={!form.message.trim() ? "true" : "false"}
+              rows={6}
             />
 
             <div className="row">
@@ -153,6 +160,7 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
               aria-live="polite"
               style={{ marginTop: 8, minHeight: 22 }}
               className="section-desc"
+              id="contact-status"
             >
               {status.ok && "Đã gửi thành công! Cảm ơn bạn 🙌"}
               {!status.ok && status.error}
@@ -160,7 +168,10 @@ function Contact({ email = "you@example.com", info = {}, actionUrl = "" }) {
           </form>
         </div>
 
-        <aside className="card" style={{ gridColumn: "span 5" }}>
+        <aside
+          className="card"
+          style={{ gridColumn: "span 5" }}
+        >
           <h3 style={{ marginTop: 0 }}>Thông tin</h3>
           <p className="section-desc">
             Email: {email}

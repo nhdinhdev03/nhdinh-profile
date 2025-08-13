@@ -1,3 +1,83 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+	App theme tokens: light defaults with dark overrides
+	- Exposed on :root for scripts/components that read from documentElement
+	- Also set on body to avoid collisions with header-specific tokens and to ensure inheritance
+	- Activated by system preference and explicitly via `.dark` on <html> from ThemeProvider
+*/
+:root {
+	--bg: #ffffff;
+	--card: #f8fafc; /* slate-50 */
+	--text: #0f172a; /* slate-900 */
+	/* avoid redefining --muted here to not fight header tokens */
+	--brand: #5b8cff; /* primary A */
+	--brand-2: #06b6d4; /* primary B */
+	--ring: rgba(14, 165, 233, 0.25);
+	color-scheme: light;
+}
+
+body {
+	--bg: #ffffff;
+	--card: #f8fafc; /* slate-50 */
+	--text: #0f172a; /* slate-900 */
+	--muted: #475569; /* slate-600 */
+	--brand: #5b8cff; /* primary A */
+	--brand-2: #06b6d4; /* primary B */
+	--ring: rgba(14, 165, 233, 0.25);
+
+	background-color: var(--bg);
+	color: var(--text);
+	color-scheme: light;
+}
+
+/* Respect system dark when user hasn't explicitly chosen */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #0b0f17; /* deep navy */
+		--card: #111827; /* gray-900 */
+		--text: #e5e7eb; /* gray-200 */
+		--brand: #0ea5e9; /* sky-500 */
+		--brand-2: #22d3ee; /* cyan-400 */
+		--ring: rgba(56, 189, 248, 0.35);
+		color-scheme: dark;
+	}
+	body {
+		--bg: #0b0f17; /* deep navy */
+		--card: #111827; /* gray-900 */
+		--text: #e5e7eb; /* gray-200 */
+		--muted: #94a3b8; /* slate-400 */
+		--brand: #0ea5e9; /* sky-500 */
+		--brand-2: #22d3ee; /* cyan-400 */
+		--ring: rgba(56, 189, 248, 0.35);
+		color-scheme: dark;
+	}
+}
+
+/* Explicit dark mode via ThemeProvider (.dark on <html>) */
+:root.dark {
+	--bg: #0b0f17;
+	--card: #111827;
+	--text: #e5e7eb;
+	--brand: #0ea5e9;
+	--brand-2: #22d3ee;
+	--ring: rgba(56, 189, 248, 0.35);
+	color-scheme: dark;
+}
+
+:root.dark body {
+	--bg: #0b0f17;
+	--card: #111827;
+	--text: #e5e7eb;
+	--muted: #94a3b8;
+	--brand: #0ea5e9;
+	--brand-2: #22d3ee;
+	--ring: rgba(56, 189, 248, 0.35);
+	color-scheme: dark;
+}
+
+/* Small defaults for better contrast in dark */
+:root.dark body a { color: color-mix(in oklab, var(--brand) 90%, var(--text)); }
+:root.dark body hr { border-color: color-mix(in oklab, var(--text) 12%, transparent); }

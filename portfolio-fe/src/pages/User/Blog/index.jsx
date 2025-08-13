@@ -27,22 +27,34 @@ const DEFAULT_POSTS = [
 
 function Blog({ posts = DEFAULT_POSTS, viewAllHref = "#" }) {
   return (
-    <section id="blog">
+    <section id="blog" aria-labelledby="blog-title">
       <div className="section-head">
         <div>
-          <div className="section-title">Blog</div>
-          <div className="section-desc">Chia sẻ kiến thức & kinh nghiệm.</div>
+          <h2 id="blog-title" className="section-title">Blog</h2>
+          <p className="section-desc">Chia sẻ kiến thức & kinh nghiệm.</p>
         </div>
-        <a className="btn" href={viewAllHref}>Xem tất cả</a>
+        <a className="btn primary" href={viewAllHref} aria-label="Xem tất cả bài viết">Xem tất cả</a>
       </div>
 
-      <div className="grid">
-        {posts.map(p => (
-          <article className="post card" key={p.id}>
-            <div className="thumb"><img src={p.img} alt={p.title} /></div>
-            <h3>{p.title}</h3>
-            <p className="section-desc">{p.desc}</p>
-            <a className="btn" href={p.href}>Đọc tiếp</a>
+      <div className="grid" aria-live="polite">
+        {posts.map((p, idx) => (
+          <article
+            className="post card"
+            key={p.id}
+            style={{"--stagger": `${idx}`}}
+          >
+            <div className="thumb" aria-hidden="true">
+              <img
+                src={p.img}
+                alt={p.title}
+                loading="lazy"
+                decoding="async"
+                sizes="(max-width: 700px) 100vw, 33vw"
+              />
+            </div>
+            <h3 className="post-title">{p.title}</h3>
+            <p className="section-desc post-desc">{p.desc}</p>
+            <a className="btn ghost" href={p.href} aria-label={`Đọc tiếp: ${p.title}`}>Đọc tiếp</a>
           </article>
         ))}
       </div>

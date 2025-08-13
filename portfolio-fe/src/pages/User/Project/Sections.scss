@@ -49,7 +49,8 @@
 	font-size: clamp(22px, 3vw, 34px);
 	font-weight: 800;
 	letter-spacing: 0.2px;
-	background: linear-gradient(90deg, #fff, #c7d2fe 40%, #d1fae5 80%);
+	/* Use brand tokens so it works in both light and dark */
+	background: linear-gradient(90deg, var(--brand), var(--brand-2));
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;
@@ -135,17 +136,15 @@
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-	background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+	/* Adaptive surface using theme card token */
+	background: color-mix(in oklab, var(--card) 96%, transparent);
 	border: 1px solid var(--stroke);
 	border-radius: var(--radius);
 	padding: 12px;
 	position: relative;
 	overflow: hidden;
-	box-shadow: var(--shadow);
-	transition: transform .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease;
-	backdrop-filter: blur(10px);
-	animation: cardIn .5s cubic-bezier(.2,.8,.2,1) both;
-	animation-delay: calc(var(--stagger) * 60ms);
+	box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+	transition: border-color .15s ease;
 }
 
 @keyframes cardIn {
@@ -153,24 +152,8 @@
 	to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-#projects .card::before {
-	content: "";
-	position: absolute;
-	inset: -1px;
-	background: radial-gradient(600px 120px at var(--mx, 50%) -10px, rgba(99,102,241,0.25), transparent 40%),
-							radial-gradient(600px 120px at var(--mx, 50%) 100%, rgba(16,185,129,0.2), transparent 60%);
-	opacity: 0;
-	transition: opacity .25s ease;
-	pointer-events: none;
-}
-
-#projects .card:hover::before { opacity: 1; }
-
-#projects .card:hover {
-	transform: translateY(-4px);
-	border-color: rgba(255,255,255,0.25);
-	box-shadow: 0 20px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
-}
+/* Removed pointer-follow glow and heavy hover effects */
+#projects .card:hover { border-color: rgba(255,255,255,0.22); }
 
 /* Thumb */
 #projects .thumb {
@@ -186,11 +169,7 @@
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	transform: scale(1.02);
-	transition: transform .5s ease;
 }
-
-#projects .card:hover .thumb img { transform: scale(1.06); }
 
 /* Chips */
 #projects .chip {
@@ -239,3 +218,8 @@
 }
 
 /* Pointer following glow uses --mx; can be updated from JS if desired */
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+	#projects * { transition: none !important; animation: none !important; }
+}

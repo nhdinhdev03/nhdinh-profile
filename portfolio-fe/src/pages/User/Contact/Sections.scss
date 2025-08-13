@@ -1,51 +1,98 @@
-/* Áp dụng cùng hệ màu/biến như phần Header/HomeIndex */
-/* Layout & utilities */
-section { padding: 56px 0; }
-.section-head { display:flex; align-items:end; justify-content:space-between; margin-bottom:18px; }
-.section-title { font-size: clamp(20px, 3.2vw, 28px); }
-.section-desc { color: var(--muted); }
-.row { display:flex; gap:12px; flex-wrap:wrap; }
+/* Contact Section - Futuristic UI consistent with Projects/Blog */
 
-/* Grid & cards */
-.grid { display:grid; grid-template-columns: repeat(12, 1fr); gap:16px; }
-.card {
+#contact {
+  --container-max: 1280px;
+  position: relative;
+  padding: clamp(32px, 6vw, 64px) 0;
+  color: var(--text, #e6e6e6);
+}
+
+#contact .section-head {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 0 clamp(12px, 3vw, 20px);
+  width: min(92vw, var(--container-max));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#contact .section-title {
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 800;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+#contact .section-desc { color: var(--muted); }
+
+/* Grid */
+#contact .grid {
+  --gap: clamp(16px, 3vw, 24px);
+  --mx: 50%;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gap);
+  padding: 0 clamp(12px, 3vw, 20px);
+  width: min(92vw, var(--container-max));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Card */
+#contact .card {
+  display: block;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
+  border-radius: 16px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  transition: border-color .15s ease;
+}
+/* Removed pointer-follow glow for performance */
+/* #contact .card::before removed */
+/* Minimal hover */
+#contact .card:hover { border-color: rgba(255,255,255,0.18); }
+
+/* Form */
+#contact form { display: grid; gap: 12px; }
+#contact .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+#contact input, #contact textarea {
   background: color-mix(in oklab, var(--card) 96%, transparent);
   border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
-  border-radius: 18px; padding: 18px;
-  box-shadow: 0 12px 30px -20px var(--ring);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s ease, background .15s ease;
 }
-
-/* Projects */
-.project { grid-column: span 6; display:flex; flex-direction:column; gap:12px; }
-.thumb { position:relative; overflow:hidden; border-radius:14px; border:1px solid color-mix(in oklab, var(--text) 10%, transparent); }
-.thumb img { display:block; width:100%; height:220px; object-fit:cover; filter:saturate(1.05); }
-.chip { display:inline-flex; gap:8px; align-items:center; font-size:12px; color:var(--muted); }
-
-/* Blog */
-.post { grid-column: span 4; }
-.post h3 { margin:.2rem 0; }
-
-/* About */
-.about { display:grid; grid-template-columns: .8fr 1.2fr; gap:18px; }
-.tag {
-  display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-size:12px;
-  color:var(--brand-2);
-  background: color-mix(in oklab, var(--brand) 10%, transparent);
-  border:1px solid color-mix(in oklab, var(--brand) 40%, transparent);
+#contact input::placeholder, #contact textarea::placeholder { color: color-mix(in oklab, var(--muted) 70%, transparent); }
+#contact input:focus, #contact textarea:focus {
+  border-color: color-mix(in oklab, var(--brand) 40%, transparent);
 }
-.muted { margin:0; padding-left:18px; color:var(--muted); }
+#contact [aria-invalid="true"] { border-color: color-mix(in oklab, red 40%, transparent); }
 
 /* Buttons */
-.btn { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px;
-  border:1px solid color-mix(in oklab, var(--text) 15%, transparent);
-  background: color-mix(in oklab, var(--card) 92%, transparent); cursor:pointer;
-}
-.btn:hover { border-color: color-mix(in oklab, var(--brand) 40%, transparent); }
-.btn.primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color:white; border-color:transparent; }
-.btn.active { outline: 2px solid var(--brand); }
+#contact .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; border:1px solid color-mix(in oklab, var(--text) 15%, transparent); background: color-mix(in oklab, var(--card) 92%, transparent); cursor:pointer; transition: border-color .15s ease; }
+#contact .btn:hover { border-color: color-mix(in oklab, var(--brand) 40%, transparent); }
+#contact .btn.primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color:white; border-color:transparent; }
 
 /* Responsive */
-@media (max-width: 960px){
-  .about { grid-template-columns:1fr; }
-  .project, .post { grid-column: span 12; }
+@media (max-width: 1200px) {
+  /* grid spans come from inline styles; grid becomes 6/6 */
+}
+@media (max-width: 900px) {
+  #contact .row { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  /* stack cards full width */
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #contact * { transition: none !important; animation: none !important; }
 }

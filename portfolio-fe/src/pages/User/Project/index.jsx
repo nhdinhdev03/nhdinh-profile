@@ -70,15 +70,6 @@ function Projects({ projects = DEFAULT_PROJECTS }) {
             data-tags={p.tags.join(",")}
             key={p.id}
             style={{"--stagger": `${idx}`}}
-            onMouseMove={(e) => {
-              const target = e.currentTarget;
-              const rect = target.getBoundingClientRect();
-              const x = ((e.clientX - rect.left) / rect.width) * 100;
-              target.style.setProperty("--mx", `${x}%`);
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.setProperty("--mx", `50%`);
-            }}
           >
             <div className="thumb" aria-hidden="true">
               <img

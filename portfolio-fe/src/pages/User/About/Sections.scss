@@ -101,6 +101,18 @@ section {
   border-radius: 999px;
 }
 
+/* Reveal-on-scroll base */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px) scale(.995);
+  transition: opacity .6s ease, transform .6s ease, filter .6s ease;
+  will-change: opacity, transform;
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
 /* Professional Stats */
 .professional-stats {
   list-style: none;
@@ -121,6 +133,7 @@ section {
   position: relative;
   overflow: hidden;
   outline: none;
+  backdrop-filter: saturate(1.03);
   
   &:hover {
     transform: translateY(-4px);
@@ -224,6 +237,7 @@ section {
   border-radius: 20px;
   padding: 24px;
   transition: all 0.3s ease;
+  overflow: hidden;
 }
 .github-card:hover {
   transform: translateY(-2px);
@@ -246,7 +260,9 @@ section {
   background: color-mix(in oklab, var(--card) 92%, transparent);
   border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
   border-radius: 12px;
+  transition: transform .35s ease;
 }
+.github-card img:hover { transform: translateY(-2px) scale(1.01); }
 .github-card figcaption {
   margin-top: 8px;
   font-size: 12px;
@@ -265,6 +281,7 @@ section {
   border-radius: 20px;
   padding: 24px;
   transition: all 0.3s ease;
+  overflow: hidden;
 }
 .readme-about-card:hover {
   transform: translateY(-2px);
@@ -356,8 +373,10 @@ section {
     object-fit: cover;
     display: block;
     filter: saturate(1.04) contrast(1.02);
+  transition: transform .45s ease;
   }
 }
+.media-card:hover img { transform: scale(1.02); }
 
 .summary-text {
   color: var(--muted);
@@ -629,6 +648,7 @@ section {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal { opacity: 1 !important; transform: none !important; }
 }
 
 /* Native progress styling (global) */

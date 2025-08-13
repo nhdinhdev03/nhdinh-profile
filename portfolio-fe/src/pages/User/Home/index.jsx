@@ -4,9 +4,9 @@ import "./HomeIndex.scss";
 import { Link } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
 // New highlight sections
-import TechMarquee from "./sections/TechMarquee";
-import StatsStrip from "./sections/StatsStrip";
-import ProjectShowcase from "./sections/ProjectShowcase";
+import TechMarquee from "../../../components/User/Home/TechMarquee";
+import StatsStrip from "../../../components/User/Home/StatsStrip";
+import ProjectShowcase from "../../../components/User/Home/ProjectShowcase";
 
 function useTypewriter(words = [], speed = 80, pause = 1200) {
   const seq = useMemo(() => (Array.isArray(words) ? words : []), [words]);

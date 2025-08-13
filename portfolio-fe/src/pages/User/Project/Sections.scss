@@ -1,18 +1,17 @@
 /* Projects Section - Futuristic UI */
 
 #projects {
-	--bg: radial-gradient(1200px 800px at 10% -10%, rgba(99,102,241,0.18), transparent 60%),
-				radial-gradient(900px 700px at 110% 10%, rgba(16,185,129,0.14), transparent 60%),
-				linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+	/* simpler, lightweight background for better performance */
+	--bg: none;
 	--glass: rgba(255, 255, 255, 0.06);
 	--glass-2: rgba(255, 255, 255, 0.12);
-	--stroke: rgba(255, 255, 255, 0.15);
-	--text: #e6e6e6;
-	--muted: #a1a1aa;
+	/* theme-aware stroke derived from current text color */
+	--stroke: color-mix(in oklab, var(--text) 12%, transparent);
 	--primary: #6366f1; /* indigo-500 */
 	--primary-2: #8b5cf6; /* violet-500 */
 	--accent: #10b981; /* emerald-500 */
-	--shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+	/* lighter shadow for better perf */
+	--shadow: 0 4px 12px rgba(0,0,0,0.15);
 	--radius: 16px;
 	--radius-sm: 12px;
 	--ring: 0 0 0 2px rgba(99,102,241,0.45), 0 0 0 6px rgba(99,102,241,0.15);
@@ -28,8 +27,7 @@
 	content: "";
 	position: absolute;
 	inset: 0;
-	background: var(--bg);
-	filter: saturate(110%) contrast(105%);
+	background: var(--bg); /* none -> no paint */
 	z-index: -2;
 }
 
@@ -72,37 +70,38 @@
 	--btn-bg: var(--glass);
 	--btn-fg: var(--text);
 	border: 1px solid var(--stroke);
-	background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-	color: var(--btn-fg);
+	background: color-mix(in oklab, var(--card) 92%, transparent);
+	color: var(--text);
 	padding: 10px 14px;
 	border-radius: 999px;
 	font-weight: 600;
 	font-size: 14px;
 	outline: none;
-	transform: translateZ(0);
-	transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+	/* keep transitions minimal; avoid transform to reduce layout work */
+	transition: background-color .12s ease, color .12s ease, border-color .12s ease, box-shadow .12s ease;
 	box-shadow: var(--shadow);
-	backdrop-filter: blur(8px);
 }
 
 #projects .btn:hover {
-	transform: translateY(-1px);
 	border-color: rgba(255,255,255,0.25);
 }
 
 #projects .btn.active, #projects .btn[aria-pressed="true"] {
-	background: linear-gradient(180deg, rgba(99,102,241,0.18), rgba(99,102,241,0.04));
-	border-color: rgba(99,102,241,0.5);
-	box-shadow: 0 10px 30px rgba(99,102,241,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+	/* subtle active state like Blog */
+	background: color-mix(in oklab, var(--brand) 12%, transparent);
+	border-color: color-mix(in oklab, var(--brand) 45%, transparent);
+	box-shadow: 0 4px 14px -6px color-mix(in oklab, var(--brand) 35%, transparent);
 }
 
 #projects .btn.primary {
-	background: linear-gradient(180deg, rgba(99,102,241,0.22), rgba(139,92,246,0.12));
-	border-color: rgba(99,102,241,0.55);
+	/* match Blog primary */
+	background: linear-gradient(135deg, var(--brand), var(--brand-2));
+	color: #fff;
+	border-color: transparent;
 }
 
 #projects .btn.ghost {
-	background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+	background: color-mix(in oklab, var(--card) 92%, transparent);
 }
 
 #projects .btn:focus-visible {
@@ -143,8 +142,13 @@
 	padding: 12px;
 	position: relative;
 	overflow: hidden;
-	box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-	transition: border-color .15s ease;
+	/* lighter shadow and add rendering hints for offscreen content */
+	box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+	transition: border-color .12s ease;
+	content-visibility: auto;
+	contain: content;
+	/* reserve space to avoid layout shifts while content is skipped */
+	contain-intrinsic-size: 360px 280px;
 }
 
 @keyframes cardIn {
@@ -161,8 +165,9 @@
 	border-radius: var(--radius-sm);
 	overflow: hidden;
 	aspect-ratio: 16 / 9;
-	background: #0b0b12;
-	border: 1px solid rgba(255,255,255,0.1);
+	/* theme-aware container so images don't look dim in light mode */
+	background: color-mix(in oklab, var(--card) 92%, transparent);
+	border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
 }
 
 #projects .thumb img {
@@ -181,16 +186,18 @@
 #projects .chip .tag {
 	padding: 6px 10px;
 	border-radius: 999px;
-	background: linear-gradient(180deg, rgba(99,102,241,0.18), rgba(139,92,246,0.08));
-	border: 1px solid rgba(99,102,241,0.4);
+	/* flatter, clearer tags */
+	background: color-mix(in oklab, var(--brand) 10%, transparent);
+	border: 1px solid color-mix(in oklab, var(--brand) 25%, transparent);
 	font-size: 12px;
-	color: #e9e9ff;
+	color: var(--brand-2);
 }
 
 /* Titles & text */
 #projects .project-title {
 	font-size: clamp(16px, 2.2vw, 18px);
 	font-weight: 700;
+	color: var(--text);
 }
 
 #projects .project-desc {

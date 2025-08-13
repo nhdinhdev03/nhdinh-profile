@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import NeuroGrid from "./HIHI";
 import "./HomeIndex.scss";
+import { Link } from "react-router-dom";
+import { ROUTES } from "router/routeConstants";
 
 function useTypewriter(words = [], speed = 80, pause = 1200) {
   const seq = useMemo(() => (Array.isArray(words) ? words : []), [words]);
@@ -15,16 +17,19 @@ function useTypewriter(words = [], speed = 80, pause = 1200) {
     const atWordEnd = !deleting && subIndex === current.length;
     const atWordStart = deleting && subIndex === 0;
 
-    const timeout = setTimeout(() => {
-      if (atWordEnd) {
-        setDeleting(true);
-      } else if (atWordStart) {
-        setDeleting(false);
-        setIndex((i) => (i + 1) % seq.length);
-      } else {
-        setSubIndex((s) => s + (deleting ? -1 : 1));
-      }
-    }, atWordEnd ? pause : deleting ? Math.max(40, speed / 2) : speed);
+    const timeout = setTimeout(
+      () => {
+        if (atWordEnd) {
+          setDeleting(true);
+        } else if (atWordStart) {
+          setDeleting(false);
+          setIndex((i) => (i + 1) % seq.length);
+        } else {
+          setSubIndex((s) => s + (deleting ? -1 : 1));
+        }
+      },
+      atWordEnd ? pause : deleting ? Math.max(40, speed / 2) : speed
+    );
 
     setText(current.slice(0, subIndex));
     return () => clearTimeout(timeout);
@@ -66,7 +71,10 @@ function HomeIndex() {
       const ny = sy + (targetVars.current.y - sy) * step;
       el.style.setProperty("--mx", nx.toFixed(4));
       el.style.setProperty("--my", ny.toFixed(4));
-      if (Math.abs(nx - targetVars.current.x) > 0.002 || Math.abs(ny - targetVars.current.y) > 0.002) {
+      if (
+        Math.abs(nx - targetVars.current.x) > 0.002 ||
+        Math.abs(ny - targetVars.current.y) > 0.002
+      ) {
         rafRef.current = requestAnimationFrame(loop);
       } else {
         rafRef.current = 0;
@@ -105,37 +113,34 @@ function HomeIndex() {
       <div className="hero__container">
         <h1 className="hero__title">
           <span>Xin chào, tôi là</span>
-          <span className="hero__name" data-text="Nhdinh">Nhdinh</span>
+          <span className="hero__name" data-text="Nhdinh">
+            Nhdinh
+          </span>
         </h1>
 
         <p className="hero__subtitle">
           <span className="typewriter" aria-live="polite" aria-atomic="true">
             {typed}
-            <span className="caret" aria-hidden="true">|</span>
+            <span className="caret" aria-hidden="true">
+              |
+            </span>
           </span>
         </p>
 
         <p className="hero__lead">
-          Tôi tạo ra những trang web đẹp, tương thích với mọi thiết bị và mang lại trải
-          nghiệm người dùng tuyệt vời. Chuyên môn về công nghệ web hiện đại và các
-          giải pháp sáng tạo.
+          Tôi tạo ra những trang web đẹp, tương thích với mọi thiết bị và mang
+          lại trải nghiệm người dùng tuyệt vời. Chuyên môn về công nghệ web hiện
+          đại và các giải pháp sáng tạo.
         </p>
 
         <div className="hero__ctas">
-          <a className="btn btn--primary" href="#projects" onClick={(e) => { e.preventDefault(); scrollTo("#projects"); }}>
+          <Link className="btn btn--primary" to={ROUTES.PROJECTS}>
             Xem Dự Án
-          </a>
-          <a className="btn" href="#contact" onClick={(e) => { e.preventDefault(); scrollTo("#contact"); }}>
+          </Link>
+          <Link className="btn" to={ROUTES.CONTACT}>
             Liên Hệ
-          </a>
+          </Link>
         </div>
-
-        <button className="hero__scroll" type="button" aria-label="Cuộn xuống" onClick={() => scrollTo("#projects")}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-            <path d="M12 5v14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-            <path d="M6 13l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
       </div>
     </section>
   );

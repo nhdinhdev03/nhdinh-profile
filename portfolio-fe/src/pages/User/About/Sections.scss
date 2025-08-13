@@ -198,6 +198,7 @@ section {
   .readme-about-card { grid-column: 1 / -1; }
   .github-card { grid-column: 1 / -1; }
   .media-card { grid-column: 1 / -1; }
+  .projects-card { grid-column: 1 / -1; }
 }
 
 /* Card Base Styles */
@@ -274,6 +275,64 @@ section {
   gap: 10px;
 }
 
+/* Projects grid */
+.projects-card {
+  background: color-mix(in oklab, var(--card) 96%, transparent);
+  border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
+  border-radius: 20px;
+  padding: 24px;
+  transition: all .3s ease;
+}
+.projects-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--brand) 20%, transparent);
+  box-shadow: 0 16px 32px -12px color-mix(in oklab, var(--ring) 30%, transparent);
+}
+.repo-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  list-style: none;
+  padding-left: 0;
+}
+.repo-card {
+  grid-column: span 4;
+  background: color-mix(in oklab, var(--card) 95%, transparent);
+  border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
+  border-radius: 14px;
+  padding: 14px;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.repo-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--brand) 24%, transparent);
+  box-shadow: 0 14px 28px -14px color-mix(in oklab, var(--ring) 30%, transparent);
+}
+.repo-card .repo-name a {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+.repo-card .repo-name a:hover { color: var(--brand); }
+.repo-card .repo-desc { color: var(--muted); font-size: 14px; margin: 6px 0 10px; }
+.repo-card .repo-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.repo-card.skeleton { position: relative; overflow: hidden; min-height: 92px; }
+.repo-card.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--text) 8%, transparent), transparent);
+  animation: shimmer 1.2s infinite;
+}
+@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+@media (max-width: 960px) {
+  .repo-card { grid-column: span 6; }
+}
+@media (max-width: 640px) {
+  .repo-card { grid-column: span 12; }
+}
+
 /* README-style About Me card */
 .readme-about-card {
   background: color-mix(in oklab, var(--card) 96%, transparent);
@@ -293,6 +352,21 @@ section {
   gap: 6px;
   margin-bottom: 12px;
 }
+.readme-about-card .readme-grid {
+  display: grid;
+  grid-template-columns: 1.4fr .8fr;
+  gap: 16px;
+}
+.readme-about-card .intro-col { min-width: 0; }
+.readme-about-card .aside-col { min-width: 0; display: grid; gap: 12px; align-content: start; }
+.readme-about-card .mini-card {
+  background: color-mix(in oklab, var(--card) 95%, transparent);
+  border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
+  border-radius: 14px;
+  padding: 14px;
+}
+.readme-about-card .mini-card h4 { margin: 0 0 8px 0; font-size: 14px; font-weight: 700; }
+.readme-about-card .mini-list { list-style: none; padding-left: 0; margin: 0; display: grid; gap: 6px; color: var(--muted); font-size: 14px; }
 .readme-about-card .hero-title { font-size: clamp(18px, 3.2vw, 22px); font-weight: 700; }
 .readme-about-card .name-highlight { color: var(--brand); }
 .readme-about-card .hero-subtitle { color: var(--muted); font-size: 14px; }
@@ -302,6 +376,10 @@ section {
 .readme-about-card .tech-badges { display: flex; flex-wrap: wrap; gap: 8px; }
 .readme-about-card .tech-badges img { height: 36px; width: auto; display: block; }
 .readme-about-card .contact-links { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+
+@media (max-width: 960px) {
+  .readme-about-card .readme-grid { grid-template-columns: 1fr; }
+}
 
 /* Profile Card */
 .avatar-section {

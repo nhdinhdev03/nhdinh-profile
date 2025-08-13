@@ -95,13 +95,14 @@
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 2rem;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; // logo | nav | actions
     align-items: center;
     gap: 1rem;
 
     @media (max-width: 768px) {
       padding: 0 1rem;
+      grid-template-columns: 1fr auto; // logo | actions
     }
   }
 
@@ -178,7 +179,8 @@
     display: none;
 
     @media (min-width: 768px) {
-      display: block;
+      display: flex;
+      justify-content: center; // center within middle column
     }
 
     &-list {
@@ -243,6 +245,14 @@
     }
   }
 
+  // Right actions container
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
   // Theme Toggle (Desktop button as an icon-only control)
   &__theme-toggle {
     margin-left: 0.25rem;
@@ -303,6 +313,39 @@
       &::before { opacity: 0; transform: scale(0.8) rotate(20deg); }
       &::after  { opacity: 1; transform: scale(1); }
     }
+
+    @media (max-width: 767px) {
+      display: none;
+    }
+  }
+
+  // Settings (Login) button
+  &__settings {
+    margin-left: 0.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(148, 163, 184, 0.06), transparent);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.25s var(--easing), border-color 0.25s var(--easing), box-shadow 0.25s var(--easing), transform 0.2s var(--easing), color 0.25s var(--easing);
+    outline: none;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #334155; // controls SVG stroke via currentColor
+
+    svg { display: block; }
+
+    &:hover {
+      background: linear-gradient(180deg, rgba(148, 163, 184, 0.12), transparent);
+      border-color: var(--border-strong);
+      color: var(--primary-strong);
+    }
+    &:active { transform: scale(0.98); }
+    &:focus-visible { box-shadow: 0 0 0 3px var(--ring); }
 
     @media (max-width: 767px) {
       display: none;
@@ -439,6 +482,14 @@
     }
   }
 
+  // small icon before text in mobile menu
+  &__mobile-nav-icon {
+    width: 1.15em;
+    height: 1.15em;
+    margin-right: 0.5rem;
+    vertical-align: -0.18em;
+  }
+
   // Mobile Menu Overlay
   &__mobile-overlay {
     position: fixed;
@@ -551,9 +602,9 @@ html {
   scroll-padding-top: 120px;
 }
 
-// Body padding to avoid header overlap (matches default header height)
-body {
-  padding-top: 100px;
+// Offset content only within UserLayout to avoid affecting Admin pages
+.layout > .page-container {
+  padding-top: 100px; // matches default header height
 }
 
 // Smooth scroll for better UX

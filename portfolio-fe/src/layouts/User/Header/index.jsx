@@ -165,8 +165,9 @@ function Header() {
                 type="button"
                 className="header__mobile-nav-link"
                 onClick={() => {
+                  // Toggle theme then auto-close the mobile menu for faster feedback
                   toggle();
-                  // keep menu state as is; close only if you want auto-close
+                  setIsMobileMenuOpen(false);
                 }}
                 aria-pressed={!light}
                 aria-label={light ? "Bật chế độ tối" : "Tắt chế độ tối"}

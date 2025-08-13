@@ -51,12 +51,78 @@ Reveal.propTypes = {
 };
 
 // Static content moved outside to avoid re-creation per render
+// Now aligned to live GitHub stats: Followers, Repositories, Stars, Gists
 const PROFESSIONAL_STATS = [
-  { value: "3+", label: "Năm kinh nghiệm", icon: "💼" },
-  { value: "15+", label: "Dự án bàn giao", icon: "🚀" },
-  { value: "99.9%", label: "Tỉ lệ uptime", icon: "⚡" },
-  { value: "4", label: "Chứng chỉ", icon: "🏆" },
+  { id: "followers", value: "-", label: "Followers", icon: "�" },
+  { id: "repos", value: "-", label: "Repositories", icon: "🚀" },
+  { id: "stars", value: "-", label: "Stars", icon: "⭐" },
+  { id: "gists", value: "-", label: "Gists", icon: "🧩" },
 ];
+
+// (removed) useGithubRepoCount — replaced by useGithubUser to avoid duplicate fetches
+
+// Fetch GitHub user object (followers, gists, etc.)
+function useGithubUser(username = "nhdinhdev03") {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    const ctrl = new AbortController();
+    let ignore = false;
+    async function load() {
+      try {
+        const res = await fetch(`https://api.github.com/users/${username}`,
+          { signal: ctrl.signal, headers: { Accept: "application/vnd.github+json" } }
+        );
+        if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+        const data = await res.json();
+        if (!ignore) setUser(data);
+      } catch (e) {
+        if (e.name !== "AbortError" && !ignore) setUser(null);
+      }
+    }
+    load();
+    return () => { ignore = true; ctrl.abort(); };
+  }, [username]);
+  return user;
+}
+
+// Simple in-memory cache for repos to avoid duplicate fetches across components
+const __reposCache = new Map(); // key: username, value: Promise<repos[]>
+
+async function fetchUserReposCached(username, signal) {
+  if (__reposCache.has(username)) return __reposCache.get(username);
+  const p = (async () => {
+    const res = await fetch(
+      `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
+      { signal, headers: { Accept: "application/vnd.github+json" } }
+    );
+    if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  })();
+  __reposCache.set(username, p);
+  return p;
+}
+
+// Sum stargazers across public repos
+function useGithubStarsTotal(username = "nhdinhdev03") {
+  const [stars, setStars] = useState(null);
+  useEffect(() => {
+    const ctrl = new AbortController();
+    let ignore = false;
+    (async () => {
+      try {
+        setStars(null);
+        const repos = await fetchUserReposCached(username, ctrl.signal);
+        const total = repos.reduce((acc, r) => acc + (r.stargazers_count || 0), 0);
+        if (!ignore) setStars(total);
+      } catch (e) {
+        if (e.name !== "AbortError" && !ignore) setStars(null);
+      }
+    })();
+    return () => { ignore = true; ctrl.abort(); };
+  }, [username]);
+  return stars;
+}
 
 // Lightweight GitHub Projects widget
 function GitHubProjects({ username = "nhdinhdev03", max = 6 }) {
@@ -70,12 +136,7 @@ function GitHubProjects({ username = "nhdinhdev03", max = 6 }) {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(
-          `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
-          { signal: ctrl.signal, headers: { Accept: "application/vnd.github+json" } }
-        );
-        if (!res.ok) throw new Error(`GitHub API ${res.status}`);
-        const data = await res.json();
+  const data = await fetchUserReposCached(username, ctrl.signal);
         const filtered = data
           .filter((r) => !r.archived && !r.disabled)
           .sort((a, b) =>
@@ -98,7 +159,7 @@ function GitHubProjects({ username = "nhdinhdev03", max = 6 }) {
 
   return (
     <Reveal as="section" className="projects-card" aria-labelledby="projects-heading">
-      <h3 id="projects-heading">Dự án GitHub</h3>
+      {/* <h3 id="projects-heading">Dự án GitHub</h3> */}
       {error && (
         <p className="summary-text">
           {error} <a className="btn" href={`https://github.com/${username}`} target="_blank" rel="noreferrer">Mở GitHub</a>
@@ -143,6 +204,30 @@ GitHubProjects.propTypes = {
 function About() {
   // Memoize static data so references remain stable
   const professionalStats = useMemo(() => PROFESSIONAL_STATS, []);
+  const ghUser = useGithubUser("nhdinhdev03");
+  const ghStars = useGithubStarsTotal("nhdinhdev03");
+  const displayedStats = useMemo(() => {
+    return professionalStats.map((s) => {
+      let value = s.value;
+      switch (s.id) {
+        case "followers":
+          value = ghUser && typeof ghUser.followers === "number" ? String(ghUser.followers) : s.value;
+          break;
+        case "repos":
+          value = ghUser && typeof ghUser.public_repos === "number" ? String(ghUser.public_repos) : s.value;
+          break;
+        case "stars":
+          value = typeof ghStars === "number" ? String(ghStars) : s.value;
+          break;
+        case "gists":
+          value = ghUser && typeof ghUser.public_gists === "number" ? String(ghUser.public_gists) : s.value;
+          break;
+        default:
+          break;
+      }
+      return { ...s, value };
+    });
+  }, [professionalStats, ghUser, ghStars]);
 
   return (
     <section
@@ -170,11 +255,11 @@ function About() {
 
         {/* Thống kê nổi bật */}
         <ul className="professional-stats" aria-label="Thống kê chuyên môn">
-          {professionalStats.map((stat, i) => (
+      {displayedStats.map((stat, i) => (
             <Reveal
               as="li"
               className="stat-card"
-              key={stat.label}
+        key={stat.id}
               style={{ transitionDelay: `${i * 60}ms` }}
               aria-label={`${stat.label}: ${stat.value}`}
             >
@@ -197,7 +282,7 @@ function About() {
             className="readme-about-card"
             aria-labelledby="readme-about-heading"
           >
-            <h3 id="readme-about-heading">About Me</h3>
+            {/* <h3 id="readme-about-heading">About Me</h3> */}
             <div className="readme-grid">
               <div className="intro-col">
                 <div className="intro-hero">
@@ -321,7 +406,7 @@ function About() {
             className="github-card"
             aria-labelledby="github-heading"
           >
-            <h3 id="github-heading">GitHub Profile</h3>
+            {/* <h3 id="github-heading">GitHub Profile</h3> */}
             <div className="github-grid">
               <figure className="gh-item">
                 <img

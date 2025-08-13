@@ -99,11 +99,10 @@ function HomeIndex() {
     "React/Node.js Engineer",
   ]);
 
-  const scrollTo = (hash) => {
-    const id = (hash || "").replace("#", "");
-    const el = id ? document.getElementById(id) : null;
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  // Split name into letters for stagger animation
+  const nameLetters = useMemo(() => Array.from("Nhdinh"), []);
+
+  // (removed unused scrollTo helper)
 
   return (
     <section className="hero" aria-label="Phần giới thiệu" ref={heroRef}>
@@ -111,10 +110,12 @@ function HomeIndex() {
         <NeuroGrid parentRef={heroRef} />
       </div>
       <div className="hero__container">
-        <h1 className="hero__title">
-          <span>Xin chào, tôi là</span>
-          <span className="hero__name" data-text="Nhdinh">
-            Nhdinh
+        <h1 className="hero__title" aria-label="Xin chào, tôi là Nhdinh">
+          <span className="hero__intro">Xin chào, tôi là</span>
+          <span className="hero__name" data-text="Nhdinh" aria-hidden="true">
+            {nameLetters.map((ch, i) => (
+              <span className="letter" style={{ "--i": i }} key={i}>{ch}</span>
+            ))}
           </span>
         </h1>
 
@@ -127,10 +128,10 @@ function HomeIndex() {
           </span>
         </p>
 
-        <p className="hero__lead">
-          Tôi tạo ra những trang web đẹp, tương thích với mọi thiết bị và mang
-          lại trải nghiệm người dùng tuyệt vời. Chuyên môn về công nghệ web hiện
-          đại và các giải pháp sáng tạo.
+        <p className="hero__lead fade-in">
+          Tôi tạo ra những trang web đẹp, tương thích với mọi thiết bị và mang lại
+          trải nghiệm người dùng tuyệt vời. Chuyên môn về công nghệ web hiện đại và
+          các giải pháp sáng tạo.
         </p>
 
         <div className="hero__ctas">

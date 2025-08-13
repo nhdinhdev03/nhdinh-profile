@@ -76,6 +76,28 @@
       );
 }
 
+/* Per-letter stagger entrance */
+.hero__name .letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(22px) scale(.94);
+  animation: letterIn 640ms cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay: calc(var(--i) * 70ms + 120ms);
+  position: relative;
+}
+
+/* Shimmer scan overlay replaces previous accent bar */
+.hero__name::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,.55) 45%, rgba(255,255,255,.15) 55%, transparent 70%);
+  mix-blend-mode: overlay;
+  transform: translateX(-120%) skewX(-12deg);
+  animation: shimmer 3.6s ease-in-out 900ms infinite;
+  pointer-events: none;
+}
+
 /* Holographic stacked glow using data-text */
 .hero__name::after {
   content: attr(data-text);
@@ -95,25 +117,7 @@
   transform: translate3d(calc(var(--mx, 0) * 3px), calc(var(--my, 0) * 3px), 0);
 }
 
-.hero__name::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 8px;
-  border-radius: 99px;
-  // background: linear-gradient(
-  //   90deg,
-  //   color-mix(in srgb, var(--brand, var(--brand-fallback)) 65%, transparent),
-  //   color-mix(in srgb, var(--brand-2, var(--brand-2-fallback)) 65%, transparent)
-  // );
-  box-shadow: 0 8px 22px -12px
-    color-mix(in srgb, var(--brand, var(--brand-fallback)) 60%, transparent);
-  transform-origin: left center;
-  transform: scaleX(0.2);
-  animation: accentGrow 1200ms cubic-bezier(0.22, 1, 0.36, 1) 300ms both;
-}
+/* (Removed original bottom bar accentGrow effect in favor of shimmer) */
 
 .hero__subtitle {
   margin: 2px 0 12px;
@@ -148,6 +152,10 @@
   font-size: clamp(14px, 2.6vw, 20px);
   line-height: 1.7;
 }
+
+/* Intro line and paragraph fade-in */
+.hero__intro { display: inline-block; font-size: clamp(16px,2.4vw,26px); font-weight: 500; color: var(--muted); opacity: 0; animation: introFade 800ms ease forwards 100ms; }
+.fade-in { opacity: 0; animation: fadeInUp .9s ease forwards .4s; }
 
 .hero__ctas {
   display: inline-flex;
@@ -246,6 +254,23 @@
   }
 }
 
+@keyframes letterIn {
+  0% { opacity: 0; transform: translateY(26px) scale(.88) rotate(4deg); filter: blur(4px); }
+  60% { opacity: 1; transform: translateY(-4px) scale(1.02); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
+  8% { opacity: 1; }
+  55% { transform: translateX(120%) skewX(-12deg); opacity: 0.9; }
+  70% { opacity: 0; }
+  100% { opacity: 0; transform: translateX(120%) skewX(-12deg); }
+}
+
+@keyframes introFade { from { opacity: 0; transform: translateY(8px);} to { opacity:1; transform: translateY(0);} }
+@keyframes fadeInUp { from { opacity:0; transform: translateY(12px);} to { opacity:1; transform: translateY(0);} }
+
 @keyframes floatA {
   0% {
     transform: translate3d(0, 0, 0);
@@ -303,9 +328,10 @@
   .hero__name {
     animation: none;
   }
-  .hero__name::before {
-    animation: none;
-  }
+  .hero__name::before { animation: none; display: none; }
+  .hero__name .letter { animation: none; opacity: 1; transform: none; }
+  .fade-in { animation: none; opacity: 1; }
+  .hero__intro { animation: none; opacity: 1; }
   .orb--a,
   .orb--b,
   .ring--a {

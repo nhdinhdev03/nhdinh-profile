@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import NeuroGrid from "./NeuroGrid/NeuroGrid";
 import "./HomeIndex.scss";
 import { Link } from "react-router-dom";
@@ -40,55 +41,21 @@ function useTypewriter(words = [], speed = 80, pause = 1200) {
   return text;
 }
 
-// Simple intersection observer hook
-function useInView(options) {
-  const ref = useRef(null);
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || inView) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setInView(true);
-            obs.disconnect();
-          }
-        });
-      },
-      { threshold: 0.35, ...(options || {}) }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [options, inView]);
-  return [ref, inView];
-}
-
-// Count up animation hook
-function useCountUp(target = 0, duration = 1400, start = false) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    if (!start) return;
-    const t0 = performance.now();
-    let raf = 0;
-    const tick = (now) => {
-      const progress = Math.min(1, (now - t0) / duration);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setValue(Math.round(eased * target));
-      if (progress < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration, start]);
-  return value;
-}
-
 function HomeIndex() {
   const heroRef = useRef(null);
   const rafRef = useRef(0);
   const targetVars = useRef({ x: 0, y: 0 });
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  // Trigger loading animation on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
 
-  // Parallax: update CSS vars --mx/--my in range [-1, 1]
+  // Enhanced parallax with smoother interpolation
   useEffect(() => {
     const el = heroRef.current;
     if (!el) return;
@@ -99,17 +66,19 @@ function HomeIndex() {
       const cy = r.top + r.height / 2;
       const dx = (e.clientX - cx) / (r.width / 2);
       const dy = (e.clientY - cy) / (r.height / 2);
-      targetVars.current.x = Math.max(-1, Math.min(1, dx));
-      targetVars.current.y = Math.max(-1, Math.min(1, dy));
+      targetVars.current.x = Math.max(-1, Math.min(1, dx * 0.7)); // Reduced intensity
+      targetVars.current.y = Math.max(-1, Math.min(1, dy * 0.7));
       if (!rafRef.current) loop();
     };
+    
     const onLeave = () => {
       targetVars.current.x = 0;
       targetVars.current.y = 0;
       if (!rafRef.current) loop();
     };
+    
     const loop = () => {
-      const step = 0.08; // easing
+      const step = 0.06; // Smoother easing
       const sx = parseFloat(getComputedStyle(el).getPropertyValue("--mx")) || 0;
       const sy = parseFloat(getComputedStyle(el).getPropertyValue("--my")) || 0;
       const nx = sx + (targetVars.current.x - sx) * step;
@@ -117,8 +86,8 @@ function HomeIndex() {
       el.style.setProperty("--mx", nx.toFixed(4));
       el.style.setProperty("--my", ny.toFixed(4));
       if (
-        Math.abs(nx - targetVars.current.x) > 0.002 ||
-        Math.abs(ny - targetVars.current.y) > 0.002
+        Math.abs(nx - targetVars.current.x) > 0.001 ||
+        Math.abs(ny - targetVars.current.y) > 0.001
       ) {
         rafRef.current = requestAnimationFrame(loop);
       } else {
@@ -138,43 +107,124 @@ function HomeIndex() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
+  
+  // Enhanced typewriter with more professional phrases
   const typed = useTypewriter([
     "Full Stack Engineer",
     "Front‑end Specialist",
-    "React / Node.js Developer",
+    "React / Node.js Expert",
+    "UI/UX Enthusiast",
+    "Performance Optimizer"
   ]);
 
   const nameLetters = useMemo(() => Array.from("Nhdinh"), []);
+
+  // Animation variants for staggered animations
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1, 
+      transition: { 
+        staggerChildren: 0.12,
+        delayChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        type: "spring", 
+        stiffness: 100, 
+        damping: 12 
+      }
+    }
+  };
 
   return (
     <>
       <header className="hero" aria-label="Giới thiệu tổng quan" ref={heroRef}>
         {/* Enhanced Background with Multiple Layers */}
         <div className="hero__bg" aria-hidden="true">
+          {/* Animated Particles */}
+          <div className="hero__particles">
+            {[...Array(25)].map((_, i) => (
+              <div 
+                key={i} 
+                className="hero__particle"
+                style={{
+                  '--size': `${Math.random() * 8 + 2}px`,
+                  '--x': `${Math.random() * 100}%`,
+                  '--y': `${Math.random() * 100}%`,
+                  '--duration': `${Math.random() * 20 + 10}s`,
+                  '--delay': `${Math.random() * 5}s`
+                }}
+              />
+            ))}
+          </div>
+          
           <NeuroGrid parentRef={heroRef} />
-          {/* Geometric Pattern Overlay */}
+          
+          {/* Enhanced Geometric Pattern Overlay */}
           <div className="hero__patterns">
             <div className="geometric-grid"></div>
             <div className="floating-elements">
-              <div className="float-elem float-elem--1"></div>
-              <div className="float-elem float-elem--2"></div>
-              <div className="float-elem float-elem--3"></div>
-              <div className="float-elem float-elem--4"></div>
-              <div className="float-elem float-elem--5"></div>
+              {[...Array(6)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className={`float-elem float-elem--${i + 1}`}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ 
+                    opacity: isLoaded ? 0.7 : 0, 
+                    scale: isLoaded ? 1 : 0.8 
+                  }}
+                  transition={{ 
+                    duration: 1.2, 
+                    delay: 0.1 + i * 0.15,
+                    ease: [0.25, 1, 0.5, 1]
+                  }}
+                />
+              ))}
             </div>
           </div>
-          {/* Dynamic Gradient Overlay */}
-          <div className="hero__gradient-overlay"></div>
+          
+          {/* Dynamic Gradient Overlay with enhanced visuals */}
+          <div className="hero__gradient-overlay">
+            <div className="hero__light-beam"></div>
+          </div>
+          
+          {/* Code snippet decorative elements */}
+          <div className="code-snippet code-snippet--left">
+            <div className="code-line">const developer = {`{`}</div>
+            <div className="code-line code-indent">name: <span className="code-string">"Nhdinh"</span>,</div>
+            <div className="code-line code-indent">skills: <span className="code-array">[...]</span>,</div>
+            <div className="code-line code-indent">passion: <span className="code-string">"Creating amazing web experiences"</span></div>
+            <div className="code-line">{`}`};</div>
+          </div>
+          
+          <div className="code-snippet code-snippet--right">
+            <div className="code-line"><span className="code-keyword">function</span> <span className="code-fn">createSolution</span>() {`{`}</div>
+            <div className="code-line code-indent"><span className="code-keyword">return</span> innovative && scalable;</div>
+            <div className="code-line">{`}`}</div>
+          </div>
         </div>
 
-        <div className="hero__container">
-          {/* Professional Badge */}
-          <div
-            className="professional-badge fade-in-up"
-            style={{ "--delay": "0.1s" }}
+        <motion.div 
+          className="hero__container"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Professional Badge with enhanced visual effect */}
+          <motion.div
+            className="professional-badge"
+            variants={itemVariants}
           >
             <div className="badge-icon">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   stroke="currentColor"
@@ -183,63 +233,68 @@ function HomeIndex() {
               </svg>
             </div>
             <span>Full Stack Developer</span>
-          </div>
+            <div className="badge-glow"></div>
+          </motion.div>
 
-          <h1 className="hero__title" aria-label="Xin chào, tôi là Nhdinh">
-            <span
-              className="hero__intro fade-in-up"
-              style={{ "--delay": "0.2s" }}
-            >
+          <motion.h1 className="hero__title" aria-label="Xin chào, tôi là Nhdinh" variants={itemVariants}>
+            <span className="hero__intro">
               <span className="wave-emoji">👋</span>
               <span className="intro-text">Xin chào, tôi là</span>
             </span>
 
-            <div
-              className="name-container fade-in-up"
-              style={{ "--delay": "0.3s" }}
-            >
-              <span
-                className="hero__name"
-                data-text="Nhdinh"
-                aria-hidden="true"
-              >
+            <div className="name-container">
+              <span className="hero__name" data-text="Nhdinh" aria-hidden="true">
                 {nameLetters.map((ch, i) => (
-                  <span className="letter" style={{ "--i": i }} key={i}>
+                  <motion.span 
+                    className="letter" 
+                    key={i}
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ 
+                      delay: 0.4 + i * 0.08,
+                      duration: 0.6,
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 15
+                    }}
+                  >
                     {ch}
-                  </span>
+                  </motion.span>
                 ))}
               </span>
               <div className="name-decoration">
-                <div className="decoration-line decoration-line--1"></div>
-                <div className="decoration-line decoration-line--2"></div>
+                <motion.div 
+                  className="decoration-line decoration-line--1"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
+                ></motion.div>
+                <motion.div 
+                  className="decoration-line decoration-line--2"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: 0.9, duration: 0.8, ease: "easeOut" }}
+                ></motion.div>
               </div>
             </div>
-          </h1>
+          </motion.h1>
 
-          <div
-            className="hero__subtitle-container fade-in-up"
-            style={{ "--delay": "0.4s" }}
-          >
+          <motion.div className="hero__subtitle-container" variants={itemVariants}>
             <p className="hero__subtitle">
-              <span
-                className="typewriter"
-                aria-live="polite"
-                aria-atomic="true"
-              >
+              <span className="typewriter" aria-live="polite" aria-atomic="true">
                 {typed}
-                <span className="caret" aria-hidden="true">
-                  |
-                </span>
+                <span className="caret" aria-hidden="true">|</span>
               </span>
             </p>
-            <div className="subtitle-accent"></div>
-          </div>
+            <motion.div 
+              className="subtitle-accent"
+              initial={{ width: "0%" }}
+              animate={{ width: "100%" }}
+              transition={{ delay: 1.1, duration: 1.2, ease: "easeOut" }}
+            ></motion.div>
+          </motion.div>
 
-          <p
-            className="hero__lead fade-in-up"
-            style={{ "--delay": "0.5s" }}
-            aria-label="Tóm tắt năng lực"
-          >
+          <motion.p className="hero__lead" aria-label="Tóm tắt năng lực" variants={itemVariants}>
             Là một lập trình viên
             <span className="highlight-text"> Kỹ Thuật Phần Mềm</span> chuyên về
             hiệu năng cao, trải nghiệm người dùng và kiến trúc mở rộng. Tôi
@@ -249,135 +304,126 @@ function HomeIndex() {
             phẩm.{" "}
             <span className="highlight-text">giải pháp nhanh chống</span> và dễ bảo
             trì website tốt nhật hiện tại.
-          </p>
+          </motion.p>
 
-          {/* Enhanced Tech Stack */}
-          <div
-            className="hero__tech-showcase fade-in-up"
-            style={{ "--delay": "0.6s" }}
-          >
+          {/* Enhanced Tech Stack with animated cards */}
+          <motion.div className="hero__tech-showcase" variants={itemVariants}>
             <div className="tech-grid">
-              <div className="tech-item tech-item--react">
-                <div className="tech-icon">⚛️</div>
-                <span>React</span>
-                <div className="tech-level">Expert</div>
-              </div>
-              <div className="tech-item tech-item--angular">
-                <div className="tech-icon">🅰️</div>
-                <span>Angular</span>
-                <div className="tech-level">Advanced</div>
-              </div>
-              <div className="tech-item tech-item--node">
-                <div className="tech-icon">🟢</div>
-                <span>Node.js</span>
-                <div className="tech-level">Expert</div>
-              </div>
-              <div className="tech-item tech-item--ts">
-                <div className="tech-icon">🔷</div>
-                <span>TypeScript</span>
-                <div className="tech-level">Expert</div>
-              </div>
-          
-              <div className="tech-item tech-item--api">
-                <div className="tech-icon">🔗</div>
-                <span>REST/GraphQL</span>
-                <div className="tech-level">Expert</div>
-              </div>
-       
-            <div className="tech-item tech-item--sqlserver">
-                <div className="tech-icon">🗄️</div>
-                <span>SQL Server</span>
-                <div className="tech-level">Expert</div>
-              </div>
-              <div className="tech-item tech-item--mongodb">
-                <div className="tech-icon">🍃</div>
-                <span>MongoDB</span>
-                <div className="tech-level">Advanced</div>
-              </div>
-            
-            
+              {[
+                { name: "React", icon: "⚛️", level: "Expert", class: "react" },
+                { name: "Angular", icon: "🅰️", level: "Advanced", class: "angular" },
+                { name: "Node.js", icon: "🟢", level: "Expert", class: "node" },
+                { name: "TypeScript", icon: "🔷", level: "Expert", class: "ts" },
+                { name: "REST/GraphQL", icon: "🔗", level: "Expert", class: "api" },
+                { name: "SQL Server", icon: "🗄️", level: "Expert", class: "sqlserver" },
+                { name: "MongoDB", icon: "🍃", level: "Advanced", class: "mongodb" }
+              ].map((tech, i) => (
+                <motion.div 
+                  className={`tech-item tech-item--${tech.class}`}
+                  key={i}
+                  style={{ '--i': i }} // For staggered animations
+                  initial={{ opacity: 0, translateY: 20 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  transition={{ 
+                    duration: 0.7,
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 12
+                  }}
+                  whileHover={{ 
+                    scale: 1.05,
+                    translateZ: 10,
+                    filter: "brightness(1.1)"
+                  }}
+                >
+                  <div className="tech-icon">{tech.icon}</div>
+                  <span className="tech-name">{tech.name}</span>
+                </motion.div>
+              ))}
             </div>
-          </div>
+          </motion.div>
 
-          {/* Enhanced Action Buttons */}
-          <div className="hero__ctas fade-in-up" style={{ "--delay": "0.8s" }}>
-            <Link
-              className="btn btn--primary btn--enhanced"
-              to={ROUTES.PROJECTS}
-            >
-              <div className="btn-content">
-                <span className="btn-text" style={{ color: "#0b0f17" }}>
-                  Khám Phá Dự Án
-                </span>
-                <div className="btn-icon">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M6 12l4-4-4-4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <div className="btn-glow"></div>
+          {/* Enhanced Action Buttons with interactive animations */}
+          <motion.div className="hero__cta-buttons" variants={itemVariants}>
+            <Link className="cta-button cta-button--primary" to={ROUTES.PROJECTS}>
+              <span>Khám Phá Dự Án</span>
+              <span className="button-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path 
+                    d="M5 12h14M12 5l7 7-7 7" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
             </Link>
 
-            <Link
-              className="btn btn--secondary btn--enhanced"
-              to={ROUTES.CONTACT}
-            >
-              <div className="btn-content">
-                <div className="btn-icon">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M2 4l6 4 6-4M2 4v8h12V4H2z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-                <span className="btn-text">Liên Hệ Ngay</span>
-              </div>
-              <div className="btn-glow"></div>
+            <Link className="cta-button cta-button--secondary" to={ROUTES.CONTACT}>
+              <span>Liên Hệ Ngay</span>
+              <span className="button-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path 
+                    d="M21 5.25L12 13.5 3 5.25M3 5.25h18v13.5H3V5.25z" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
             </Link>
+          </motion.div>
 
-            <a
-              className="btn btn--outline btn--enhanced"
-              href="/cv.pdf"
-              target="_blank"
-              rel="noopener"
-              aria-label="Tải CV PDF"
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <div className="btn-content">
-                <span className="btn-text">Download CV</span>
-                <div className="btn-icon">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M8 1v8m0 0l-3-3m3 3l3-3M3 12h10"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+              <a
+                className="btn btn--outline btn--enhanced"
+                href="/cv.pdf"
+                target="_blank"
+                rel="noopener"
+                aria-label="Tải CV PDF"
+              >
+                <div className="btn-content">
+                  <span className="btn-text">Download CV</span>
+                  <div className="btn-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M8 1v8m0 0l-3-3m3 3l3-3M3 12h10"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-              <div className="btn-glow"></div>
-            </a>
-          </div>
-
-          {/* Premium Stats Section */}
-        </div>
+                <div className="btn-glow"></div>
+              </a>
+            </motion.div>
+          {/* Scroll indicator */}
+          <motion.div 
+            className="scroll-indicator"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 3, duration: 0.8 }}
+          >
+            <div className="scroll-text">Scroll Down</div>
+            <div className="scroll-icon"></div>
+          </motion.div>
+        </motion.div>
       </header>
 
       {/* Tech stack marquee */}
       <TechMarquee />
+      
       {/* Quick stats strip */}
       <StatsStrip />
+      
       {/* Project highlights */}
       <ProjectShowcase />
     </>

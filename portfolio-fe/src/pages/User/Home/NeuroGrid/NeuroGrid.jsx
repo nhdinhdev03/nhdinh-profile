@@ -85,8 +85,9 @@ export default function NeuroGrid({ parentRef }) {
 			ctx.clearRect(0, 0, width, height);
 
 			// colors via CSS variables with fallbacks
-			const brand = getCSSVar(document.documentElement, "--brand", "#5b8cff");
-			const brand2 = getCSSVar(document.documentElement, "--brand-2", "#06b6d4");
+			const brand = getCSSVar(document.documentElement, "--brand-primary", "#5b8cff");
+			const brand2 = getCSSVar(document.documentElement, "--brand-secondary", "#06b6d4");
+			const isLight = !document.body.classList.contains("dark");
 			const { mx, my } = sampleParallax();
 
 			// subtle global parallax offset
@@ -96,6 +97,9 @@ export default function NeuroGrid({ parentRef }) {
 			// animate with low amplitude; turn nearly static if reduced motion
 			const amp = prefersReduced ? 0 : Math.min(8, spacing * 0.12);
 			const speed = prefersReduced ? 0 : 0.6;
+			
+			// Điều chỉnh opacity dựa theo light/dark mode
+			ctx.globalAlpha = isLight ? 0.4 : 0.65;
 
 			// Precompute gradient for strokes
 			const g = ctx.createLinearGradient(0, 0, width, height);

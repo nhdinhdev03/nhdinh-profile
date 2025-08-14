@@ -4,6 +4,7 @@ import NeuroGrid from "./NeuroGrid/NeuroGrid";
 import "./HomeIndex.scss";
 import { Link } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
+import { useTheme } from "theme/ThemeProvider";
 
 import { ProjectShowcase, StatsStrip, TechMarquee } from "components";
 
@@ -46,6 +47,7 @@ function HomeIndex() {
   const rafRef = useRef(0);
   const targetVars = useRef({ x: 0, y: 0 });
   const [isLoaded, setIsLoaded] = useState(false);
+  const { light, toggle } = useTheme();
   
   // Trigger loading animation on mount
   useEffect(() => {
@@ -147,6 +149,9 @@ function HomeIndex() {
   return (
     <>
       <header className="hero" aria-label="Giới thiệu tổng quan" ref={heroRef}>
+        {/* Theme Toggle Button */}
+     
+
         {/* Enhanced Background with Multiple Layers */}
         <div className="hero__bg" aria-hidden="true">
           {/* Animated Particles */}

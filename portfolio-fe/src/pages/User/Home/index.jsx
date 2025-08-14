@@ -243,7 +243,7 @@ function HomeIndex() {
 
           <motion.h1 className="hero__title" aria-label="Xin chào, tôi là Nhdinh" variants={itemVariants}>
             <span className="hero__intro">
-              <span className="wave-emoji">👋</span>
+           
               <span className="intro-text">Xin chào, tôi là</span>
             </span>
 
@@ -309,6 +309,7 @@ function HomeIndex() {
             phẩm.{" "}
             <span className="highlight-text">giải pháp nhanh chống</span> và dễ bảo
             trì website tốt nhật hiện tại.
+      
           </motion.p>
 
           {/* Enhanced Tech Stack with animated cards */}

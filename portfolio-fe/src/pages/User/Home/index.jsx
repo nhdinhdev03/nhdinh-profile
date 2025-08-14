@@ -380,7 +380,7 @@ function HomeIndex() {
               </span>
             </Link>
           </motion.div>
-
+       <br />
             <motion.div
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
@@ -394,6 +394,7 @@ function HomeIndex() {
                 aria-label="Tải CV PDF"
               >
                 <div className="btn-content">
+           
                   <span className="btn-text">Download CV</span>
                   <div className="btn-icon">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -411,15 +412,7 @@ function HomeIndex() {
               </a>
             </motion.div>
           {/* Scroll indicator */}
-          <motion.div 
-            className="scroll-indicator"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3, duration: 0.8 }}
-          >
-            <div className="scroll-text">Scroll Down</div>
-            <div className="scroll-icon"></div>
-          </motion.div>
+        
         </motion.div>
       </header>
 

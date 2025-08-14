@@ -22,11 +22,65 @@ function Header() {
   }, []);
 
   const navItems = [
-    { name: "Trang chủ", path: ROUTES.HOME, id: "home" },
-    { name: "Giới thiệu", path: ROUTES.ABOUT, id: "about" },
-    { name: "Dự án", path: ROUTES.PROJECTS, id: "projects" },
-    { name: "Blog", path: ROUTES.BLOG, id: "blog" },
-    { name: "Liên hệ", path: ROUTES.CONTACT, id: "contact" },
+    { 
+      name: "Trang chủ", 
+      path: ROUTES.HOME, 
+      id: "home",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9,22 9,12 15,12 15,22"/>
+        </svg>
+      )
+    },
+    { 
+      name: "Giới thiệu", 
+      path: ROUTES.ABOUT, 
+      id: "about",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      )
+    },
+    { 
+      name: "Dự án", 
+      path: ROUTES.PROJECTS, 
+      id: "projects",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      )
+    },
+    { 
+      name: "Blog", 
+      path: ROUTES.BLOG, 
+      id: "blog",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10,9 9,9 8,9"/>
+        </svg>
+      )
+    },
+    { 
+      name: "Liên hệ", 
+      path: ROUTES.CONTACT, 
+      id: "contact",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      )
+    },
   ];
 
   const handleNavigation = (path) => {
@@ -144,67 +198,132 @@ function Header() {
             isMobileMenuOpen ? "header__mobile-menu--open" : ""
           }`}
         >
-          <ul className="header__mobile-nav-list">
-            {navItems.map((item) => (
-              <li key={item.id} className="header__mobile-nav-item">
-                <button
-                  className={`header__mobile-nav-link ${
-                    isActiveRoute(item.path)
-                      ? "header__mobile-nav-link--active"
-                      : ""
-                  }`}
-                  onClick={() => handleNavigation(item.path)}
-                >
-                  {item.name}
-                </button>
-              </li>
-            ))}
-            {/* Theme Toggle (Mobile) */}
-            <li key="theme" className="header__mobile-nav-item">
+          <div className="header__mobile-content">
+            {/* Mobile Header */}
+            <div className="header__mobile-header">
+              <div className="header__mobile-title">
+                <h2>Menu</h2>
+                <span className="header__mobile-subtitle">Điều hướng nhanh</span>
+              </div>
+            
+            </div>
+
+            {/* Navigation Links */}
+            <nav className="header__mobile-nav">
+              <ul className="header__mobile-nav-list">
+                {navItems.map((item, index) => (
+                  <li key={item.id} className="header__mobile-nav-item" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <button
+                      className={`header__mobile-nav-link ${
+                        isActiveRoute(item.path)
+                          ? "header__mobile-nav-link--active"
+                          : ""
+                      }`}
+                      onClick={() => handleNavigation(item.path)}
+                    >
+                      <div className="header__mobile-nav-icon">
+                        {item.icon}
+                      </div>
+                      <div className="header__mobile-nav-text">
+                        <span className="header__mobile-nav-name">{item.name}</span>
+                        <span className="header__mobile-nav-desc">
+                          {item.id === 'home' && 'Trang chính'}
+                          {item.id === 'about' && 'Thông tin cá nhân'}
+                          {item.id === 'projects' && 'Danh mục dự án'}
+                          {item.id === 'blog' && 'Bài viết & Chia sẻ'}
+                          {item.id === 'contact' && 'Thông tin liên lạc'}
+                        </span>
+                      </div>
+                      <div className="header__mobile-nav-arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="9,18 15,12 9,6"/>
+                        </svg>
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Mobile Actions */}
+            <div className="header__mobile-actions">
+              {/* Theme Toggle */}
               <button
                 type="button"
-                className="header__mobile-nav-link"
+                className={`header__mobile-action ${
+                  light ? "" : "header__mobile-action--active"
+                }`}
                 onClick={() => {
-                  // Toggle theme then auto-close the mobile menu for faster feedback
                   toggle();
                   setIsMobileMenuOpen(false);
                 }}
                 aria-pressed={!light}
                 aria-label={light ? "Bật chế độ tối" : "Tắt chế độ tối"}
-                title="Chuyển chế độ sáng/tối"
               >
-                Chế độ tối: {light ? "Tắt" : "Bật"}
+                <div className="header__mobile-action-icon">
+                  {light ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="5"/>
+                      <line x1="12" y1="1" x2="12" y2="3"/>
+                      <line x1="12" y1="21" x2="12" y2="23"/>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                      <line x1="1" y1="12" x2="3" y2="12"/>
+                      <line x1="21" y1="12" x2="23" y2="12"/>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                  )}
+                </div>
+                <div className="header__mobile-action-text">
+                  <span>Chế độ {light ? "tối" : "sáng"}</span>
+                  <small>Thay đổi giao diện</small>
+                </div>
               </button>
-            </li>
-            {/* Login (Mobile) */}
-            <li key="login" className="header__mobile-nav-item">
+
+              {/* Login */}
               <button
                 type="button"
-                className="header__mobile-nav-link"
+                className="header__mobile-action"
                 onClick={() => handleNavigation(ROUTES.ADMIN.LOGIN)}
                 aria-label="Đi đến trang đăng nhập"
-                title="Đăng nhập"
               >
-                {/* <svg
-                  className="header__mobile-nav-icon"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 8 19.61a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.39 15a1.65 1.65 0 0 0-1.51-1H1.8a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 3.39 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 5.83 3.3l.06.06A1.65 1.65 0 0 0 7.71 3a1.65 1.65 0 0 0 1-1.51V1.4a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 14.61 3a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 8c.67.3 1.1.96 1.1 1.7s-.43 1.41-1.1 1.7Z" />
-                </svg> */}
-                Đăng nhập
+                <div className="header__mobile-action-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                    <polyline points="10,17 15,12 10,7"/>
+                    <line x1="15" y1="12" x2="3" y2="12"/>
+                  </svg>
+                </div>
+                <div className="header__mobile-action-text">
+                  <span>Đăng nhập</span>
+                  <small>Truy cập quản trị</small>
+                </div>
               </button>
-            </li>
-          </ul>
+            </div>
+
+            {/* Mobile Footer */}
+            <div className="header__mobile-footer">
+              <div className="header__mobile-profile">
+                <img 
+                  src={light ? img.Logo : img.Logo2} 
+                  alt="Avatar" 
+                  className="header__mobile-avatar"
+                />
+                <div className="header__mobile-info">
+                  <h4>Nguyen Hoang Dinh</h4>
+                  <p>Full Stack Developer</p>
+                </div>
+              </div>
+              <div className="header__mobile-version">
+                <span>Portfolio v2.0</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Mobile Menu Overlay */}

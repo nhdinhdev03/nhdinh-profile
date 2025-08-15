@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import "./TechMarquee.scss";
+import useIsMobile from "hooks/useIsMobile";
 
-// Inline SVG logos
-const Logo = ({ type }) => {
+// Inline SVG logos with React.memo for performance
+const Logo = React.memo(({ type }) => {
   switch (type) {
     case "react":
       return (
@@ -297,7 +298,7 @@ const Logo = ({ type }) => {
     default:
       return null;
   }
-};
+});
 
 const LOGOS = [
   { key: "react", label: "React" },
@@ -326,12 +327,14 @@ const LOGOS = [
 ];
 
 function TechMarquee({ direction = "ltr", speed }) {
+  const { isMobile } = useIsMobile();
+  
   // speed prop now means desired pixels/second (optional override)
   const trackRef = useRef(null);
   const progressRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
   const [idx, setIdx] = useState(0);
-  const SLIDE_DURATION = 3000; // ms per fade logo
+  const SLIDE_DURATION = isMobile ? 2000 : 3000; // Faster slideshow on mobile
   const marqueeItems = useMemo(() => [...LOGOS, ...LOGOS], []); // duplicate only (seamless loop)
 
   // Adaptive base speed (px/s) if not provided
@@ -396,8 +399,8 @@ function TechMarquee({ direction = "ltr", speed }) {
     };
   }, [direction, isPaused]);
 
-  const handleMouseEnter = () => setIsPaused(true);
-  const handleMouseLeave = () => setIsPaused(false);
+  const handleMouseEnter = useCallback(() => setIsPaused(true), []);
+  const handleMouseLeave = useCallback(() => setIsPaused(false), []);
 
   // Center slideshow interval
   useEffect(() => {
@@ -406,7 +409,7 @@ function TechMarquee({ direction = "ltr", speed }) {
       SLIDE_DURATION
     );
     return () => clearInterval(id);
-  }, []);
+  }, [SLIDE_DURATION]);
 
   // Progress bar animation (if progress bar CSS added later)
   useEffect(() => {
@@ -422,7 +425,7 @@ function TechMarquee({ direction = "ltr", speed }) {
     };
     af = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(af);
-  }, []);
+  }, [SLIDE_DURATION]);
 
   // Compose classes for marquee section
   const marqueeClasses = [

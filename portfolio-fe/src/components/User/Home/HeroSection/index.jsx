@@ -1,98 +1,134 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import HeroBackground from "./HeroBackground";
 import HeroHeader from "./HeroHeader";
-
+import useIsMobile from "hooks/useIsMobile";
 
 function HeroSection() {
   const heroRef = useRef(null);
   const rafRef = useRef(0);
   const targetVars = useRef({ x: 0, y: 0 });
+  const currentVars = useRef({ x: 0, y: 0 });
   const [isLoaded, setIsLoaded] = useState(false);
   const [entranceComplete, setEntranceComplete] = useState(false);
-
+  const { isMobile } = useIsMobile();
 
   useEffect(() => {
     // Add "appeared" class to body when home page loads
     document.body.classList.add("home-appeared");
     
-    // Load sequence with staggered timing for smoother entry
+    // Faster load sequence for mobile
+    const loadDelay = isMobile ? 50 : 100;
+    const entranceDelay = isMobile ? 300 : 600;
+    
     const loadTimer = setTimeout(() => {
       setIsLoaded(true);
       
-      // Mark entrance animation as complete after additional delay
+      // Mark entrance animation as complete
       const entranceTimer = setTimeout(() => {
         setEntranceComplete(true);
-      }, 800);
+      }, entranceDelay);
       
       return () => clearTimeout(entranceTimer);
-    }, 150); // Reduced from 300ms for faster initial render
+    }, loadDelay);
     
     return () => {
       clearTimeout(loadTimer);
       document.body.classList.remove("home-appeared");
     };
+  }, [isMobile]);
+
+  // Optimized animation loop
+  const animationLoop = useCallback(() => {
+    const el = heroRef.current;
+    if (!el) return;
+    
+    const step = 0.08; // Smoother easing
+    const nx = currentVars.current.x + (targetVars.current.x - currentVars.current.x) * step;
+    const ny = currentVars.current.y + (targetVars.current.y - currentVars.current.y) * step;
+    
+    currentVars.current.x = nx;
+    currentVars.current.y = ny;
+    
+    el.style.setProperty("--mx", nx.toFixed(3));
+    el.style.setProperty("--my", ny.toFixed(3));
+    
+    if (
+      Math.abs(nx - targetVars.current.x) > 0.001 ||
+      Math.abs(ny - targetVars.current.y) > 0.001
+    ) {
+      rafRef.current = requestAnimationFrame(animationLoop);
+    } else {
+      rafRef.current = 0;
+    }
   }, []);
+
+  // Optimized mouse movement handler with throttling  
+  const handleMouseMove = useCallback((e) => {
+    const el = heroRef.current;
+    if (!el) return;
+    
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width / 2);
+    const dy = (e.clientY - cy) / (rect.height / 2);
+    
+    targetVars.current.x = Math.max(-1, Math.min(1, dx * 0.5)); // Reduced intensity for smoother feel
+    targetVars.current.y = Math.max(-1, Math.min(1, dy * 0.5));
+    
+    if (!rafRef.current) {
+      animationLoop();
+    }
+  }, [animationLoop]);
+
+  const handleMouseLeave = useCallback(() => {
+    targetVars.current.x = 0;
+    targetVars.current.y = 0;
+    if (!rafRef.current) {
+      animationLoop();
+    }
+  }, [animationLoop]);
 
   useEffect(() => {
     const el = heroRef.current;
     if (!el) return;
-    const rect = () => el.getBoundingClientRect();
-    const onMove = (e) => {
-      const r = rect();
-      const cx = r.left + r.width / 2;
-      const cy = r.top + r.height / 2;
-      const dx = (e.clientX - cx) / (r.width / 2);
-      const dy = (e.clientY - cy) / (r.height / 2);
-      targetVars.current.x = Math.max(-1, Math.min(1, dx * 0.7)); // Reduced intensity
-      targetVars.current.y = Math.max(-1, Math.min(1, dy * 0.7));
-      if (!rafRef.current) loop();
-    };
 
-    const onLeave = () => {
-      targetVars.current.x = 0;
-      targetVars.current.y = 0;
-      if (!rafRef.current) loop();
-    };
+    // Skip mouse interactions on mobile for better performance
+    if (isMobile) return;
 
-    const loop = () => {
-      const step = 0.06; // Smoother easing
-      const sx = parseFloat(getComputedStyle(el).getPropertyValue("--mx")) || 0;
-      const sy = parseFloat(getComputedStyle(el).getPropertyValue("--my")) || 0;
-      const nx = sx + (targetVars.current.x - sx) * step;
-      const ny = sy + (targetVars.current.y - sy) * step;
-      el.style.setProperty("--mx", nx.toFixed(4));
-      el.style.setProperty("--my", ny.toFixed(4));
-      if (
-        Math.abs(nx - targetVars.current.x) > 0.001 ||
-        Math.abs(ny - targetVars.current.y) > 0.001
-      ) {
-        rafRef.current = requestAnimationFrame(loop);
-      } else {
-        rafRef.current = 0;
+    let lastCall = 0;
+    const throttledMouseMove = (e) => {
+      const now = Date.now();
+      if (now - lastCall >= 16) { // 60fps throttling
+        handleMouseMove(e);
+        lastCall = now;
       }
     };
 
-    // Only enable on pointer devices
+    // Only enable on devices with fine pointer control
     const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    if (mq.matches) {
-      el.addEventListener("mousemove", onMove);
-      el.addEventListener("mouseleave", onLeave);
+    if (mq.matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.addEventListener("mousemove", throttledMouseMove, { passive: true });
+      el.addEventListener("mouseleave", handleMouseLeave, { passive: true });
     }
+    
     return () => {
-      el.removeEventListener("mousemove", onMove);
-      el.removeEventListener("mouseleave", onLeave);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      el.removeEventListener("mousemove", throttledMouseMove);
+      el.removeEventListener("mouseleave", handleMouseLeave);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
-  }, []);
+  }, [handleMouseMove, handleMouseLeave, isMobile]);
 
   return (
     <header 
-      className={`hero ${isLoaded ? 'hero-loaded' : ''} ${entranceComplete ? 'entrance-complete' : ''}`} 
+      className={`hero ${isLoaded ? 'hero-loaded' : ''} ${entranceComplete ? 'entrance-complete' : ''} ${isMobile ? 'hero-mobile' : ''}`} 
       aria-label="Giới thiệu tổng quan" 
       ref={heroRef}
     >
-      <HeroBackground heroRef={heroRef} isLoaded={isLoaded} />
-      <HeroHeader entranceComplete={entranceComplete} />
+      <HeroBackground heroRef={heroRef} isLoaded={isLoaded} isMobile={isMobile} />
+      <HeroHeader entranceComplete={entranceComplete} isMobile={isMobile} />
     </header>
   );
 }

@@ -39,6 +39,34 @@
   --hero-bg: #ffffff;
 }
 
+/* Lightweight skeleton placeholder to avoid layout shift while lazy components load */
+.loading-block {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--bg-secondary), var(--bg-tertiary), var(--bg-secondary));
+  background-size: 200% 100%;
+  animation: loadingShimmer 1.2s linear infinite;
+  border-radius: 12px;
+  filter: brightness(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-block { animation: none; }
+}
+
+/* Mobile optimizations for loading blocks */
+@media (max-width: 768px) {
+  .loading-block {
+    animation-duration: 0.8s; /* Faster on mobile */
+    border-radius: 8px; /* Smaller radius on mobile */
+  }
+}
+
+@keyframes loadingShimmer {
+  0% { background-position: 0 0; }
+  100% { background-position: -200% 0; }
+}
+
 /* Dark Mode Theme */
 .dark {
   /* Dark Mode Text - Đồng bộ với header */
@@ -2763,5 +2791,52 @@
 @media (max-width: 480px) {
   .code-snippet {
     display: none;
+  }
+}
+
+/* Mobile-specific hero optimizations */
+@media (max-width: 768px) {
+  .hero-mobile {
+    /* Reduce backdrop blur intensity on mobile */
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    
+    /* Optimize animations for mobile */
+    .hero__particles {
+      opacity: 0.6;
+    }
+    
+    .hero__patterns {
+      opacity: 0.4;
+    }
+    
+    .floating-elements {
+      opacity: 0.5;
+    }
+    
+    /* Reduce motion blur effects */
+    .hero__light-beam {
+      filter: blur(40px) !important;
+    }
+    
+    /* Optimize text rendering */
+    .hero__title,
+    .hero__subtitle,
+    .hero__lead {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeSpeed;
+    }
+  }
+  
+  /* Faster transitions on mobile */
+  .hero-mobile * {
+    transition-duration: 0.2s !important;
+    animation-duration: 0.3s !important;
+  }
+  
+  /* Disable complex transforms on mobile */
+  .hero-mobile .float-elem {
+    transform: translateZ(0) !important;
   }
 }

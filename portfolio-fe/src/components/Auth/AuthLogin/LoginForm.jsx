@@ -1,9 +1,17 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { User, Lock, Eye, EyeOff, ArrowLeft, Shield, LogIn } from "lucide-react";
+import {
+  User,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  Shield,
+  LogIn,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import "./LoginForm.scss";
 
 function LoginForm() {
@@ -27,46 +35,52 @@ function LoginForm() {
     return e;
   }, [username, password]);
 
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    setError("");
-    setTouched({ username: true, password: true });
-    if (Object.keys(fieldErrors).length) {
-      setError("Vui lòng kiểm tra các trường bắt buộc.");
-      toast.error("Vui lòng nhập đầy đủ thông tin", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      return;
-    }
-    setIsLoading(true);
-    try {
-      // TODO: Gọi API đăng nhập
-      await new Promise((r) => setTimeout(r, 1000));
-      // success flow placeholder
-      toast.success("Đăng nhập thành công!", {
-        position: "top-center",
-        autoClose: 2000,
-      });
-    } catch (_) {
-      setError("Đăng nhập thất bại. Vui lòng thử lại.");
-      toast.error("Đăng nhập thất bại. Vui lòng thử lại.", {
-        position: "top-center",
-        autoClose: 4000,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fieldErrors]);
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setError("");
+      setTouched({ username: true, password: true });
+      if (Object.keys(fieldErrors).length) {
+        setError("Vui lòng kiểm tra các trường bắt buộc.");
+        toast.error("Vui lòng nhập đầy đủ thông tin", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        return;
+      }
+      setIsLoading(true);
+      try {
+        // TODO: Gọi API đăng nhập
+        await new Promise((r) => setTimeout(r, 1000));
+        // success flow placeholder
+        toast.success("Đăng nhập thành công!", {
+          position: "top-center",
+          autoClose: 2000,
+        });
+      } catch (_) {
+        setError("Đăng nhập thất bại. Vui lòng thử lại.");
+        toast.error("Đăng nhập thất bại. Vui lòng thử lại.", {
+          position: "top-center",
+          autoClose: 4000,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fieldErrors]
+  );
 
   const togglePw = useCallback(() => setShowPassword((s) => !s), []);
   const onBlur = (e) => setTouched((t) => ({ ...t, [e.target.name]: true }));
 
-  const particles = useMemo(() => Array.from({ length: 15 }, (_, i) => i + 1), []);
+  const particles = useMemo(
+    () => Array.from({ length: 15 }, (_, i) => i + 1),
+    []
+  );
 
   return (
     <div className="login-screen">
@@ -81,22 +95,22 @@ function LoginForm() {
       <div className="bg-layer gradient-mesh" aria-hidden="true" />
       <div className="bg-layer vignette" aria-hidden="true" />
       <div className="bg-layer noise" aria-hidden="true" />
-      
+
       {/* Floating Elements */}
       <div className="floating-elements" aria-hidden="true">
-        <motion.div 
+        <motion.div
           className="floating-card card-1"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 0.6, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         />
-        <motion.div 
+        <motion.div
           className="floating-card card-2"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 0.6, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
         />
-        <motion.div 
+        <motion.div
           className="floating-card card-3"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.6, scale: 1 }}
@@ -122,9 +136,9 @@ function LoginForm() {
 
       <ToastContainer />
 
-      <motion.div 
-        className="auth-wrapper" 
-        role="main" 
+      <motion.div
+        className="auth-wrapper"
+        role="main"
         aria-labelledby="auth-title"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: fadeIn ? 1 : 0, y: fadeIn ? 0 : 20 }}
@@ -132,8 +146,8 @@ function LoginForm() {
       >
         <div className="panel" data-elevated>
           <div className="glass-effect"></div>
-          
-          <motion.header 
+
+          <motion.header
             className="panel-head"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -141,8 +155,8 @@ function LoginForm() {
           >
             <div className="logo-container">
               <div className="logo-badge">
-                <motion.div 
-                  className="avatar-gradient" 
+                <motion.div
+                  className="avatar-gradient"
                   aria-hidden="true"
                   initial={{ scale: 0.8, rotateY: -30 }}
                   animate={{ scale: 1, rotateY: 0 }}
@@ -153,8 +167,8 @@ function LoginForm() {
                 </motion.div>
               </div>
             </div>
-            <motion.h1 
-              id="auth-title" 
+            <motion.h1
+              id="auth-title"
               className="panel-title"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -162,7 +176,7 @@ function LoginForm() {
             >
               Admin Dashboard
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="panel-sub"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -171,11 +185,18 @@ function LoginForm() {
               Đăng nhập để quản lý portfolio chuyên nghiệp
             </motion.p>
           </motion.header>
-          
-          <form className="auth-form" onSubmit={handleSubmit} noValidate aria-describedby={error ? "form-error" : undefined}>
+
+          <form
+            className="auth-form"
+            onSubmit={handleSubmit}
+            noValidate
+            aria-describedby={error ? "form-error" : undefined}
+          >
             <AnimatePresence>
-              <motion.div 
-                className={`field ${touched.username && fieldErrors.username ? "has-error" : ""}`}
+              <motion.div
+                className={`field ${
+                  touched.username && fieldErrors.username ? "has-error" : ""
+                }`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
@@ -196,12 +217,16 @@ function LoginForm() {
                     onChange={(e) => setUsername(e.target.value)}
                     onBlur={onBlur}
                     aria-invalid={touched.username && !!fieldErrors.username}
-                    aria-describedby={touched.username && fieldErrors.username ? "err-username" : undefined}
+                    aria-describedby={
+                      touched.username && fieldErrors.username
+                        ? "err-username"
+                        : undefined
+                    }
                     disabled={isLoading}
                     className="modern-input"
                   />
                   {username && (
-                    <motion.span 
+                    <motion.span
                       className="input-check"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -210,9 +235,9 @@ function LoginForm() {
                   )}
                 </div>
                 {touched.username && fieldErrors.username && (
-                  <motion.p 
-                    id="err-username" 
-                    className="field-error" 
+                  <motion.p
+                    id="err-username"
+                    className="field-error"
                     role="alert"
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
@@ -223,8 +248,10 @@ function LoginForm() {
                 )}
               </motion.div>
 
-              <motion.div 
-                className={`field ${touched.password && fieldErrors.password ? "has-error" : ""}`}
+              <motion.div
+                className={`field ${
+                  touched.password && fieldErrors.password ? "has-error" : ""
+                }`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
@@ -245,7 +272,11 @@ function LoginForm() {
                     onChange={(e) => setPassword(e.target.value)}
                     onBlur={onBlur}
                     aria-invalid={touched.password && !!fieldErrors.password}
-                    aria-describedby={touched.password && fieldErrors.password ? "err-password" : undefined}
+                    aria-describedby={
+                      touched.password && fieldErrors.password
+                        ? "err-password"
+                        : undefined
+                    }
                     disabled={isLoading}
                     className="modern-input"
                   />
@@ -264,9 +295,9 @@ function LoginForm() {
                   </motion.button>
                 </div>
                 {touched.password && fieldErrors.password && (
-                  <motion.p 
-                    id="err-password" 
-                    className="field-error" 
+                  <motion.p
+                    id="err-password"
+                    className="field-error"
                     role="alert"
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
@@ -279,9 +310,9 @@ function LoginForm() {
             </AnimatePresence>
 
             {error && (
-              <motion.div 
-                id="form-error" 
-                className="form-error-banner" 
+              <motion.div
+                id="form-error"
+                className="form-error-banner"
                 role="alert"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -291,7 +322,7 @@ function LoginForm() {
               </motion.div>
             )}
 
-            <motion.div 
+            <motion.div
               className="login-options"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -301,12 +332,14 @@ function LoginForm() {
                 <input type="checkbox" id="remember" />
                 <label htmlFor="remember">Ghi nhớ đăng nhập</label>
               </div>
-              <a href="/forgot-password" className="forgot-password">Quên mật khẩu?</a>
+              <a href="/forgot-password" className="forgot-password">
+                Quên mật khẩu?
+              </a>
             </motion.div>
 
-            <motion.button 
-              type="submit" 
-              className="btn-submit" 
+            <motion.button
+              type="submit"
+              className="btn-submit"
               disabled={isLoading}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -327,8 +360,8 @@ function LoginForm() {
               )}
             </motion.button>
           </form>
-          
-          <motion.div 
+
+          <motion.div
             className="additional-options"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

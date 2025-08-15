@@ -1,7 +1,5 @@
 /* Main index file that imports all component-specific SCSS files */
 
 @use "sass:color";
-@use "./shared/variables";
-@use "./TechMarquee/TechMarquee";
-@use "./StatsStrip/StatsStrip";
-@use "./ProjectShowcase/ProjectShowcase";
+
+@import "./shared/variables.scss"; 

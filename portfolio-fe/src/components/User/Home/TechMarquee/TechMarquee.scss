@@ -1,4 +1,4 @@
-@use "../shared/variables.scss";
+@use "../../../../utils/styles/scss/index.scss";
 
 /* Marquee component styles */
 .marquee {
@@ -80,8 +80,8 @@
 }
 
 .logo-slide svg {
-  width: 92px;
-  height: 92px;
+  width: 72px;
+  height: 72px;
 }
 
 .logo-caption {

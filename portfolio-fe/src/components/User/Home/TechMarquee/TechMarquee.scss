@@ -1,0 +1,99 @@
+@use "../shared/variables.scss";
+
+/* Marquee component styles */
+.marquee {
+  // --marquee-speed removed; JS controls speed
+  --pause-on-hover: running;
+}
+
+.marquee__viewport {
+  overflow: hidden;
+  mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  -webkit-mask: linear-gradient(
+    90deg,
+    transparent,
+    #000 10%,
+    #000 90%,
+    transparent
+  );
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  gap: 34px;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  // animation removed; using JS translate3d
+}
+
+.marquee__item {
+  font-weight: 600;
+  font-size: clamp(14px, 2.2vw, 20px);
+  padding: 10px 20px;
+  background: color-mix(in srgb, var(--card) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+  border-radius: 999px;
+  box-shadow: 0 4px 14px -8px color-mix(in srgb, var(--ring) 70%, transparent);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* small icon sizing */
+.marquee__logo svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+/* Center logo fading slideshow */
+.logos-slideshow {
+  position: relative;
+  height: 140px;
+  display: grid;
+  place-items: center;
+  margin: 0 0 46px;
+}
+
+.logo-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  opacity: 0;
+  transform: translateY(12px) scale(0.94);
+  filter: blur(6px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.9s;
+}
+
+.logo-slide.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+.logo-slide svg {
+  width: 92px;
+  height: 92px;
+}
+
+.logo-caption {
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+}

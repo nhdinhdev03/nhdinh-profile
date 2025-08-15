@@ -79,5 +79,5 @@ body {
 }
 
 /* Small defaults for better contrast in dark */
-:root.dark body a { color: color-mix(in oklab, var(--brand) 90%, var(--text)); }
-:root.dark body hr { border-color: color-mix(in oklab, var(--text) 12%, transparent); }
+/* :root.dark body a { color: color-mix(in oklab, var(--brand) 90%, var(--text)); } */
+/* :root.dark body hr { border-color: color-mix(in oklab, var(--text) 12%, transparent); } */

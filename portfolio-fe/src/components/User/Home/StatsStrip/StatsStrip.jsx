@@ -1,5 +1,5 @@
 import React from "react";
-import "./sections.scss";
+import "./StatsStrip.scss";
 
 const stats = [
   { label: "Năm kinh nghiệm", value: 3, suffix: "+" },

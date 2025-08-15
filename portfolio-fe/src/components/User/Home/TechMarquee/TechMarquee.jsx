@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import "./sections.scss";
+import "./TechMarquee.scss";
 
 // Inline SVG logos
 const Logo = ({ type }) => {

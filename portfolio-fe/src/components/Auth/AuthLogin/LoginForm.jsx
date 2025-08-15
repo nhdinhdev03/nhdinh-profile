@@ -255,8 +255,13 @@ function LoginForm() {
                     onClick={togglePw}
                     aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                     whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0.8 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    <span className="icon-wrapper">
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </span>
                   </motion.button>
                 </div>
                 {touched.password && fieldErrors.password && (

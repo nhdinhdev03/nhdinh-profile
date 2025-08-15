@@ -1,188 +1,4 @@
-@use "sass:color";
-
-/* Shared container max width (aligned with #blog section) */
-:root {
-  --container-max: 1280px; /* unify across home + blog */
-}
-
-.hm-section {
-  padding: clamp(40px, 8vw, 96px) 0;
-  position: relative;
-}
-.hm-section:nth-of-type(even) {
-  background: color-mix(in srgb, var(--card) 94%, transparent);
-}
-.container {
-  /* Use same sizing strategy as #blog: slightly inset (92vw) and capped by --container-max */
-  width: min(92vw, var(--container-max));
-  margin-inline: auto; /* Shorthand for left/right margins */
-  padding-inline: clamp(16px, 2.4vw, 24px); /* Shorthand for left/right padding */
-  box-sizing: border-box;
-}
-.sec-title {
-  text-align: center;
-  font-size: clamp(26px, 4.4vw, 44px);
-  margin: 0 0 32px;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-  background: linear-gradient(
-    90deg,
-    var(--brand, #5b8cff),
-    var(--brand-2, #06b6d4)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.sec-titles{
-
-  font-size: clamp(26px, 4.4vw, 44px);
-  margin: 0 0 32px;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-  background: linear-gradient(
-    90deg,
-    var(--brand, #5b8cff),
-    var(--brand-2, #06b6d4)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-/* Marquee */
-.marquee {
-  // --marquee-speed removed; JS controls speed
-  --pause-on-hover: running;
-}
-
-.marquee__viewport {
-  overflow: hidden;
-  mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-  -webkit-mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-}
-
-.marquee__track {
-  display: flex;
-  width: max-content;
-  gap: 34px;
-  will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  // animation removed; using JS translate3d
-}
-.marquee__item {
-  font-weight: 600;
-  font-size: clamp(14px, 2.2vw, 20px);
-  padding: 10px 20px;
-  background: color-mix(in srgb, var(--card) 90%, transparent);
-  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
-  border-radius: 999px;
-  box-shadow: 0 4px 14px -8px color-mix(in srgb, var(--ring) 70%, transparent);
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-/* small icon sizing */
-.marquee__logo svg {
-  width: 28px;
-  height: 28px;
-  display: block;
-}
-
-/* Center logo fading slideshow */
-.logos-slideshow {
-  position: relative;
-  height: 140px;
-  display: grid;
-  place-items: center;
-  margin: 0 0 46px;
-}
-.logo-slide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  opacity: 0;
-  transform: translateY(12px) scale(0.94);
-  filter: blur(6px);
-  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.9s;
-}
-.logo-slide.active {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-}
-.logo-slide svg {
-  width: 92px;
-  height: 92px;
-}
-.logo-caption {
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-/* Stats */
-.stats {
-  --gap: clamp(16px, 4vw, 46px);
-  /* Use consistent container width from root */
-  width: min(92vw, var(--container-max));
-  margin-inline: auto;
-}
-.stats__grid {
-  display: grid;
-  gap: var(--gap);
-  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
-}
-.stat {
-  text-align: center;
-  padding: 22px 14px 26px;
-  background: color-mix(in srgb, var(--card) 88%, transparent);
-  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
-  border-radius: 20px;
-  position: relative;
-  overflow: hidden;
-}
-.stat::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    120% 120% at 50% 10%,
-    color-mix(in srgb, var(--brand, #5b8cff) 25%, transparent),
-    transparent 70%
-  );
-  opacity: 0.5;
-  pointer-events: none;
-}
-.stat__value {
-  font-size: clamp(30px, 5vw, 52px);
-  font-weight: 700;
-  line-height: 1;
-  background: linear-gradient(
-    90deg,
-    var(--brand, #5b8cff),
-    var(--brand-2, #06b6d4)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 4px 16px
-    color-mix(in srgb, var(--brand, #5b8cff) 40%, transparent);
-}
-.stat__label {
-  margin-top: 8px;
-  font-size: clamp(12px, 1.9vw, 15px);
-  color: var(--muted);
-  font-weight: 500;
-}
+@use "../shared/variables.scss";
 
 /* Enhanced Showcase Styles */
 .showcase {
@@ -246,15 +62,6 @@
   transform: translate(2px, -2px);
 }
 
-@media (max-width: 640px) {
-  .showcase__head {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 16px;
-  }
-}
-
 .showcase__grid {
   display: grid;
   gap: clamp(28px, 4vw, 48px);
@@ -300,7 +107,8 @@
 
 .project-card.featured {
   border-color: color-mix(in srgb, var(--brand) 20%, transparent);
-  background: linear-gradient(135deg, 
+  background: linear-gradient(
+    135deg,
     color-mix(in srgb, var(--card) 98%, transparent),
     color-mix(in srgb, var(--brand) 3%, transparent)
   );
@@ -318,7 +126,8 @@
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  background: linear-gradient(135deg, 
+  background: linear-gradient(
+    135deg,
     color-mix(in srgb, var(--brand) 10%, transparent),
     color-mix(in srgb, var(--brand-2) 15%, transparent)
   );
@@ -391,8 +200,9 @@
   letter-spacing: -0.3px;
   font-weight: 700;
   line-height: 1.2;
-  background: linear-gradient(135deg, 
-    var(--text), 
+  background: linear-gradient(
+    135deg,
+    var(--text),
     color-mix(in srgb, var(--text) 70%, var(--brand))
   );
   -webkit-background-clip: text;
@@ -432,10 +242,11 @@
 }
 
 .tech-tag::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, 
+  background: linear-gradient(
+    135deg,
     color-mix(in srgb, var(--brand) 8%, transparent),
     color-mix(in srgb, var(--brand-2) 12%, transparent)
   );
@@ -482,10 +293,10 @@
 }
 
 .btn::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.1));
+  background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1));
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -496,7 +307,6 @@
 
 .btn-primary {
   background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  color: white;
   border-color: transparent;
   box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--brand) 40%, transparent);
 }
@@ -543,129 +353,37 @@
   background: linear-gradient(135deg, #ec4899, #f43f5e);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .project-card {
-    animation: none;
-    transition: none;
-  }
-  .project-card:hover {
-    transform: none;
-  }
-  .btn:hover {
-    transform: none;
-  }
-}
-
-/* Responsive Improvements */
-@media (max-width: 768px) {
-  .showcase__grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 20px 0;
-  }
-  
-  .project-card {
-    border-radius: 20px;
-  }
-  
-  .project-card__header {
-    padding: 20px 20px 12px;
-  }
-  
-  .project-card__body {
-    padding: 0 20px 16px;
-  }
-  
-  .project-card__footer {
-    padding: 16px 20px 20px;
-  }
-  
-  .project-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .btn {
-    padding: 12px 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .showcase__head {
-    margin-bottom: 32px;
-  }
-  
-  .project-icon {
-    width: 48px;
-    height: 48px;
-  }
-  
-  .icon-emoji {
-    font-size: 20px;
-  }
-  
-  .project-title {
-    font-size: 20px;
-  }
-  
-  .project-desc {
-    font-size: 13px;
-  }
-  
-  .tech-tag {
-    font-size: 10px;
-    padding: 4px 8px;
-  }
-}
-
-/* Dark mode enhancements */
-@media (prefers-color-scheme: dark) {
-  .project-card {
-    background: color-mix(in srgb, var(--card) 92%, transparent);
-    border-color: color-mix(in srgb, var(--text) 12%, transparent);
-  }
-  
-  .project-card.featured {
-    background: linear-gradient(135deg, 
-      color-mix(in srgb, var(--card) 95%, transparent),
-      color-mix(in srgb, var(--brand) 5%, transparent)
-    );
-  }
-  
-  .project-icon {
-    background: linear-gradient(135deg, 
-      color-mix(in srgb, var(--brand) 15%, transparent),
-      color-mix(in srgb, var(--brand-2) 20%, transparent)
-    );
-    box-shadow: 0 8px 16px -8px color-mix(in srgb, var(--brand) 60%, transparent);
-  }
-  
-  .tech-tag {
-    background: color-mix(in srgb, var(--card) 95%, transparent);
-    border-color: color-mix(in srgb, var(--text) 15%, transparent);
-  }
-  
-  .project-card__footer {
-    background: color-mix(in srgb, var(--card) 96%, transparent);
-    border-color: color-mix(in srgb, var(--text) 10%, transparent);
-  }
-}
-
 /* Animation for tech tags */
-.tech-tag:nth-child(1) { animation-delay: 0.1s; }
-.tech-tag:nth-child(2) { animation-delay: 0.2s; }
-.tech-tag:nth-child(3) { animation-delay: 0.3s; }
-.tech-tag:nth-child(4) { animation-delay: 0.4s; }
-.tech-tag:nth-child(5) { animation-delay: 0.5s; }
+.tech-tag:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.tech-tag:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.tech-tag:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.tech-tag:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.tech-tag:nth-child(5) {
+  animation-delay: 0.5s;
+}
 
 .project-card:hover .tech-tag {
   animation: tagFloat 0.3s ease var(--animation-delay, 0s) both;
 }
 
 @keyframes tagFloat {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 /* Focus styles for accessibility */
@@ -678,112 +396,122 @@
   outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
-.card {
-  --bg: color-mix(in srgb, var(--card) 94%, transparent);
-  position: relative;
-  background: var(--bg);
-  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
-  border-radius: 26px;
-  padding: 32px 28px 36px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 16px 34px -22px color-mix(in srgb, var(--ring) 80%, transparent);
-  isolation: isolate;
-  cursor: default;
-  transition: border-color 0.4s, background 0.4s, transform 0.4s;
-}
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: 
-    radial-gradient(
-      100% 80% at 50% 0%,
-      color-mix(in srgb, var(--brand) 15%, transparent),
-      transparent 70%
-    ),
-    linear-gradient(
-      170deg,
-      color-mix(in srgb, var(--brand-2) 8%, transparent),
-      transparent 60%
-    );
-  opacity: 0.75;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  transition: all 0.4s ease;
-  
-  @media (prefers-reduced-motion: no-preference) {
-    animation: cardGlow 8s ease-in-out infinite alternate;
+
+/* Responsive Improvements */
+@media (max-width: 768px) {
+  .showcase__grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 20px 0;
+  }
+
+  .project-card {
+    border-radius: 20px;
+  }
+
+  .project-card__header {
+    padding: 20px 20px 12px;
+  }
+
+  .project-card__body {
+    padding: 0 20px 16px;
+  }
+
+  .project-card__footer {
+    padding: 16px 20px 20px;
+  }
+
+  .project-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 12px 16px;
   }
 }
 
-@keyframes cardGlow {
-  0% {
-    opacity: 0.6;
-    background-position: 0% 0%;
-  }
-  100% {
-    opacity: 0.9; 
-    background-position: 0% 20%;
+@media (max-width: 640px) {
+  .showcase__head {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
   }
 }
-.card:hover {
-  transform: translateY(-4px);
-  border-color: color-mix(in srgb, var(--brand, #5b8cff) 40%, transparent);
+
+@media (max-width: 480px) {
+  .showcase__head {
+    margin-bottom: 32px;
+  }
+
+  .project-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .icon-emoji {
+    font-size: 20px;
+  }
+
+  .project-title {
+    font-size: 20px;
+  }
+
+  .project-desc {
+    font-size: 13px;
+  }
+
+  .tech-tag {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
 }
-.card:hover::before {
-  opacity: 0.9;
-}
-.card__title {
-  margin: 0;
-  font-size: clamp(20px, 2.4vw, 26px);
-  letter-spacing: -0.5px;
-  font-weight: 700;
-  background: linear-gradient(90deg, var(--text), color-mix(in srgb, var(--text) 85%, var(--brand)));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.card__desc {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--muted);
-  opacity: 0.9;
-}
-.card__stack {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.card__stack li {
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--card) 96%, transparent);
-  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
-  font-weight: 600;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    border-color: color-mix(in srgb, var(--brand) 40%, transparent);
-    background: color-mix(in srgb, var(--brand) 10%, transparent);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px -6px color-mix(in srgb, var(--brand) 30%, transparent);
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .project-card {
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    border-color: color-mix(in srgb, var(--text) 12%, transparent);
+  }
+
+  .project-card.featured {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--card) 95%, transparent),
+      color-mix(in srgb, var(--brand) 5%, transparent)
+    );
+  }
+
+  .project-icon {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--brand) 15%, transparent),
+      color-mix(in srgb, var(--brand-2) 20%, transparent)
+    );
+    box-shadow: 0 8px 16px -8px color-mix(in srgb, var(--brand) 60%, transparent);
+  }
+
+  .tech-tag {
+    background: color-mix(in srgb, var(--card) 95%, transparent);
+    border-color: color-mix(in srgb, var(--text) 15%, transparent);
+  }
+
+  .project-card__footer {
+    background: color-mix(in srgb, var(--card) 96%, transparent);
+    border-color: color-mix(in srgb, var(--text) 10%, transparent);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee__track {
+  .project-card {
     animation: none;
+    transition: none;
   }
-  .card:hover {
+  .project-card:hover {
+    transform: none;
+  }
+  .btn:hover {
     transform: none;
   }
 }

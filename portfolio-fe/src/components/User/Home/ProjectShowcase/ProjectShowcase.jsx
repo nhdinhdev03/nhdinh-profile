@@ -1,5 +1,5 @@
 import React from "react";
-import "./sections.scss";
+import "./ProjectShowcase.scss";
 import { Link } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
 

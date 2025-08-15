@@ -39,6 +39,95 @@
   --hero-bg: #ffffff;
 }
 
+/* Home page container with unified grid background */
+.home-container {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+
+/* Hero-style radial gradient background for entire page */
+.home-container::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+      1100px 360px at 10% -10%,
+      color-mix(in oklab, var(--brand-primary) 16%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 320px at 90% 0%,
+      color-mix(in oklab, var(--brand-secondary) 14%, transparent),
+      transparent 55%
+    );
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Grid overlay background for entire page */
+.home-container::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--brand-primary) 11%, transparent) 0px,
+      color-mix(in oklab, var(--brand-primary) 11%, transparent) 1px,
+      transparent 1px,
+      transparent 22px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in oklab, var(--brand-primary) 8%, transparent) 0px,
+      color-mix(in oklab, var(--brand-primary) 8%, transparent) 1px,
+      transparent 1px,
+      transparent 22px
+    );
+  opacity: 0.45;
+  z-index: -1;
+  animation: gridMove 60s linear infinite;
+}
+
+/* Grid animation for subtle movement */
+@keyframes gridMove {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 22px 22px, 22px 22px;
+  }
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .home-container::after {
+    background: repeating-linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--brand-primary) 8%, transparent) 0px,
+        color-mix(in oklab, var(--brand-primary) 8%, transparent) 1px,
+        transparent 1px,
+        transparent 18px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        color-mix(in oklab, var(--brand-primary) 6%, transparent) 0px,
+        color-mix(in oklab, var(--brand-primary) 6%, transparent) 1px,
+        transparent 1px,
+        transparent 18px
+      );
+    opacity: 0.3;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .home-container::after {
+    animation: none !important;
+  }
+}
+
 /* Lightweight skeleton placeholder to avoid layout shift while lazy components load */
 .loading-block {
   width: 100%;
@@ -100,6 +189,13 @@
   --pattern-opacity: 0.3;
   --orb-opacity: 0.5;
   --grid-opacity: 0.4;
+}
+
+/* Ensure all content sections are above the grid background */
+.home-container > * {
+  position: relative;
+  z-index: 1;
+}
 
   /* Dark Mode Pattern Override */
   .hero::after {
@@ -111,7 +207,7 @@
   .hero {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
-}
+
 
 /* 3D Depth Variables */
 :root {
@@ -123,6 +219,12 @@
   --z-raised: 5px;
   --z-high: 20px;
   --perspective: 1000px;
+}
+
+/* Ensure all content sections are above the grid background */
+.home-container > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* 3D perspective container */

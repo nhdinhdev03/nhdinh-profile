@@ -34,8 +34,9 @@ function HomeIndex() {
   }, [isMobile]);
 
   return (
-    <>
+    <div className="home-container">
       <HeroSection />
+
       <TechMarquee />
 
       {/* Stats placeholder */}
@@ -55,7 +56,7 @@ function HomeIndex() {
           </Suspense>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

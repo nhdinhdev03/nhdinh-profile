@@ -387,11 +387,13 @@ function HomeIndex() {
               whileTap={{ scale: 0.97 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <a
+              <button
                 className="btn btn--outline btn--enhanced"
-                href="/cv.pdf"
-                target="_blank"
-                rel="noopener"
+                onClick={() => {
+                  import("components").then(({ showNotification }) => {
+                    showNotification("Tính năng đang được phát triển và sẽ sẵn sàng trong thời gian tới!", "development", 5000);
+                  });
+                }}
                 aria-label="Tải CV PDF"
               >
                 <div className="btn-content">
@@ -410,7 +412,7 @@ function HomeIndex() {
                   </div>
                 </div>
                 <div className="btn-glow"></div>
-              </a>
+              </button>
             </motion.div>
           {/* Scroll indicator */}
         

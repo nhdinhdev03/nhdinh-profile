@@ -3,31 +3,31 @@ import { motion } from "framer-motion";
 import NeuroGrid from "components/User/Home/NeuroGrid/NeuroGrid";
 
 function HeroBackground({ heroRef, isLoaded, isMobile = false }) {
-  // Reduce particles on mobile for better performance
-  const particleCount = isMobile ? 8 : 25;
-  const floatElementCount = isMobile ? 3 : 6;
+  // Giảm particles cho mobile để tối ưu performance
+  const particleCount = isMobile ? 8 : 25; 
+  const floatElementCount = isMobile ? 3 : 6; // Giảm floating elements cho mobile
   
   return (
     <div className="hero__bg" aria-hidden="true">
-      {/* Animated Particles - Reduced on mobile */}
+      {/* Particles - Tối ưu cho mobile */}
       <div className="hero__particles">
         {[...Array(particleCount)].map((_, i) => (
           <div
             key={i}
-            className="hero__particle"
+            className={`hero__particle ${isMobile ? 'mobile-static' : ''}`}
             style={{
-              "--size": `${Math.random() * (isMobile ? 6 : 8) + 2}px`,
+              "--size": `${Math.random() * (isMobile ? 4 : 8) + 2}px`,
               "--x": `${Math.random() * 100}%`,
               "--y": `${Math.random() * 100}%`,
-              "--duration": `${Math.random() * (isMobile ? 15 : 20) + 10}s`,
-              "--delay": `${Math.random() * 5}s`,
+              "--duration": `${isMobile ? '999999s' : Math.random() * 20 + 15 + 's'}`, // Tĩnh hoàn toàn cho mobile
+              "--delay": `${Math.random() * 8}s`,
             }}
           />
         ))}
       </div>
 
-      {/* Skip NeuroGrid on mobile for performance */}
-      {!isMobile && <NeuroGrid parentRef={heroRef} />}
+      {/* Hiển thị NeuroGrid cho mobile nhưng tĩnh */}
+      <NeuroGrid parentRef={heroRef} isMobile={isMobile} />
 
       {/* Enhanced Geometric Pattern Overlay */}
       <div className="hero__patterns">
@@ -36,15 +36,15 @@ function HeroBackground({ heroRef, isLoaded, isMobile = false }) {
           {[...Array(floatElementCount)].map((_, i) => (
             <motion.div
               key={i}
-              className={`float-elem float-elem--${i + 1}`}
+              className={`float-elem float-elem--${i + 1} ${isMobile ? 'mobile-static' : ''}`}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{
-                opacity: isLoaded ? (isMobile ? 0.4 : 0.7) : 0,
+                opacity: isLoaded ? (isMobile ? 0.3 : 0.7) : 0, // Giảm opacity cho mobile để tinh tế hơn
                 scale: isLoaded ? 1 : 0.8,
               }}
               transition={{
-                duration: isMobile ? 0.8 : 1.2,
-                delay: 0.1 + i * (isMobile ? 0.1 : 0.15),
+                duration: isMobile ? 0.3 : 1.2, // Rất nhanh cho mobile
+                delay: isMobile ? 0 : 0.1 + i * 0.15, // Không delay cho mobile
                 ease: [0.25, 1, 0.5, 1],
               }}
             />
@@ -57,9 +57,9 @@ function HeroBackground({ heroRef, isLoaded, isMobile = false }) {
         <div className="hero__light-beam"></div>
       </div>
 
-      {/* Code snippet decorative elements - Hidden on mobile */}
+      {/* Code snippet decorative elements - Chỉ hiển thị trên desktop */}
       {!isMobile && (
-        <>
+        <div className="code-snippets-container">
           <div className="code-snippet code-snippet--left">
             <div className="code-line">const profile = {`{`}</div>
             <div className="code-line code-indent">
@@ -98,7 +98,7 @@ function HeroBackground({ heroRef, isLoaded, isMobile = false }) {
             </div>
             <div className="code-line">{`}`}</div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

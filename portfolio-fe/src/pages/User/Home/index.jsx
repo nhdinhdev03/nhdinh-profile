@@ -4,8 +4,12 @@ import { HeroSection, TechMarquee } from "components";
 import useIsMobile from "hooks/useIsMobile";
 
 // Lazy load heavier sections
-const StatsStrip = React.lazy(() => import("components/User/Home/StatsStrip/StatsStrip"));
-const ProjectShowcase = React.lazy(() => import("components/User/Home/ProjectShowcase/ProjectShowcase"));
+const StatsStrip = React.lazy(() =>
+  import("components/User/Home/StatsStrip/StatsStrip")
+);
+const ProjectShowcase = React.lazy(() =>
+  import("components/User/Home/ProjectShowcase/ProjectShowcase")
+);
 
 function HomeIndex() {
   const [showStats, setShowStats] = useState(false);
@@ -18,10 +22,10 @@ function HomeIndex() {
     // More aggressive intersection margins for mobile
     const rootMargin = isMobile ? "0px 0px 100px 0px" : "0px 0px 200px 0px";
     const threshold = isMobile ? 0.1 : 0.05;
-    
+
     const options = { root: null, rootMargin, threshold };
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           if (entry.target === statsRef.current) setShowStats(true);
           if (entry.target === projectsRef.current) setShowProjects(true);
@@ -35,26 +39,40 @@ function HomeIndex() {
 
   return (
     <div className="home-container">
-      <HeroSection />
 
-      <TechMarquee />
-
-      {/* Stats placeholder */}
-      <div ref={statsRef} style={{ minHeight: 80 }}>
-        {showStats && (
-          <Suspense fallback={<div className="loading-block" aria-label="Đang tải số liệu"/>}>
-            <StatsStrip />
-          </Suspense>
-        )}
+      <div className="hero-container-no-grid">
+        <HeroSection />
       </div>
 
-      {/* Projects placeholder */}
-      <div ref={projectsRef} style={{ minHeight: 120 }}>
-        {showProjects && (
-          <Suspense fallback={<div className="loading-block" aria-label="Đang tải dự án"/>}>
-            <ProjectShowcase />
-          </Suspense>
-        )}
+
+      <div className="content-sections-with-grid">
+        <TechMarquee />
+
+        {/* Stats placeholder */}
+        <div ref={statsRef} style={{ minHeight: 80 }}>
+          {showStats && (
+            <Suspense
+              fallback={
+                <div className="loading-block" aria-label="Đang tải số liệu" />
+              }
+            >
+              <StatsStrip />
+            </Suspense>
+          )}
+        </div>
+
+        {/* Projects placeholder */}
+        <div ref={projectsRef} style={{ minHeight: 120 }}>
+          {showProjects && (
+            <Suspense
+              fallback={
+                <div className="loading-block" aria-label="Đang tải dự án" />
+              }
+            >
+              <ProjectShowcase />
+            </Suspense>
+          )}
+        </div>
       </div>
     </div>
   );

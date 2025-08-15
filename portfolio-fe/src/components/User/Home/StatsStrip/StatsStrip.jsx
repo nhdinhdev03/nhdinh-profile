@@ -10,7 +10,18 @@ const stats = [
 
 export default function StatsStrip() {
   return (
+    
     <section className="hm-section stats" aria-label="Thành tựu nhanh">
+       <div className="showcase__head">
+                <div className="showcase__header-content">
+         
+                  <p className="showcase__subtitle">
+                             <h2 className="sec-titles">Một Số Thống Kê</h2>
+                    {/* Khám phá những dự án độc đáo với công nghệ hiện đại */}
+                  </p>
+                </div>
+              
+              </div>
       <div className="container stats__grid">
         {stats.map((s, i) => (
           <div className="stat" key={i}>

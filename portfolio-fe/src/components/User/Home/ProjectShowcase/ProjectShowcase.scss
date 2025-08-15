@@ -5,6 +5,24 @@
   /* Use consistent container sizing */
   width: min(92vw, var(--container-max));
   margin-inline: auto;
+  position: relative;
+  
+  // PC/laptop grid background
+  @media (min-width: 769px) {
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(80, 80, 100, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(80, 80, 100, 0.07) 1px, transparent 1px);
+      background-size: 22px 22px;
+      z-index: -1;
+      animation: gridMove 35s linear infinite;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+  }
 }
 
 .showcase__head {

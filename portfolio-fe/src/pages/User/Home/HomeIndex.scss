@@ -67,35 +67,34 @@
     pointer-events: none;
   }
 
-  // Grid overlay background
+  // Grid overlay background - DISABLED for selective grid application
   &::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-        90deg,
-        color-mix(in oklab, var(--brand-primary) 11%, transparent) 0px,
-        color-mix(in oklab, var(--brand-primary) 11%, transparent) 1px,
-        transparent 1px,
-        transparent 22px
-      ),
-      repeating-linear-gradient(
-        0deg,
-        color-mix(in oklab, var(--brand-primary) 8%, transparent) 0px,
-        color-mix(in oklab, var(--brand-primary) 8%, transparent) 1px,
-        transparent 1px,
-        transparent 22px
-      );
-    opacity: 0.45;
-    z-index: -1;
-    animation: gridMove 60s linear infinite;
+    display: none; /* Tắt grid chính để áp dụng có chọn lọc */
   }
 
   // Ensure all content sections are above the grid background
   > * {
     position: relative;
     z-index: 1;
+  }
+  
+  // Container with grid layout for laptop/desktop
+  .content-sections-with-grid {
+    position: relative;
+    
+    @media (min-width: 769px) {
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(to right, rgba(80, 80, 100, 0.05) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(80, 80, 100, 0.05) 1px, transparent 1px);
+        background-size: 22px 22px;
+        z-index: -1;
+        pointer-events: none;
+      }
+    }
   }
 }
 
@@ -112,21 +111,7 @@
 // Consolidated Responsive Design
 @media (max-width: 768px) {
   .home-container::after {
-    background: repeating-linear-gradient(
-        90deg,
-        color-mix(in oklab, var(--brand-primary) 8%, transparent) 0px,
-        color-mix(in oklab, var(--brand-primary) 8%, transparent) 1px,
-        transparent 1px,
-        transparent 18px
-      ),
-      repeating-linear-gradient(
-        0deg,
-        color-mix(in oklab, var(--brand-primary) 6%, transparent) 0px,
-        color-mix(in oklab, var(--brand-primary) 6%, transparent) 1px,
-        transparent 1px,
-        transparent 18px
-      );
-    opacity: 0.3;
+    display: none; /* Tắt grid chính cho mobile */
   }
 
   .loading-block {
@@ -169,13 +154,127 @@
     z-index: 5;
   }
 
-  .tech-grid { gap: 12px; }
-  .tech-item { padding: 10px 16px; font-size: 13px; }
-  .floating-elements .float-elem { display: none; }
-  .btn .btn-content { padding: 14px 24px; }
-  .stats-container { padding: 24px 16px; }
-  .stat-circle { width: 60px; height: 60px; }
-  .stat-number { font-size: clamp(24px, 6vw, 28px); }
+  .tech-grid { gap: 16px; }
+  .tech-item { padding: 12px 20px; font-size: 14px; }
+  
+  // Hiển thị lại floating elements cho mobile nhưng tĩnh
+  .floating-elements .float-elem { 
+    display: block !important; 
+    opacity: 0.5 !important;
+    transform: scale(0.8) !important;
+  }
+  
+  // Hiển thị particles cho mobile nhưng tĩnh
+  .hero__particles {
+    opacity: 0.6; // Tăng opacity để thấy rõ
+  }
+  
+  .hero__particle {
+    opacity: 0.4 !important; // Tăng opacity
+  }
+  
+  // Hiển thị geometric grid nhưng tĩnh
+  .geometric-grid {
+    opacity: 0.15 !important; // Tăng opacity để thấy rõ
+    animation: none !important; // Giữ tắt animation
+  }
+  
+  .btn .btn-content { padding: 16px 28px; }
+  .stats-container { padding: 32px 20px; }
+  .stat-circle { width: 75px; height: 75px; }
+  .stat-number { font-size: clamp(28px, 6vw, 34px); }
+}
+
+/* Mobile Static Elements - Hiển thị nhưng không animation */
+.mobile-static {
+  animation: none !important;
+  transition: none !important;
+  will-change: auto !important;
+}
+
+// Mobile particles tĩnh
+.hero__particle.mobile-static {
+  animation: none !important;
+  opacity: 0.3 !important;
+}
+
+/* Ensure hero section grid pattern is visible on mobile */
+@media (max-width: 768px) {
+  .hero-container-no-grid {
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      z-index: 0;
+    }
+    
+    /* Make sure the hero content is above the grid */
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+  }
+}
+
+// Mobile floating elements tĩnh
+.float-elem.mobile-static {
+  animation: none !important;
+  transform: scale(0.8) !important;
+  opacity: 0.5 !important;
+}
+
+// Mobile code snippets tĩnh
+.code-snippets-container.mobile-static {
+  .code-snippet {
+    transform: scale(0.75) !important;
+    opacity: 0.8 !important;
+    animation: none !important;
+    transition: none !important;
+    
+    &--left {
+      top: 15% !important;
+      left: 2% !important;
+    }
+    
+    &--right {
+      bottom: 15% !important;
+      right: 2% !important;
+    }
+    
+    &:hover {
+      transform: scale(0.75) !important; // Không thay đổi khi hover
+    }
+  }
+}
+
+/* Mobile Performance Optimization - Tắt animations không cần thiết */
+@media (max-width: 768px) {
+  // Tắt tất cả animations floating
+  .float-elem,
+  .hero__particle,
+  .code-snippet {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  // Đơn giản hóa background
+  .hero__bg {
+    will-change: auto !important;
+  }
+  
+  // Tắt parallax effects
+  .hero__patterns {
+    transform: none !important;
+  }
+  
+  // Tối ưu typewriter effect cho mobile
+  .typewriter {
+    animation-duration: 2s !important; // Nhanh hơn
+  }
+  
+  .typewriter .caret {
+    animation-duration: 0.8s !important; // Nhanh hơn
+  }
 }
 
 @media (max-width: 480px) {
@@ -198,7 +297,7 @@
 /* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .home-container::after {
-    animation: none !important;
+    display: none !important; /* Tắt grid chính cho reduced motion */
   }
 }
 
@@ -370,17 +469,33 @@
   will-change: transform;
 }
 
-/* Lưới tinh tế hơn để không làm xỉn nền */
+/* Lưới tĩnh - không animation để tránh gây mỏi mắt */
 .geometric-grid {
   position: absolute;
   inset: 0;
   background-image: linear-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
-  background-size: 100px 100px; /* Increased size for less complexity */
-  animation: gridMove 90s linear infinite; /* Slower animation for better performance */
-  opacity: 0.12; /* Reduced opacity for subtler effect */
+  background-size: 100px 100px;
+  /* animation: gridMove 90s linear infinite; */ /* Tắt animation */
+  opacity: 0.12;
   transform: translateZ(0);
-  will-change: background-position;
+  /* will-change: background-position; */ /* Loại bỏ will-change */
+}
+
+/* Mobile enhancement for geometric grid */
+@media (max-width: 768px) {
+  .geometric-grid {
+    background-size: 80px 80px; /* Smaller grid for mobile */
+    opacity: 0.18; /* Increased opacity for mobile visibility */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.12) 1px, transparent 1px);
+  }
+  
+  .dark .geometric-grid {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+    opacity: 0.20;
+  }
 }
 
 /* Cài đặt lại grid cho dark mode */
@@ -437,79 +552,79 @@
       inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   }
 
-  // Unified element variations using CSS custom properties
+  // Tối ưu element variations để bố cục đẹp hơn
   &--1 {
-    width: 150px;
-    height: 150px;
-    top: 15%;
-    left: 10%;
+    width: 120px; // Giảm size
+    height: 120px;
+    top: 8%; // Đẩy lên cao hơn
+    left: 8%; // Gần lề hơn
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-    animation: floatPattern1 30s ease-in-out infinite;
+    animation: floatPattern1 45s ease-in-out infinite; // Chậm hơn
   }
 
   &--2 {
-    width: 100px;
-    height: 100px;
-    top: 60%;
-    right: 15%;
+    width: 80px; // Giảm size
+    height: 80px;
+    top: 45%; // Điều chỉnh vị trí
+    right: 12%; // Xa lề hơn một chút
     border-radius: 40% 60% 30% 70% / 60% 30% 70% 40%;
-    animation: floatPattern1 36s ease-in-out infinite reverse;
+    animation: floatPattern1 50s ease-in-out infinite reverse;
   }
 
   &--3 {
-    width: 180px;
-    height: 180px;
-    bottom: 20%;
-    left: 20%;
+    width: 140px; // Giảm size
+    height: 140px;
+    bottom: 15%; // Tăng khoảng cách từ đáy
+    left: 15%; // Xa lề hơn
     border-radius: 50% 50% 40% 60% / 40% 50% 50% 60%;
-    animation: floatPattern2 40s ease-in-out infinite;
+    animation: floatPattern2 55s ease-in-out infinite;
   }
 
   &--4 {
-    width: 80px;
-    height: 80px;
-    top: 30%;
-    right: 30%;
+    width: 60px; // Giảm size
+    height: 60px;
+    top: 25%; // Điều chỉnh
+    right: 35%; // Dịch chuyển vào trong
     border-radius: 60% 40% 50% 50% / 50% 50% 50% 50%;
-    animation: floatPattern1 22s ease-in-out infinite reverse;
+    animation: floatPattern1 35s ease-in-out infinite reverse;
     transform: translateZ(var(--z-mid));
   }
 
   &--5 {
-    width: 120px;
-    height: 120px;
-    top: 80%;
-    right: 5%;
+    width: 100px; // Giảm size
+    height: 100px;
+    top: 75%; // Điều chỉnh
+    right: 8%; // Gần lề hơn
     border-radius: 35% 65% 50% 50% / 50% 50% 60% 40%;
-    animation: floatPattern1 26s ease-in-out infinite;
+    animation: floatPattern1 40s ease-in-out infinite;
     transform: translateZ(var(--z-far));
   }
 
   &--6 {
-    width: 90px;
-    height: 90px;
-    top: 40%;
-    left: 40%;
+    width: 70px; // Giảm size
+    height: 70px;
+    top: 35%; // Điều chỉnh
+    left: 45%; // Dịch chuyển ít
     border-radius: 40% 60% 70% 30% / 40% 50% 50% 60%;
-    animation: floatPattern2 20s ease-in-out infinite;
+    animation: floatPattern2 30s ease-in-out infinite;
     transform: translateZ(var(--z-mid));
   }
 }
 
-// Consolidated Animation Keyframes
+// Consolidated Animation Keyframes - Nhẹ nhàng hơn
 @keyframes floatPattern1 {
   0%,
   100% {
     transform: translateX(0) translateY(0);
   }
   25% {
-    transform: translateX(10px) translateY(-8px);
+    transform: translateX(5px) translateY(-4px); // Giảm movement
   }
   50% {
-    transform: translateX(-8px) translateY(5px);
+    transform: translateX(-4px) translateY(3px); // Giảm movement
   }
   75% {
-    transform: translateX(5px) translateY(10px);
+    transform: translateX(3px) translateY(5px); // Giảm movement
   }
 }
 
@@ -519,10 +634,10 @@
     transform: translateX(0) translateY(0) rotate(0deg);
   }
   33% {
-    transform: translateX(-8px) translateY(5px) rotate(3deg);
+    transform: translateX(-4px) translateY(3px) rotate(1deg); // Giảm rotation
   }
   66% {
-    transform: translateX(10px) translateY(-8px) rotate(-3deg);
+    transform: translateX(5px) translateY(-4px) rotate(-1deg); // Giảm rotation
   }
 }
 
@@ -561,19 +676,19 @@
       0 10px 32px -8px rgba(var(--brand-secondary-rgb), 0.35);
   }
 
-  // Position variants
+  // Position variants - Tối ưu vị trí
   &--left {
-    top: 25%;
-    left: 5%;
-    transform: translateZ(var(--z-mid)) rotate(-4deg);
-    animation: floatCode 30s ease-in-out infinite alternate;
+    top: 15%; // Giảm từ 25%
+    left: 3%; // Gần lề hơn
+    transform: translateZ(var(--z-mid)) rotate(-2deg); // Giảm góc xoay
+    animation: floatCode 40s ease-in-out infinite alternate; // Chậm hơn
   }
 
   &--right {
-    bottom: 25%;
-    right: 5%;
-    transform: translateZ(var(--z-mid)) rotate(4deg);
-    animation: floatCode 35s ease-in-out infinite alternate-reverse;
+    bottom: 15%; // Tăng từ 25% để đối xứng
+    right: 3%; // Gần lề hơn
+    transform: translateZ(var(--z-mid)) rotate(2deg); // Giảm góc xoay
+    animation: floatCode 45s ease-in-out infinite alternate-reverse; // Chậm hơn
   }
 
   // Dark mode styles
@@ -590,13 +705,15 @@
   }
 }
 
+// Code snippets chỉ hiển thị trên desktop, mobile-scale CSS không còn cần thiết
+
 @keyframes floatCode {
   0%,
   100% {
-    transform: translateY(0) rotate(-4deg);
+    transform: translateY(0) rotate(-2deg); // Giảm rotation
   }
   50% {
-    transform: translateY(-8px) rotate(-3deg);
+    transform: translateY(-4px) rotate(-1deg); // Giảm movement và rotation
   }
 }
 
@@ -2138,14 +2255,7 @@
     z-index: 5;
   }
 
-  .tech-grid { gap: 12px; }
-  .tech-item { padding: 10px 16px; font-size: 13px; }
-  .floating-elements .float-elem { display: none; }
-  .btn .btn-content { padding: 14px 24px; }
-  .stats-container { padding: 24px 16px; }
-  .stat-circle { width: 60px; height: 60px; }
-  .stat-number { font-size: clamp(24px, 6vw, 28px); }
-}/* Reduced Motion Support */
+/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   .hero,
   .hero::before,
@@ -2307,6 +2417,130 @@
     color: black !important;
     -webkit-text-fill-color: black !important;
     filter: none !important;
+  }
+}
+
+/* ========================= */
+/* Grid Optimization - Only show grid for content sections */
+/* ========================= */
+
+/* Remove grid from hero section */
+.hero-container-no-grid {
+  position: relative;
+  background: var(--hero-bg);
+  isolation: isolate;
+  
+  /* Ensure no grid background interference for desktop */
+  &::before,
+  &::after {
+    display: none !important;
+  }
+  
+  /* Add mobile grid animation */
+  @media (max-width: 768px) {
+    &::before {
+      display: block !important;
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(80, 80, 100, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(80, 80, 100, 0.04) 1px, transparent 1px);
+      background-size: 18px 18px;
+      z-index: -1;
+      pointer-events: none;
+      animation: gridMove 40s linear infinite;
+      opacity: 0.5;
+    }
+  }
+}
+
+/* Apply grid only to content sections */
+.content-sections-with-grid {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+
+  // Grid overlay background only for content sections
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--brand-primary) 11%, transparent) 0px,
+        color-mix(in oklab, var(--brand-primary) 11%, transparent) 1px,
+        transparent 1px,
+        transparent 22px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        color-mix(in oklab, var(--brand-primary) 8%, transparent) 0px,
+        color-mix(in oklab, var(--brand-primary) 8%, transparent) 1px,
+        transparent 1px,
+        transparent 22px
+      );
+    opacity: 0.45;
+    z-index: 0;
+    animation: gridMove 60s linear infinite;
+  }
+
+  // Ensure content is above grid
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* Mobile optimization for content grid */
+@media (max-width: 768px) {
+  .content-sections-with-grid::before {
+    background: repeating-linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--brand-primary) 8%, transparent) 0px,
+        color-mix(in oklab, var(--brand-primary) 8%, transparent) 1px,
+        transparent 1px,
+        transparent 18px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        color-mix(in oklab, var(--brand-primary) 6%, transparent) 0px,
+        color-mix(in oklab, var(--brand-primary) 6%, transparent) 1px,
+        transparent 1px,
+        transparent 18px
+      );
+    opacity: 0.25;
+    animation: gridMove 90s linear infinite;
+  }
+}
+
+/* Dark mode adjustments for content grid */
+.dark .content-sections-with-grid::before {
+  background: repeating-linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--brand-primary) 15%, transparent) 0px,
+      color-mix(in oklab, var(--brand-primary) 15%, transparent) 1px,
+      transparent 1px,
+      transparent 22px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in oklab, var(--brand-secondary) 12%, transparent) 0px,
+      color-mix(in oklab, var(--brand-secondary) 12%, transparent) 1px,
+      transparent 1px,
+      transparent 22px
+    );
+  opacity: 0.35;
+}
+
+/* Reduced motion for content grid */
+@media (prefers-reduced-motion: reduce) {
+  .content-sections-with-grid::before {
+    animation: none !important;
   }
 }
 
@@ -2603,14 +2837,38 @@
     }
   }
 
-  /* Faster transitions on mobile */
+  /* Hiển thị elements trên mobile nhưng tĩnh - không animation */
   .hero-mobile * {
-    transition-duration: 0.2s !important;
-    animation-duration: 0.3s !important;
+    transition: none !important;
+    animation: none !important;
+    will-change: auto !important;
   }
 
-  /* Disable complex transforms on mobile */
+  /* Hiển thị floating elements trên mobile */
   .hero-mobile .float-elem {
-    transform: translateZ(0) !important;
+    display: block !important; // Hiển thị trở lại
+    opacity: 0.5 !important;
+    transform: scale(0.8) !important;
+    animation: none !important;
   }
+  
+  /* Giữ background pattern cho mobile */
+  .hero-mobile .hero__bg {
+    background: transparent !important; // Giữ background pattern
+  }
+  
+  /* Hiển thị effects trên mobile với opacity phù hợp */
+  .hero-mobile .hero__particles {
+    opacity: 0.4 !important;
+  }
+  
+  .hero-mobile .geometric-grid {
+    opacity: 0.12 !important;
+  }
+  
+  /* NeuroGrid tối ưu cho mobile */
+  .hero-mobile .fx-canvas {
+    opacity: 0.8 !important;
+  }
+}
 }

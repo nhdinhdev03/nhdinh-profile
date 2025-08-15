@@ -8,13 +8,29 @@ function HeroSection() {
   const rafRef = useRef(0);
   const targetVars = useRef({ x: 0, y: 0 });
   const [isLoaded, setIsLoaded] = useState(false);
+  const [entranceComplete, setEntranceComplete] = useState(false);
 
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Add "appeared" class to body when home page loads
+    document.body.classList.add("home-appeared");
+    
+    // Load sequence with staggered timing for smoother entry
+    const loadTimer = setTimeout(() => {
       setIsLoaded(true);
-    }, 300);
-    return () => clearTimeout(timer);
+      
+      // Mark entrance animation as complete after additional delay
+      const entranceTimer = setTimeout(() => {
+        setEntranceComplete(true);
+      }, 800);
+      
+      return () => clearTimeout(entranceTimer);
+    }, 150); // Reduced from 300ms for faster initial render
+    
+    return () => {
+      clearTimeout(loadTimer);
+      document.body.classList.remove("home-appeared");
+    };
   }, []);
 
   useEffect(() => {
@@ -70,9 +86,13 @@ function HeroSection() {
   }, []);
 
   return (
-    <header className="hero" aria-label="Giới thiệu tổng quan" ref={heroRef}>
+    <header 
+      className={`hero ${isLoaded ? 'hero-loaded' : ''} ${entranceComplete ? 'entrance-complete' : ''}`} 
+      aria-label="Giới thiệu tổng quan" 
+      ref={heroRef}
+    >
       <HeroBackground heroRef={heroRef} isLoaded={isLoaded} />
-      <HeroHeader />
+      <HeroHeader entranceComplete={entranceComplete} />
     </header>
   );
 }

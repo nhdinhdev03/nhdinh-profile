@@ -2711,3 +2711,57 @@
     padding-top: 140px !important; /* Even more padding on very small screens */
   }
 }
+
+
+/* Additional styling for code snippets */
+.code-snippet--left {
+  top: 25%; 
+  left: 10%;
+  transform: rotate(-5deg) translateZ(var(--z-raised));
+  z-index: 2;
+}
+
+.code-snippet--right {
+  bottom: 30%;
+  right: 10%;
+  transform: rotate(5deg) translateZ(var(--z-raised));
+  z-index: 2;
+}
+
+/* Make code snippets responsive */
+@media (max-width: 1200px) {
+  .code-snippet--left {
+    top: 20%;
+    left: 5%;
+  }
+  
+  .code-snippet--right {
+    bottom: 25%;
+    right: 5%;
+  }
+}
+
+@media (max-width: 768px) {
+  .code-snippet {
+    font-size: 10px;
+    padding: 10px 12px;
+    max-width: 280px;
+  }
+  
+  .code-snippet--left {
+    top: 15%;
+    left: 2%;
+  }
+  
+  .code-snippet--right {
+    bottom: 20%;
+    right: 2%;
+  }
+}
+
+/* Hide code snippets on very small screens */
+@media (max-width: 480px) {
+  .code-snippet {
+    display: none;
+  }
+}

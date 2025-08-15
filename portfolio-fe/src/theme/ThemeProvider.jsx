@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import "./transitions.scss";
 
 const ThemeCtx = createContext({
   light: true,

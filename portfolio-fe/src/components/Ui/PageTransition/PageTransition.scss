@@ -1,0 +1,35 @@
+.page-transition {
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.page-transition.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition.fadeOut {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* Special transition for the home page */
+.page-transition.home-transition.fadeIn {
+  animation: homeReveal 600ms ease forwards;
+}
+
+@keyframes homeReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Add layer stacking to ensure proper z-index during transitions */
+.page-transition > * {
+  position: relative;
+  z-index: 1;
+}

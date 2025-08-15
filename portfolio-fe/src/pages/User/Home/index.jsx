@@ -1,6 +1,5 @@
 import React from "react";
 import "./HomeIndex.scss";
-import "./CodeSnippets.scss"; // Import code snippets styling
 import {  HeroSection, ProjectShowcase, StatsStrip, TechMarquee } from "components";
 
 

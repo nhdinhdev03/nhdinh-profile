@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { motion } from "framer-motion";
+import React, { useMemo, useEffect } from "react";
+import { motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
 import useTypewriter from "hooks/useTypewriter";
 import { ROUTES } from "router/routeConstants";
@@ -8,8 +8,10 @@ import { ROUTES } from "router/routeConstants";
 /**
  * Hero header component with personal information and CTA buttons
  */
-function HeroHeader() {
-  // Enhanced typewriter with professional phrases
+function HeroHeader({ entranceComplete = false }) {
+  const controls = useAnimation();
+
+  // Optimized typewriter with professional typing effect and smooth transitions
   const typed = useTypewriter([
     "Web Developer",
     "Front‑end Specialist",
@@ -17,18 +19,30 @@ function HeroHeader() {
     "UI/UX Enthusiast",
     "Performance Optimizer",
     "Full Stack Developer",
-  ]);
+  ], { 
+    startDelay: entranceComplete ? 50 : 400, // Quick start when returning to page
+    typeSpeed: 70,                           // Moderate typing speed (ms per character)
+    deleteSpeed: 35,                         // Faster deletion speed for dynamic feel
+    delayBetweenWords: 1500,                 // Slightly longer pause to read each phrase
+    loop: true                               // Continuous animation
+  });
 
   const nameLetters = useMemo(() => Array.from("Nhdinh"), []);
+  
+  // Start animations when component mounts or when returning to home
+  useEffect(() => {
+    controls.start("visible");
+  }, [controls]);
 
-  // Animation variants for staggered animations
+  // Animation variants for staggered animations - optimized for smoother transitions
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.1,
+        staggerChildren: 0.08, // Slightly faster stagger for smoother appearance
+        delayChildren: 0.05,
+        when: "beforeChildren",
       },
     },
   };

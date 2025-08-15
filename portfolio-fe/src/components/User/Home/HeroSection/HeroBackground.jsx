@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import NeuroGrid from "pages/User/Home/NeuroGrid/NeuroGrid";
+import NeuroGrid from "components/User/Home/NeuroGrid/NeuroGrid";
 
 
 

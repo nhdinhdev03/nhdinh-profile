@@ -254,7 +254,6 @@ function LoginForm() {
                     className="toggle-pw"
                     onClick={togglePw}
                     aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
-                    whileTap={{ scale: 0.95 }}
                     initial={{ opacity: 0.8 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.2 }}

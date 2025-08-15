@@ -8,12 +8,18 @@ const ThemeCtx = createContext({
   source: "system", // "system" | "user"
 });
 
+// Decide initial theme:
+// 1. Honor explicit user choice in localStorage.
+// 2. Otherwise default to DARK (product decision) instead of following system.
 function getInitialLight() {
-  const stored = localStorage.getItem("theme"); // "light" | "dark" | null
-  if (stored === "light") return { light: true, source: "user" };
-  if (stored === "dark") return { light: false, source: "user" };
-  const prefersLight = window.matchMedia?.("(prefers-color-scheme: light)")?.matches;
-  return { light: !!prefersLight, source: "system" };
+  try {
+    const stored = localStorage.getItem("theme"); // "light" | "dark" | null
+    if (stored === "light") return { light: true, source: "user" };
+    if (stored === "dark") return { light: false, source: "user" };
+  } catch (e) {
+    // ignore (private mode / unavailable)
+  }
+  return { light: false, source: "system" }; // treat as system/default so a later user action can override
 }
 
 export function ThemeProvider({ children }) {
@@ -36,15 +42,8 @@ export function ThemeProvider({ children }) {
     }
   }, [light, source]);
 
-  useEffect(() => {
-    const mq = window.matchMedia?.("(prefers-color-scheme: light)");
-    if (!mq) return;
-    const onChange = (e) => {
-      setState((prev) => (prev.source !== "system" ? prev : { light: e.matches, source: "system" }));
-    };
-    mq.addEventListener?.("change", onChange);
-    return () => mq.removeEventListener?.("change", onChange);
-  }, []);
+  // Since we now force dark as the default (unless user picked), we no longer live-sync with system preference.
+  // If you want to re-enable adaptive system sync for users who haven't chosen yet, restore the matchMedia listener.
 
   useEffect(() => {
     const onStorage = (e) => {

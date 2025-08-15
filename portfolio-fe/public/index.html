@@ -25,6 +25,27 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Nhdinh | Developer Portfolio</title>
+    <script>
+      /*
+       * Prevent initial light flash: apply stored theme or default dark ASAP.
+       */
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var wantLight = stored === 'light';
+          if (stored === 'dark' || !wantLight) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          } else if (wantLight) {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = 'dark';
+        }
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

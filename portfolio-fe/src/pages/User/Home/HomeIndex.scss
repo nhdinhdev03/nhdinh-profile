@@ -16,7 +16,7 @@
 
   // Backgrounds & Surfaces
   --bg-primary: #ffffff;
-  --bg-secondary: #f1f5f9;
+  --bg-secondary: #f1f9f2;
   --surface-alpha: rgba(0, 0, 0, 0.03);
   --surface-beta: rgba(0, 0, 0, 0.06);
 
@@ -310,6 +310,7 @@
   z-index: 0;
   transform-style: flat;
   will-change: transform;
+
 }
 
 /* Animated floating particles */
@@ -616,12 +617,7 @@
 .hero__gradient-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    rgba(15, 23, 42, 0.2) 50%,
-    rgba(15, 23, 42, 0.4) 100%
-  );
+
   z-index: 2;
 }
 

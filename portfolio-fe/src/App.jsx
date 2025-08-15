@@ -25,7 +25,7 @@ const ResourcePrefetcher = () => {
   return null;
 };
 
-export default function App() {
+function App() {
   return (
     <NotificationContextProvider>
       <BrowserRouter>
@@ -66,3 +66,4 @@ export default function App() {
     </NotificationContextProvider>
   );
 }
+export default App;

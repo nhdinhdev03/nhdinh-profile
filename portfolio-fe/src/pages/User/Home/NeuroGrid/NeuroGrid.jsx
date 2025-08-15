@@ -3,12 +3,7 @@
 
 import React, { useEffect, useRef } from "react";
 
-// Lightweight animated neural grid background for the hero
-// - Renders to a canvas sized to its container
-// - Uses CSS vars --mx/--my for subtle parallax
-// - Respects prefers-reduced-motion
-// - Keeps draw cost low for good FPS
-export default function NeuroGrid({ parentRef }) {
+ function NeuroGrid({ parentRef }) {
 	const canvasRef = useRef(null);
 	const rafRef = useRef(0);
 	const roRef = useRef(null);
@@ -197,3 +192,4 @@ export default function NeuroGrid({ parentRef }) {
 		/>
 	);
 }
+export default NeuroGrid;

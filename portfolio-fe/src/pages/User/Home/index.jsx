@@ -237,7 +237,7 @@ function HomeIndex() {
                 />
               </svg>
             </div>
-            <span>Full Stack Developer</span>
+            <span className="badge-text">Full Stack Developer</span>
             <div className="badge-glow"></div>
           </motion.div>
 

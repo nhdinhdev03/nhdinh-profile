@@ -2222,7 +2222,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .hero {
-    padding: clamp(60px, 10vw, 120px) 0 clamp(40px, 6vw, 80px);
+    padding: 120px 0 clamp(40px, 6vw, 80px); /* Increased top padding to account for header */
   }
 
   .hero__container {
@@ -2248,6 +2248,14 @@
     font-size: clamp(14px, 3.5vw, 18px);
     margin: 24px auto 32px;
   }
+  
+  .professional-badge {
+    margin-top: 60px; /* Add space at the top to avoid the menu */
+    padding: 8px 16px; /* Make it slightly smaller */
+    font-size: 13px; /* Reduce font size */
+    z-index: 5; /* Ensure it's above other elements */
+  }
+}
 
   .tech-grid {
     gap: 12px;
@@ -2278,7 +2286,7 @@
   .stat-number {
     font-size: clamp(24px, 6vw, 28px);
   }
-}
+
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
@@ -2683,5 +2691,22 @@
     transform: translateZ(0);
     backface-visibility: hidden;
     will-change: transform;
+  }
+}
+
+@media (max-width: 480px) {
+  .professional-badge {
+    margin-top: 75px !important; /* More space to avoid menu overlap */
+    padding: 6px 12px !important; /* Smaller padding */
+    font-size: 12px !important; /* Smaller font */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important; /* Better visibility */
+  }
+  
+  .professional-badge .badge-icon {
+    transform: scale(0.85); /* Slightly smaller icon */
+  }
+  
+  .hero {
+    padding-top: 140px !important; /* Even more padding on very small screens */
   }
 }

@@ -54,7 +54,7 @@ function LoginForm() {
       }
       setIsLoading(true);
       try {
-        // TODO: Gọi API đăng nhập
+
         await new Promise((r) => setTimeout(r, 1000));
         // success flow placeholder
         toast.success("Đăng nhập thành công!", {

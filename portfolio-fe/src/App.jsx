@@ -51,11 +51,17 @@ function App() {
               key={path}
               path={path}
               element={
-                <Layout>
+                Layout ? (
+                  <Layout>
+                    <PageTransition>
+                      <Component />
+                    </PageTransition>
+                  </Layout>
+                ) : (
                   <PageTransition>
                     <Component />
                   </PageTransition>
-                </Layout>
+                )
               }
             />
           ))}

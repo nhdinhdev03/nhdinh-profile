@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import "./transitions.scss";
+import "../transitions.scss";
 
 const UserThemeCtx = createContext({
   light: true,
@@ -25,6 +25,7 @@ function getInitialLight() {
 export function UserThemeProvider({ children }) {
   const [{ light, source }, setState] = useState(getInitialLight);
 
+  // Apply theme to DOM when UserThemeProvider is active
   useEffect(() => {
     const root = document.documentElement;
     if (light) {
@@ -34,6 +35,13 @@ export function UserThemeProvider({ children }) {
       root.classList.add("dark");
       root.style.colorScheme = "dark";
     }
+
+    // Cleanup function to ensure we don't leave dark theme when unmounting
+    return () => {
+      // When UserThemeProvider unmounts, reset to light theme (for Admin)
+      root.classList.remove("dark");
+      root.style.colorScheme = "light";
+    };
   }, [light]);
 
   useEffect(() => {

@@ -1,22 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
-import AdminBreadcrumb from "../../../layouts/Admin/Breadcrumb";
+
 
 const PageHeader = ({
   title,
   description,
   actions,
-  breadcrumbActions,
-  customBreadcrumbLabels,
+ 
   className = "",
 }) => {
   return (
     <div className={`bg-white dark:bg-gray-800 shadow-sm ${className}`}>
-      {/* Breadcrumb */}
-      <AdminBreadcrumb
-        actions={breadcrumbActions}
-        customLabels={customBreadcrumbLabels}
-      />
 
       {/* Page Header */}
       <div className="border-b border-gray-200 dark:border-gray-700">

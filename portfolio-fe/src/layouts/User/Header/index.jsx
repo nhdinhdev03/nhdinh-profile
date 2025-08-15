@@ -3,14 +3,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import { ROUTES } from "router/routeConstants";
 import img from "assets/Img";
-import { useTheme } from "theme/ThemeProvider";
+import { useUserTheme } from "../../../theme";
 
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { light, toggle } = useTheme();
+  const { light, toggle } = useUserTheme();
 
   useEffect(() => {
     const handleScroll = () => {

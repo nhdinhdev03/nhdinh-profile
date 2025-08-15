@@ -3,13 +3,13 @@ import "./Footer.scss";
 import facebookIcon from "../../../assets/icon/f-facebook.svg";
 import linkedinIcon from "../../../assets/icon/f-linkedIn.svg";
 import youtubeIcon from "../../../assets/icon/f-youtube.svg";
-import { useTheme } from "theme/ThemeProvider";
+import { useUserTheme } from "../../../theme";
 
 function Footer() {
   const currentYear = new Date().getFullYear();
   const foundationYear = 2024; // adjust if needed
   const yearText = foundationYear === currentYear ? currentYear : `${foundationYear}–${currentYear}`;
-  const { light } = useTheme();
+  const { light } = useUserTheme();
 
   const scrollToTop = () => {
     if (typeof window !== "undefined") {

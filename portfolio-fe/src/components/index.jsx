@@ -9,6 +9,7 @@ export { default as HeroSection } from "./User/Home/HeroSection";
 export { default as AdminDashboard } from "pages/Admin/Dashboard/Dashboard";
 export { default as AdminSidebar } from "layouts/Admin/Sidebar";
 export { default as AdminHeader } from "layouts/Admin/Header";
+export { default as AdminBreadcrumb } from "layouts/Admin/Breadcrumb";
 
 // Content Management Components
 export { default as HomeManagement } from "pages/Admin/HomeManagement/HomeManagement";

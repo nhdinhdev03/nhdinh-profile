@@ -4,19 +4,25 @@ import { Link, useLocation } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
 
 
-function Breadcrumb({ className, separator, labels: labelsOverride, showOnHome = false }) {
+function Breadcrumb({ 
+  className, 
+  separator, 
+  labels: labelsOverride, 
+  showOnHome = false,
+
+}) {
   const location = useLocation();
 
-  // Default labels from route constants
   const defaultLabels = useMemo(
     () => ({
-
-      [ROUTES.ABOUT]: "About",
+      // User routes
+      [ROUTES.HOME]: "Trang chủ",
+      [ROUTES.ABOUT]: "Giới thiệu",
       [ROUTES.BLOG]: "Blog",
-      [ROUTES.CONTACT]: "Contact",
-      [ROUTES.PROJECTS]: "Projects",
-      [ROUTES.ADMIN?.LOGIN]: "Admin Login",
-      [ROUTES.ADMIN?.PORTAL]: "Admin Portal",
+      [ROUTES.CONTACT]: "Liên hệ",
+      [ROUTES.PROJECTS]: "Dự án",
+      
+   
     }),
     []
   );

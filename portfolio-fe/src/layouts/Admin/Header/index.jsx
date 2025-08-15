@@ -5,22 +5,23 @@ import {
   MagnifyingGlassIcon,
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
+import { ROUTES } from 'router/routeConstants';
 
 const Header = ({ setSidebarOpen, currentPath }) => {
   const getPageTitle = () => {
     const pathTitles = {
-      '/dashboard-management-sys/dashboard': 'Dashboard',
-      '/dashboard-management-sys/home': 'Quản lý Trang chủ',
-      '/dashboard-management-sys/about': 'Quản lý Giới thiệu',
-      '/dashboard-management-sys/projects': 'Quản lý Dự án',
-      '/dashboard-management-sys/blog': 'Quản lý Blog',
-      '/dashboard-management-sys/contact': 'Quản lý Liên hệ',
-      '/dashboard-management-sys/accounts': 'Quản lý Tài khoản',
-      '/dashboard-management-sys/history': 'Lịch sử thay đổi',
-      '/dashboard-management-sys/media': 'Thư viện Media',
-      '/dashboard-management-sys/analytics': 'Thống kê',
-      '/dashboard-management-sys/settings': 'Cài đặt',
-      '/dashboard-management-sys/profile': 'Hồ sơ',
+      [ROUTES.ADMIN.DASHBOARD]: 'Dashboard',
+      [ROUTES.ADMIN.HOME_MANAGEMENT]: 'Quản lý Trang chủ',
+      [ROUTES.ADMIN.ABOUT_MANAGEMENT]: 'Quản lý Giới thiệu',
+      [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: 'Quản lý Dự án',
+      [ROUTES.ADMIN.BLOG_MANAGEMENT]: 'Quản lý Blog',
+      [ROUTES.ADMIN.CONTACT_MANAGEMENT]: 'Quản lý Liên hệ',
+      [ROUTES.ADMIN.ACCOUNTS_MANAGEMENT]: 'Quản lý Tài khoản',
+      [ROUTES.ADMIN.HISTORY_LOGS]: 'Lịch sử thay đổi',
+      [ROUTES.ADMIN.MEDIA_LIBRARY]: 'Thư viện Media',
+      [ROUTES.ADMIN.ANALYTICS]: 'Thống kê & Phân tích',
+      [ROUTES.ADMIN.SETTINGS]: 'Cài đặt hệ thống',
+      [ROUTES.ADMIN.PROFILE]: 'Hồ sơ cá nhân',
     };
     return pathTitles[currentPath] || 'Admin Portal';
   };

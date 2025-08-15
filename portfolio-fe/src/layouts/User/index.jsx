@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import Header from "./Header";
-import Breadcrumb from "../Breadcrumb";
+import Breadcrumb from "./Breadcrumb";
 import Footer from "./Footer";
 import { ROUTES } from "router/routeConstants";
 import "./UserLayout.scss";

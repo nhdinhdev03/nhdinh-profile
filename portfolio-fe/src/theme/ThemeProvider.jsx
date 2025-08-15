@@ -19,7 +19,7 @@ function getInitialLight() {
   } catch (e) {
     // ignore (private mode / unavailable)
   }
-  return { light: false, source: "system" }; // treat as system/default so a later user action can override
+  return { light: false, source: "system" }; 
 }
 
 export function ThemeProvider({ children }) {
@@ -42,8 +42,6 @@ export function ThemeProvider({ children }) {
     }
   }, [light, source]);
 
-  // Since we now force dark as the default (unless user picked), we no longer live-sync with system preference.
-  // If you want to re-enable adaptive system sync for users who haven't chosen yet, restore the matchMedia listener.
 
   useEffect(() => {
     const onStorage = (e) => {

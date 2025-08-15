@@ -4,8 +4,12 @@ import {
   PencilIcon, 
   TrashIcon,
   FolderIcon,
-  EyeIcon
+  EyeIcon,
+  FunnelIcon,
+  MagnifyingGlassIcon,
+  DocumentArrowDownIcon
 } from '@heroicons/react/24/outline';
+import PageHeader from '../../../components/Admin/PageHeader';
 
 const ProjectsManagement = () => {
   const [projects, setProjects] = useState([
@@ -130,30 +134,58 @@ const ProjectsManagement = () => {
 
   const availableTechs = ['React', 'Vue.js', 'Angular', 'Node.js', 'Express.js', 'MongoDB', 'PostgreSQL', 'MySQL', 'Tailwind CSS', 'Bootstrap', 'TypeScript', 'JavaScript', 'Python', 'Java', 'Spring Boot'];
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Quản lý Dự án</h1>
-          <p className="text-gray-500">Quản lý portfolio và các dự án cá nhân</p>
-        </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-        >
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Thêm dự án
-        </button>
-      </div>
+  const pageActions = (
+    <>
+      <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <FunnelIcon className="h-4 w-4 mr-2" />
+        Lọc
+      </button>
+      
+      <button className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <DocumentArrowDownIcon className="h-4 w-4 mr-2" />
+        Xuất dữ liệu
+      </button>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-          <div className="flex items-center">
-            <FolderIcon className="h-8 w-8 text-indigo-600" />
-            <div className="ml-4">
-              <p className="text-2xl font-bold text-gray-900">{projects.length}</p>
+      <button
+        onClick={() => setShowForm(true)}
+        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        <PlusIcon className="h-4 w-4 mr-2" />
+        Thêm dự án
+      </button>
+    </>
+  );
+
+  return (
+    <>
+      <PageHeader
+        title="Quản lý Dự án"
+        description="Quản lý portfolio và các dự án cá nhân"
+        actions={pageActions}
+        className="sticky top-16 z-30"
+      />
+      
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+        <div className="space-y-6">
+          {/* Search Bar */}
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              placeholder="Tìm kiếm dự án..."
+            />
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+              <div className="flex items-center">
+                <FolderIcon className="h-8 w-8 text-indigo-600" />
+                <div className="ml-4">
+                  <p className="text-2xl font-bold text-gray-900">{projects.length}</p>
               <p className="text-sm text-gray-500">Tổng dự án</p>
             </div>
           </div>
@@ -389,7 +421,9 @@ const ProjectsManagement = () => {
           </div>
         </div>
       )}
-    </div>
+        </div> {/* end of space-y-6 */}
+      </div> {/* end of container mx-auto */}
+    </>
   );
 };
 

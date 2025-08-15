@@ -1,230 +1,380 @@
-
-
-
 import React, { useEffect, useRef } from "react";
+import { useUserTheme } from "theme";
 
- function NeuroGrid({ parentRef, isMobile = false }) {
-	const canvasRef = useRef(null);
-	const rafRef = useRef(0);
-	const roRef = useRef(null);
+function NeuroGrid({ parentRef, isMobile = false }) {
+  const canvasRef = useRef(null);
+  const rafRef = useRef(0);
+  const roRef = useRef(null);
 
-	useEffect(() => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-		const ctx = canvas.getContext("2d", { alpha: true });
-		if (!ctx) return;
+  // Use theme context for more reliable theme detection
+  const { light: isLightTheme } = useUserTheme();
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", { alpha: true });
+    if (!ctx) return;
 
-		const container = canvas.parentElement || canvas;
-		const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2); // Giảm DPR cho mobile
-		const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const container = canvas.parentElement || canvas;
+    // Optimize DPR based on device capability and reduce for mobile to improve performance
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 2);
+    const prefersReduced = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)"
+    )?.matches;
 
-		let width = 0,
-			height = 0,
-			t0 = performance.now();
+    let width = 0,
+      height = 0,
+      t0 = performance.now();
 
-		// Grid state
-		let points = [];
-		let cols = 0,
-			rows = 0,
-			spacing = 72;
+    // Grid state
+    let points = [];
+    let cols = 0,
+      rows = 0,
+      spacing = 72;
 
-		function getCSSVar(el, name, fallback) {
-			try {
-				const v = getComputedStyle(el).getPropertyValue(name).trim();
-				return v || fallback;
-			} catch (_) {
-				return fallback;
-			}
-		}
+    function getCSSVar(el, name, fallback) {
+      try {
+        const v = getComputedStyle(el).getPropertyValue(name).trim();
+        return v || fallback;
+      } catch (_) {
+        return fallback;
+      }
+    }
 
-		function size() {
-			const rect = container.getBoundingClientRect();
-			// Limit width to 1500px maximum
-			const maxWidth = 1500;
-			width = Math.min(maxWidth, Math.max(1, rect.width));
-			height = Math.max(1, rect.height);
-			canvas.width = Math.round(width * dpr);
-			canvas.height = Math.round(height * dpr);
-			canvas.style.width = width + "px";
-			canvas.style.height = height + "px";
-			canvas.style.maxWidth = maxWidth + "px";
-			canvas.style.margin = "0 auto"; // Center canvas if container is wider than maxWidth
-			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    function size() {
+      const rect = container.getBoundingClientRect();
+      // Limit width to 1500px maximum for better performance
+      const maxWidth = 1500;
+      width = Math.min(maxWidth, Math.max(1, rect.width));
+      height = Math.max(1, rect.height);
 
-			// derive spacing based on width for consistent density, tối ưu cho mobile
-			const baseSpacing = isMobile ? 11 : 12; // Slight increase in spacing for mobile for better performance
-			spacing = Math.max(isMobile ? 48 : 56, Math.min(isMobile ? 80 : 100, Math.round(width / baseSpacing)));
-			cols = Math.ceil(width / spacing) + 1;
-			rows = Math.ceil(height / spacing) + 1;
+      // Optimize canvas size with proper DPR scaling
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      canvas.style.maxWidth = maxWidth + "px";
+      canvas.style.margin = "0 auto"; // Center canvas if container is wider than maxWidth
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-			// Create a more structured grid with points array
-			points = new Array(rows * cols).fill(null);
-			
-			for (let y = 0; y < rows; y++) {
-				for (let x = 0; x < cols; x++) {
-					const idx = y * cols + x;
-					
-					// Skip some points on mobile for better performance (use a more reliable pattern)
-					if (isMobile && ((x + y) % 2 === 1)) {
-						continue;
-					}
-					
-					const px = x * spacing + (Math.random() - 0.5) * spacing * (isMobile ? 0.1 : 0.15);
-					const py = y * spacing + (Math.random() - 0.5) * spacing * (isMobile ? 0.1 : 0.15);
-					const phase = Math.random() * Math.PI * 2;
-					points[idx] = {
-						ax: px,
-						ay: py,
-						phase,
-					};
-				}
-			}
-		}
+      // derive spacing based on width, device, and theme for consistent density
+      const isCurrentlyLight = isLightTheme;
 
-		function sampleParallax() {
-			const host = parentRef?.current || container;
-			const mx = parseFloat(getComputedStyle(host).getPropertyValue("--mx")) || 0;
-			const my = parseFloat(getComputedStyle(host).getPropertyValue("--my")) || 0;
-			return { mx, my };
-		}
+      // Optimize grid density for better performance and visibility
+      // Use denser grid in light mode for better visibility
+      const baseSpacing = isMobile
+        ? isCurrentlyLight
+          ? 7
+          : 10 // Even denser grid for light mode on mobile for better visibility
+        : isCurrentlyLight
+        ? 8
+        : 11; // Even denser grid for light mode on desktop
 
-		function draw(now) {
-			const t = (now - t0) / 1000;
-			ctx.clearRect(0, 0, width, height);
+      // Calculate optimal spacing based on screen width and theme
+      spacing = Math.max(
+        isMobile ? (isCurrentlyLight ? 38 : 48) : isCurrentlyLight ? 42 : 56,
+        Math.min(
+          isMobile ? (isCurrentlyLight ? 60 : 80) : isCurrentlyLight ? 75 : 100,
+          Math.round(width / baseSpacing)
+        )
+      );
+      cols = Math.ceil(width / spacing) + 1;
+      rows = Math.ceil(height / spacing) + 1;
 
-			// colors via CSS variables with fallbacks
-			const brand = getCSSVar(document.documentElement, "--brand-primary", "#5b8cff");
-			const brand2 = getCSSVar(document.documentElement, "--brand-secondary", "#06b6d4");
-			const isLight = !document.body.classList.contains("dark");
-			const { mx, my } = sampleParallax();
+      // Create a more structured grid with points array - pre-allocate for performance
+      points = new Array(rows * cols).fill(null);
 
-			// subtle global parallax offset (reduced for mobile)
-			const ox = isMobile ? mx * 5 : mx * 10; // Half strength for mobile
-			const oy = isMobile ? my * 3 : my * 6;
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const idx = y * cols + x;
 
-			// Optimize animation parameters
-			// Simplified calculation to avoid nested ternaries
-			let amp = 0;
-			let speed = 0;
-			
-			if (!prefersReduced) {
-				if (isMobile) {
-					amp = Math.min(3, spacing * 0.06); // Further reduced for mobile
-					speed = 0.25; // Even slower for better performance
-				} else {
-					amp = Math.min(8, spacing * 0.12);
-					speed = 0.6;
-				}
-			}
-			
-			// Điều chỉnh opacity dựa theo light/dark mode và mobile
-			const baseAlpha = isLight ? 0.4 : 0.65;
-			const mobileAlpha = isMobile ? baseAlpha * 0.8 : baseAlpha; // Tăng opacity cho mobile để rõ hơn
-			ctx.globalAlpha = mobileAlpha;
+          // Optimize grid pattern based on device and theme
+          // For light mode: include almost ALL points for maximum visibility
+          // For dark mode: more skipping for a subtler effect
+          if (isMobile) {
+            // In light mode on mobile, keep more points (skip fewer)
+            if (!isCurrentlyLight && (x + y) % 2 === 1) {
+              continue;
+            }
+          } else {
+            // In desktop dark mode, we can skip some points for better performance
+            // In light mode, keep almost all points for better visibility
+            if (!isCurrentlyLight && (x + y) % 3 === 2) {
+              continue;
+            }
+          }
 
-			// Precompute gradient for strokes
-			const g = ctx.createLinearGradient(0, 0, width, height);
-			g.addColorStop(0, brand);
-			g.addColorStop(1, brand2);
+          // Adjust randomness based on theme - less random in light mode for cleaner grid lines
+          const randomFactor = isCurrentlyLight
+            ? isMobile
+              ? 0.06
+              : 0.1 // Less randomness in light mode for cleaner appearance
+            : isMobile
+            ? 0.1
+            : 0.15;
 
-			ctx.lineWidth = isMobile ? 1.2 : 1.1; // Slightly thicker lines for mobile
-			ctx.strokeStyle = g;
-			ctx.globalAlpha = isMobile ? 0.7 : 0.65; // Higher contrast for mobile
+          // Calculate point position with optimized randomization
+          const px =
+            x * spacing + (Math.random() - 0.5) * spacing * randomFactor;
+          const py =
+            y * spacing + (Math.random() - 0.5) * spacing * randomFactor;
+          const phase = Math.random() * Math.PI * 2;
+          points[idx] = {
+            ax: px,
+            ay: py,
+            phase,
+          };
+        }
+      }
+    }
 
-			// helper to compute index
-			const idx = (x, y) => y * cols + x;
+    function sampleParallax() {
+      const host = parentRef?.current || container;
+      const mx =
+        parseFloat(getComputedStyle(host).getPropertyValue("--mx")) || 0;
+      const my =
+        parseFloat(getComputedStyle(host).getPropertyValue("--my")) || 0;
+      return { mx, my };
+    }
 
-			// draw connections (only right and down to avoid duplicates)
-			for (let y = 0; y < rows; y++) {
-				for (let x = 0; x < cols; x++) {
-					const p = points[idx(x, y)];
-					if (!p) continue;
-					const jitter = Math.sin(t * speed + p.phase); // Apply for mobile too
-					const px = p.ax + ox + jitter * amp;
-					const py = p.ay + oy + Math.cos(t * speed + p.phase) * amp * (isMobile ? 0.4 : 0.6);
+    function draw(now) {
+      const t = (now - t0) / 1000;
+      ctx.clearRect(0, 0, width, height);
 
-					// right neighbor
-					if (x + 1 < cols) {
-						const pr = points[idx(x + 1, y)];
-						if (pr) { // Check if the right neighbor exists
-							const jr = Math.sin(t * speed + pr.phase);
-							const prx = pr.ax + ox + jr * amp;
-							const pry = pr.ay + oy + Math.cos(t * speed + pr.phase) * amp * (isMobile ? 0.4 : 0.6);
-							ctx.beginPath();
-							ctx.moveTo(px, py);
-							ctx.lineTo(prx, pry);
-							ctx.stroke();
-						}
-					}
-					// down neighbor
-					if (y + 1 < rows) {
-						const pd = points[idx(x, y + 1)];
-						if (pd) { // Check if the down neighbor exists
-							const jd = Math.sin(t * speed + pd.phase);
-							const pdx = pd.ax + ox + jd * amp;
-							const pdy = pd.ay + oy + Math.cos(t * speed + pd.phase) * amp * (isMobile ? 0.4 : 0.6);
-							ctx.beginPath();
-							ctx.moveTo(px, py);
-							ctx.lineTo(pdx, pdy);
-							ctx.stroke();
-						}
-					}
-				}
-			}
+      // colors via CSS variables with fallbacks - cache these for better performance
+      const brand = getCSSVar(
+        document.documentElement,
+        "--brand-primary",
+        "#5b8cff"
+      );
+      const brand2 = getCSSVar(
+        document.documentElement,
+        "--brand-secondary",
+        "#06b6d4"
+      );
+      const isCurrentlyLight = isLightTheme;
+      const { mx, my } = sampleParallax();
 
-			// draw nodes lightly on top
-			ctx.globalAlpha = isMobile ? 0.8 : 0.75; // Slightly increased opacity for mobile
-			for (let y = 0; y < rows; y++) {
-				for (let x = 0; x < cols; x++) {
-					const p = points[idx(x, y)];
-					if (!p) continue; // Skip if point doesn't exist
-					const jitter = Math.sin(t * speed + p.phase); // Apply for mobile too
-					const px = p.ax + ox + jitter * amp;
-					const py = p.ay + oy + Math.cos(t * speed + p.phase) * amp * (isMobile ? 0.4 : 0.6);
-					ctx.beginPath();
-					ctx.fillStyle = brand;
-					ctx.arc(px, py, isMobile ? 1.5 : 1.2, 0, Math.PI * 2); // Slightly larger nodes for mobile
-					ctx.fill();
-				}
-			}
+      // Enhanced parallax effect with better performance optimization
+      // More pronounced in light mode for better visibility, reduced for mobile
+      const parallaxStrength = isCurrentlyLight ? 1.1 : 1.0; // Increased strength for light mode
 
-			// Continue animation for all devices
-			rafRef.current = requestAnimationFrame(draw);
-		}
+      // Use requestAnimationFrame timestamp for smoother parallax
+      const parallaxSpeed = 0.05;
+      const timeOffset = t * parallaxSpeed;
 
-		// Observe size changes efficiently
-		function start() {
-			size();
-			if (rafRef.current) cancelAnimationFrame(rafRef.current);
-			rafRef.current = requestAnimationFrame(draw);
-		}
+      // Optimize based on device type and theme
+      const baseX = isMobile ? 4 : 8;
+      const baseY = isMobile ? 2 : 5;
 
-			if ("ResizeObserver" in window) {
-				roRef.current = new ResizeObserver(() => start());
-				roRef.current.observe(container);
-			} else {
-				// Fallback if ResizeObserver is unavailable
-				window.addEventListener("resize", start);
-			}
+      const ox =
+        mx * baseX * parallaxStrength +
+        (isCurrentlyLight ? Math.sin(timeOffset) * 2 : 0);
+      const oy =
+        my * baseY * parallaxStrength +
+        (isCurrentlyLight ? Math.cos(timeOffset) * 1 : 0);
 
-		start();
+      // Optimize animation parameters for performance and visual appeal
+      // Better calculations for light/dark mode and device type
+      let amp = 0;
+      let speed = 0;
 
-		return () => {
-			if (rafRef.current) cancelAnimationFrame(rafRef.current);
-			if (roRef.current) roRef.current.disconnect();
-			if (!("ResizeObserver" in window)) window.removeEventListener("resize", start);
-		};
-	}, [parentRef, isMobile]);
+      if (!prefersReduced) {
+        if (isMobile) {
+          // Optimized for mobile, with light mode enhancement
+          amp = Math.min(3, spacing * (isCurrentlyLight ? 0.09 : 0.06)); // Increased amplitude for light mode
+          speed = isCurrentlyLight ? 0.35 : 0.25; // Faster in light mode for better visibility
+        } else {
+          // Optimized desktop animation - more pronounced in light mode
+          amp = Math.min(8, spacing * (isCurrentlyLight ? 0.15 : 0.12)); // Increased amplitude for light mode
+          speed = isCurrentlyLight ? 0.7 : 0.6; // Faster animation in light mode for better visibility
+        }
+      }
 
-	return (
-		<div className="neuro-grid-container" style={{ maxWidth: '1600px', margin: '0 auto' }}>
-			<canvas
-				ref={canvasRef}
-				className="fx-canvas"
-				aria-hidden="true"
-				tabIndex="-1" /* Ensures the element is not focusable */
-			/>
-		</div>
-	);
+      // Optimize opacity for maximum visibility in light mode
+      // Significantly higher in light mode for better contrast against light backgrounds
+      const baseAlpha = isCurrentlyLight ? 0.95 : 0.65; // Maximum opacity for light mode
+      const mobileAlpha = isMobile ? baseAlpha * 0.98 : baseAlpha; // Slightly higher for mobile
+      ctx.globalAlpha = mobileAlpha;
+
+      // Create optimized gradient for better visibility
+      const g = ctx.createLinearGradient(0, 0, width, height);
+
+      // Enhanced colors for maximum visibility in light mode
+      if (isCurrentlyLight) {
+        // Use stronger, more saturated colors for light mode
+        g.addColorStop(0, "#1E40AF"); // Darker, stronger blue for maximum contrast in light mode
+        g.addColorStop(0.5, "#2563EB"); // Strong mid-blue for better visibility
+        g.addColorStop(1, "#0891B2"); // Strong cyan for better visibility
+      } else {
+        // Keep original colors for dark mode
+        g.addColorStop(0, brand);
+        g.addColorStop(1, brand2);
+      }
+
+      // Significantly thicker lines in light mode for maximum visibility
+      ctx.lineWidth = isMobile
+        ? isCurrentlyLight
+          ? 1.8
+          : 1.5 // Thicker lines on mobile light mode
+        : isCurrentlyLight
+        ? 1.6
+        : 1.1; // Thicker lines on desktop light mode
+
+      ctx.strokeStyle = g;
+      // Set optimal opacity for current mode
+      ctx.globalAlpha = isMobile
+        ? isCurrentlyLight
+          ? 0.92
+          : 0.85
+        : isCurrentlyLight
+        ? 0.9
+        : 0.65; // Maximum contrast for light mode
+
+      // helper to compute index
+      const idx = (x, y) => y * cols + x;
+
+      // draw connections (only right and down to avoid duplicates)
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const p = points[idx(x, y)];
+          if (!p) continue;
+          const jitter = Math.sin(t * speed + p.phase); // Apply for mobile too
+          const px = p.ax + ox + jitter * amp;
+          const py =
+            p.ay +
+            oy +
+            Math.cos(t * speed + p.phase) * amp * (isMobile ? 0.4 : 0.6);
+
+          // right neighbor
+          if (x + 1 < cols) {
+            const pr = points[idx(x + 1, y)];
+            if (pr) {
+              // Check if the right neighbor exists
+              const jr = Math.sin(t * speed + pr.phase);
+              const prx = pr.ax + ox + jr * amp;
+              const pry =
+                pr.ay +
+                oy +
+                Math.cos(t * speed + pr.phase) * amp * (isMobile ? 0.4 : 0.6);
+              ctx.beginPath();
+              ctx.moveTo(px, py);
+              ctx.lineTo(prx, pry);
+              ctx.stroke();
+            }
+          }
+          // down neighbor
+          if (y + 1 < rows) {
+            const pd = points[idx(x, y + 1)];
+            if (pd) {
+              // Check if the down neighbor exists
+              const jd = Math.sin(t * speed + pd.phase);
+              const pdx = pd.ax + ox + jd * amp;
+              const pdy =
+                pd.ay +
+                oy +
+                Math.cos(t * speed + pd.phase) * amp * (isMobile ? 0.4 : 0.6);
+              ctx.beginPath();
+              ctx.moveTo(px, py);
+              ctx.lineTo(pdx, pdy);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      // Draw nodes with maximum visibility in light mode
+      // Set optimal opacity for nodes
+      ctx.globalAlpha = isMobile
+        ? isCurrentlyLight
+          ? 0.98
+          : 0.9 // Almost full opacity for light mode on mobile
+        : isCurrentlyLight
+        ? 0.97
+        : 0.75; // Nearly full opacity for light mode on desktop
+
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const p = points[idx(x, y)];
+          if (!p) continue; // Skip if point doesn't exist
+
+          const jitter = Math.sin(t * speed + p.phase);
+          const px = p.ax + ox + jitter * amp;
+          const py =
+            p.ay +
+            oy +
+            Math.cos(t * speed + p.phase) * amp * (isMobile ? 0.4 : 0.6);
+
+          ctx.beginPath();
+          // Use much darker, more saturated color for nodes in light mode
+          ctx.fillStyle = isCurrentlyLight
+            ? "#1E3A8A" // Very dark blue for maximum contrast in light mode
+            : brand;
+
+          // Much larger nodes in light mode for maximum visibility
+          const nodeSize = isMobile
+            ? isCurrentlyLight
+              ? 2.2
+              : 2.0 // Larger nodes on mobile light mode
+            : isCurrentlyLight
+            ? 2.0
+            : 1.2; // Much larger nodes on desktop light mode
+
+          ctx.arc(px, py, nodeSize, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Continue animation for all devices
+      rafRef.current = requestAnimationFrame(draw);
+    }
+
+    // Observe size changes efficiently
+    function start() {
+      size();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(draw);
+    }
+
+    if ("ResizeObserver" in window) {
+      roRef.current = new ResizeObserver(() => start());
+      roRef.current.observe(container);
+    } else {
+      // Fallback if ResizeObserver is unavailable
+      window.addEventListener("resize", start);
+    }
+
+    start();
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (roRef.current) roRef.current.disconnect();
+      if (!("ResizeObserver" in window))
+        window.removeEventListener("resize", start);
+    };
+  }, [parentRef, isMobile, isLightTheme]); // Include isLightTheme in dependencies
+
+  return (
+    <div
+      className={`neuro-grid-container ${
+        isLightTheme ? "light-mode" : "dark-mode"
+      }`}
+      style={{
+        maxWidth: "1600px",
+        margin: "0 auto",
+        position: "relative",
+        // Enhanced background gradient for better contrast in light mode
+        background: isLightTheme
+          ? "linear-gradient(180deg, rgba(235,242,254,0.8) 0%, rgba(240,249,255,0.4) 100%)"
+          : "transparent",
+      }}
+    >
+      <canvas
+        ref={canvasRef}
+        className="fx-canvas"
+        aria-hidden="true"
+        tabIndex="-1" /* Ensures the element is not focusable */
+      />
+    </div>
+  );
 }
 export default NeuroGrid;

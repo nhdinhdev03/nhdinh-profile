@@ -5,6 +5,26 @@ import ScrollToTop from "router/ScrollToHash";
 import { NotificationContextProvider, PageTransition } from "components";
 import { useEffect } from "react";
 
+// Initialize theme before app renders to prevent flash of wrong theme
+(function initializeTheme() {
+  try {
+    const storedTheme = localStorage.getItem('userTheme');
+    const root = document.documentElement;
+    
+    if (storedTheme === 'dark') {
+      root.classList.add('dark');
+      root.style.colorScheme = 'dark';
+    } else {
+      // Default to light mode if no preference or 'light' is stored
+      localStorage.setItem('userTheme', 'light');
+      root.classList.remove('dark');
+      root.style.colorScheme = 'light';
+    }
+  } catch (e) {
+    // Ignore errors (private browsing etc)
+  }
+})();
+
 // Resource Prefetcher component to preload critical resources
 const ResourcePrefetcher = () => {
   useEffect(() => {

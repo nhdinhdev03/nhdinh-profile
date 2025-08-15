@@ -16,9 +16,14 @@ const UserThemeCtx = createContext({
 
 function getInitialLight() {
   try {
+    // Check local storage first
     const stored = localStorage.getItem("userTheme");
     if (stored === "light") return { light: true, source: "user" };
     if (stored === "dark") return { light: false, source: "user" };
+    
+    // If no stored preference, set light as default and save it
+    localStorage.setItem("userTheme", "light");
+    return { light: true, source: "user" };
   } catch (e) {
     // ignore (private mode / unavailable)
   }
@@ -26,7 +31,20 @@ function getInitialLight() {
 }
 
 export function UserThemeProvider({ children }) {
-  const [{ light, source }, setState] = useState(getInitialLight);
+  // Apply initial theme immediately before React hydration
+  const initialTheme = getInitialLight();
+  if (typeof document !== 'undefined') {
+    const root = document.documentElement;
+    if (initialTheme.light) {
+      root.classList.remove("dark");
+      root.style.colorScheme = "light";
+    } else {
+      root.classList.add("dark");
+      root.style.colorScheme = "dark";
+    }
+  }
+
+  const [{ light, source }, setState] = useState(initialTheme);
 
   useEffect(() => {
     const root = document.documentElement;

@@ -8,6 +8,7 @@ import {
   EyeIcon,
   FunnelIcon
 } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../components/Admin';
 
 const HistoryLogs = () => {
   const [logs] = useState([
@@ -117,28 +118,28 @@ const HistoryLogs = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Lịch sử thay đổi</h1>
-          <p className="text-gray-500">Theo dõi tất cả hoạt động trong hệ thống</p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          >
-            {actionTypes.map((type) => (
-              <option key={type.value} value={type.value}>{type.label}</option>
-            ))}
-          </select>
-          <button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-            <FunnelIcon className="h-4 w-4 mr-2" />
-            Bộ lọc
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Lịch sử thay đổi"
+        subtitle="Theo dõi tất cả hoạt động trong hệ thống"
+        icon={ClockIcon}
+        actions={
+          <div className="flex items-center space-x-3">
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            >
+              {actionTypes.map((type) => (
+                <option key={type.value} value={type.value}>{type.label}</option>
+              ))}
+            </select>
+            <button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+              <FunnelIcon className="h-4 w-4 mr-2" />
+              Bộ lọc
+            </button>
+          </div>
+        }
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">

@@ -8,6 +8,7 @@ import {
   ShieldCheckIcon,
   ClockIcon
 } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../components/Admin';
 
 const AccountsManagement = () => {
   const [users, setUsers] = useState([
@@ -147,20 +148,20 @@ const AccountsManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Quản lý Tài khoản</h1>
-          <p className="text-gray-500">Quản lý người dùng và phân quyền</p>
-        </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-        >
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Thêm người dùng
-        </button>
-      </div>
+      <PageHeader
+        title="Quản lý Tài khoản"
+        subtitle="Quản lý người dùng và phân quyền"
+        icon={UserGroupIcon}
+        actions={
+          <button
+            onClick={() => setShowForm(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+          >
+            <PlusIcon className="h-4 w-4 mr-2" />
+            Thêm người dùng
+          </button>
+        }
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

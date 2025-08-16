@@ -14,7 +14,8 @@ import {
   Textarea, 
   Select, 
   useToast,
-  ConfirmModal 
+  ConfirmModal,
+  PageHeader
 } from '../../../components/Admin';
 
 const Settings = () => {
@@ -358,28 +359,27 @@ const Settings = () => {
       animate={{ opacity: 1 }}
       className="space-y-6"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Cài đặt hệ thống</h1>
-          <p className="text-gray-500 mt-1">Quản lý và cấu hình hệ thống</p>
-        </div>
-        
-        <div className="flex space-x-3">
-          <Button
-            variant="secondary"
-            onClick={() => setShowResetModal(true)}
-          >
-            Khôi phục mặc định
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleSave}
-          >
-            Lưu thay đổi
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Cài đặt hệ thống"
+        subtitle="Quản lý và cấu hình hệ thống"
+        icon={CogIcon}
+        actions={
+          <div className="flex space-x-3">
+            <Button
+              variant="secondary"
+              onClick={() => setShowResetModal(true)}
+            >
+              Khôi phục mặc định
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleSave}
+            >
+              Lưu thay đổi
+            </Button>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Settings Navigation */}

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from "react"
 import "./TechMarquee.scss";
 import useIsMobile from "hooks/useIsMobile";
 
+
 // Inline SVG logos with React.memo for performance
 const Logo = React.memo(({ type }) => {
   switch (type) {
@@ -443,7 +444,14 @@ function TechMarquee({ direction = "ltr", speed }) {
       aria-label="Công nghệ sử dụng"
     >
       <div className="container">
-        <h2 className="sec-title">Công Nghệ & Công Cụ</h2>
+        <div className="tech__header">
+          <h2 className="sec-titles">
+            <span className="highlight">Công Nghệ & Công Cụ</span>
+          </h2>
+          <p className="tech__subtitle">
+            Khám phá những công nghệ hiện đại trong hành trình phát triển
+          </p>
+        </div>
         {/* Fade slideshow (all breakpoints) */}
         <div
           className="logos-slideshow"

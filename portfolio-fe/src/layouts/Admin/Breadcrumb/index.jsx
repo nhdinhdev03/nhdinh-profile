@@ -90,7 +90,7 @@ const  AdminBreadcrumb = ({
   if (crumbs.length === 1) return null;
 
   return (
-    <div className={`bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 ${className}`}>
+    <div className={`bg-white border-b border-gray-200 ${className}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-3">
           {/* Breadcrumb Navigation */}
@@ -102,13 +102,13 @@ const  AdminBreadcrumb = ({
               return (
                 <React.Fragment key={item.path}>
                   {idx > 0 && (
-                    <ChevronRightIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                    <ChevronRightIcon className="h-4 w-4 text-gray-400" />
                   )}
                   
                   <div className="flex items-center">
                     {isLast ? (
                       <span 
-                        className="flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400"
+                        className="flex items-center gap-1.5 text-sm font-medium text-blue-600"
                         aria-current="page"
                       >
                         {IconComponent && (
@@ -119,7 +119,7 @@ const  AdminBreadcrumb = ({
                     ) : (
                       <Link
                         to={item.path}
-                        className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors duration-200 px-2 py-1 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
+                        className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200 px-2 py-1 rounded-md hover:bg-gray-50"
                       >
                         {IconComponent && (
                           <IconComponent className="h-4 w-4" />

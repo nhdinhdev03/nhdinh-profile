@@ -5,7 +5,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import PropTypes from 'prop-types';
 import "./UserStyles.scss";
+import "../ThemeTransitions.scss";
 
 const UserThemeCtx = createContext({
   light: true,
@@ -15,17 +17,34 @@ const UserThemeCtx = createContext({
 });
 
 function getInitialLight() {
-  try {
-    // Check local storage first
-    const stored = localStorage.getItem("userTheme");
-    if (stored === "light") return { light: true, source: "user" };
-    if (stored === "dark") return { light: false, source: "user" };
-    
-    // If no stored preference, set light as default and save it
-    localStorage.setItem("userTheme", "light");
-    return { light: true, source: "user" };
-  } catch (e) {
-    // ignore (private mode / unavailable)
+  // Check local storage first (guard SSR / private mode)
+  if (typeof window !== 'undefined') {
+    try {
+      // First check if preload script already set the theme
+      const isCurrentlyDark = document.documentElement.classList.contains('dark');
+      const stored = window.localStorage.getItem("userTheme");
+      
+      if (stored === "light") return { light: true, source: "user" };
+      if (stored === "dark") return { light: false, source: "user" };
+      
+      // If no stored preference but DOM has dark class from preload, respect it
+      if (isCurrentlyDark) {
+        window.localStorage.setItem("userTheme", "dark");
+        return { light: false, source: "user" };
+      }
+      
+      // Default to light and save it
+      window.localStorage.setItem("userTheme", "light");
+      return { light: true, source: "user" };
+    } catch (e) {
+      // If storage inaccessible (private mode), fall back to current DOM state
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.warn('UserTheme: cannot access localStorage', e);
+      }
+      const isCurrentlyDark = document.documentElement.classList.contains('dark');
+      return { light: !isCurrentlyDark, source: "system" };
+    }
   }
   return { light: true, source: "system" };
 }
@@ -35,6 +54,10 @@ export function UserThemeProvider({ children }) {
   const initialTheme = getInitialLight();
   if (typeof document !== 'undefined') {
     const root = document.documentElement;
+    
+    // Mark as loading to disable transitions initially
+    root.classList.add('loading');
+    
     if (initialTheme.light) {
       root.classList.remove("dark");
       root.style.colorScheme = "light";
@@ -46,8 +69,23 @@ export function UserThemeProvider({ children }) {
 
   const [{ light, source }, setState] = useState(initialTheme);
 
+  // Remove loading class after component mounts
   useEffect(() => {
     const root = document.documentElement;
+    // Small delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      root.classList.remove('loading');
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    
+    // Add temporary class to indicate theme is switching (for CSS optimizations)
+    root.classList.add('theme-switching');
+    
     if (light) {
       root.classList.remove("dark");
       root.style.colorScheme = "light";
@@ -55,7 +93,26 @@ export function UserThemeProvider({ children }) {
       root.classList.add("dark");
       root.style.colorScheme = "dark";
     }
+    
+    // Remove switching class after transition
+    const timeoutId = setTimeout(() => {
+      root.classList.remove('theme-switching');
+    }, 250);
+    
+    return () => clearTimeout(timeoutId);
   }, [light]);
+
+  // Cleanup on unmount: khi thoát khỏi layout User, Admin sẽ luôn quay về light
+  useEffect(() => {
+    return () => {
+      const root = document.documentElement;
+      // Only reset if we are leaving a dark state to avoid flicker if another provider would manage it
+      if (root.classList.contains('dark')) {
+        root.classList.remove("dark");
+        root.style.colorScheme = "light";
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (source === "user") {
@@ -92,3 +149,7 @@ export function UserThemeProvider({ children }) {
 export function useUserTheme() {
   return useContext(UserThemeCtx);
 }
+
+UserThemeProvider.propTypes = {
+  children: PropTypes.node
+};

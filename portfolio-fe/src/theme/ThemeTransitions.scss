@@ -1,0 +1,70 @@
+/* Theme Transition Optimizations - Apply globally */
+
+/* Smooth color transitions for all themed elements */
+*,
+*::before,
+*::after {
+  transition: 
+    background-color 200ms ease-out,
+    border-color 200ms ease-out,
+    color 200ms ease-out,
+    fill 200ms ease-out,
+    stroke 200ms ease-out,
+    box-shadow 200ms ease-out;
+}
+
+/* Disable transitions during route changes to prevent flash */
+html.route-changing *,
+html.route-changing *::before,
+html.route-changing *::after {
+  transition: none !important;
+  animation-duration: 0s !important;
+}
+
+/* Prevent transition on initial page load */
+html.loading *,
+html.loading *::before,
+html.loading *::after {
+  transition: none !important;
+}
+
+/* Re-enable after initial load */
+html:not(.loading) * {
+  transition: 
+    background-color 200ms ease-out,
+    border-color 200ms ease-out,
+    color 200ms ease-out,
+    fill 200ms ease-out,
+    stroke 200ms ease-out,
+    box-shadow 200ms ease-out;
+}
+
+/* Special handling for images and media */
+img, 
+video,
+canvas,
+svg {
+  transition: opacity 200ms ease-out, filter 200ms ease-out;
+}
+
+/* Theme-specific optimizations */
+.dark {
+  color-scheme: dark;
+}
+
+html:not(.dark) {
+  color-scheme: light;
+}
+
+/* Prevent color-scheme flicker during transitions */
+html {
+  color-scheme: light; /* default, overridden by JS */
+}
+
+/* Performance optimizations for theme switches */
+.theme-switching {
+  /* Temporarily disable expensive animations during theme change */
+  * {
+    animation-play-state: paused !important;
+  }
+}

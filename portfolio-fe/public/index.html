@@ -27,22 +27,38 @@
     <title>Nhdinh | Developer Portfolio</title>
     <script>
       /*
-       * Prevent initial light flash: apply stored theme or default dark ASAP.
+       * Prevent FOUC (Flash of Unstyled Content): apply theme immediately
+       * - Check route to determine if Admin (always light) or User (stored preference)
+       * - For User: check userTheme localStorage key, default to light
+       * - For Admin: always light mode
        */
       (function () {
         try {
-          var stored = localStorage.getItem('theme');
-          var wantLight = stored === 'light';
-          if (stored === 'dark' || !wantLight) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.style.colorScheme = 'dark';
-          } else if (wantLight) {
+          var path = window.location.pathname;
+          var isAdminRoute = path.startsWith('/admin');
+          
+          if (isAdminRoute) {
+            // Admin always light
             document.documentElement.classList.remove('dark');
             document.documentElement.style.colorScheme = 'light';
+          } else {
+            // User area: check stored preference
+            var stored = localStorage.getItem('userTheme');
+            var wantLight = stored === 'light' || !stored; // default light if no preference
+            
+            if (wantLight) {
+              document.documentElement.classList.remove('dark');
+              document.documentElement.style.colorScheme = 'light';
+            } else {
+              document.documentElement.classList.add('dark');
+              document.documentElement.style.colorScheme = 'dark';
+            }
           }
         } catch (e) {
-          document.documentElement.classList.add('dark');
-          document.documentElement.style.colorScheme = 'dark';
+          // Fallback to light mode if localStorage unavailable (private mode)
+          console.warn('Theme initialization failed:', e.message);
+          document.documentElement.classList.remove('dark');
+          document.documentElement.style.colorScheme = 'light';
         }
       })();
     </script>
@@ -61,29 +77,4 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
-  <!-- <script>
-  // ===== Chặn chuột phải =====
-  document.addEventListener("contextmenu", function (event) {
-    event.preventDefault();
-    alert("⚠️ Chuột phải đã bị vô hiệu hóa!");
-  });
-
-  // ===== Chặn phím tắt DevTools =====
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "F12" ||
-       (event.ctrlKey && event.shiftKey && (event.key === "I" || event.key === "J")) ||
-       (event.ctrlKey && event.key.toLowerCase() === "u")) {
-      event.preventDefault();
-      alert("⚠️ DevTools đã bị chặn!");
-    }
-  });
-
-  // ===== Phát hiện DevTools mở qua kích thước =====
-  setInterval(function () {
-    if (window.outerWidth - window.innerWidth > 160 || 
-        window.outerHeight - window.innerHeight > 160) {
-      alert("⚠️ Bạn đang mở DevTools! Hãy đóng lại.");
-    }
-  }, 1000);
-</script> -->
 </html>

@@ -45,7 +45,7 @@ function HomeIndex() {
       </div>
 
 
-      <div className="content-sections-with-grid">
+      <div>
         <TechMarquee />
 
         {/* Stats placeholder */}

@@ -59,17 +59,7 @@
       position: relative;
       z-index: 1;
       
-      &::after {
-        content: "";
-        position: absolute;
-        bottom: 4px;
-        left: -2%;
-        width: 104%;
-        height: 10px;
-        background: color-mix(in srgb, var(--brand, #5b8cff) 20%, transparent);
-        z-index: -1;
-        border-radius: 4px;
-      }
+     
     }
   }
 }

@@ -3,6 +3,7 @@ package com.nhdinh.profile.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,7 +23,11 @@ import lombok.Data;
 public abstract class BaseEntity {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
     @Column(name = "Id", columnDefinition = "UNIQUEIDENTIFIER")
     private UUID id;
     
@@ -33,12 +38,14 @@ public abstract class BaseEntity {
     @Column(name = "CreatedBy", columnDefinition = "UNIQUEIDENTIFIER")
     private UUID createdBy;
     
-    @LastModifiedDate
-    @Column(name = "UpdatedAt")
-    private LocalDateTime updatedAt;
-    
-    @Column(name = "UpdatedBy", columnDefinition = "UNIQUEIDENTIFIER")
-    private UUID updatedBy;
+    // Note: UpdatedAt and UpdatedBy are not in current database schema
+    // Uncomment these when database is updated:
+    // @LastModifiedDate
+    // @Column(name = "UpdatedAt")
+    // private LocalDateTime updatedAt;
+    // 
+    // @Column(name = "UpdatedBy", columnDefinition = "UNIQUEIDENTIFIER")
+    // private UUID updatedBy;
     
     @Column(name = "IsDeleted", nullable = false)
     private Boolean isDeleted = false;

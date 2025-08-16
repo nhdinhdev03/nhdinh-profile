@@ -10,7 +10,7 @@ import {
 
 const AdminTable = ({ 
   columns, 
-  data, 
+  data = [], // Add default empty array
   loading = false,
   searchable = true,
   sortable = true,
@@ -39,6 +39,11 @@ const AdminTable = ({
 
   // Filter and sort data
   const processedData = React.useMemo(() => {
+    // Guard against undefined data
+    if (!Array.isArray(data)) {
+      return [];
+    }
+    
     let filtered = [...data];
 
     // Search filter
@@ -188,7 +193,7 @@ const AdminTable = ({
                   >
                     {columns.map((column) => (
                       <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {column.render ? column.render(row[column.key], row) : row[column.key]}
+                        {column.render ? column.render(row) : row[column.key]}
                       </td>
                     ))}
                   </motion.tr>
@@ -254,7 +259,7 @@ AdminTable.propTypes = {
     sortable: PropTypes.bool,
     render: PropTypes.func
   })).isRequired,
-  data: PropTypes.array.isRequired,
+  data: PropTypes.array,
   loading: PropTypes.bool,
   searchable: PropTypes.bool,
   sortable: PropTypes.bool,

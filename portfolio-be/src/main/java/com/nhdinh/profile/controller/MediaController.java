@@ -38,6 +38,15 @@ public class MediaController {
         return ResponseEntity.ok(mediaPage);
     }
     
+    @GetMapping("/all")
+    public ResponseEntity<List<Media>> getAllMediaSimple() {
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
+        Page<Media> mediaPage = mediaRepository.findAllActive(pageable);
+        
+        return ResponseEntity.ok(mediaPage.getContent());
+    }
+    
     @GetMapping("/{id}")
     public ResponseEntity<Media> getMediaById(@PathVariable UUID id) {
         Optional<Media> media = mediaRepository.findByIdActive(id);

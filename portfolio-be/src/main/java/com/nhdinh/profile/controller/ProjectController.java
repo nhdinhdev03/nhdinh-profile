@@ -28,8 +28,8 @@ public class ProjectController {
     public ResponseEntity<Page<Project>> getAllProjects(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "sortOrder") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
         
         Sort sort = sortDir.equalsIgnoreCase("desc") 
             ? Sort.by(sortBy).descending() 
@@ -39,6 +39,15 @@ public class ProjectController {
         Page<Project> projectPage = projectRepository.findAllActive(pageable);
         
         return ResponseEntity.ok(projectPage);
+    }
+    
+    @GetMapping("/all")
+    public ResponseEntity<List<Project>> getAllProjectsSimple() {
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
+        Page<Project> projectPage = projectRepository.findAllActive(pageable);
+        
+        return ResponseEntity.ok(projectPage.getContent());
     }
     
     @GetMapping("/{id}")

@@ -31,7 +31,7 @@ public class BlogPostController {
     public ResponseEntity<Page<BlogPost>> getAllBlogPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "publishedAt") String sortBy,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir) {
         
         Sort sort = sortDir.equalsIgnoreCase("desc") 
@@ -42,6 +42,15 @@ public class BlogPostController {
         Page<BlogPost> postPage = blogPostRepository.findAllActive(pageable);
         
         return ResponseEntity.ok(postPage);
+    }
+    
+    @GetMapping("/all")
+    public ResponseEntity<List<BlogPost>> getAllBlogPostsSimple() {
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
+        Page<BlogPost> postPage = blogPostRepository.findAllActive(pageable);
+        
+        return ResponseEntity.ok(postPage.getContent());
     }
     
     @GetMapping("/published")

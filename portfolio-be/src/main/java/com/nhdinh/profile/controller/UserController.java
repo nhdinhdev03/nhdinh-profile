@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +36,15 @@ public class UserController {
         Page<User> userPage = userRepository.findAllActive(pageable);
         
         return ResponseEntity.ok(userPage);
+    }
+    
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUsersSimple() {
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
+        Page<User> userPage = userRepository.findAllActive(pageable);
+        
+        return ResponseEntity.ok(userPage.getContent());
     }
     
     @GetMapping("/{id}")

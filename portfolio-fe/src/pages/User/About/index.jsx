@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 
 import "./Sections.scss";
 import { useUserTheme } from "theme";
-import Loading, { ProfileLoading, StatsLoading, ProjectsLoading } from "components/UI/Loading";
-import "components/UI/Loading/Loading.scss";
+
+
 
 // Optimized GitHub data hook
 const useGithubData = () => {
@@ -308,94 +308,11 @@ const ContactSection = ({ profile, light }) => (
 
 // Main About Component
 const About = () => {
-  const { profile, repos, loading, error } = useGithubData();
+  const { profile, repos } = useGithubData();
   const { light } = useUserTheme();
 
-  if (loading) {
-    return (
-      <div className={`about-page ${light ? 'light-theme' : 'dark-theme'}`}>
-        <AboutHeader />
-        <div className="gradient-line" aria-hidden="true" />
-        <ProfileLoading light={light} />
-        <div className="gradient-line" aria-hidden="true" />
-        <StatsLoading />
-        <div className="gradient-line" aria-hidden="true" />
-        <Loading 
-          variant="skeleton" 
-          className="skills-loading"
-          text="Loading skills..."
-        >
-          <div className="skills-skeleton">
-            {Array.from({ length: 3 }, (_, index) => (
-              <div key={index} className="skill-category-skeleton">
-                <div className="skill-header-skeleton">
-                  <div className="skill-icon-skeleton" style={{ width: '40px', height: '40px', borderRadius: '8px' }} />
-                  <div className="skill-title-skeleton" style={{ width: '120px', height: '24px' }} />
-                </div>
-                <div className="skill-tags-skeleton">
-                  {Array.from({ length: 6 }, (_, tagIndex) => (
-                    <div key={tagIndex} style={{ width: `${60 + tagIndex * 10}px`, height: '24px', borderRadius: '12px', marginBottom: '8px' }} />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </Loading>
-        <div className="gradient-line" aria-hidden="true" />
-        <ProjectsLoading />
-        <div className="gradient-line" aria-hidden="true" />
-        <Loading 
-          variant="skeleton" 
-          className="timeline-loading"
-          text="Loading experience..."
-        >
-          <div className="timeline-skeleton">
-            {Array.from({ length: 3 }, (_, index) => (
-              <div key={index} className="timeline-item-skeleton">
-                <div style={{ width: '120px', height: '20px', marginBottom: '8px' }} />
-                <div style={{ width: '250px', height: '24px', marginBottom: '4px' }} />
-                <div style={{ width: '180px', height: '20px', marginBottom: '8px' }} />
-                <div style={{ width: '100%', height: '40px' }} />
-              </div>
-            ))}
-          </div>
-        </Loading>
-        <div className="gradient-line" aria-hidden="true" />
-        <Loading 
-          variant="skeleton" 
-          className="contact-loading"
-          text="Loading contact info..."
-        >
-          <div className="contact-skeleton">
-            <div style={{ width: '200px', height: '32px', margin: '0 auto 16px' }} />
-            <div style={{ width: '100%', height: '48px', margin: '0 auto 24px' }} />
-            <div className="contact-badges-skeleton" style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
-              <div style={{ width: '80px', height: '36px', borderRadius: '18px' }} />
-              <div style={{ width: '90px', height: '36px', borderRadius: '18px' }} />
-              <div style={{ width: '85px', height: '36px', borderRadius: '18px' }} />
-            </div>
-          </div>
-        </Loading>
-      </div>
-    );
-  }
   
-  if (error) {
-    return (
-      <div className={`about-page ${light ? 'light-theme' : 'dark-theme'}`}>
-        <div className="error-state">
-          <h3>⚠️ Unable to load profile data</h3>
-          <p>Error: {error.message}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="retry-button"
-          >
-            🔄 Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className={`about-page ${light ? 'light' : ''}`}>

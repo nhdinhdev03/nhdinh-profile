@@ -1,0 +1,186 @@
+/* Loading Page Styles */
+
+.loading-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  transition: all 0.3s ease;
+  
+  .dark & {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+  
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  &__logo {
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeInUp 0.8s ease-out 0.2s forwards;
+    
+    &-img {
+      max-width: 80px;
+      max-height: 80px;
+      object-fit: contain;
+    }
+  }
+  
+  &__spinner {
+    opacity: 0;
+    transform: scale(0.8);
+    animation: fadeInScale 0.8s ease-out 0.4s forwards;
+  }
+  
+  &__message {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #475569;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 0.6s forwards;
+    
+    .dark & {
+      color: #cbd5e1;
+    }
+  }
+  
+  &__progress {
+    width: 200px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 0.8s forwards;
+    
+    &-bar {
+      width: 100%;
+      height: 4px;
+      background: #e2e8f0;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+      
+      .dark & {
+        background: #334155;
+      }
+    }
+    
+    &-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        animation: progressShimmer 2s infinite;
+      }
+    }
+    
+    &-text {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #64748b;
+      
+      .dark & {
+        color: #94a3b8;
+      }
+    }
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes progressShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .loading-page {
+    &__container {
+      gap: 1.5rem;
+      padding: 1.5rem;
+    }
+    
+    &__logo-img {
+      max-width: 60px;
+      max-height: 60px;
+    }
+    
+    &__message {
+      font-size: 1rem;
+    }
+    
+    &__progress {
+      width: 160px;
+    }
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .loading-page {
+    &__logo,
+    &__spinner,
+    &__message,
+    &__progress {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+    
+    &__progress-fill::after {
+      animation: none;
+    }
+  }
+}

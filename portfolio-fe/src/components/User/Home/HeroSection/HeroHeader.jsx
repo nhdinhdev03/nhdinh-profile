@@ -256,7 +256,7 @@ function HeroCtaButtons({ itemVariants }) {
           className="cta-button cta-button--primary"
           to={ROUTES.PROJECTS}
         >
-          <span>Khám Phá Dự Án</span>
+          <span>Dự Án</span>
           <span className="button-icon">
             <svg
               width="18"
@@ -280,7 +280,7 @@ function HeroCtaButtons({ itemVariants }) {
           className="cta-button cta-button--secondary"
           to={ROUTES.CONTACT}
         >
-          <span>Liên Hệ Ngay</span>
+          <span>Liên Hệ</span>
           <span className="button-icon">
             <svg
               width="18"

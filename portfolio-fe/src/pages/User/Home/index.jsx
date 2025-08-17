@@ -1,15 +1,10 @@
 import React, { Suspense, useEffect, useState, useRef } from "react";
 import "./HomeIndex.scss";
-import { HeroSection, TechMarquee } from "components";
+import { HeroSection, ProjectShowcase, StatsStrip, TechMarquee } from "components";
 import useIsMobile from "hooks/useIsMobile";
 
 // Lazy load heavier sections
-const StatsStrip = React.lazy(() =>
-  import("components/User/Home/StatsStrip/StatsStrip")
-);
-const ProjectShowcase = React.lazy(() =>
-  import("components/User/Home/ProjectShowcase/ProjectShowcase")
-);
+
 
 function HomeIndex() {
   const [showStats, setShowStats] = useState(false);

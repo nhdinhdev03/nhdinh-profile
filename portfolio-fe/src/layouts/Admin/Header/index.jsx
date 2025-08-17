@@ -20,17 +20,17 @@ const Header = ({ setSidebarOpen, currentPath }) => {
   const getPageTitle = () => {
     const pathTitles = {
       [ROUTES.ADMIN.DASHBOARD]: 'Dashboard',
-      [ROUTES.ADMIN.HOME_MANAGEMENT]: 'Quản lý Trang chủ',
-      [ROUTES.ADMIN.ABOUT_MANAGEMENT]: 'Quản lý Giới thiệu',
-      [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: 'Quản lý Dự án',
-      [ROUTES.ADMIN.BLOG_MANAGEMENT]: 'Quản lý Blog',
-      [ROUTES.ADMIN.CONTACT_MANAGEMENT]: 'Quản lý Liên hệ',
-      [ROUTES.ADMIN.ACCOUNTS_MANAGEMENT]: 'Quản lý Tài khoản',
+      [ROUTES.ADMIN.HOME_MANAGEMENT]: 'Trang chủ',
+      [ROUTES.ADMIN.ABOUT_MANAGEMENT]: 'Giới thiệu',
+      [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: 'Dự án',
+      [ROUTES.ADMIN.BLOG_MANAGEMENT]: 'Blog',
+      [ROUTES.ADMIN.CONTACT_MANAGEMENT]: 'Liên hệ',
+      [ROUTES.ADMIN.ACCOUNTS_MANAGEMENT]: 'Tài khoản',
       [ROUTES.ADMIN.HISTORY_LOGS]: 'Lịch sử thay đổi',
       [ROUTES.ADMIN.MEDIA_LIBRARY]: 'Thư viện Media',
-      [ROUTES.ADMIN.ANALYTICS]: 'Thống kê & Phân tích',
-      [ROUTES.ADMIN.SETTINGS]: 'Cài đặt hệ thống',
-      [ROUTES.ADMIN.PROFILE]: 'Hồ sơ cá nhân',
+      [ROUTES.ADMIN.ANALYTICS]: 'Thống kê',
+      [ROUTES.ADMIN.SETTINGS]: 'Cài đặt',
+      [ROUTES.ADMIN.PROFILE]: 'Hồ sơ',
     };
     return pathTitles[currentPath] || 'Admin Portal';
   };

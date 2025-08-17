@@ -1,455 +1,355 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+
 import "./Sections.scss";
-import { Link } from "react-router-dom";
-import { ROUTES } from "router/routeConstants";
+import { useUserTheme } from "theme";
 
-
-const cx = (...cls) => cls.filter(Boolean).join(" ");
-
-
-function useInView(options = {}) {
-  const ref = useRef(null);
-  const [inView, setInView] = useState(false);
-
+// Optimized GitHub data hook
+const useGithubData = () => {
+  const [data, setData] = useState({ profile: null, repos: [], loading: true, error: null });
+  
   useEffect(() => {
-    const el = ref.current;
-    if (!el || inView) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          obs.unobserve(el);
+    let ignore = false;
+    const ctrl = new AbortController();
+    
+    async function fetchData() {
+      try {
+        const [profileRes, reposRes] = await Promise.all([
+          fetch('https://api.github.com/users/nhdinhdev03', { 
+            signal: ctrl.signal, 
+            headers: { Accept: "application/vnd.github+json" }
+          }),
+          fetch('https://api.github.com/users/nhdinhdev03/repos?per_page=6&sort=updated', { 
+            signal: ctrl.signal, 
+            headers: { Accept: "application/vnd.github+json" }
+          })
+        ]);
+        
+        if (!profileRes.ok || !reposRes.ok) throw new Error('Failed to fetch');
+        
+        const [profile, repos] = await Promise.all([profileRes.json(), reposRes.json()]);
+        
+        if (!ignore) {
+          setData({
+            profile,
+            repos: Array.isArray(repos) ? repos.filter(r => !r.archived) : [],
+            loading: false,
+            error: null
+          });
         }
-      },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.15, ...options }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [inView, options]);
-
-  return [ref, inView];
-}
-
-// Generic Reveal wrapper to add animation classes when in view
-function Reveal(props) {
-  const { as: Tag = "div", className = "", children, ...rest } = props;
-  const [ref, inView] = useInView();
-  return (
-    <Tag
-      ref={ref}
-      className={cx("reveal", inView && "in-view", className)}
-      {...rest}
-    >
-      {children}
-    </Tag>
-  );
-}
-
-Reveal.propTypes = {
-  as: PropTypes.elementType,
-  className: PropTypes.string,
-  children: PropTypes.node,
-};
-
-// Static content moved outside to avoid re-creation per render
-// Now aligned to live GitHub stats: Followers, Repositories, Stars, Gists
-const PROFESSIONAL_STATS = [
-  { id: "followers", value: "-", label: "Followers", icon: "�" },
-  { id: "repos", value: "-", label: "Repositories", icon: "🚀" },
-  { id: "stars", value: "-", label: "Stars", icon: "⭐" },
-  { id: "gists", value: "-", label: "Gists", icon: "🧩" },
-];
-
-// (removed) useGithubRepoCount — replaced by useGithubUser to avoid duplicate fetches
-
-// Fetch GitHub user object (followers, gists, etc.)
-function useGithubUser(username = "nhdinhdev03") {
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    const ctrl = new AbortController();
-    let ignore = false;
-    async function load() {
-      try {
-        const res = await fetch(`https://api.github.com/users/${username}`,
-          { signal: ctrl.signal, headers: { Accept: "application/vnd.github+json" } }
-        );
-        if (!res.ok) throw new Error(`GitHub API ${res.status}`);
-        const data = await res.json();
-        if (!ignore) setUser(data);
-      } catch (e) {
-        if (e.name !== "AbortError" && !ignore) setUser(null);
+      } catch (error) {
+        if (!ignore && error.name !== "AbortError") {
+          setData(prev => ({ ...prev, loading: false, error }));
+        }
       }
     }
-    load();
+    
+    fetchData();
     return () => { ignore = true; ctrl.abort(); };
-  }, [username]);
-  return user;
+  }, []);
+  
+  return data;
 }
 
-// Simple in-memory cache for repos to avoid duplicate fetches across components
-const __reposCache = new Map(); // key: username, value: Promise<repos[]>
+// Page Header Section
+const AboutHeader = () => (
+  <header className="about-header">
+    <div className="header-content">
+      <h1 className="page-title">
+        <span className="title-main">About Me</span>
+        <span className="title-subtitle">Giới thiệu</span>
+      </h1>
+      <p className="page-description">
+        Passionate developer with expertise in modern web technologies. 
+        I love creating innovative solutions and sharing knowledge with the community.
+      </p>
+    </div>
+  </header>
+);
 
-async function fetchUserReposCached(username, signal) {
-  if (__reposCache.has(username)) return __reposCache.get(username);
-  const p = (async () => {
-    const res = await fetch(
-      `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
-      { signal, headers: { Accept: "application/vnd.github+json" } }
-    );
-    if (!res.ok) throw new Error(`GitHub API ${res.status}`);
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
-  })();
-  __reposCache.set(username, p);
-  return p;
-}
+const ProfileHero = ({ profile, light }) => (
+  <section className="profile-hero">
+    <div className="profile-image">
+      <img src={profile?.avatar_url || '/default-avatar.png'} alt="Profile" />
+      <div className="profile-status">
+        <span className={`status-badge ${light ? 'light-mode' : 'dark-mode'}`}>
+          {light ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </span>
+      </div>
+    </div>
+    <div className="profile-content">
+      <h1>
+        <span className="name-highlight">{profile?.name || 'Nguyen Hoang Dinh'}</span>
+      </h1>
+      <p className="title">Full Stack Developer & Software Engineer</p>
+      <p className="description">
+        <span className="highlight">
+          {profile?.bio || 'Passionate about creating innovative web solutions with modern technologies.'}
+        </span>
+        <br />
+        <span className="italic">
+          Experienced in React, Node.js, and cloud technologies with a focus on clean, scalable code.
+        </span>
+      </p>
+      <div className="profile-badges">
+        <span className="badge badge-green">Available for Work</span>
+        <span className="badge badge-blue">Open Source Contributor</span>
+        <span className="badge badge-orange">JavaScript Expert</span>
+      </div>
+    </div>
+  </section>
+);
 
-// Sum stargazers across public repos
-function useGithubStarsTotal(username = "nhdinhdev03") {
-  const [stars, setStars] = useState(null);
-  useEffect(() => {
-    const ctrl = new AbortController();
-    let ignore = false;
-    (async () => {
-      try {
-        setStars(null);
-        const repos = await fetchUserReposCached(username, ctrl.signal);
-        const total = repos.reduce((acc, r) => acc + (r.stargazers_count || 0), 0);
-        if (!ignore) setStars(total);
-      } catch (e) {
-        if (e.name !== "AbortError" && !ignore) setStars(null);
-      }
-    })();
-    return () => { ignore = true; ctrl.abort(); };
-  }, [username]);
-  return stars;
-}
-
-// Lightweight GitHub Projects widget
-function GitHubProjects({ username = "nhdinhdev03", max = 6 }) {
-  const [repos, setRepos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const ctrl = new AbortController();
-    async function load() {
-      try {
-        setLoading(true);
-        setError("");
-  const data = await fetchUserReposCached(username, ctrl.signal);
-        const filtered = data
-          .filter((r) => !r.archived && !r.disabled)
-          .sort((a, b) =>
-            (b.stargazers_count - a.stargazers_count) ||
-            new Date(b.updated_at) - new Date(a.updated_at)
-          )
-          .slice(0, max);
-        setRepos(filtered);
-      } catch (e) {
-        if (e.name !== "AbortError") setError("Không tải được dự án từ GitHub.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-    return () => ctrl.abort();
-  }, [username, max]);
-
-  const placeholders = Array.from({ length: max });
-
-  return (
-    <Reveal as="section" className="projects-card" aria-labelledby="projects-heading">
-      {/* <h3 id="projects-heading">Dự án GitHub</h3> */}
-      {error && (
-        <p className="summary-text">
-          {error} <a className="btn" href={`https://github.com/${username}`} target="_blank" rel="noreferrer">Mở GitHub</a>
-        </p>
-      )}
-      <ul className="repo-grid" aria-label="Danh sách dự án GitHub">
-        {loading && placeholders.map((_, i) => (
-          <li key={i} className="repo-card skeleton" aria-hidden="true" />
-        ))}
-
-        {!loading && repos.map((repo, i) => (
-          <Reveal
-            key={repo.id}
-            as="li"
-            className="repo-card"
-            style={{ transitionDelay: `${i * 50}ms` }}
-          >
-            <div className="repo-name">
-              <a href={repo.html_url} target="_blank" rel="noreferrer" title={repo.full_name}>
-                {repo.name}
-              </a>
-            </div>
-            {repo.description && <p className="repo-desc">{repo.description}</p>}
-            <div className="repo-meta">
-              {repo.language && <span className="chip">{repo.language}</span>}
-              <span className="chip">★ {repo.stargazers_count}</span>
-              <span className="chip">⑂ {repo.forks_count}</span>
-              <span className="chip" title={repo.updated_at}>Cập nhật {new Date(repo.updated_at).toLocaleDateString()}</span>
-            </div>
-          </Reveal>
-        ))}
-      </ul>
-    </Reveal>
-  );
-}
-
-GitHubProjects.propTypes = {
-  username: PropTypes.string,
-  max: PropTypes.number,
+ProfileHero.propTypes = {
+  profile: PropTypes.shape({
+    avatar_url: PropTypes.string,
+    name: PropTypes.string,
+    bio: PropTypes.string,
+    html_url: PropTypes.string,
+  }),
+  light: PropTypes.bool.isRequired,
 };
 
-function About() {
-  // Memoize static data so references remain stable
-  const professionalStats = useMemo(() => PROFESSIONAL_STATS, []);
-  const ghUser = useGithubUser("nhdinhdev03");
-  const ghStars = useGithubStarsTotal("nhdinhdev03");
-  const displayedStats = useMemo(() => {
-    return professionalStats.map((s) => {
-      let value = s.value;
-      switch (s.id) {
-        case "followers":
-          value = ghUser && typeof ghUser.followers === "number" ? String(ghUser.followers) : s.value;
-          break;
-        case "repos":
-          value = ghUser && typeof ghUser.public_repos === "number" ? String(ghUser.public_repos) : s.value;
-          break;
-        case "stars":
-          value = typeof ghStars === "number" ? String(ghStars) : s.value;
-          break;
-        case "gists":
-          value = ghUser && typeof ghUser.public_gists === "number" ? String(ghUser.public_gists) : s.value;
-          break;
-        default:
-          break;
-      }
-      return { ...s, value };
-    });
-  }, [professionalStats, ghUser, ghStars]);
+// Quick Stats Section
+const QuickStats = ({ repos, profile }) => {
+  const stats = [
+    { number: repos?.length || 0, label: 'Projects', icon: '🚀' },
+    { number: profile?.followers || 0, label: 'Followers', icon: '👥' },
+    { number: profile?.following || 0, label: 'Following', icon: '🤝' },
+    { number: profile?.public_repos || 0, label: 'Repositories', icon: '📁' }
+  ];
 
   return (
-    <section
-      id="about"
-      className="about-hero about-professional"
-      aria-labelledby="about-title"
-    >
-      <div className="hero__bg" aria-hidden="true" />
-      <div className="containers">
-        <header className="section-head">
-          <div>
-            <h2 id="about-title" className="section-title">
-              Giới thiệu
-            </h2>
-            <p className="section-subtitle" aria-describedby="about-title">
-              Tóm tắt năng lực & thế mạnh nổi bật
-            </p>
-          </div>
-       
-        </header>
-        <div className="gradient-line" aria-hidden="true" />
-
-        {/* Thống kê nổi bật */}
-        <ul className="professional-stats" aria-label="Thống kê chuyên môn">
-      {displayedStats.map((stat, i) => (
-            <Reveal
-              as="li"
-              className="stat-card"
-        key={stat.id}
-              style={{ transitionDelay: `${i * 60}ms` }}
-              aria-label={`${stat.label}: ${stat.value}`}
-            >
-              <div className="stat-icon" aria-hidden="true">
-                {stat.icon}
-              </div>
-              <div className="stat-value">{stat.value}</div>
-              <div className="stat-label">{stat.label}</div>
-            </Reveal>
-          ))}
-        </ul>
-
-        {/* Main Content Grid */}
-        <div className="about-grid">
-          {/* Profile Card */}
-
-          {/* README-style About Me Card */}
-          <Reveal
-            as="section"
-            className="readme-about-card"
-            aria-labelledby="readme-about-heading"
-          >
-            {/* <h3 id="readme-about-heading">About Me</h3> */}
-            <div className="readme-grid">
-              <div className="intro-col">
-                <div className="intro-hero">
-                  <div className="hero-title">
-                    👋 Hi, I'm{" "}
-                    <span className="name-highlight">Nguyễn Hoàng Dinh</span>
-                  </div>
-                  <div className="hero-subtitle">
-                    Full-Stack Developer (Front-end & Back-end) · Vietnam
-                  </div>
-                  <p className="hero-lead">
-                    <strong>Building future-ready web products</strong> — from
-                    concept to scalable production.
-                  </p>
-                  <p className="hero-detail">
-                    I'm a full-stack developer who enjoys turning ideas into
-                    polished products. I specialize in JavaScript/TypeScript on the
-                    front-end and API development on the back-end. I love learning
-                    new technologies, designing clean architectures, and optimizing
-                    user experiences. When I'm not coding, I'm exploring system
-                    design and improving DevOps skills.
-                  </p>
-                </div>
-
-                <div className="readme-sections">
-                  <div className="tech-category">
-                    <h4>Front-End</h4>
-                    <div className="tech-badges">
-                      <a href="https://react.dev" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=react" alt="React" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://angular.io" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=angular" alt="Angular" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://www.typescriptlang.org" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=ts" alt="TypeScript" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://tailwindcss.com" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=tailwind" alt="Tailwind" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://sass-lang.com" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=sass" alt="Sass" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://getbootstrap.com" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=bootstrap" alt="Bootstrap" loading="lazy" decoding="async" />
-                      </a>
-                    </div>
-                  </div>
-                  <div className="tech-category">
-                    <h4>Back-End</h4>
-                    <div className="tech-badges">
-                      <a href="https://nodejs.org" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=nodejs" alt="Node.js" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://spring.io" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=spring" alt="Spring" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://go.dev" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=go" alt="Go" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://www.java.com" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=java" alt="Java" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://en.wikipedia.org/wiki/C_(programming_language)" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=c" alt="C" loading="lazy" decoding="async" />
-                      </a>
-                    </div>
-                  </div>
-                  <div className="tech-category">
-                    <h4>Databases & DevOps</h4>
-                    <div className="tech-badges">
-                      <a href="https://www.mysql.com" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=mysql" alt="MySQL" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://www.microsoft.com/sql-server" target="_blank" rel="noreferrer">
-                        <img src="https://upload.wikimedia.org/wikipedia/it/2/23/Sql_server_logo.png" alt="SQL Server" height="36" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://www.docker.com" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=docker" alt="Docker" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://git-scm.com" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=git" alt="Git" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://www.figma.com" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=figma" alt="Figma" loading="lazy" decoding="async" />
-                      </a>
-                      <a href="https://www.adobe.com/products/photoshop.html" target="_blank" rel="noreferrer">
-                        <img src="https://skillicons.dev/icons?i=ps" alt="Photoshop" loading="lazy" decoding="async" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <aside className="aside-col" aria-label="Thông tin nhanh">
-                <div className="mini-card">
-                  <h4>Thông tin nhanh</h4>
-                  <ul className="mini-list">
-                    <li>📍 Hồ Chí Minh, Việt Nam</li>
-                    <li>💼 Full-Stack Developer</li>
-                    <li>✅ Sẵn sàng nhận dự án</li>
-                  </ul>
-                </div>
-                <div className="mini-card">
-                  <h4>Liên hệ</h4>
-                  <div className="contact-links">
-                    <Link className="btn primary" to={ROUTES.CONTACT}>Liên hệ hợp tác</Link>
-                    <a className="btn" href="https://fb.com/nhdinh03" target="_blank" rel="noreferrer">Facebook</a>
-                    <a className="btn" href="https://instagram.com/nhdinhdz" target="_blank" rel="noreferrer">Instagram</a>
-                    <a className="btn" href="https://www.tiktok.com/@nhdinh.dev03" target="_blank" rel="noreferrer">TikTok</a>
-                    <a className="btn" href="https://discord.gg/6UbbDqKKQN" target="_blank" rel="noreferrer">Discord</a>
-                  </div>
-                </div>
-              </aside>
-            </div>
-          </Reveal>
-
-          {/* GitHub Profile Card */}
-          <Reveal
-            as="section"
-            className="github-card"
-            aria-labelledby="github-heading"
-          >
-            {/* <h3 id="github-heading">GitHub Profile</h3> */}
-            <div className="github-grid">
-              <figure className="gh-item">
-                <img
-                  src="https://github-readme-activity-graph.vercel.app/graph?username=nhdinhdev03&theme=react-dark&hide_border=true"
-                  alt="Biểu đồ hoạt động GitHub — nhdinhdev03"
-                  width="600"
-                  height="180"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <figcaption>Biểu đồ đóng góp</figcaption>
-              </figure>
-              <figure className="gh-item">
-                <img
-                  src="https://github-readme-stats.vercel.app/api/top-langs/?username=nhdinhdev03&layout=compact&theme=tokyonight&hide_border=true&langs_count=10"
-                  alt="Ngôn ngữ hàng đầu"
-                  width="600"
-                  height="180"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <figcaption>Top Languages</figcaption>
-              </figure>
-            </div>
-            <div className="gh-links">
-              <a
-                className="btn"
-                href="https://github.com/nhdinhdev03"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Xem GitHub
-              </a>
-              <a className="btn" href="mailto:nhdinh.dev03@gmail.com">
-                Liên hệ
-              </a>
-            </div>
-          </Reveal>
-
-          {/* GitHub Projects List */}
-          <GitHubProjects username="nhdinhdev03" max={6} />
+    <section className="quick-stats">
+      {stats.map((stat, index) => (
+        <div key={index} className="stat-card">
+          <div className="stat-icon">{stat.icon}</div>
+          <div className="stat-number">{stat.number}</div>
+          <div className="stat-label">{stat.label}</div>
         </div>
+      ))}
+    </section>
+  );
+};
+
+QuickStats.propTypes = {
+  repos: PropTypes.arrayOf(PropTypes.object),
+  profile: PropTypes.shape({
+    followers: PropTypes.number,
+    following: PropTypes.number,
+    public_repos: PropTypes.number,
+  }),
+};
+
+// Skills Overview Section
+const SkillsOverview = () => {
+  const skillCategories = [
+    {
+      title: 'Frontend',
+      icon: '🎨',
+      skills: ['React', 'Vue.js', 'JavaScript', 'TypeScript', 'HTML5', 'CSS3', 'Tailwind CSS']
+    },
+    {
+      title: 'Backend',
+      icon: '⚙️',
+      skills: ['Node.js', 'Java', 'Spring Boot', 'PostgreSQL', 'MongoDB', 'Redis']
+    },
+    {
+      title: 'DevOps & Tools',
+      icon: '🛠️',
+      skills: ['Docker', 'AWS', 'Git', 'CI/CD', 'Linux', 'Nginx']
+    }
+  ];
+
+  return (
+    <section className="skills-overview">
+      <h2>Technical Skills</h2>
+      <div className="skills-grid">
+        {skillCategories.map((category, index) => (
+          <div key={index} className="skill-category">
+            <div className="category-header">
+              <span className="category-icon">{category.icon}</span>
+              <h3>{category.title}</h3>
+            </div>
+            <div className="skill-list">
+              {category.skills.map((skill, skillIndex) => (
+                <span key={skillIndex} className="skill-tag">{skill}</span>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
-}
+};
+
+// Recent Projects Section
+const RecentProjects = ({ repos }) => {
+  const featuredRepos = repos?.slice(0, 6) || [];
+
+  return (
+    <section className="recent-projects">
+      <h2>Recent Projects</h2>
+      <div className="projects-grid">
+        {featuredRepos.map((repo, index) => (
+          <div key={index} className="project-card">
+            <div className="project-header">
+              <div className="project-icon">📁</div>
+              <div className="project-status">
+                {repo.private ? (
+                  <span className="private-badge">🔒 Private</span>
+                ) : (
+                  <span className="public-badge">🌍 Public</span>
+                )}
+              </div>
+            </div>
+            <div className="project-content">
+              <h3>{repo.name}</h3>
+              <p className="project-description">
+                {repo.description || 'No description available'}
+              </p>
+              <div className="project-tech">
+                {repo.language && (
+                  <span className="tech-tag primary">{repo.language}</span>
+                )}
+                <span className="tech-tag stars">
+                  <span className="stat-indicator stars">⭐ {repo.stargazers_count}</span>
+                </span>
+                <span className="tech-tag forks">
+                  <span className="stat-indicator forks">🔀 {repo.forks_count}</span>
+                </span>
+              </div>
+              <div className="project-links">
+                <a href={repo.html_url} target="_blank" rel="noopener noreferrer" className="project-link primary">
+                  View Code
+                </a>
+                {repo.homepage && (
+                  <a href={repo.homepage} target="_blank" rel="noopener noreferrer" className="project-link secondary">
+                    Live Demo
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+// Experience Timeline Section
+const ExperienceTimeline = () => {
+  const experiences = [
+    {
+      date: '2023 - Present',
+      title: 'Senior Full Stack Developer',
+      company: 'Tech Solutions Inc.',
+      description: 'Leading development of scalable web applications using React and Node.js. Mentoring junior developers and implementing best practices.'
+    },
+    {
+      date: '2021 - 2023',
+      title: 'Full Stack Developer',
+      company: 'Digital Innovation Co.',
+      description: 'Developed and maintained multiple client projects using modern web technologies. Collaborated with design teams to create responsive user interfaces.'
+    },
+    {
+      date: '2020 - 2021',
+      title: 'Frontend Developer',
+      company: 'StartUp Ventures',
+      description: 'Built responsive web applications with React and Vue.js. Focused on user experience and performance optimization.'
+    }
+  ];
+
+  return (
+    <section className="experience-timeline">
+      <h2>Experience</h2>
+      <div className="timeline">
+        {experiences.map((exp, index) => (
+          <div key={index} className="timeline-item">
+            <div className="timeline-date">{exp.date}</div>
+            <div className="timeline-title">{exp.title}</div>
+            <div className="timeline-company">{exp.company}</div>
+            <div className="timeline-description">{exp.description}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+// Contact Section
+const ContactSection = ({ profile, light }) => (
+  <section className="contact-section">
+    <h3>Let's Connect</h3>
+    <p>
+      I'm always interested in hearing about new opportunities and exciting projects.
+      Feel free to reach out if you'd like to collaborate or just want to say hello!
+    </p>
+    <div className="contact-badges">
+      <a href="mailto:nhdinhdev03@gmail.com" className="contact-badge email">
+        Email
+      </a>
+      <a href={profile?.html_url} target="_blank" rel="noopener noreferrer" className="contact-badge github">
+        GitHub
+      </a>
+      <a href="https://linkedin.com/in/nhdinhdev03" target="_blank" rel="noopener noreferrer" className="contact-badge linkedin">
+        LinkedIn
+      </a>
+    </div>
+    <div className="theme-indicator">
+      <div className="theme-status">
+        {light ? '☀️ Light Mode Active' : '🌙 Dark Mode Active'}
+      </div>
+    </div>
+  </section>
+);
+
+// Main About Component
+const About = () => {
+  const { profile, repos, loading, error } = useGithubData();
+  const { light } = useUserTheme();
+
+  if (loading) return <div className="loading-state">Loading profile data...</div>;
+  if (error) return <div className="error-state">Error loading data: {error.message}</div>;
+
+  return (
+    <div className={`about-page ${light ? 'light-theme' : 'dark-theme'}`}>
+      <AboutHeader />
+      <div className="gradient-line" aria-hidden="true" />
+      <ProfileHero profile={profile} light={light} />
+      <div className="gradient-line" aria-hidden="true" />
+      <QuickStats repos={repos} profile={profile} />
+      <div className="gradient-line" aria-hidden="true" />
+      <SkillsOverview />
+      <div className="gradient-line" aria-hidden="true" />
+      <RecentProjects repos={repos} />
+      <div className="gradient-line" aria-hidden="true" />
+      <ExperienceTimeline />
+      <div className="gradient-line" aria-hidden="true" />
+      <ContactSection profile={profile} light={light} />
+    </div>
+  );
+};
+
 export default About;
+
+// PropTypes definitions - fix existing warnings
+RecentProjects.propTypes = {
+  repos: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    description: PropTypes.string,
+    language: PropTypes.string,
+    stargazers_count: PropTypes.number,
+    forks_count: PropTypes.number,
+    html_url: PropTypes.string,
+    homepage: PropTypes.string,
+    private: PropTypes.bool,
+  })),
+};
+
+ContactSection.propTypes = {
+  profile: PropTypes.shape({
+    html_url: PropTypes.string,
+  }),
+  light: PropTypes.bool.isRequired,
+};

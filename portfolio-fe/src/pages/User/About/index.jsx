@@ -398,7 +398,7 @@ const About = () => {
   }
 
   return (
-    <div className={`about-page ${light ? 'light-theme' : 'dark-theme'}`}>
+    <div className={`about-page ${light ? 'light' : ''}`}>
       <AboutHeader />
       <div className="gradient-line" aria-hidden="true" />
       <ProfileHero profile={profile} light={light} />

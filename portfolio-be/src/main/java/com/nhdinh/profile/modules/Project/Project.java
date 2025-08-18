@@ -69,7 +69,7 @@ public class Project {
     
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "ProjectTags",
+        name = "ProjectTagMap",
         schema = "dbo",
         joinColumns = @JoinColumn(name = "ProjectId"),
         inverseJoinColumns = @JoinColumn(name = "TagId")

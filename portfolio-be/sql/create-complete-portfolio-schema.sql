@@ -253,92 +253,92 @@ INSERT INTO dbo.ProjectTag (Name) VALUES
 -- ============================================================================
 GO
 
--- View: Complete Project Information with Category and Tags
-CREATE VIEW vw_ProjectsWithDetails AS
-SELECT 
-    p.ProjectId,
-    p.Title,
-    p.Description,
-    p.ImageUrl,
-    p.DemoUrl,
-    p.SourceUrl,
-    p.CreatedAt,
-    p.UpdatedAt,
-    pc.Name AS CategoryName,
-    pc.CategoryId,
-    STRING_AGG(pt.Name, ', ') WITHIN GROUP (ORDER BY ptm.SortOrder) AS Tags,
-    COUNT(ptm.TagId) AS TagCount
-FROM dbo.Project p
-INNER JOIN dbo.ProjectCategory pc ON p.CategoryId = pc.CategoryId
-LEFT JOIN dbo.ProjectTagMap ptm ON p.ProjectId = ptm.ProjectId
-LEFT JOIN dbo.ProjectTag pt ON ptm.TagId = pt.TagId
-GROUP BY 
-    p.ProjectId, p.Title, p.Description, p.ImageUrl, p.DemoUrl, p.SourceUrl,
-    p.CreatedAt, p.UpdatedAt, pc.Name, pc.CategoryId;
-GO
+-- -- View: Complete Project Information with Category and Tags
+-- CREATE VIEW vw_ProjectsWithDetails AS
+-- SELECT 
+--     p.ProjectId,
+--     p.Title,
+--     p.Description,
+--     p.ImageUrl,
+--     p.DemoUrl,
+--     p.SourceUrl,
+--     p.CreatedAt,
+--     p.UpdatedAt,
+--     pc.Name AS CategoryName,
+--     pc.CategoryId,
+--     STRING_AGG(pt.Name, ', ') WITHIN GROUP (ORDER BY ptm.SortOrder) AS Tags,
+--     COUNT(ptm.TagId) AS TagCount
+-- FROM dbo.Project p
+-- INNER JOIN dbo.ProjectCategory pc ON p.CategoryId = pc.CategoryId
+-- LEFT JOIN dbo.ProjectTagMap ptm ON p.ProjectId = ptm.ProjectId
+-- LEFT JOIN dbo.ProjectTag pt ON ptm.TagId = pt.TagId
+-- GROUP BY 
+--     p.ProjectId, p.Title, p.Description, p.ImageUrl, p.DemoUrl, p.SourceUrl,
+--     p.CreatedAt, p.UpdatedAt, pc.Name, pc.CategoryId;
+-- GO
 
--- View: Tag Usage Statistics
-CREATE VIEW vw_TagStatistics AS
-SELECT 
-    pt.TagId,
-    pt.Name AS TagName,
-    COUNT(ptm.ProjectId) AS UsageCount,
-    COUNT(ptm.ProjectId) * 100.0 / (SELECT COUNT(*) FROM dbo.Project) AS UsagePercentage
-FROM dbo.ProjectTag pt
-LEFT JOIN dbo.ProjectTagMap ptm ON pt.TagId = ptm.TagId
-GROUP BY pt.TagId, pt.Name;
-GO
+-- -- View: Tag Usage Statistics
+-- CREATE VIEW vw_TagStatistics AS
+-- SELECT 
+--     pt.TagId,
+--     pt.Name AS TagName,
+--     COUNT(ptm.ProjectId) AS UsageCount,
+--     COUNT(ptm.ProjectId) * 100.0 / (SELECT COUNT(*) FROM dbo.Project) AS UsagePercentage
+-- FROM dbo.ProjectTag pt
+-- LEFT JOIN dbo.ProjectTagMap ptm ON pt.TagId = ptm.TagId
+-- GROUP BY pt.TagId, pt.Name;
+-- GO
 
--- View: Category Statistics
-CREATE VIEW vw_CategoryStatistics AS
-SELECT 
-    pc.CategoryId,
-    pc.Name AS CategoryName,
-    COUNT(p.ProjectId) AS ProjectCount,
-    COUNT(p.ProjectId) * 100.0 / (SELECT COUNT(*) FROM dbo.Project) AS ProjectPercentage
-FROM dbo.ProjectCategory pc
-LEFT JOIN dbo.Project p ON pc.CategoryId = p.CategoryId
-GROUP BY pc.CategoryId, pc.Name;
-GO
+-- -- View: Category Statistics
+-- CREATE VIEW vw_CategoryStatistics AS
+-- SELECT 
+--     pc.CategoryId,
+--     pc.Name AS CategoryName,
+--     COUNT(p.ProjectId) AS ProjectCount,
+--     COUNT(p.ProjectId) * 100.0 / (SELECT COUNT(*) FROM dbo.Project) AS ProjectPercentage
+-- FROM dbo.ProjectCategory pc
+-- LEFT JOIN dbo.Project p ON pc.CategoryId = p.CategoryId
+-- GROUP BY pc.CategoryId, pc.Name;
+-- GO
 
--- ============================================================================
--- 7. STORED PROCEDURES
--- ============================================================================
+-- -- ============================================================================
+-- -- 7. STORED PROCEDURES
+-- -- ============================================================================
 
--- Procedure: Get Projects by Technology Stack
-CREATE PROCEDURE sp_GetProjectsByTechnologyStack
-    @TechnologyNames NVARCHAR(MAX) -- Comma-separated list of technology names
-AS
-BEGIN
-    SET NOCOUNT ON;
+-- -- Procedure: Get Projects by Technology Stack
+-- CREATE PROCEDURE sp_GetProjectsByTechnologyStack
+--     @TechnologyNames NVARCHAR(MAX) -- Comma-separated list of technology names
+-- AS
+-- BEGIN
+--     SET NOCOUNT ON;
     
-    DECLARE @TagTable TABLE (TagName NVARCHAR(50));
+--     DECLARE @TagTable TABLE (TagName NVARCHAR(50));
     
-    -- Parse comma-separated technology names
-    INSERT INTO @TagTable (TagName)
-    SELECT TRIM(value) FROM STRING_SPLIT(@TechnologyNames, ',');
+--     -- Parse comma-separated technology names
+--     INSERT INTO @TagTable (TagName)
+--     SELECT TRIM(value) FROM STRING_SPLIT(@TechnologyNames, ',');
     
-    -- Find projects that use ALL specified technologies
-    SELECT DISTINCT
-        p.ProjectId,
-        p.Title,
-        p.Description,
-        p.ImageUrl,
-        p.DemoUrl,
-        p.SourceUrl,
-        p.CreatedAt,
-        pc.Name AS CategoryName
-    FROM dbo.Project p
-    INNER JOIN dbo.ProjectCategory pc ON p.CategoryId = pc.CategoryId
-    INNER JOIN dbo.ProjectTagMap ptm ON p.ProjectId = ptm.ProjectId
-    INNER JOIN dbo.ProjectTag pt ON ptm.TagId = pt.TagId
-    WHERE pt.Name IN (SELECT TagName FROM @TagTable)
-    GROUP BY 
-        p.ProjectId, p.Title, p.Description, p.ImageUrl, p.DemoUrl, p.SourceUrl,
-        p.CreatedAt, pc.Name
-    HAVING COUNT(DISTINCT pt.Name) = (SELECT COUNT(*) FROM @TagTable);
-END;
-GO
+--     -- Find projects that use ALL specified technologies
+--     SELECT DISTINCT
+--         p.ProjectId,
+--         p.Title,
+--         p.Description,
+--         p.ImageUrl,
+--         p.DemoUrl,
+--         p.SourceUrl,
+--         p.CreatedAt,
+--         pc.Name AS CategoryName
+--     FROM dbo.Project p
+--     INNER JOIN dbo.ProjectCategory pc ON p.CategoryId = pc.CategoryId
+--     INNER JOIN dbo.ProjectTagMap ptm ON p.ProjectId = ptm.ProjectId
+--     INNER JOIN dbo.ProjectTag pt ON ptm.TagId = pt.TagId
+--     WHERE pt.Name IN (SELECT TagName FROM @TagTable)
+--     GROUP BY 
+--         p.ProjectId, p.Title, p.Description, p.ImageUrl, p.DemoUrl, p.SourceUrl,
+--         p.CreatedAt, pc.Name
+--     HAVING COUNT(DISTINCT pt.Name) = (SELECT COUNT(*) FROM @TagTable);
+-- END;
+-- GO
 
 -- ============================================================================
 -- 8. SAMPLE PROJECT DATA (OPTIONAL)
@@ -388,8 +388,8 @@ FROM dbo.ProjectTag
 WHERE Name IN ('React Native', 'Node.js', 'MongoDB', 'Express.js');
 */
 
-PRINT 'Portfolio database schema created successfully!';
-PRINT 'Tables created: ProjectCategory, ProjectTag, Project, ProjectTagMap';
-PRINT 'Views created: vw_ProjectsWithDetails, vw_TagStatistics, vw_CategoryStatistics';
-PRINT 'Procedures created: sp_GetProjectsByTechnologyStack';
-PRINT 'Sample categories and tags inserted successfully!';
+-- PRINT 'Portfolio database schema created successfully!';
+-- PRINT 'Tables created: ProjectCategory, ProjectTag, Project, ProjectTagMap';
+-- PRINT 'Views created: vw_ProjectsWithDetails, vw_TagStatistics, vw_CategoryStatistics';
+-- PRINT 'Procedures created: sp_GetProjectsByTechnologyStack';
+-- PRINT 'Sample categories and tags inserted successfully!';

@@ -1,70 +1,65 @@
 package com.nhdinh.profile.modules.BlogPost;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "BlogPost", schema = "dbo")
-public class BlogPost {
+public class BlogPostResponse {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "BlogId", columnDefinition = "UNIQUEIDENTIFIER")
     private UUID blogId;
-    
-    @NotBlank(message = "Title is required")
-    @Size(max = 200, message = "Title must not exceed 200 characters")
-    @Column(name = "Title", nullable = false, length = 200)
     private String title;
-    
-    @NotBlank(message = "Slug is required")
-    @Size(max = 200, message = "Slug must not exceed 200 characters")
-    @Column(name = "Slug", nullable = false, length = 200, unique = true)
     private String slug;
-    
-    @Size(max = 300, message = "Description must not exceed 300 characters")
-    @Column(name = "Description", length = 300)
     private String description;
-    
-    @Size(max = 512, message = "Thumbnail URL must not exceed 512 characters")
-    @Column(name = "Thumbnail", length = 512)
     private String thumbnail;
-    
-    @Column(name = "Content", columnDefinition = "NVARCHAR(MAX)")
     private String content;
-    
-    @CreationTimestamp
-    @Column(name = "CreatedAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    
-    @UpdateTimestamp
-    @Column(name = "UpdatedAt")
     private LocalDateTime updatedAt;
-    
-    @Column(name = "IsDeleted", nullable = false)
-    private Boolean isDeleted = false;
-    
-    @Version
-    @Column(name = "RowVer")
-    private byte[] rowVer;
+    private Boolean isDeleted;
     
     // Default constructor
-    public BlogPost() {}
+    public BlogPostResponse() {}
     
-    // Constructor for creating new blog post
-    public BlogPost(String title, String slug, String description, String thumbnail, String content) {
+    // Constructor from BlogPost entity
+    public BlogPostResponse(BlogPost blogPost) {
+        this.blogId = blogPost.getBlogId();
+        this.title = blogPost.getTitle();
+        this.slug = blogPost.getSlug();
+        this.description = blogPost.getDescription();
+        this.thumbnail = blogPost.getThumbnail();
+        this.content = blogPost.getContent();
+        this.createdAt = blogPost.getCreatedAt();
+        this.updatedAt = blogPost.getUpdatedAt();
+        this.isDeleted = blogPost.getIsDeleted();
+    }
+    
+    // Constructor for summary (without content)
+    public BlogPostResponse(UUID blogId, String title, String slug, String description, 
+                          String thumbnail, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.blogId = blogId;
         this.title = title;
         this.slug = slug;
         this.description = description;
         this.thumbnail = thumbnail;
-        this.content = content;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.isDeleted = false;
+    }
+    
+    // Static factory method for creating summary response (without content)
+    public static BlogPostResponse createSummary(BlogPost blogPost) {
+        return new BlogPostResponse(
+            blogPost.getBlogId(),
+            blogPost.getTitle(),
+            blogPost.getSlug(),
+            blogPost.getDescription(),
+            blogPost.getThumbnail(),
+            blogPost.getCreatedAt(),
+            blogPost.getUpdatedAt()
+        );
+    }
+    
+    // Static factory method for creating full response
+    public static BlogPostResponse createFull(BlogPost blogPost) {
+        return new BlogPostResponse(blogPost);
     }
     
     // Getters and Setters
@@ -140,36 +135,14 @@ public class BlogPost {
         this.isDeleted = isDeleted;
     }
     
-    public byte[] getRowVer() {
-        return rowVer;
-    }
-    
-    public void setRowVer(byte[] rowVer) {
-        this.rowVer = rowVer;
-    }
-    
-    // Utility methods
-    public void markAsDeleted() {
-        this.isDeleted = true;
-    }
-    
-    public void restore() {
-        this.isDeleted = false;
-    }
-    
-    public boolean isActive() {
-        return !this.isDeleted;
-    }
-    
     @Override
     public String toString() {
-        return "BlogPost{" +
+        return "BlogPostResponse{" +
                 "blogId=" + blogId +
                 ", title='" + title + '\'' +
                 ", slug='" + slug + '\'' +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
-                ", isDeleted=" + isDeleted +
                 '}';
     }
 }

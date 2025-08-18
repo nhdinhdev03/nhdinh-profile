@@ -65,29 +65,6 @@ const useGithubData = () => {
   return data;
 };
 
-// Page Header Section
-const AboutHeader = () => (
-  <header className="about-header">
-    <div className="header-content">
-      <h1 className="page-title">
-        <span className="title-main">Về Tôi</span>
-
-      </h1>
-      <p className="page-description">
-        Tôi là một <span className="highlight-primary">Web Developer</span> đam mê 
-        <span className="highlight-accent"> biến ý tưởng thành sản phẩm hoàn thiện</span>. 
-        Tôi chuyên về <span className="highlight-secondary">JavaScript/TypeScript</span> cho 
-        front-end và <span className="highlight-secondary">phát triển API</span> cho back-end. 
-        Tôi yêu thích việc học các công nghệ mới, 
-        <span className="highlight-accent">thiết kế kiến trúc sạch</span> và 
-        <span className="highlight-primary"> tối ưu trải nghiệm người dùng</span>. 
-        Khi không code, tôi dành thời gian nghiên cứu system design và 
-        <span className="highlight-secondary"> nâng cao kỹ năng DevOps</span>.
-      </p>
-    </div>
-  </header>
-);
-
 const ProfileHero = ({ profile, light }) => (
   <section className="profile-hero">
     <div className="profile-image">
@@ -104,26 +81,36 @@ const ProfileHero = ({ profile, light }) => (
           {profile?.name || "Nguyen Hoang Dinh"}
         </span>
       </h1>
-      <p className="title">Lập Trình Viên Full Stack & Kỹ Sư Phần Mềm</p>
+      <p className="title">Lập Trình Viên & Kỹ Thuật Phần Mềm</p>
       <p className="description">
         <span className="highlight-primary">
-          Xây dựng các sản phẩm web tương lai
+          Biến ý tưởng thành những sản phẩm tinh xảo
         </span>
-        {" — từ ý tưởng đến "}
-        <span className="highlight-secondary">sản xuất có thể mở rộng</span>.
+        {" — chuyên về "}
+        <span className="highlight-secondary">JavaScript/TypeScript front-end</span>
+        {" và "}
+        <span className="highlight-accent">phát triển API back-end</span>.
         <br />
-        <span className="highlight-accent">Đam mê mang đến</span>
-        {" trải nghiệm người dùng mượt mà và "}
-        <span className="highlight-secondary">hệ thống mạnh mẽ, dễ bảo trì</span>.
+        <span className="highlight-primary">Đam mê học công nghệ mới</span>
+        {", thiết kế kiến trúc sạch và "}
+        <span className="highlight-secondary">
+          tối ưu hóa trải nghiệm người dùng
+        </span>
+        .
         <br />
+        <span className="highlight-accent">
+          Khi không lập trình, tôi khám phá thiết kế hệ thống
+        </span>
+        {" và cải thiện kỹ năng DevOps. "}
         <span className="italic">
-          {profile?.bio || "Có kinh nghiệm với React, Node.js và công nghệ đám mây với tâm huyết về code sạch và có thể mở rộng."}
+          {profile?.bio ||
+            "Có kinh nghiệm với React, Node.js và công nghệ đám mây với tâm huyết về code sạch và có thể mở rộng."}
         </span>
       </p>
       <div className="profile-badges">
         <span className="badge badge-green">Sẵn Sàng Làm Việc</span>
-        <span className="badge badge-blue">Đóng Góp Mã Nguồn Mở</span>
-        <span className="badge badge-orange">Chuyên Gia JavaScript</span>
+        <span className="badge badge-blue">Full-Stack Developer</span>
+        <span className="badge badge-orange">System Design</span>
       </div>
     </div>
   </section>
@@ -178,25 +165,32 @@ const SkillsOverview = () => {
       icon: "🎨",
       skills: [
         "React",
-        "Vue.js",
         "JavaScript",
         "TypeScript",
+        "Vue.js",
         "HTML5",
         "CSS3",
         "Tailwind CSS",
+        "Sass/SCSS",
       ],
     },
     {
       title: "Backend",
       icon: "⚙️",
       skills: [
-        "Node.js",
         "Java",
         "Spring Boot",
-        "PostgreSQL",
-        "MongoDB",
-        "Redis",
+        "Node.js",
+
+        "Express.js",
+        "REST API",
+        "GraphQL",
       ],
+    },
+    {
+      title: "Database",
+      icon: "🗄️",
+      skills: ["SQL Server", "PostgreSQL", "MongoDB", "Redis", "MySQL"],
     },
     {
       title: "DevOps & Tools",
@@ -302,17 +296,17 @@ const ExperienceTimeline = () => {
   const experiences = [
     {
       date: "2023 - Hiện tại",
-      title: "Lập Trình Viên Full Stack Cấp Cao",
+      title: "Lập Trình Viên Web Developer",
       company: "Tech Solutions Inc.",
       description:
-        "Dẫn dắt phát triển các ứng dụng web có thể mở rộng sử dụng React và Node.js. Hướng dẫn các lập trình viên junior và triển khai các phương pháp hay nhất.",
+        "Dẫn dắt phát triển các ứng dụng web có thể mở rộng sử dụng React và Java. Hướng dẫn các lập trình viên junior và triển khai các phương pháp hay nhất.",
     },
     {
       date: "2021 - 2023",
-      title: "Lập Trình Viên Full Stack",
+      title: "Lập Trình Viên Backend",
       company: "Digital Innovation Co.",
       description:
-        "Phát triển và duy trì nhiều dự án khách hàng sử dụng công nghệ web hiện đại. Hợp tác với đội ngũ thiết kế để tạo ra giao diện người dùng responsive.",
+        "Phát triển và duy trì nhiều dự án khách hàng sử dụng công nghệ web hiện đại. ",
     },
     {
       date: "2020 - 2021",
@@ -371,7 +365,9 @@ const ContactSection = ({ profile, light }) => (
     </div>
     <div className="theme-indicator">
       <div className="theme-status">
-        {light ? "☀️ Chế Độ Sáng Đang Hoạt Động" : "🌙 Chế Độ Tối Đang Hoạt Động"}
+        {light
+          ? "☀️ Chế Độ Sáng Đang Hoạt Động"
+          : "🌙 Chế Độ Tối Đang Hoạt Động"}
       </div>
     </div>
   </section>
@@ -384,7 +380,6 @@ const About = () => {
 
   return (
     <div className={`about-page ${light ? "light" : ""}`}>
-      <AboutHeader />
       <div className="gradient-line" aria-hidden="true" />
       <ProfileHero profile={profile} light={light} />
       <div className="gradient-line" aria-hidden="true" />

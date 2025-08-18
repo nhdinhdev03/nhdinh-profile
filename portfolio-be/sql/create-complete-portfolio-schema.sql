@@ -388,8 +388,81 @@ FROM dbo.ProjectTag
 WHERE Name IN ('React Native', 'Node.js', 'MongoDB', 'Express.js');
 */
 
+-- ============================================================================
+-- 11. PROFILE INFO TABLE
+-- ============================================================================
+-- Thông tin cơ bản của người dùng/profile
+CREATE TABLE dbo.ProfileInfo (
+    ProfileId  UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
+    FullName   NVARCHAR(100),
+    Title      NVARCHAR(100),
+    Bio        NVARCHAR(MAX),
+    AvatarUrl  NVARCHAR(512),
+    CreatedAt  DATETIME2 DEFAULT SYSUTCDATETIME(),
+    RowVer     ROWVERSION
+);
+
+-- Indexes for ProfileInfo
+CREATE INDEX IX_ProfileInfo_FullName ON dbo.ProfileInfo(FullName);
+CREATE INDEX IX_ProfileInfo_CreatedAt ON dbo.ProfileInfo(CreatedAt DESC);
+
+-- Comments for ProfileInfo
+EXEC sp_addextendedproperty 
+    'MS_Description', 'Bảng thông tin cơ bản của profile/người dùng',
+    'SCHEMA', 'dbo', 'TABLE', 'ProfileInfo';
+
+-- ============================================================================
+-- 12. PROFILE TAG TABLE
+-- ============================================================================
+-- Các tag/kỹ năng của profile
+CREATE TABLE dbo.ProfileTag (
+    TagId     UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
+    ProfileId UNIQUEIDENTIFIER NOT NULL FOREIGN KEY REFERENCES dbo.ProfileInfo(ProfileId) ON DELETE CASCADE,
+    Label     NVARCHAR(100),
+    SortOrder INT DEFAULT 1,
+    RowVer    ROWVERSION
+);
+
+-- Indexes for ProfileTag
+CREATE INDEX IX_ProfileTag_ProfileId ON dbo.ProfileTag(ProfileId);
+CREATE INDEX IX_ProfileTag_SortOrder ON dbo.ProfileTag(SortOrder);
+CREATE INDEX IX_ProfileTag_ProfileId_SortOrder ON dbo.ProfileTag(ProfileId, SortOrder);
+
+-- Comments for ProfileTag
+EXEC sp_addextendedproperty 
+    'MS_Description', 'Bảng lưu các tag/kỹ năng của profile',
+    'SCHEMA', 'dbo', 'TABLE', 'ProfileTag';
+
+-- ============================================================================
+-- 13. EXPERIENCE TABLE
+-- ============================================================================
+-- Kinh nghiệm làm việc của profile
+CREATE TABLE dbo.Experience (
+    ExpId      UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWSEQUENTIALID(),
+    ProfileId  UNIQUEIDENTIFIER NOT NULL FOREIGN KEY REFERENCES dbo.ProfileInfo(ProfileId) ON DELETE CASCADE,
+    Position   NVARCHAR(100),
+    Company    NVARCHAR(100),
+    Description NVARCHAR(MAX),
+    StartYear  INT,
+    EndYear    INT NULL,
+    IsCurrent  BIT DEFAULT 0,
+    SortOrder  INT DEFAULT 1,
+    RowVer     ROWVERSION
+);
+
+-- Indexes for Experience
+CREATE INDEX IX_Experience_ProfileId ON dbo.Experience(ProfileId);
+CREATE INDEX IX_Experience_StartYear ON dbo.Experience(StartYear DESC);
+CREATE INDEX IX_Experience_ProfileId_SortOrder ON dbo.Experience(ProfileId, SortOrder);
+CREATE INDEX IX_Experience_IsCurrent ON dbo.Experience(IsCurrent);
+
+-- Comments for Experience
+EXEC sp_addextendedproperty 
+    'MS_Description', 'Bảng lưu kinh nghiệm làm việc của profile',
+    'SCHEMA', 'dbo', 'TABLE', 'Experience';
+
 -- PRINT 'Portfolio database schema created successfully!';
--- PRINT 'Tables created: ProjectCategory, ProjectTag, Project, ProjectTagMap';
+-- PRINT 'Tables created: ProjectCategory, ProjectTag, Project, ProjectTagMap, ProfileInfo, ProfileTag, Experience';
 -- PRINT 'Views created: vw_ProjectsWithDetails, vw_TagStatistics, vw_CategoryStatistics';
 -- PRINT 'Procedures created: sp_GetProjectsByTechnologyStack';
 -- PRINT 'Sample categories and tags inserted successfully!';

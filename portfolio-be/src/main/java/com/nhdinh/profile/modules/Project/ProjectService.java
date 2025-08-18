@@ -1,7 +1,9 @@
 package com.nhdinh.profile.modules.Project;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nhdinh.profile.modules.ProjectCategory.ProjectCategory;
 import com.nhdinh.profile.modules.ProjectCategory.ProjectCategoryDAO;
+import com.nhdinh.profile.modules.ProjectTag.ProjectTag;
+import com.nhdinh.profile.modules.ProjectTag.ProjectTagService;
 
 @Service
 @Transactional
@@ -20,6 +24,9 @@ public class ProjectService {
     
     @Autowired
     private ProjectCategoryDAO projectCategoryDAO;
+    
+    @Autowired
+    private ProjectTagService projectTagService;
     
     /**
      * Lấy tất cả Project
@@ -73,6 +80,12 @@ public class ProjectService {
         project.setSourceUrl(request.getSourceUrl());
         project.setCategory(category);
         
+        // Xử lý tags
+        if (request.getTagNames() != null && !request.getTagNames().isEmpty()) {
+            List<ProjectTag> tags = projectTagService.findOrCreateTags(request.getTagNames());
+            project.setTags(new HashSet<>(tags));
+        }
+        
         return projectDAO.save(project);
     }
     
@@ -99,6 +112,16 @@ public class ProjectService {
         existingProject.setSourceUrl(request.getSourceUrl());
         existingProject.setCategory(category);
         
+        // Xử lý tags
+        if (request.getTagNames() != null) {
+            if (request.getTagNames().isEmpty()) {
+                existingProject.getTags().clear();
+            } else {
+                List<ProjectTag> tags = projectTagService.findOrCreateTags(request.getTagNames());
+                existingProject.setTags(new HashSet<>(tags));
+            }
+        }
+        
         return projectDAO.save(existingProject);
     }
     
@@ -124,5 +147,33 @@ public class ProjectService {
      */
     public long countProjectsByCategory(UUID categoryId) {
         return projectDAO.countByCategoryId(categoryId);
+    }
+    
+    /**
+     * Lấy Projects theo TagId
+     */
+    public List<Project> getProjectsByTagId(UUID tagId) {
+        return projectDAO.findByTagId(tagId);
+    }
+    
+    /**
+     * Lấy Projects theo tên tag
+     */
+    public List<Project> getProjectsByTagName(String tagName) {
+        return projectDAO.findByTagName(tagName);
+    }
+    
+    /**
+     * Lấy Projects có chứa bất kỳ tag nào trong danh sách
+     */
+    public List<Project> getProjectsByAnyTags(List<UUID> tagIds) {
+        return projectDAO.findByTagIds(tagIds);
+    }
+    
+    /**
+     * Lấy Projects có chứa tất cả tags trong danh sách
+     */
+    public List<Project> getProjectsByAllTags(List<UUID> tagIds) {
+        return projectDAO.findByAllTagIds(tagIds, tagIds.size());
     }
 }

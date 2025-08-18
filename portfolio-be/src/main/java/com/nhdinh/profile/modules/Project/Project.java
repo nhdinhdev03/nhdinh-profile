@@ -1,9 +1,12 @@
 package com.nhdinh.profile.modules.Project;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import com.nhdinh.profile.modules.ProjectCategory.ProjectCategory;
+import com.nhdinh.profile.modules.ProjectTag.ProjectTag;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +15,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -61,6 +66,15 @@ public class Project {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CategoryId", nullable = false)
     private ProjectCategory category;
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "ProjectTags",
+        schema = "dbo",
+        joinColumns = @JoinColumn(name = "ProjectId"),
+        inverseJoinColumns = @JoinColumn(name = "TagId")
+    )
+    private Set<ProjectTag> tags = new HashSet<>();
     
     @Column(name = "CreatedAt", nullable = false)
     private LocalDateTime createdAt;

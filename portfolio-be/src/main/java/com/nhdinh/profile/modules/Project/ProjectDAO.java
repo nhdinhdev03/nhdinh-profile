@@ -72,4 +72,30 @@ public interface ProjectDAO extends JpaRepository<Project, UUID> {
      */
     @Query("SELECT COUNT(p) FROM Project p WHERE p.category.categoryId = :categoryId")
     long countByCategoryId(@Param("categoryId") UUID categoryId);
+    
+    /**
+     * Tìm Projects theo TagId
+     */
+    @Query("SELECT p FROM Project p JOIN p.tags t WHERE t.tagId = :tagId ORDER BY p.createdAt DESC")
+    List<Project> findByTagId(@Param("tagId") UUID tagId);
+    
+    /**
+     * Tìm Projects theo tên tag
+     */
+    @Query("SELECT p FROM Project p JOIN p.tags t WHERE LOWER(t.name) = LOWER(:tagName) ORDER BY p.createdAt DESC")
+    List<Project> findByTagName(@Param("tagName") String tagName);
+    
+    /**
+     * Tìm Projects có chứa bất kỳ tag nào trong danh sách
+     */
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE t.tagId IN :tagIds ORDER BY p.createdAt DESC")
+    List<Project> findByTagIds(@Param("tagIds") List<UUID> tagIds);
+    
+    /**
+     * Tìm Projects có chứa tất cả tags trong danh sách
+     */
+    @Query("SELECT p FROM Project p WHERE SIZE(p.tags) >= :tagCount AND " +
+           "(SELECT COUNT(t) FROM Project p2 JOIN p2.tags t WHERE p2 = p AND t.tagId IN :tagIds) = :tagCount " +
+           "ORDER BY p.createdAt DESC")
+    List<Project> findByAllTagIds(@Param("tagIds") List<UUID> tagIds, @Param("tagCount") int tagCount);
 }

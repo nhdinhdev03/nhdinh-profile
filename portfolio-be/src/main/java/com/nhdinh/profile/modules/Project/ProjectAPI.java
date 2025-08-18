@@ -162,4 +162,38 @@ public class ProjectAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    /**
+     * Lấy Projects theo TagId
+     */
+    @GetMapping("/tag/{tagId}")
+    public ResponseEntity<List<ProjectResponse>> getProjectsByTag(@PathVariable UUID tagId) {
+        try {
+            List<Project> projects = projectService.getProjectsByTagId(tagId);
+            List<ProjectResponse> responses = projects.stream()
+                    .map(ProjectResponse::fromEntity)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(responses);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
+     * Lấy Projects theo tên tag
+     */
+    @GetMapping("/tag/name/{tagName}")
+    public ResponseEntity<List<ProjectResponse>> getProjectsByTagName(@PathVariable String tagName) {
+        try {
+            List<Project> projects = projectService.getProjectsByTagName(tagName);
+            List<ProjectResponse> responses = projects.stream()
+                    .map(ProjectResponse::fromEntity)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(responses);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.nhdinh.profile.modules.Project;
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
@@ -32,4 +33,6 @@ public class ProjectUpdateRequest {
     
     @NotNull(message = "CategoryId không được để trống")
     private UUID categoryId;
+    
+    private List<String> tagNames;
 }

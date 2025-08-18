@@ -1,76 +1,102 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
 import useTypewriter from "hooks/useTypewriter";
+import useIsMobile from "hooks/useIsMobile";
 import { ROUTES } from "router/routeConstants";
 
 
 /**
  * Hero header component with personal information and CTA buttons
  */
-function HeroHeader({ entranceComplete = false }) {
+function HeroHeader({ entranceComplete = false, isMobile = false }) {
+  const { isMobile: responsiveIsMobile } = useIsMobile();
+  const actualIsMobile = isMobile || responsiveIsMobile;
   const controls = useAnimation();
+  const [isVisible, setIsVisible] = useState(false);
 
-  // Optimized typewriter with professional typing effect and smooth transitions
+  // Mobile-optimized typewriter with faster, smoother transitions
   const typed = useTypewriter([
     "Web Developer",
-    "Front‑end Specialist",
+    "Front‑end Specialist", 
     "React / Java Expert",
     "UI/UX Enthusiast",
     "Performance Optimizer",
     "Full Stack Developer",
   ], { 
-    startDelay: entranceComplete ? 50 : 400, // Quick start when returning to page
-    typeSpeed: 70,                           // Moderate typing speed (ms per character)
-    deleteSpeed: 35,                         // Faster deletion speed for dynamic feel
-    delayBetweenWords: 1500,                 // Slightly longer pause to read each phrase
-    loop: true                               // Continuous animation
+    startDelay: entranceComplete ? (actualIsMobile ? 100 : 50) : (actualIsMobile ? 600 : 400),
+    typeSpeed: actualIsMobile ? 50 : 70,        // Faster on mobile
+    deleteSpeed: actualIsMobile ? 25 : 35,      // Faster deletion on mobile
+    delayBetweenWords: actualIsMobile ? 1200 : 1500, // Shorter pause on mobile
+    loop: true
   });
 
   const nameLetters = useMemo(() => Array.from("Nhdinh"), []);
   
-  // Start animations when component mounts or when returning to home
+  // Intersection observer for animation trigger
   useEffect(() => {
-    controls.start("visible");
-  }, [controls]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            controls.start("visible");
+          }
+        });
+      },
+      { 
+        threshold: actualIsMobile ? 0.1 : 0.2,
+        rootMargin: actualIsMobile ? '50px' : '100px'
+      }
+    );
 
-  // Animation variants for staggered animations - optimized for smoother transitions
+    const element = document.querySelector('.hero__container');
+    if (element) {
+      observer.observe(element);
+    }
+
+    return () => observer.disconnect();
+  }, [controls, actualIsMobile]);
+
+  // Mobile-optimized animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.08, // Slightly faster stagger for smoother appearance
-        delayChildren: 0.05,
+        staggerChildren: actualIsMobile ? 0.06 : 0.08,
+        delayChildren: actualIsMobile ? 0.02 : 0.05,
         when: "beforeChildren",
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: actualIsMobile ? 15 : 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 12,
+        type: actualIsMobile ? "tween" : "spring",
+        duration: actualIsMobile ? 0.4 : undefined,
+        ease: actualIsMobile ? [0.25, 0.8, 0.4, 1] : undefined,
+        stiffness: actualIsMobile ? undefined : 100,
+        damping: actualIsMobile ? undefined : 12,
       },
     },
   };
 
   return (
     <motion.div
-      className="hero__container"
+      className={`hero__container ${isVisible ? 'animate-in' : ''}`}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Professional Badge with enhanced visual effect */}
+      {/* Professional Badge with enhanced mobile support */}
       <motion.div className="professional-badge" variants={itemVariants}>
         <div className="badge-icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg width={actualIsMobile ? "12" : "14"} height={actualIsMobile ? "12" : "14"} viewBox="0 0 24 24" fill="none">
             <path
               d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               stroke="currentColor"
@@ -101,14 +127,15 @@ function HeroHeader({ entranceComplete = false }) {
               <motion.span
                 className="letter"
                 key={i}
-                initial={{ y: 30, opacity: 0 }}
+                initial={{ y: actualIsMobile ? 20 : 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{
-                  delay: 0.4 + i * 0.08,
-                  duration: 0.6,
-                  type: "spring",
-                  stiffness: 100,
-                  damping: 15,
+                  delay: 0.4 + i * (actualIsMobile ? 0.06 : 0.08),
+                  duration: actualIsMobile ? 0.4 : 0.6,
+                  type: actualIsMobile ? "tween" : "spring",
+                  ease: actualIsMobile ? [0.25, 0.8, 0.4, 1] : undefined,
+                  stiffness: actualIsMobile ? undefined : 100,
+                  damping: actualIsMobile ? undefined : 15,
                 }}
               >
                 {ch}
@@ -120,13 +147,21 @@ function HeroHeader({ entranceComplete = false }) {
               className="decoration-line decoration-line--1"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
+              transition={{ 
+                delay: actualIsMobile ? 0.6 : 0.8, 
+                duration: actualIsMobile ? 0.6 : 0.8, 
+                ease: "easeOut" 
+              }}
             ></motion.div>
             <motion.div
               className="decoration-line decoration-line--2"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ delay: 0.9, duration: 0.8, ease: "easeOut" }}
+              transition={{ 
+                delay: actualIsMobile ? 0.7 : 0.9, 
+                duration: actualIsMobile ? 0.6 : 0.8, 
+                ease: "easeOut" 
+              }}
             ></motion.div>
           </div>
         </div>
@@ -152,7 +187,11 @@ function HeroHeader({ entranceComplete = false }) {
           className="subtitle-accent"
           initial={{ width: "0%" }}
           animate={{ width: "100%" }}
-          transition={{ delay: 1.1, duration: 1.2, ease: "easeOut" }}
+          transition={{ 
+            delay: actualIsMobile ? 0.9 : 1.1, 
+            duration: actualIsMobile ? 0.8 : 1.2, 
+            ease: "easeOut" 
+          }}
         ></motion.div>
       </motion.div>
 
@@ -167,162 +206,148 @@ function HeroHeader({ entranceComplete = false }) {
         thiết kế & triển khai{" "}
         <span className="highlight-text">hệ thống linh hoạt</span>, tối ưu
         UI/UX và tự động hóa quy trình để rút ngắn thời gian ra mắt sản
-        phẩm. <span className="highlight-text">giải pháp nhanh chống</span>{" "}
-        và dễ bảo trì website tốt nhật hiện tại.
+        phẩm. <span className="highlight-text">giải pháp nhanh chóng</span>{" "}
+        và dễ bảo trì website tốt nhất hiện tại.
       </motion.p>
 
-      <HeroTechShowcase itemVariants={itemVariants} />
-      <HeroCtaButtons itemVariants={itemVariants} />
+      <HeroCtaButtons itemVariants={itemVariants} isMobile={actualIsMobile} />
     </motion.div>
   );
 }
 
 /**
- * Tech showcase component
+ * Call to action buttons with enhanced mobile optimization
  */
-function HeroTechShowcase({ itemVariants }) {
-  return (
-    <motion.div className="hero__tech-showcase" variants={itemVariants}>
-      <div className="tech-grid">
-        {[
-          { name: "React", icon: "⚛️", level: "Expert", class: "react" },
-          {
-            name: "Angular",
-            icon: "🅰️",
-            level: "Advanced",
-            class: "angular",
-          },
-          { name: "Node.js", icon: "🟢", level: "Expert", class: "node" },
-          {
-            name: "TypeScript",
-            icon: "🔷",
-            level: "Expert",
-            class: "ts",
-          },
-          {
-            name: "REST/GraphQL",
-            icon: "🔗",
-            level: "Expert",
-            class: "api",
-          },
-          {
-            name: "SQL Server",
-            icon: "🗄️",
-            level: "Expert",
-            class: "sqlserver",
-          },
-          {
-            name: "MongoDB",
-            icon: "🍃",
-            level: "Advanced",
-            class: "mongodb",
-          },
-        ].map((tech, i) => (
-          <motion.div
-            className={`tech-item tech-item--${tech.class}`}
-            key={i}
-            style={{ "--i": i }} // For staggered animations
-            initial={{ opacity: 0, translateY: 20 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{
-              duration: 0.7,
-              type: "spring",
-              stiffness: 100,
-              damping: 12,
-            }}
-            whileHover={{
-              scale: 1.05,
-              translateZ: 10,
-              filter: "brightness(1.1)",
-            }}
-          >
-            <div className="tech-icon">{tech.icon}</div>
-            <span className="tech-name">{tech.name}</span>
-          </motion.div>
-        ))}
-      </div>
-    </motion.div>
-  );
-}
+function HeroCtaButtons({ itemVariants, isMobile = false }) {
+  // Create synchronized variants for all buttons
+  const ctaVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: isMobile ? 15 : 20,
+      scale: 0.95 
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: isMobile ? "tween" : "spring",
+        duration: isMobile ? 0.4 : 0.6,
+        ease: isMobile ? [0.25, 0.8, 0.4, 1] : undefined,
+        stiffness: isMobile ? undefined : 100,
+        damping: isMobile ? undefined : 12,
+      },
+    },
+  };
 
-/**
- * Call to action buttons
- */
-function HeroCtaButtons({ itemVariants }) {
+  // Container variants for simultaneous animation
+  const ctaSectionVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        // All children animate at the same time (no stagger)
+        staggerChildren: 0,
+        delayChildren: 0,
+        when: "beforeChildren",
+      },
+    },
+  };
+
   return (
-    <>
-      <motion.div className="hero__cta-buttons" variants={itemVariants}>
+    <motion.div 
+      className="hero__cta-section" 
+      variants={ctaSectionVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div className="hero__cta-buttons" variants={ctaVariants}>
         <Link
           className="cta-button cta-button--primary"
           to={ROUTES.PROJECTS}
+          aria-label="Xem các dự án của tôi"
         >
-          <span>Dự Án</span>
-          <span className="button-icon">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M5 12h14M12 5l7 7-7 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <span className="cta-button__content">
+            <span className="cta-button__text">Xem Dự Án</span>
+            <span className="cta-button__icon">
+              <svg
+                width={isMobile ? "16" : "18"}
+                height={isMobile ? "16" : "18"}
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
           </span>
+          <div className="cta-button__glow"></div>
         </Link>
 
         <Link
           className="cta-button cta-button--secondary"
           to={ROUTES.CONTACT}
+          aria-label="Liên hệ với tôi"
         >
-          <span>Liên Hệ</span>
-          <span className="button-icon">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21 5.25L12 13.5 3 5.25M3 5.25h18v13.5H3V5.25z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <span className="cta-button__content">
+            <span className="cta-button__text">Liên Hệ</span>
+            <span className="cta-button__icon">
+              <svg
+                width={isMobile ? "16" : "18"}
+                height={isMobile ? "16" : "18"}
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M21 5.25L12 13.5 3 5.25M3 5.25h18v13.5H3V5.25z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
           </span>
+          <div className="cta-button__glow"></div>
         </Link>
       </motion.div>
-      <br />
+      
       <motion.div
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        className="hero__download-cv"
+        variants={ctaVariants}
+        whileHover={isMobile ? undefined : { scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ 
+          type: isMobile ? "tween" : "spring", 
+          stiffness: 400, 
+          damping: 10,
+          duration: isMobile ? 0.2 : undefined
+        }}
       >
         <button
-          className="btn btn--outline btn--enhanced"
+          className="download-cv-btn"
           onClick={() => {
             import("components").then(({ showNotification }) => {
               showNotification(
-                "Tính năng đang được phát triển và sẽ sẵn sàng trong thời gian tới!",
+                "Tính năng đang được phát triển và sẽ sẵn sày trong thời gian tới!",
                 "development",
-                5000
+                isMobile ? 3000 : 5000
               );
             });
           }}
           aria-label="Tải CV PDF"
         >
-          <div className="btn-content">
-            <span className="btn-text">Download CV</span>
-            <div className="btn-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <span className="download-cv-btn__content">
+            <span className="download-cv-btn__text">Download CV</span>
+            <span className="download-cv-btn__icon">
+              <svg width={isMobile ? "14" : "16"} height={isMobile ? "14" : "16"} viewBox="0 0 16 16" fill="none">
                 <path
                   d="M8 1v8m0 0l-3-3m3 3l3-3M3 12h10"
                   stroke="currentColor"
@@ -331,12 +356,12 @@ function HeroCtaButtons({ itemVariants }) {
                   strokeLinejoin="round"
                 />
               </svg>
-            </div>
-          </div>
-          <div className="btn-glow"></div>
+            </span>
+          </span>
+          <div className="download-cv-btn__glow"></div>
         </button>
       </motion.div>
-    </>
+    </motion.div>
   );
 }
 

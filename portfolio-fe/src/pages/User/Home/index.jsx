@@ -1,36 +1,20 @@
-import React, { Suspense, useEffect, useState, useRef } from "react";
+import React, { Suspense, lazy } from "react";
 import "./HomeIndex.scss";
-import { HeroSection, ProjectShowcase, StatsStrip, TechMarquee } from "components";
+import { HeroSection } from "components"; // keep hero eager (above the fold)
 import useIsMobile from "hooks/useIsMobile";
+import useVisibility from "hooks/useVisibility";
 
-// Lazy load heavier sections
-
+// True code-splitting for heavier, below-the-fold sections
+const StatsStrip = lazy(() => import("components/User/Home/StatsStrip/StatsStrip"));
+const ProjectShowcase = lazy(() => import("components/User/Home/ProjectShowcase/ProjectShowcase"));
+const TechMarquee = lazy(() => import("components/User/Home/TechMarquee/TechMarquee"));
 
 function HomeIndex() {
-  const [showStats, setShowStats] = useState(false);
-  const [showProjects, setShowProjects] = useState(false);
-  const statsRef = useRef(null);
-  const projectsRef = useRef(null);
   const { isMobile } = useIsMobile();
-
-  useEffect(() => {
-    // More aggressive intersection margins for mobile
-    const rootMargin = isMobile ? "0px 0px 100px 0px" : "0px 0px 200px 0px";
-    const threshold = isMobile ? 0.1 : 0.05;
-
-    const options = { root: null, rootMargin, threshold };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          if (entry.target === statsRef.current) setShowStats(true);
-          if (entry.target === projectsRef.current) setShowProjects(true);
-        }
-      });
-    }, options);
-    if (statsRef.current) observer.observe(statsRef.current);
-    if (projectsRef.current) observer.observe(projectsRef.current);
-    return () => observer.disconnect();
-  }, [isMobile]);
+  const [statsRef, showStats] = useVisibility({ threshold: isMobile ? 0.2 : 0.1, rootMargin: isMobile ? '0px 0px 120px 0px' : '0px 0px 240px 0px' });
+  const [projectsRef, showProjects] = useVisibility({ threshold: isMobile ? 0.15 : 0.08, rootMargin: isMobile ? '0px 0px 160px 0px' : '0px 0px 320px 0px' });
+  const [marqueeRef, showMarquee] = useVisibility({ threshold: 0.05, rootMargin: isMobile ? '0px 0px 200px 0px' : '0px 0px 400px 0px' });
+  // no manual observer code needed now
 
   return (
     <div className="home-container">
@@ -41,10 +25,17 @@ function HomeIndex() {
 
 
       <div>
-        <TechMarquee />
+        {/* Tech marquee placeholder for intersection-based lazy mount */}
+        <div ref={marqueeRef} style={{ minHeight: 120 }}>
+          {showMarquee && (
+            <Suspense fallback={<div className="loading-block" aria-label="Đang tải công nghệ" />}> 
+              <TechMarquee />
+            </Suspense>
+          )}
+        </div>
 
         {/* Stats placeholder */}
-        <div ref={statsRef} style={{ minHeight: 80 }}>
+  <div ref={statsRef} style={{ minHeight: 80 }}>
           {showStats && (
             <Suspense
               fallback={
@@ -57,7 +48,7 @@ function HomeIndex() {
         </div>
 
         {/* Projects placeholder */}
-        <div ref={projectsRef} style={{ minHeight: 120 }}>
+  <div ref={projectsRef} style={{ minHeight: 120 }}>
           {showProjects && (
             <Suspense
               fallback={

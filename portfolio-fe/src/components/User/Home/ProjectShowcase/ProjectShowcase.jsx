@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./ProjectShowcase.scss";
 import { Link } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
+import useIsMobile from "hooks/useIsMobile";
 
 // Enhanced featured projects with more professional presentation
 const featured = [
@@ -47,10 +48,39 @@ const featured = [
 ];
 
 function ProjectShowcase() {
+  const { isMobile } = useIsMobile();
+  const showcaseRef = useRef(null);
+  const [isInView, setIsInView] = useState(false);
+
+  // Intersection Observer for animation trigger
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsInView(entry.isIntersecting);
+        });
+      },
+      { 
+        threshold: isMobile ? 0.1 : 0.2,
+        rootMargin: isMobile ? '50px' : '100px'
+      }
+    );
+
+    if (showcaseRef.current) {
+      observer.observe(showcaseRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isMobile]);
+
   return (
-    <section className="hm-section showcase" aria-label="Dự án nổi bật">
+    <section 
+      ref={showcaseRef}
+      className={`hm-section showcase ${isInView ? 'animate-in' : ''}`} 
+      aria-label="Dự án nổi bật"
+    >
       <div className="container">
-        <div className="showcase__head">
+        <div className={`showcase__head ${isInView ? 'animate-in' : ''}`}>
           <div className="showcase__header-content">
             <h2 className="sec-titles">
               <span className="highlight">Dự Án Nổi Bật</span>
@@ -67,12 +97,12 @@ function ProjectShowcase() {
           </Link>
         </div>
         
-        <div className="showcase__grid">
+        <div className={`showcase__grid ${isInView ? 'animate-in' : ''}`}>
           {featured.map((project, index) => (
             <article 
               key={project.id} 
-              className={`project-card ${project.featured ? 'featured' : ''}`}
-              style={{'--delay': `${index * 0.1}s`}}
+              className={`project-card ${project.featured ? 'featured' : ''} ${isInView ? 'animate-in' : ''}`}
+              style={{'--delay': `${index * 0.15}s`}}
               tabIndex={0} 
               aria-label={project.title}
             >
@@ -93,8 +123,14 @@ function ProjectShowcase() {
                 <p className="project-desc">{project.desc}</p>
                 
                 <div className="project-stack" aria-label="Công nghệ">
-                  {project.stack.map(tech => (
-                    <span key={tech} className="tech-tag">{tech}</span>
+                  {project.stack.map((tech, techIndex) => (
+                    <span 
+                      key={tech} 
+                      className="tech-tag"
+                      style={{'--tech-delay': `${techIndex * 0.1}s`}}
+                    >
+                      {tech}
+                    </span>
                   ))}
                 </div>
               </div>

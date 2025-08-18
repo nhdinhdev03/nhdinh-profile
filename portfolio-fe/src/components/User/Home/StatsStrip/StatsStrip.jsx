@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import "./StatsStrip.scss";
 
 const stats = [
@@ -7,77 +7,87 @@ const stats = [
     value: 2, 
     suffix: "+",
     icon: "📅",
-    color: "blue"
+    color: "blue",
+    description: "Phát triển phần mềm"
   },
   { 
     label: "Dự án đã hoàn thành", 
     value: 20, 
     suffix: "+",
     icon: "🚀",
-    color: "green" 
+    color: "green",
+    description: "Web & Mobile Apps"
   },
   { 
     label: "Công nghệ đã dùng", 
     value: 18, 
     suffix: "+",
     icon: "⚙️",
-    color: "purple"
+    color: "purple",
+    description: "Frontend & Backend"
   },
   { 
     label: "Giờ coding", 
     value: 3000, 
     suffix: "+",
     icon: "⏱️",
-    color: "orange"
+    color: "orange",
+    description: "Thực tế & Học tập"
   },
 ];
 
 export default function StatsStrip() {
   const statsRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  
+  const animateValue = (node, target, suffix, duration, delay = 0) => {
+    setTimeout(() => {
+      const start = performance.now();
+      const animate = (currentTime) => {
+        const progress = Math.min(1, (currentTime - start) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+        const val = Math.round(target * eased);
+        node.textContent = `${val}${suffix}`;
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
+    }, delay);
+  };
+  
+  const startCountAnimation = useCallback(() => {
+    const nodes = document.querySelectorAll('.stat__value');
+    const duration = window.innerWidth <= 768 ? 1000 : 1400;
+    const delayStep = window.innerWidth <= 768 ? 100 : 150;
+    
+    nodes.forEach((node, index) => {
+      const target = parseInt(node.getAttribute('data-target') || '0', 10);
+      const suffix = node.getAttribute('data-suffix') || '';
+      const delay = index * delayStep;
+      
+      animateValue(node, target, suffix, duration, delay);
+    });
+  }, []);
   
   useEffect(() => {
+    const node = statsRef.current;
+    if (!node) return;
+    
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
           startCountAnimation();
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.3 });
-    
-    if (statsRef.current) {
-      observer.observe(statsRef.current);
-    }
-    
-    return () => {
-      if (statsRef.current) {
-        observer.unobserve(statsRef.current);
-      }
-    };
-  }, []);
-  
-  const startCountAnimation = () => {
-    const statValues = document.querySelectorAll('.stat__value');
-    
-    statValues.forEach(statValue => {
-      const target = parseInt(statValue.getAttribute('data-target'), 10);
-      const suffix = statValue.getAttribute('data-suffix') || '';
-      let current = 0;
-      const increment = Math.ceil(target / 40); // Speed of count
-      const duration = 1800; // Total animation time in ms
-      const stepTime = Math.floor(duration / (target / increment));
-      
-      const counter = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          statValue.textContent = `${target}${suffix}`;
-          clearInterval(counter);
-        } else {
-          statValue.textContent = `${current}${suffix}`;
-        }
-      }, stepTime);
+    }, { 
+      threshold: window.innerWidth <= 768 ? 0.2 : 0.3,
+      rootMargin: window.innerWidth <= 768 ? '0px 0px -50px 0px' : '0px 0px -100px 0px'
     });
-  };
+    
+    observer.observe(node);
+    return () => observer.unobserve(node);
+  }, [isVisible, startCountAnimation]);
 
   return (
     <section className="hm-section stats" aria-label="Thành tựu nhanh">
@@ -91,15 +101,16 @@ export default function StatsStrip() {
           </p>
         </div>
         
-        <div className="stats__grid" ref={statsRef}>
+        <div className={`stats__grid ${isVisible ? 'stats__grid--visible' : ''}`} ref={statsRef}>
           {stats.map((stat, index) => (
             <div 
-              className={`stat stat--${stat.color}`} 
+              className={`stat stat--${stat.color} ${isVisible ? 'stat--animate' : ''}`} 
               key={index}
-              style={{'--delay': `${index * 0.15}s`}}
+              style={{'--delay': `${index * (window.innerWidth <= 768 ? 0.1 : 0.15)}s`}}
             >
               <div className="stat__icon-wrapper">
                 <span className="stat__icon">{stat.icon}</span>
+                <div className="stat__icon-bg"></div>
               </div>
               <div 
                 className="stat__value" 
@@ -109,7 +120,31 @@ export default function StatsStrip() {
                 0{stat.suffix}
               </div>
               <div className="stat__label">{stat.label}</div>
+              <div className="stat__description">{stat.description}</div>
               <div className={`stat__decoration stat__decoration--${stat.color}`}></div>
+              <div className="stat__progress-ring">
+                <svg className="progress-ring" width="120" height="120">
+                  <circle
+                    className="progress-ring__circle-bg"
+                    cx="60"
+                    cy="60"
+                    r="54"
+                    fill="transparent"
+                    strokeWidth="4"
+                  />
+                  <circle
+                    className="progress-ring__circle"
+                    cx="60"
+                    cy="60"
+                    r="54"
+                    fill="transparent"
+                    strokeWidth="4"
+                    strokeDasharray="339.292"
+                    strokeDashoffset="339.292"
+                    style={{'--progress': `${(stat.value / Math.max(...stats.map(s => s.value))) * 100}%`}}
+                  />
+                </svg>
+              </div>
             </div>
           ))}
         </div>

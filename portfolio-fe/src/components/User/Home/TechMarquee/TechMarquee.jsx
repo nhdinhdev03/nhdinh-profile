@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from "react"
 import "./TechMarquee.scss";
 import useIsMobile from "hooks/useIsMobile";
 
-
 // Inline SVG logos with React.memo for performance
 const Logo = React.memo(({ type }) => {
   switch (type) {
@@ -301,6 +300,9 @@ const Logo = React.memo(({ type }) => {
   }
 });
 
+// Add prop validation for Logo component
+Logo.displayName = 'Logo';
+
 const LOGOS = [
   { key: "react", label: "React" },
   { key: "ts", label: "TypeScript" },
@@ -329,16 +331,39 @@ const LOGOS = [
 
 function TechMarquee({ direction = "ltr", speed }) {
   const { isMobile } = useIsMobile();
+  const marqueeRef = useRef(null);
+  const [isInView, setIsInView] = useState(false);
   
   // speed prop now means desired pixels/second (optional override)
   const trackRef = useRef(null);
-  const progressRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [idx, setIdx] = useState(0);
-  const SLIDE_DURATION = isMobile ? 2000 : 3000; // Faster slideshow on mobile
+  const SLIDE_DURATION = isMobile ? 1800 : 2500; // Faster slideshow on mobile
   const marqueeItems = useMemo(() => [...LOGOS, ...LOGOS], []); // duplicate only (seamless loop)
 
-  // Adaptive base speed (px/s) if not provided
+  // Intersection Observer for animation trigger
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsInView(entry.isIntersecting);
+        });
+      },
+      { 
+        threshold: isMobile ? 0.1 : 0.2,
+        rootMargin: isMobile ? '50px' : '100px'
+      }
+    );
+
+    if (marqueeRef.current) {
+      observer.observe(marqueeRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isMobile]);
+
+  // Adaptive base speed (px/s) if not provided with mobile optimization
   const speedRef = useRef(60);
   useEffect(() => {
     if (typeof speed === "number" && speed > 0) {
@@ -346,14 +371,25 @@ function TechMarquee({ direction = "ltr", speed }) {
       return;
     }
     const w = window.innerWidth;
-    speedRef.current =
-      w > 1400 ? 90 : w > 1100 ? 75 : w > 900 ? 65 : w > 600 ? 55 : 45;
+    // More conservative speeds for mobile with cleaner logic
+    if (w > 1400) {
+      speedRef.current = 85;
+    } else if (w > 1100) {
+      speedRef.current = 70;
+    } else if (w > 900) {
+      speedRef.current = 60;
+    } else if (w > 600) {
+      speedRef.current = 50;
+    } else {
+      speedRef.current = 35;
+    }
   }, [speed]);
 
-  // Pixel based RAF animation
+  // Enhanced pixel based RAF animation with mobile optimization
   useEffect(() => {
     const track = trackRef.current;
-    if (!track) return;
+    if (!track || !isInView) return;
+    
     let pos = 0; // translateX in px (negative for left movement)
     let last = performance.now();
     let cycleWidth = 0; // width of one copy
@@ -364,17 +400,19 @@ function TechMarquee({ direction = "ltr", speed }) {
       // Measure width of first half (original set)
       const half = track.children.length / 2;
       let w = 0;
+      const gap = isMobile ? 20 : 34; // Smaller gap on mobile
       for (let i = 0; i < half; i++)
-        w += track.children[i].getBoundingClientRect().width + 34; // include gap (matches CSS gap)
+        w += track.children[i].getBoundingClientRect().width + gap;
       cycleWidth = w;
     };
+    
     measure();
     let resizeTO;
     const onResize = () => {
       clearTimeout(resizeTO);
       resizeTO = setTimeout(() => {
         measure();
-      }, 120);
+      }, isMobile ? 100 : 120);
     };
     window.addEventListener("resize", onResize);
 
@@ -384,7 +422,7 @@ function TechMarquee({ direction = "ltr", speed }) {
     const loop = (now) => {
       const dt = now - last;
       last = now;
-      if (!isPaused && cycleWidth > 0) {
+      if (!isPaused && isVisible && cycleWidth > 0) {
         pos += dir * (speedRef.current * (dt / 1000));
         // Wrap seamlessly
         if (dir === -1 && pos <= -cycleWidth) pos += cycleWidth;
@@ -398,10 +436,43 @@ function TechMarquee({ direction = "ltr", speed }) {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", onResize);
     };
-  }, [direction, isPaused]);
+  }, [direction, isPaused, isVisible, isInView, isMobile]);
 
-  const handleMouseEnter = useCallback(() => setIsPaused(true), []);
-  const handleMouseLeave = useCallback(() => setIsPaused(false), []);
+  // Visibility observer to auto-pause when offscreen
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const root = track.closest('section');
+    if (!root) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.target === root) {
+          setIsVisible(e.isIntersecting);
+        }
+      });
+    }, { threshold: 0.05 });
+    io.observe(root);
+    return () => io.disconnect();
+  }, []);
+
+  // Mobile-optimized touch interactions
+  const handleMouseEnter = useCallback(() => {
+    if (!isMobile) setIsPaused(true);
+  }, [isMobile]);
+  
+  const handleMouseLeave = useCallback(() => {
+    if (!isMobile) setIsPaused(false);
+  }, [isMobile]);
+
+  const handleTouchStart = useCallback(() => {
+    if (isMobile) setIsPaused(true);
+  }, [isMobile]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (isMobile) {
+      setTimeout(() => setIsPaused(false), 1000); // Resume after 1s on mobile
+    }
+  }, [isMobile]);
 
   // Center slideshow interval
   useEffect(() => {
@@ -410,22 +481,6 @@ function TechMarquee({ direction = "ltr", speed }) {
       SLIDE_DURATION
     );
     return () => clearInterval(id);
-  }, [SLIDE_DURATION]);
-
-  // Progress bar animation (if progress bar CSS added later)
-  useEffect(() => {
-    let af;
-    const start = performance.now();
-    const loop = (t) => {
-      const el = progressRef.current;
-      if (el) {
-        const pct = ((t - start) % SLIDE_DURATION) / SLIDE_DURATION;
-        el.style.setProperty("--p", pct.toString());
-      }
-      af = requestAnimationFrame(loop);
-    };
-    af = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(af);
   }, [SLIDE_DURATION]);
 
   // Compose classes for marquee section
@@ -439,12 +494,13 @@ function TechMarquee({ direction = "ltr", speed }) {
 
   return (
     <section
+      ref={marqueeRef}
       className={marqueeClasses}
       style={marqueeStyle}
       aria-label="Công nghệ sử dụng"
     >
       <div className="container">
-        <div className="tech__header">
+        <div className={`tech__header ${isInView ? 'animate-in' : ''}`}>
           <h2 className="sec-titles">
             <span className="highlight">Công Nghệ & Công Cụ</span>
           </h2>
@@ -453,42 +509,39 @@ function TechMarquee({ direction = "ltr", speed }) {
           </p>
         </div>
         {/* Fade slideshow (all breakpoints) */}
-        <div
-          className="logos-slideshow"
-          role="list"
+        <ul
+          className={`logos-slideshow ${isInView ? 'animate-in' : ''}`}
           aria-label="Logo công nghệ nổi bật"
         >
           {LOGOS.map((l, i) => (
-            <div
+            <li
               key={l.key}
               className={"logo-slide" + (i === idx ? " active" : "")}
-              role="listitem"
               aria-label={l.label}
             >
               <Logo type={l.key} />
               <span className="logo-caption">{l.label}</span>
-            </div>
+            </li>
           ))}
-          <div className="logo-progress" ref={progressRef} aria-hidden="true" />
-        </div>
+        </ul>
         {/* Scrolling marquee (băng truyền) */}
         <div
-          className="marquee__viewport"
+          className={`marquee__viewport ${isInView ? 'animate-in' : ''}`}
           aria-label="Danh sách công nghệ"
-          role="list"
         >
-          <div
+          <ul
             className="marquee__track"
             ref={trackRef}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             {marqueeItems.map((l, i) => {
               const baseIndex = i % LOGOS.length;
               const active = baseIndex === idx; // sync highlight with big slide
               return (
-                <span
-                  role="listitem"
+                <li
                   aria-label={l.label + (active ? " (đang chọn)" : "")}
                   className={`marquee__item marquee__logo${
                     active ? " is-active" : ""
@@ -497,13 +550,20 @@ function TechMarquee({ direction = "ltr", speed }) {
                 >
                   <Logo type={l.key} />
                   <span>{l.label}</span>
-                </span>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </div>
       </div>
     </section>
   );
 }
+
+// Add prop validation
+TechMarquee.defaultProps = {
+  direction: "ltr",
+  speed: null
+};
+
 export default TechMarquee;

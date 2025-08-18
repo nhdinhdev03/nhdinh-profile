@@ -136,7 +136,14 @@ function NeuroGrid({ parentRef, isMobile = false }) {
       return { mx, my };
     }
 
-    function draw(now) {
+  // Decide animation strategy for mobile / low-power
+  const deviceMem = navigator.deviceMemory || 0; // may be undefined
+  const lowPower = isMobile && (deviceMem && deviceMem <= 4);
+  const frameSkip = isMobile ? 2 : 0; // render every 3rd frame on mobile (approx ~20fps) for lighter CPU
+  let frameCount = 0;
+  const shouldAnimate = !lowPower; // if low-end device, draw once (static)
+
+  function draw(now) {
       const t = (now - t0) / 1000;
       ctx.clearRect(0, 0, width, height);
 
@@ -325,7 +332,14 @@ function NeuroGrid({ parentRef, isMobile = false }) {
       }
 
       // Continue animation for all devices
-      rafRef.current = requestAnimationFrame(draw);
+      if (shouldAnimate) {
+        if (frameSkip && (frameCount++ % (frameSkip + 1)) !== 0) {
+          // skip this frame scheduling heavy math, but still request next frame
+          rafRef.current = requestAnimationFrame(draw);
+          return;
+        }
+        rafRef.current = requestAnimationFrame(draw);
+      }
     }
 
     // Observe size changes efficiently
@@ -344,6 +358,10 @@ function NeuroGrid({ parentRef, isMobile = false }) {
     }
 
     start();
+    if (!shouldAnimate) {
+      // Static mode: cancel next frame after first render
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    }
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);

@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.Project;
+package com.nhdinh.profile.service.Project;
 
 import java.util.HashSet;
 import java.util.List;
@@ -10,10 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nhdinh.profile.modules.Project.Project;
+import com.nhdinh.profile.modules.Project.ProjectDAO;
 import com.nhdinh.profile.modules.ProjectCategory.ProjectCategory;
 import com.nhdinh.profile.modules.ProjectCategory.ProjectCategoryDAO;
 import com.nhdinh.profile.modules.ProjectTag.ProjectTag;
 import com.nhdinh.profile.modules.ProjectTag.ProjectTagService;
+import com.nhdinh.profile.request.Project.ProjectCreateRequest;
+import com.nhdinh.profile.request.Project.ProjectUpdateRequest;
 
 @Service
 @Transactional

@@ -1,10 +1,11 @@
-package com.nhdinh.profile.modules.Project;
+package com.nhdinh.profile.response.Project;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.nhdinh.profile.modules.Project.Project;
 import com.nhdinh.profile.modules.ProjectCategory.ProjectCategoryResponse;
 import com.nhdinh.profile.modules.ProjectTag.ProjectTagResponse;
 

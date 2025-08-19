@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.Project;
+package com.nhdinh.profile.request.Project;
 
 import java.util.List;
 import java.util.UUID;

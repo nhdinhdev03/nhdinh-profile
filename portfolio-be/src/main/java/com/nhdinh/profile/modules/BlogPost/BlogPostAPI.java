@@ -1,5 +1,8 @@
 package com.nhdinh.profile.modules.BlogPost;
 
+import com.nhdinh.profile.service.BlogPost.BlogPostService;
+import com.nhdinh.profile.request.BlogPost.BlogPostRequest;
+import com.nhdinh.profile.request.BlogPost.BlogPostUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +72,7 @@ public class BlogPostAPI {
     // Update blog post
     @PutMapping("/{id}")
     public ResponseEntity<BlogPost> updateBlogPost(@PathVariable UUID id, 
-                                                  @Valid @RequestBody BlogPostRequest request) {
+                                                  @Valid @RequestBody BlogPostUpdateRequest request) {
         try {
             BlogPost updatedBlogPost = blogPostService.updateBlogPost(id, request);
             return ResponseEntity.ok(updatedBlogPost);

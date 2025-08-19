@@ -1,5 +1,9 @@
-package com.nhdinh.profile.modules.BlogPost;
+package com.nhdinh.profile.service.BlogPost;
 
+import com.nhdinh.profile.modules.BlogPost.BlogPost;
+import com.nhdinh.profile.modules.BlogPost.BlogPostDAO;
+import com.nhdinh.profile.request.BlogPost.BlogPostRequest;
+import com.nhdinh.profile.request.BlogPost.BlogPostUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +68,7 @@ public class BlogPostService {
     }
     
     // Update blog post
-    public BlogPost updateBlogPost(UUID id, BlogPostRequest request) {
+    public BlogPost updateBlogPost(UUID id, BlogPostUpdateRequest request) {
         Optional<BlogPost> existingBlogPost = blogPostDAO.findById(id);
         if (!existingBlogPost.isPresent() || existingBlogPost.get().getIsDeleted()) {
             throw new IllegalArgumentException("Blog post not found");
@@ -72,11 +76,19 @@ public class BlogPostService {
         
         BlogPost blogPost = existingBlogPost.get();
         
-        // Update fields
-        blogPost.setTitle(request.getTitle());
-        blogPost.setDescription(request.getDescription());
-        blogPost.setThumbnail(request.getThumbnail());
-        blogPost.setContent(request.getContent());
+        // Update fields only if they are provided
+        if (request.getTitle() != null) {
+            blogPost.setTitle(request.getTitle());
+        }
+        if (request.getDescription() != null) {
+            blogPost.setDescription(request.getDescription());
+        }
+        if (request.getThumbnail() != null) {
+            blogPost.setThumbnail(request.getThumbnail());
+        }
+        if (request.getContent() != null) {
+            blogPost.setContent(request.getContent());
+        }
         
         // Update slug if provided and different
         if (request.getSlug() != null && !request.getSlug().equals(blogPost.getSlug())) {
@@ -154,6 +166,19 @@ public class BlogPostService {
             throw new IllegalArgumentException("Blog post not found");
         }
         blogPostDAO.deleteById(id);
+    }
+    
+    // Get blog post statistics
+    public long getTotalBlogPosts() {
+        return blogPostDAO.count();
+    }
+    
+    public long getActiveBlogPosts() {
+        return blogPostDAO.countByIsDeletedFalse();
+    }
+    
+    public long getDeletedBlogPosts() {
+        return blogPostDAO.countByIsDeletedTrue();
     }
     
     // Utility: Generate slug from title

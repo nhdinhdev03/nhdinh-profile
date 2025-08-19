@@ -1,11 +1,9 @@
-package com.nhdinh.profile.modules.BlogPost;
+package com.nhdinh.profile.request.BlogPost;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class BlogPostRequest {
+public class BlogPostUpdateRequest {
     
-    @NotBlank(message = "Title is required")
     @Size(max = 200, message = "Title must not exceed 200 characters")
     private String title;
     
@@ -21,10 +19,10 @@ public class BlogPostRequest {
     private String content;
     
     // Default constructor
-    public BlogPostRequest() {}
+    public BlogPostUpdateRequest() {}
     
     // Constructor
-    public BlogPostRequest(String title, String slug, String description, String thumbnail, String content) {
+    public BlogPostUpdateRequest(String title, String slug, String description, String thumbnail, String content) {
         this.title = title;
         this.slug = slug;
         this.description = description;
@@ -75,7 +73,7 @@ public class BlogPostRequest {
     
     @Override
     public String toString() {
-        return "BlogPostRequest{" +
+        return "BlogPostUpdateRequest{" +
                 "title='" + title + '\'' +
                 ", slug='" + slug + '\'' +
                 ", description='" + description + '\'' +

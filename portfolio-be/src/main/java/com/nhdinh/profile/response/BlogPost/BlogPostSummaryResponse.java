@@ -1,39 +1,24 @@
-package com.nhdinh.profile.modules.BlogPost;
+package com.nhdinh.profile.response.BlogPost;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class BlogPostResponse {
+public class BlogPostSummaryResponse {
     
     private UUID blogId;
     private String title;
     private String slug;
     private String description;
     private String thumbnail;
-    private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isDeleted;
     
-    // Default constructor
-    public BlogPostResponse() {}
+    public BlogPostSummaryResponse() {}
     
-    // Constructor from BlogPost entity
-    public BlogPostResponse(BlogPost blogPost) {
-        this.blogId = blogPost.getBlogId();
-        this.title = blogPost.getTitle();
-        this.slug = blogPost.getSlug();
-        this.description = blogPost.getDescription();
-        this.thumbnail = blogPost.getThumbnail();
-        this.content = blogPost.getContent();
-        this.createdAt = blogPost.getCreatedAt();
-        this.updatedAt = blogPost.getUpdatedAt();
-        this.isDeleted = blogPost.getIsDeleted();
-    }
-    
-    // Constructor for summary (without content)
-    public BlogPostResponse(UUID blogId, String title, String slug, String description, 
-                          String thumbnail, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public BlogPostSummaryResponse(UUID blogId, String title, String slug, String description, 
+                                  String thumbnail, LocalDateTime createdAt, LocalDateTime updatedAt, 
+                                  Boolean isDeleted) {
         this.blogId = blogId;
         this.title = title;
         this.slug = slug;
@@ -41,25 +26,7 @@ public class BlogPostResponse {
         this.thumbnail = thumbnail;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.isDeleted = false;
-    }
-    
-    // Static factory method for creating summary response (without content)
-    public static BlogPostResponse createSummary(BlogPost blogPost) {
-        return new BlogPostResponse(
-            blogPost.getBlogId(),
-            blogPost.getTitle(),
-            blogPost.getSlug(),
-            blogPost.getDescription(),
-            blogPost.getThumbnail(),
-            blogPost.getCreatedAt(),
-            blogPost.getUpdatedAt()
-        );
-    }
-    
-    // Static factory method for creating full response
-    public static BlogPostResponse createFull(BlogPost blogPost) {
-        return new BlogPostResponse(blogPost);
+        this.isDeleted = isDeleted;
     }
     
     // Getters and Setters
@@ -103,14 +70,6 @@ public class BlogPostResponse {
         this.thumbnail = thumbnail;
     }
     
-    public String getContent() {
-        return content;
-    }
-    
-    public void setContent(String content) {
-        this.content = content;
-    }
-    
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -137,12 +96,13 @@ public class BlogPostResponse {
     
     @Override
     public String toString() {
-        return "BlogPostResponse{" +
+        return "BlogPostSummaryResponse{" +
                 "blogId=" + blogId +
                 ", title='" + title + '\'' +
                 ", slug='" + slug + '\'' +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
+                ", isDeleted=" + isDeleted +
                 '}';
     }
 }

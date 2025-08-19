@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.AdminUser;
+package com.nhdinh.profile.response.AdminUser;
 
 public class AdminUserStatsResponse {
     

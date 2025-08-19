@@ -1,6 +1,9 @@
-package com.nhdinh.profile.modules.AdminUser;
+package com.nhdinh.profile.response.AdminUser;
 
 import java.util.List;
+
+import com.nhdinh.profile.modules.AdminUser.AdminUser;
+import com.nhdinh.profile.modules.AdminUser.AdminUserMonthlyStats;
 
 public class AdminUserSummaryResponse {
     

@@ -45,6 +45,7 @@ const HomeManagement = () => {
   const [saving, setSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
+  const [isEditingHero, setIsEditingHero] = useState(false);
 
   // Filter states
   const [showDeleted, setShowDeleted] = useState(false);
@@ -323,20 +324,8 @@ const HomeManagement = () => {
             loadTabStats();
           }
 
-          // Load first hero for editing only in active view
-          if (viewMode === "active") {
-            const hero = response.data[0];
-            setSelectedHero(hero);
-            setHeroSection({
-              heroId: hero.heroId,
-              locale: hero.locale,
-              preHeading: hero.preHeading || "",
-              heading: hero.heading || "",
-              introHtml: hero.introHtml || "",
-              createdAt: hero.createdAt,
-              updatedAt: hero.updatedAt,
-            });
-          }
+          // Không tự động load hero để edit nữa - chỉ load danh sách
+          // Người dùng sẽ phải click "Edit" để chỉnh sửa hero
         } else {
           setHeroes([]);
           setHeroData([]);
@@ -630,6 +619,7 @@ const HomeManagement = () => {
   const selectHero = useCallback(
     (hero) => {
       setSelectedHero(hero);
+      setIsEditingHero(true);
       setHeroSection({
         heroId: hero.heroId,
         locale: hero.locale,
@@ -665,6 +655,7 @@ const HomeManagement = () => {
       updatedAt: null,
     });
     setSelectedHero(null);
+    setIsEditingHero(false);
     setSubHeadings([]); // Clear sub-headings
     setNewSubHeading(""); // Clear new sub-heading input
     setEditingSubHeading(null); // Clear editing state
@@ -744,20 +735,8 @@ const HomeManagement = () => {
           setHeroes(response.data);
           setHeroData(response.data);
 
-          // Load first hero for editing only in active view
-          if (viewMode === "active") {
-            const hero = response.data[0];
-            setSelectedHero(hero);
-            setHeroSection({
-              heroId: hero.heroId,
-              locale: hero.locale,
-              preHeading: hero.preHeading || "",
-              heading: hero.heading || "",
-              introHtml: hero.introHtml || "",
-              createdAt: hero.createdAt,
-              updatedAt: hero.updatedAt,
-            });
-          }
+          // Không tự động load hero để edit nữa - chỉ load danh sách
+          // Người dùng sẽ phải click "Edit" để chỉnh sửa hero
         } else {
           setHeroes([]);
           setHeroData([]);
@@ -790,35 +769,24 @@ const HomeManagement = () => {
       );
 
       if (!isSelectedHeroVisible) {
-        // Try to find an appropriate hero to auto-select in current view
-        if (filteredHeroes.length > 0) {
-          // Auto-select first available hero in current view
-          const firstAvailableHero = filteredHeroes[0];
-          selectHero(firstAvailableHero);
-          return; // Exit early, no notification needed when auto-selecting
-        } else {
-          // Only show notification if:
-          // 1. No heroes available in current view 
-          // 2. User is actively searching (has search term)
-          // 3. Haven't shown notification for this combo yet
-          const hasActiveSearch = debouncedSearchTerm.trim().length > 0;
-          const notificationKey = `${selectedHero.heroId}-${viewMode}`;
+        // Không auto-select hero nữa - chỉ hiển thị thông báo nếu cần
+        const hasActiveSearch = debouncedSearchTerm.trim().length > 0;
+        const notificationKey = `${selectedHero.heroId}-${viewMode}`;
 
-          if (hasActiveSearch && lastNotificationId !== notificationKey) {
-            const heroStatus = selectedHero.isDeleted ? "đã xóa" : "hoạt động";
-            const currentView =
-              viewMode === "active"
-                ? "Heroes hoạt động"
-                : viewMode === "deleted"
-                ? "Thùng rác"
-                : "view hiện tại";
+        if (hasActiveSearch && lastNotificationId !== notificationKey) {
+          const heroStatus = selectedHero.isDeleted ? "đã xóa" : "hoạt động";
+          const currentView =
+            viewMode === "active"
+              ? "Heroes hoạt động"
+              : viewMode === "deleted"
+              ? "Thùng rác"
+              : "view hiện tại";
 
-            showControlledNotification(
-              `Hero "${selectedHero.heading}" (${heroStatus}) không hiển thị trong ${currentView}. Bạn vẫn có thể chỉnh sửa hoặc chuyển tab để xem lại.`
-            );
+          showControlledNotification(
+            `Hero "${selectedHero.heading}" (${heroStatus}) không hiển thị trong ${currentView}. Bạn vẫn có thể chỉnh sửa hoặc chuyển tab để xem lại.`
+          );
 
-            setLastNotificationId(notificationKey);
-          }
+          setLastNotificationId(notificationKey);
         }
       }
     }
@@ -935,6 +903,7 @@ const HomeManagement = () => {
           <button
             onClick={() => {
               resetHeroForm();
+              setIsEditingHero(true); // Hiển thị form để tạo hero mới
             }}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
           >
@@ -1174,8 +1143,8 @@ const HomeManagement = () => {
       </div>
 
 
-      {/* Hero Section Editor - Only show in active view */}
-      {viewMode === "active" && (
+      {/* Hero Section Editor - Only show when editing a hero */}
+      {viewMode === "active" && isEditingHero && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
 
           <div className="p-6">
@@ -1351,15 +1320,11 @@ const HomeManagement = () => {
                   </select>
                 </div>
 
-                {/* Sub-headings Management - Hiển thị luôn */}
+                {/* Sub-headings Management - Chỉ hiển thị khi edit hero */}
+                {isEditingHero && heroSection.heroId && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Sub-headings ({subHeadings.length})
-                    {!heroSection.heroId && (
-                      <span className="text-xs text-amber-600 ml-2">
-                        (Lưu Hero trước để thêm sub-headings)
-                      </span>
-                    )}
                   </label>
                   <div className="space-y-2">
                     {subHeadings.map((sub, index) => (
@@ -1494,6 +1459,7 @@ const HomeManagement = () => {
                     )}
                   </div>
                 </div>
+                )}
               </div>
               <div className="bg-gray-50 rounded-lg p-6">
                 <h3 className="text-sm font-medium text-gray-700 mb-3">
@@ -1536,6 +1502,17 @@ const HomeManagement = () => {
               </div>
             </div>
             <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setIsEditingHero(false);
+                  setSelectedHero(null);
+                  resetHeroForm();
+                }}
+                disabled={loading || saving}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50"
+              >
+                Hủy
+              </button>
               <button
                 onClick={() => fetchHeroData(true)}
                 disabled={loading}
@@ -1706,6 +1683,7 @@ const HomeManagement = () => {
                     <button
                       onClick={() => {
                         resetHeroForm();
+                        setIsEditingHero(true); // Hiển thị form để tạo hero mới
                       }}
                       className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                     >

@@ -166,7 +166,7 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
           >
             {nameLetters.map((ch, i) => (
               <motion.span
-                className="letter"
+                className={ch === ' ' ? 'letter letter--space' : 'letter'}
                 key={i}
                 initial={{ y: actualIsMobile ? 20 : 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -179,7 +179,7 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
                   damping: actualIsMobile ? undefined : 15,
                 }}
               >
-                {ch}
+                {ch === ' ' ? '\u00A0' : ch}
               </motion.span>
             ))}
           </span>

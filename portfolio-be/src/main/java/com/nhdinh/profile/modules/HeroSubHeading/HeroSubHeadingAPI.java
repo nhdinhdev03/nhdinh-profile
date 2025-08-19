@@ -17,6 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nhdinh.profile.request.HeroSubHeading.HeroSubHeadingCreateRequest;
+import com.nhdinh.profile.request.HeroSubHeading.HeroSubHeadingReorderRequest;
+import com.nhdinh.profile.request.HeroSubHeading.HeroSubHeadingUpdateRequest;
+import com.nhdinh.profile.response.HeroSubHeading.HeroSubHeadingResponse;
+import com.nhdinh.profile.service.HeroSubHeading.HeroSubHeadingService;
+
 import jakarta.validation.Valid;
 
 @RestController

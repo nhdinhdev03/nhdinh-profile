@@ -1,7 +1,9 @@
-package com.nhdinh.profile.modules.HeroSubHeading;
+package com.nhdinh.profile.response.HeroSubHeading;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.nhdinh.profile.modules.HeroSubHeading.HeroSubHeading;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

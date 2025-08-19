@@ -1,7 +1,12 @@
-package com.nhdinh.profile.modules.HeroSubHeading;
+package com.nhdinh.profile.service.HeroSubHeading;
 
 import com.nhdinh.profile.modules.Hero.Hero;
 import com.nhdinh.profile.modules.Hero.HeroDAO;
+import com.nhdinh.profile.modules.HeroSubHeading.HeroSubHeading;
+import com.nhdinh.profile.modules.HeroSubHeading.HeroSubHeadingDAO;
+import com.nhdinh.profile.request.HeroSubHeading.HeroSubHeadingCreateRequest;
+import com.nhdinh.profile.request.HeroSubHeading.HeroSubHeadingReorderRequest;
+import com.nhdinh.profile.request.HeroSubHeading.HeroSubHeadingUpdateRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

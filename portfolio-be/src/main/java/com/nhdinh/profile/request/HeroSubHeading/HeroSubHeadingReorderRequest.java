@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.HeroSubHeading;
+package com.nhdinh.profile.request.HeroSubHeading;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package com.nhdinh.profile.request.BlogTagMap;
+package com.nhdinh.profile.service.BlogTagMap;
 
 import com.nhdinh.profile.modules.BlogPost.BlogPost;
 import com.nhdinh.profile.modules.BlogPost.BlogPostDAO;

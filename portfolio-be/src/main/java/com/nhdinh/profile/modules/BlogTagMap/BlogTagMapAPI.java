@@ -6,11 +6,10 @@ import com.nhdinh.profile.request.BlogTagMap.BlogTagMapBatchByNameRequest;
 import com.nhdinh.profile.request.BlogTagMap.BlogTagMapBatchRequest;
 import com.nhdinh.profile.request.BlogTagMap.BlogTagMapByNameRequest;
 import com.nhdinh.profile.request.BlogTagMap.BlogTagMapRequest;
-import com.nhdinh.profile.request.BlogTagMap.BlogTagMapService;
 import com.nhdinh.profile.response.BlogTagMap.BlogPostTagStatsResponse;
 import com.nhdinh.profile.response.BlogTagMap.BlogTagCoOccurrenceResponse;
 import com.nhdinh.profile.response.BlogTagMap.BlogTagPopularityResponse;
-
+import com.nhdinh.profile.service.BlogTagMap.BlogTagMapService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

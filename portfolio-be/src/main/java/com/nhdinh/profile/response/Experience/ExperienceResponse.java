@@ -1,6 +1,8 @@
-package com.nhdinh.profile.modules.Experience;
+package com.nhdinh.profile.response.Experience;
 
 import java.util.UUID;
+
+import com.nhdinh.profile.modules.Experience.Experience;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

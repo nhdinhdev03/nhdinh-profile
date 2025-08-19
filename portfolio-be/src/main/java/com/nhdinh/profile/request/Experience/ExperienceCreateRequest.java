@@ -1,6 +1,8 @@
-package com.nhdinh.profile.modules.Experience;
+package com.nhdinh.profile.request.Experience;
 
 import java.util.UUID;
+
+import com.nhdinh.profile.modules.Experience.Experience;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

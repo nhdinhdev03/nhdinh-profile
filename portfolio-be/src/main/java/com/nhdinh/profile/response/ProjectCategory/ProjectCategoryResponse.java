@@ -1,10 +1,12 @@
-package com.nhdinh.profile.modules.ProjectCategory;
+package com.nhdinh.profile.response.ProjectCategory;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
+
+import com.nhdinh.profile.modules.ProjectCategory.ProjectCategory;
 
 @Data
 @NoArgsConstructor

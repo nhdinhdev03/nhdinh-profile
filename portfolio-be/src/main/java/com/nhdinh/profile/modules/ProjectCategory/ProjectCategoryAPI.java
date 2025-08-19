@@ -18,6 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nhdinh.profile.request.ProjectCategory.ProjectCategoryCreateRequest;
+import com.nhdinh.profile.request.ProjectCategory.ProjectCategoryUpdateRequest;
+import com.nhdinh.profile.response.ProjectCategory.ProjectCategoryResponse;
+import com.nhdinh.profile.service.ProjectCategory.ProjectCategoryService;
+
 import jakarta.validation.Valid;
 
 @RestController

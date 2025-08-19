@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ProjectCategory;
+package com.nhdinh.profile.request.ProjectCategory;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

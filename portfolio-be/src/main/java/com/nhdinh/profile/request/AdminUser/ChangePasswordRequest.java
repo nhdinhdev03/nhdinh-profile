@@ -1,4 +1,5 @@
-package com.nhdinh.profile.modules.AdminUser;
+package com.nhdinh.profile.request.AdminUser;
+
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

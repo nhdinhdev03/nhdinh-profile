@@ -1,15 +1,16 @@
-package com.nhdinh.profile.modules.AdminUser;
+package com.nhdinh.profile.request.AdminUser;
+
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class AdminUserUpdateRequest {
     
-    @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Invalid phone number format")
+    @Pattern(regexp = "^[+]?\\d{10,15}$", message = "Invalid phone number format")
     private String phoneNumber;
     
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username can only contain letters, numbers, and underscores")
+    @Pattern(regexp = "^\\w+$", message = "Username can only contain letters, numbers, and underscores")
     private String username;
     
     @Size(max = 100, message = "Full name must not exceed 100 characters")

@@ -850,8 +850,41 @@
     transform: translateY(0);
   }
 
+  // Loading state
+  &.hero-loading {
+    .hero__intro,
+    .hero__name,
+    .hero__subtitle,
+    .hero__lead {
+      opacity: 0.6;
+      animation: loadingPulse 2s ease-in-out infinite;
+    }
+  }
+
   @media (min-width: 768px) {
     padding: 0 clamp(32px, 6vw, 48px);
+  }
+}
+
+// Error message styling
+.hero__error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  color: #dc2626;
+  font-size: 14px;
+  text-align: center;
+}
+
+// Loading animation
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
   }
 }
 

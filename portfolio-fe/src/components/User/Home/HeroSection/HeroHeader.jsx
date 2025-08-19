@@ -1,8 +1,10 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import useTypewriter from "hooks/useTypewriter";
 import useIsMobile from "hooks/useIsMobile";
+import useHeroData from "hooks/useHeroData";
 import { ROUTES } from "router/routeConstants";
 
 
@@ -15,23 +17,51 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
   const controls = useAnimation();
   const [isVisible, setIsVisible] = useState(false);
 
+  // Fetch hero data from API
+  const { heroData, subHeadings, loading, error, hasData } = useHeroData('en');
+
+  // Get dynamic sub-headings or fallback to default
+  const typewriterTexts = useMemo(() => {
+    if (hasData && subHeadings.length > 0) {
+      // Sort sub-headings by sortOrder and extract text
+      return subHeadings
+        .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+        .map(sub => sub.text);
+    }
+    
+    // Fallback to default texts
+    return [
+      "Web Developer",
+      "Front‑end Specialist", 
+      "React / Java Expert",
+      "UI/UX Enthusiast",
+      "Performance Optimizer",
+      "Full Stack Developer",
+    ];
+  }, [hasData, subHeadings]);
+
+  // Calculate start delay for typewriter
+  const typewriterStartDelay = useMemo(() => {
+    if (entranceComplete) {
+      return actualIsMobile ? 100 : 50;
+    }
+    return actualIsMobile ? 600 : 400;
+  }, [entranceComplete, actualIsMobile]);
+
   // Mobile-optimized typewriter with faster, smoother transitions
-  const typed = useTypewriter([
-    "Web Developer",
-    "Front‑end Specialist", 
-    "React / Java Expert",
-    "UI/UX Enthusiast",
-    "Performance Optimizer",
-    "Full Stack Developer",
-  ], { 
-    startDelay: entranceComplete ? (actualIsMobile ? 100 : 50) : (actualIsMobile ? 600 : 400),
+  const typed = useTypewriter(typewriterTexts, { 
+    startDelay: typewriterStartDelay,
     typeSpeed: actualIsMobile ? 50 : 70,        // Faster on mobile
     deleteSpeed: actualIsMobile ? 25 : 35,      // Faster deletion on mobile
     delayBetweenWords: actualIsMobile ? 1200 : 1500, // Shorter pause on mobile
     loop: true
   });
 
-  const nameLetters = useMemo(() => Array.from("Nhdinh"), []);
+  const nameLetters = useMemo(() => {
+    // Use heading from API if available, otherwise fallback to default
+    const displayName = hasData && heroData?.heading ? heroData.heading : "Nhdinh";
+    return Array.from(displayName);
+  }, [hasData, heroData]);
   
   // Intersection observer for animation trigger
   useEffect(() => {
@@ -88,11 +118,20 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
 
   return (
     <motion.div
-      className={`hero__container ${isVisible ? 'animate-in' : ''}`}
+      className={`hero__container ${isVisible ? 'animate-in' : ''} ${loading ? 'hero-loading' : ''}`}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
+      {/* Show error message if there's an error and no cached data */}
+      {error && !hasData && (
+        <motion.div 
+          className="hero__error"
+          variants={itemVariants}
+        >
+          <p>Không thể tải dữ liệu trang chủ. Đang hiển thị nội dung mặc định.</p>
+        </motion.div>
+      )}
       {/* Professional Badge with enhanced mobile support */}
       <motion.div className="professional-badge" variants={itemVariants}>
         <div className="badge-icon">
@@ -114,13 +153,15 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
         variants={itemVariants}
       >
         <span className="hero__intro">
-          <span className="intro-text">Xin chào, tôi là</span>
+          <span className="intro-text">
+            {hasData && heroData?.preHeading ? heroData.preHeading : "Xin chào, tôi là"}
+          </span>
         </span>
 
         <div className="name-container">
           <span
             className="hero__name"
-            data-text="Nhdinh"
+            data-text={hasData && heroData?.heading ? heroData.heading : "Nhdinh"}
             aria-hidden="true"
           >
             {nameLetters.map((ch, i) => (
@@ -195,20 +236,26 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
         ></motion.div>
       </motion.div>
 
-      <motion.p
+      <motion.div
         className="hero__lead"
         aria-label="Tóm tắt năng lực"
         variants={itemVariants}
       >
-        Là một lập trình viên
-        <span className="highlight-text"> Kỹ Thuật Phần Mềm</span> chuyên về
-        hiệu năng cao, trải nghiệm người dùng và kiến trúc mở rộng. Tôi
-        thiết kế & triển khai{" "}
-        <span className="highlight-text">hệ thống linh hoạt</span>, tối ưu
-        UI/UX và tự động hóa quy trình để rút ngắn thời gian ra mắt sản
-        phẩm. <span className="highlight-text">giải pháp nhanh chóng</span>{" "}
-        và dễ bảo trì website tốt nhất hiện tại.
-      </motion.p>
+        {hasData && heroData?.introHtml ? (
+          <div dangerouslySetInnerHTML={{ __html: heroData.introHtml }} />
+        ) : (
+          <p>
+            Là một lập trình viên
+            <span className="highlight-text"> Kỹ Thuật Phần Mềm</span> chuyên về
+            hiệu năng cao, trải nghiệm người dùng và kiến trúc mở rộng. Tôi
+            thiết kế & triển khai{" "}
+            <span className="highlight-text">hệ thống linh hoạt</span>, tối ưu
+            UI/UX và tự động hóa quy trình để rút ngắn thời gian ra mắt sản
+            phẩm. <span className="highlight-text">giải pháp nhanh chóng</span>{" "}
+            và dễ bảo trì website tốt nhất hiện tại.
+          </p>
+        )}
+      </motion.div>
 
       <HeroCtaButtons itemVariants={itemVariants} isMobile={actualIsMobile} />
     </motion.div>
@@ -364,5 +411,16 @@ function HeroCtaButtons({ itemVariants, isMobile = false }) {
     </motion.div>
   );
 }
+
+// PropTypes
+HeroHeader.propTypes = {
+  entranceComplete: PropTypes.bool,
+  isMobile: PropTypes.bool,
+};
+
+HeroCtaButtons.propTypes = {
+  itemVariants: PropTypes.object.isRequired,
+  isMobile: PropTypes.bool,
+};
 
 export default HeroHeader;

@@ -4,6 +4,7 @@ import { HeroSection } from "components"; // keep hero eager (above the fold)
 import useIsMobile from "hooks/useIsMobile";
 import useVisibility from "hooks/useVisibility";
 
+
 // True code-splitting for heavier, below-the-fold sections
 const StatsStrip = lazy(() => import("components/User/Home/StatsStrip/StatsStrip"));
 const ProjectShowcase = lazy(() => import("components/User/Home/ProjectShowcase/ProjectShowcase"));
@@ -23,6 +24,7 @@ function HomeIndex() {
         <HeroSection />
       </div>
 
+     
 
       <div>
         {/* Tech marquee placeholder for intersection-based lazy mount */}

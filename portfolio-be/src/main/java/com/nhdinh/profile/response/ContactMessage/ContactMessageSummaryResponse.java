@@ -1,6 +1,10 @@
-package com.nhdinh.profile.modules.ContactMessage;
+package com.nhdinh.profile.response.ContactMessage;
 
 import java.util.List;
+
+import com.nhdinh.profile.modules.ContactMessage.ContactMessage;
+import com.nhdinh.profile.modules.ContactMessage.ContactMessageMonthlyStats;
+import com.nhdinh.profile.modules.ContactMessage.EmailDomainStats;
 
 public class ContactMessageSummaryResponse {
     

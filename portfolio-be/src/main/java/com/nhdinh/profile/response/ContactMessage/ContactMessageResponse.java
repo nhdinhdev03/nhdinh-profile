@@ -1,7 +1,9 @@
-package com.nhdinh.profile.modules.ContactMessage;
+package com.nhdinh.profile.response.ContactMessage;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.nhdinh.profile.modules.ContactMessage.ContactMessage;
 
 public class ContactMessageResponse {
     

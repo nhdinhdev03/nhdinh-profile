@@ -1,8 +1,16 @@
-package com.nhdinh.profile.modules.ContactMessage;
+package com.nhdinh.profile.service.ContactMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.nhdinh.profile.modules.ContactMessage.ContactMessage;
+import com.nhdinh.profile.modules.ContactMessage.ContactMessageDAO;
+import com.nhdinh.profile.modules.ContactMessage.ContactMessageMonthlyStats;
+import com.nhdinh.profile.modules.ContactMessage.EmailDomainStats;
+import com.nhdinh.profile.request.ContactMessage.ContactMessageRequest;
+import com.nhdinh.profile.response.ContactMessage.ContactMessageStatsResponse;
+import com.nhdinh.profile.response.ContactMessage.ContactMessageSummaryResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;

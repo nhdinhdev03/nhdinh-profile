@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ContactMessage;
+package com.nhdinh.profile.response.ContactMessage;
 
 public class ContactMessageStatsResponse {
     

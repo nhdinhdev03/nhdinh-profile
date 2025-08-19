@@ -6,6 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.nhdinh.profile.request.ContactMessage.ContactMessageRequest;
+import com.nhdinh.profile.response.ContactMessage.ContactMessageStatsResponse;
+import com.nhdinh.profile.response.ContactMessage.ContactMessageSummaryResponse;
+import com.nhdinh.profile.service.ContactMessage.ContactMessageService;
+
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;

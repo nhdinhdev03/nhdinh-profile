@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ContactMessage;
+package com.nhdinh.profile.request.ContactMessage;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -83,7 +83,7 @@ public interface AdminUserDAO extends JpaRepository<AdminUser, UUID> {
     long countTotalUsers();
     
     // Count users created today
-    @Query("SELECT COUNT(a) FROM AdminUser a WHERE DATE(a.createdAt) = CURRENT_DATE")
+    @Query("SELECT COUNT(a) FROM AdminUser a WHERE CAST(a.createdAt AS date) = CAST(CURRENT_TIMESTAMP AS date)")
     long countUsersCreatedToday();
     
     // Count users created this week

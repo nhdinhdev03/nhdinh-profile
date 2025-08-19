@@ -44,8 +44,8 @@ public class AdminUser {
     private Boolean isActive = true;
     
     @Version
-    @Column(name = "RowVer")
-    private Long rowVer;
+    @Column(name = "RowVer", columnDefinition = "ROWVERSION")
+    private byte[] rowVer;
     
     // Constructors
     public AdminUser() {
@@ -124,11 +124,11 @@ public class AdminUser {
         this.isActive = isActive;
     }
     
-    public Long getRowVer() {
+    public byte[] getRowVer() {
         return rowVer;
     }
     
-    public void setRowVer(Long rowVer) {
+    public void setRowVer(byte[] rowVer) {
         this.rowVer = rowVer;
     }
     

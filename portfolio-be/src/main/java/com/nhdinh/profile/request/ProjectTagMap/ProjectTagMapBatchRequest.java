@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ProjectTagMap;
+package com.nhdinh.profile.request.ProjectTagMap;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

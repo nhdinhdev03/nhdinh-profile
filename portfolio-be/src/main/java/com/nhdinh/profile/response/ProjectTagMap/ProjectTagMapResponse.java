@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ProjectTagMap;
+package com.nhdinh.profile.response.ProjectTagMap;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+import com.nhdinh.profile.modules.ProjectTagMap.ProjectTagMap;
 import com.nhdinh.profile.response.Project.ProjectResponse;
 import com.nhdinh.profile.response.ProjectTag.ProjectTagResponse;
 

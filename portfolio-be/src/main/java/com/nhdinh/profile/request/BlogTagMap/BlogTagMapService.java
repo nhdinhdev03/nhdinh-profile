@@ -1,9 +1,16 @@
-package com.nhdinh.profile.modules.BlogTagMap;
+package com.nhdinh.profile.request.BlogTagMap;
 
 import com.nhdinh.profile.modules.BlogPost.BlogPost;
 import com.nhdinh.profile.modules.BlogPost.BlogPostDAO;
 import com.nhdinh.profile.modules.BlogTag.BlogTag;
 import com.nhdinh.profile.modules.BlogTag.BlogTagDAO;
+
+import com.nhdinh.profile.modules.BlogTagMap.BlogTagMap;
+import com.nhdinh.profile.modules.BlogTagMap.BlogTagMapDAO;
+import com.nhdinh.profile.response.BlogTagMap.BlogPostTagStatsResponse;
+import com.nhdinh.profile.response.BlogTagMap.BlogTagCoOccurrenceResponse;
+import com.nhdinh.profile.response.BlogTagMap.BlogTagPopularityResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

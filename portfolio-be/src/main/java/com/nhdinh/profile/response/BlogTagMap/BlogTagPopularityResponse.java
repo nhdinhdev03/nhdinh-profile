@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.BlogTagMap;
+package com.nhdinh.profile.response.BlogTagMap;
 
 import com.nhdinh.profile.modules.BlogTag.BlogTag;
 import java.util.UUID;

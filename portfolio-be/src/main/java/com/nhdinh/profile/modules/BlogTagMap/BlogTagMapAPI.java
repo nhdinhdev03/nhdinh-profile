@@ -2,6 +2,16 @@ package com.nhdinh.profile.modules.BlogTagMap;
 
 import com.nhdinh.profile.modules.BlogPost.BlogPost;
 import com.nhdinh.profile.modules.BlogTag.BlogTag;
+import com.nhdinh.profile.request.BlogTagMap.BlogTagMapBatchByNameRequest;
+import com.nhdinh.profile.request.BlogTagMap.BlogTagMapBatchRequest;
+import com.nhdinh.profile.request.BlogTagMap.BlogTagMapByNameRequest;
+import com.nhdinh.profile.request.BlogTagMap.BlogTagMapRequest;
+import com.nhdinh.profile.request.BlogTagMap.BlogTagMapService;
+import com.nhdinh.profile.response.BlogTagMap.BlogPostTagStatsResponse;
+import com.nhdinh.profile.response.BlogTagMap.BlogTagCoOccurrenceResponse;
+import com.nhdinh.profile.response.BlogTagMap.BlogTagPopularityResponse;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

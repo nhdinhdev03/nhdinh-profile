@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.BlogTagMap;
+package com.nhdinh.profile.request.BlogTagMap;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -17,10 +17,10 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
   const controls = useAnimation();
   const [isVisible, setIsVisible] = useState(false);
 
-  // Fetch hero data from API
-  const { heroData, subHeadings, loading, error, hasData } = useHeroData('en');
+  // Fetch hero data from API - always use Vietnamese locale
+  const { heroData, subHeadings, loading, error, hasData } = useHeroData('vi');
 
-  // Get dynamic sub-headings or fallback to default
+  // Get dynamic sub-headings or fallback to default Vietnamese
   const typewriterTexts = useMemo(() => {
     if (hasData && subHeadings.length > 0) {
       // Sort sub-headings by sortOrder and extract text
@@ -29,13 +29,13 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
         .map(sub => sub.text);
     }
     
-    // Fallback to default texts
+    // Fallback to default Vietnamese texts
     return [
-      "Web Developer",
-      "Front‑end Specialist", 
-      "React / Java Expert",
+      "Lập Trình Viên Web",
+      "Chuyên Gia Front-end", 
+      "Chuyên Gia React / Java",
       "UI/UX Enthusiast",
-      "Performance Optimizer",
+      "Tối Ưu Hiệu Năng",
       "Full Stack Developer",
     ];
   }, [hasData, subHeadings]);

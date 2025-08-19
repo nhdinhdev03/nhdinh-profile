@@ -4,6 +4,8 @@ import { AdminLayout, UserLayout } from "layouts";
 import * as PageAdmin from "pages/Admin";
 import * as PageUser from "pages/User";
 import * as AuthComponents from "components/Auth";
+
+
 import { ROUTES } from "./routeConstants";
 
 // Mẹo: luôn dùng ROUTES.* để không hard-code chuỗi
@@ -13,6 +15,8 @@ export const publicRoutes = [
   { path: ROUTES.BLOG, component: PageUser.Blog, layout: UserLayout },
   { path: ROUTES.CONTACT, component: PageUser.Contact, layout: UserLayout },
   { path: ROUTES.PROJECTS, component: PageUser.Projects, layout: UserLayout },
+
+
 ];
 
 export const privateRoutes = [

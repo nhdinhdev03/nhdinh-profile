@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -77,8 +76,6 @@ public class HeroSubHeadingService {
             subHeading.setSortOrder(request.getSortOrder());
         }
         
-        subHeading.setCreatedAt(LocalDateTime.now());
-        
         return heroSubHeadingDAO.save(subHeading);
     }
     
@@ -105,8 +102,6 @@ public class HeroSubHeadingService {
             existingSubHeading.setSortOrder(request.getSortOrder());
         }
         
-        existingSubHeading.setUpdatedAt(LocalDateTime.now());
-        
         return heroSubHeadingDAO.save(existingSubHeading);
     }
     
@@ -129,7 +124,6 @@ public class HeroSubHeadingService {
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy SubHeading với ID: " + request.getSubId()));
             
             subHeading.setSortOrder(request.getSortOrder());
-            subHeading.setUpdatedAt(LocalDateTime.now());
             heroSubHeadingDAO.save(subHeading);
         }
     }

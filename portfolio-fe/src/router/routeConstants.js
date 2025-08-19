@@ -10,6 +10,9 @@ export const ROUTES = {
   BLOG: `/${API_VERSION}/blog`,
   CONTACT: `/${API_VERSION}/contact`,
   PROJECTS: `/${API_VERSION}/projects`,
+  
+  //test
+
 
   //login
   LOGIN: `/${AUTH_LOGIN}/login`,

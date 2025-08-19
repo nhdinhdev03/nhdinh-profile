@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nhdinh.profile.modules.Hero.Hero;
 import com.nhdinh.profile.modules.Hero.HeroDAO;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,6 +24,22 @@ public class HeroService {
     @Transactional(readOnly = true)
     public List<Hero> getAllHeroes() {
         return heroDAO.findAllNotDeleted();
+    }
+    
+    /**
+     * Lấy tất cả Hero đã bị xóa mềm
+     */
+    @Transactional(readOnly = true)
+    public List<Hero> getDeletedHeroes() {
+        return heroDAO.findByIsDeleted(true);
+    }
+    
+    /**
+     * Lấy tất cả Hero (bao gồm cả đã xóa và chưa xóa)
+     */
+    @Transactional(readOnly = true)
+    public List<Hero> getAllHeroesIncludeDeleted() {
+        return heroDAO.findAll();
     }
     
     /**
@@ -55,7 +70,6 @@ public class HeroService {
         
         hero.setHeroId(null); // Đảm bảo tạo mới
         hero.setIsDeleted(false);
-        hero.setCreatedAt(LocalDateTime.now());
         
         return heroDAO.save(hero);
     }
@@ -79,7 +93,6 @@ public class HeroService {
         existingHero.setPreHeading(heroUpdate.getPreHeading());
         existingHero.setHeading(heroUpdate.getHeading());
         existingHero.setIntroHtml(heroUpdate.getIntroHtml());
-        existingHero.setUpdatedAt(LocalDateTime.now());
         
         return heroDAO.save(existingHero);
     }
@@ -93,7 +106,6 @@ public class HeroService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Hero với ID: " + heroId));
         
         hero.setIsDeleted(true);
-        hero.setUpdatedAt(LocalDateTime.now());
         heroDAO.save(hero);
     }
     
@@ -114,7 +126,6 @@ public class HeroService {
         }
         
         hero.setIsDeleted(false);
-        hero.setUpdatedAt(LocalDateTime.now());
         
         return heroDAO.save(hero);
     }

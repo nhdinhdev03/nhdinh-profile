@@ -61,7 +61,7 @@ public class Hero {
     private LocalDateTime createdAt;
     
     @UpdateTimestamp
-    @Column(name = "UpdatedAt")
+    @Column(name = "UpdatedAt", insertable = false)
     private LocalDateTime updatedAt;
     
     @NotNull
@@ -69,7 +69,7 @@ public class Hero {
     private Boolean isDeleted = false;
     
     @Version
-    @Column(name = "RowVer")
+    @Column(name = "RowVer", insertable = false, updatable = false)
     private byte[] rowVer;
     
     @OneToMany(mappedBy = "hero", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)

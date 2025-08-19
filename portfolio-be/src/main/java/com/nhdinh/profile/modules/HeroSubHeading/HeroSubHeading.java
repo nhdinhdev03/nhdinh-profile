@@ -59,10 +59,10 @@ public class HeroSubHeading {
     private LocalDateTime createdAt;
     
     @UpdateTimestamp
-    @Column(name = "UpdatedAt")
+    @Column(name = "UpdatedAt", insertable = false)
     private LocalDateTime updatedAt;
     
     @Version
-    @Column(name = "RowVer")
+    @Column(name = "RowVer", insertable = false, updatable = false)
     private byte[] rowVer;
 }

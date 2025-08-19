@@ -50,6 +50,40 @@ public class HeroAPI {
     }
     
     /**
+     * Lấy tất cả Heroes đã bị xóa mềm
+     */
+    @GetMapping("/deleted")
+    public ResponseEntity<List<HeroResponse>> getDeletedHeroes() {
+        try {
+            List<Hero> heroes = heroService.getDeletedHeroes();
+            List<HeroResponse> responses = heroes.stream()
+                    .map(HeroResponse::fromEntity)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(responses);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
+     * Lấy tất cả Heroes bao gồm cả đã xóa
+     */
+    @GetMapping("/all-include-deleted")
+    public ResponseEntity<List<HeroResponse>> getAllHeroesIncludeDeleted() {
+        try {
+            List<Hero> heroes = heroService.getAllHeroesIncludeDeleted();
+            List<HeroResponse> responses = heroes.stream()
+                    .map(HeroResponse::fromEntity)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(responses);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
      * Lấy Hero theo ID
      */
     @GetMapping("/{heroId}")

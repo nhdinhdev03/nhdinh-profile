@@ -3,7 +3,7 @@ import axiosClient from "api/global/axiosClient";
 
 class HeroSubHeadingApi extends BaseApi {
   constructor() {
-    super("hero-sub-headings");
+    super("hero-subheadings");
   }
 
   // Get sub-headings by hero ID

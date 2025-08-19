@@ -1,7 +1,7 @@
 package com.nhdinh.profile.modules.SkillCategory;
 
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -27,22 +27,22 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*")
 public class SkillCategoryAPI {
     
-    private SkillCategoryDAO skillCategoryDAO;
+    private final SkillCategoryDAO skillCategoryDAO;
     
-    public SkillCategoryAPI() {
-        this.skillCategoryDAO = new SkillCategoryDAO();
+    public SkillCategoryAPI(SkillCategoryDAO skillCategoryDAO) {
+        this.skillCategoryDAO = skillCategoryDAO;
     }
     
     /**
-     * GET /api/skill-categories
+     * GET /api/skill-categories/active/all
      * Get all active skill categories
      */
-    @GetMapping
+    @GetMapping("/active/all")
     public ResponseEntity<List<SkillCategory>> getAllActiveCategories() {
         try {
             List<SkillCategory> categories = skillCategoryDAO.getAllActiveCategories();
             return ResponseEntity.ok(categories);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -57,7 +57,7 @@ public class SkillCategoryAPI {
         try {
             List<SkillCategory> categories = skillCategoryDAO.getAllCategories();
             return ResponseEntity.ok(categories);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -71,16 +71,16 @@ public class SkillCategoryAPI {
     public ResponseEntity<SkillCategory> getCategoryById(@PathVariable("id") String categoryId) {
         try {
             UUID id = UUID.fromString(categoryId);
-            SkillCategory category = skillCategoryDAO.getCategoryById(id);
+            Optional<SkillCategory> category = skillCategoryDAO.findById(id);
             
-            if (category != null) {
-                return ResponseEntity.ok(category);
+            if (category.isPresent()) {
+                return ResponseEntity.ok(category.get());
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -93,14 +93,9 @@ public class SkillCategoryAPI {
     @PostMapping
     public ResponseEntity<SkillCategory> createCategory(@Valid @RequestBody SkillCategory category) {
         try {
-            SkillCategory createdCategory = skillCategoryDAO.createCategory(category);
-            
-            if (createdCategory != null) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        } catch (SQLException e) {
+            SkillCategory createdCategory = skillCategoryDAO.save(category);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -116,18 +111,17 @@ public class SkillCategoryAPI {
             @Valid @RequestBody SkillCategory category) {
         try {
             UUID id = UUID.fromString(categoryId);
-            category.setCategoryId(id);
             
-            boolean updated = skillCategoryDAO.updateCategory(category);
-            
-            if (updated) {
+            if (skillCategoryDAO.existsById(id)) {
+                category.setCategoryId(id);
+                skillCategoryDAO.save(category);
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -141,16 +135,19 @@ public class SkillCategoryAPI {
     public ResponseEntity<Void> deleteCategory(@PathVariable("id") String categoryId) {
         try {
             UUID id = UUID.fromString(categoryId);
-            boolean deleted = skillCategoryDAO.deleteCategory(id);
+            Optional<SkillCategory> categoryOpt = skillCategoryDAO.findById(id);
             
-            if (deleted) {
+            if (categoryOpt.isPresent()) {
+                SkillCategory category = categoryOpt.get();
+                category.setActive(false);
+                skillCategoryDAO.save(category);
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -164,16 +161,16 @@ public class SkillCategoryAPI {
     public ResponseEntity<Void> hardDeleteCategory(@PathVariable("id") String categoryId) {
         try {
             UUID id = UUID.fromString(categoryId);
-            boolean deleted = skillCategoryDAO.hardDeleteCategory(id);
             
-            if (deleted) {
+            if (skillCategoryDAO.existsById(id)) {
+                skillCategoryDAO.deleteById(id);
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

@@ -1,7 +1,7 @@
 package com.nhdinh.profile.modules.Skill;
 
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -26,28 +26,28 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/skills")
 @CrossOrigin(origins = "*")
 public class SkillAPI {
-    
-    private SkillDAO skillDAO;
-    
-    public SkillAPI() {
-        this.skillDAO = new SkillDAO();
+
+    private final SkillDAO skillDAO;
+
+    public SkillAPI(SkillDAO skillDAO) {
+        this.skillDAO = skillDAO;
     }
-    
+
     /**
-     * GET /api/skills
+     * GET /api/skills/active
      * Get all active skills
      */
-    @GetMapping
+    @GetMapping("/active/all")
     public ResponseEntity<List<Skill>> getAllActiveSkills() {
         try {
             List<Skill> skills = skillDAO.getAllActiveSkills();
             return ResponseEntity.ok(skills);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     /**
      * GET /api/skills/all
      * Get all skills (including inactive)
@@ -57,12 +57,12 @@ public class SkillAPI {
         try {
             List<Skill> skills = skillDAO.getAllSkills();
             return ResponseEntity.ok(skills);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     /**
      * GET /api/skills/category/{categoryId}
      * Get skills by category ID
@@ -75,12 +75,12 @@ public class SkillAPI {
             return ResponseEntity.ok(skills);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     /**
      * GET /api/skills/{id}
      * Get skill by ID
@@ -89,21 +89,21 @@ public class SkillAPI {
     public ResponseEntity<Skill> getSkillById(@PathVariable("id") String skillId) {
         try {
             UUID id = UUID.fromString(skillId);
-            Skill skill = skillDAO.getSkillById(id);
-            
-            if (skill != null) {
-                return ResponseEntity.ok(skill);
+            Optional<Skill> skill = skillDAO.findById(id);
+
+            if (skill.isPresent()) {
+                return ResponseEntity.ok(skill.get());
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     /**
      * POST /api/skills
      * Create new skill
@@ -111,19 +111,14 @@ public class SkillAPI {
     @PostMapping
     public ResponseEntity<Skill> createSkill(@Valid @RequestBody Skill skill) {
         try {
-            Skill createdSkill = skillDAO.createSkill(skill);
-            
-            if (createdSkill != null) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(createdSkill);
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        } catch (SQLException e) {
+            Skill createdSkill = skillDAO.save(skill);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdSkill);
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     /**
      * PUT /api/skills/{id}
      * Update skill
@@ -134,23 +129,22 @@ public class SkillAPI {
             @Valid @RequestBody Skill skill) {
         try {
             UUID id = UUID.fromString(skillId);
-            skill.setSkillId(id);
-            
-            boolean updated = skillDAO.updateSkill(skill);
-            
-            if (updated) {
+
+            if (skillDAO.existsById(id)) {
+                skill.setSkillId(id);
+                skillDAO.save(skill);
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     /**
      * DELETE /api/skills/{id}
      * Soft delete skill (set IsActive to false)
@@ -159,21 +153,24 @@ public class SkillAPI {
     public ResponseEntity<Void> deleteSkill(@PathVariable("id") String skillId) {
         try {
             UUID id = UUID.fromString(skillId);
-            boolean deleted = skillDAO.deleteSkill(id);
-            
-            if (deleted) {
+            Optional<Skill> skillOpt = skillDAO.findById(id);
+
+            if (skillOpt.isPresent()) {
+                Skill skill = skillOpt.get();
+                skill.setActive(false);
+                skillDAO.save(skill);
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     /**
      * DELETE /api/skills/{id}/hard
      * Hard delete skill (permanent delete)
@@ -182,16 +179,16 @@ public class SkillAPI {
     public ResponseEntity<Void> hardDeleteSkill(@PathVariable("id") String skillId) {
         try {
             UUID id = UUID.fromString(skillId);
-            boolean deleted = skillDAO.hardDeleteSkill(id);
-            
-            if (deleted) {
+
+            if (skillDAO.existsById(id)) {
+                skillDAO.deleteById(id);
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

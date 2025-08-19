@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.Hero;
+package com.nhdinh.profile.request.Hero;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

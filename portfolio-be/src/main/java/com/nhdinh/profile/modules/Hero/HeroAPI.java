@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nhdinh.profile.request.Hero.HeroCreateRequest;
+import com.nhdinh.profile.request.Hero.HeroUpdateRequest;
+import com.nhdinh.profile.response.Hero.HeroResponse;
+import com.nhdinh.profile.service.Hero.HeroService;
+
 import jakarta.validation.Valid;
 
 @RestController

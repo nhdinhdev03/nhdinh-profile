@@ -1,7 +1,9 @@
-package com.nhdinh.profile.modules.ProfileInfo;
+package com.nhdinh.profile.response.ProfileInfo;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.nhdinh.profile.modules.ProfileInfo.ProfileInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

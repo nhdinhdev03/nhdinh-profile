@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ProfileInfo;
+package com.nhdinh.profile.request.ProfileInfo;
 
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

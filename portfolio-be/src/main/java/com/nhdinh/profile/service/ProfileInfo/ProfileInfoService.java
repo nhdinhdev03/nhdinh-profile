@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ProfileInfo;
+package com.nhdinh.profile.service.ProfileInfo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,6 +8,11 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.nhdinh.profile.modules.ProfileInfo.ProfileInfo;
+import com.nhdinh.profile.modules.ProfileInfo.ProfileInfoDAO;
+import com.nhdinh.profile.request.ProfileInfo.ProfileInfoCreateRequest;
+import com.nhdinh.profile.request.ProfileInfo.ProfileInfoUpdateRequest;
 
 @Service
 @Transactional

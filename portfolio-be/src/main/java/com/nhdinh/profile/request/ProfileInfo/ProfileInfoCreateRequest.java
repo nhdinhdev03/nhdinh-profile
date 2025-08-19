@@ -1,4 +1,6 @@
-package com.nhdinh.profile.modules.ProfileInfo;
+package com.nhdinh.profile.request.ProfileInfo;
+
+import com.nhdinh.profile.modules.ProfileInfo.ProfileInfo;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

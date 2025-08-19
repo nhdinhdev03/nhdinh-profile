@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nhdinh.profile.request.ProfileInfo.ProfileInfoCreateRequest;
+import com.nhdinh.profile.request.ProfileInfo.ProfileInfoUpdateRequest;
+import com.nhdinh.profile.response.ProfileInfo.ProfileInfoResponse;
+import com.nhdinh.profile.service.ProfileInfo.ProfileInfoService;
+
 import jakarta.validation.Valid;
 
 @RestController

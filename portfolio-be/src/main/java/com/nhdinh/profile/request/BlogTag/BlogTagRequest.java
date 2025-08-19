@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.BlogTag;
+package com.nhdinh.profile.request.BlogTag;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

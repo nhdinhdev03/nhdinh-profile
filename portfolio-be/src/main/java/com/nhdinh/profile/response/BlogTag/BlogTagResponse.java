@@ -1,6 +1,8 @@
-package com.nhdinh.profile.modules.BlogTag;
+package com.nhdinh.profile.response.BlogTag;
 
 import java.util.UUID;
+
+import com.nhdinh.profile.modules.BlogTag.BlogTag;
 
 public class BlogTagResponse {
     

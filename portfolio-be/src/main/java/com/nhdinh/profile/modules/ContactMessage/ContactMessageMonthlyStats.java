@@ -12,6 +12,16 @@ public class ContactMessageMonthlyStats {
     public ContactMessageMonthlyStats() {
     }
     
+    // Simple constructor for basic monthly stats
+    public ContactMessageMonthlyStats(int year, int month, long totalMessages) {
+        this.year = year;
+        this.month = month;
+        this.totalMessages = totalMessages;
+        this.pendingMessages = 0; // Default value
+        this.repliedMessages = 0; // Default value
+        this.monthName = getMonthName(month);
+    }
+    
     public ContactMessageMonthlyStats(int year, int month, long totalMessages, 
                                     long pendingMessages, long repliedMessages) {
         this.year = year;

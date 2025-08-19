@@ -41,7 +41,7 @@
     </dependency>
 
     <!-- Security - TEMPORARILY DISABLED FOR API TESTING -->
-    <!--
+   
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
@@ -50,10 +50,10 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-crypto</artifactId>
     </dependency>
-    -->
+
 
     <!-- JWT (đủ 3 mảnh: api + impl + jackson) - TEMPORARILY DISABLED FOR API TESTING -->
-    <!--
+
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
@@ -71,7 +71,7 @@
       <version>0.11.5</version>
       <scope>runtime</scope>
     </dependency>
-    -->
+
 
     <!-- SQL Server driver -->
     <dependency>

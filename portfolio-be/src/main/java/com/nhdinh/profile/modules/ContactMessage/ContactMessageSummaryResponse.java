@@ -13,6 +13,17 @@ public class ContactMessageSummaryResponse {
     public ContactMessageSummaryResponse() {
     }
     
+    // Simple constructor for basic summary
+    public ContactMessageSummaryResponse(List<ContactMessage> pendingMessages,
+                                       List<ContactMessage> recentMessages,
+                                       ContactMessageStatsResponse statistics) {
+        this.pendingMessages = pendingMessages;
+        this.recentMessages = recentMessages;
+        this.statistics = statistics;
+        this.monthlyStats = null; // Can be set later if needed
+        this.topEmailDomains = null; // Can be set later if needed
+    }
+    
     public ContactMessageSummaryResponse(ContactMessageStatsResponse statistics,
                                        List<ContactMessage> recentMessages,
                                        List<ContactMessage> pendingMessages,

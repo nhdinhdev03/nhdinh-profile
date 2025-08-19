@@ -18,14 +18,14 @@ public class ContactMessageResponse {
     }
     
     public ContactMessageResponse(ContactMessage contactMessage) {
-        this.id = contactMessage.getId();
-        this.name = contactMessage.getName();
+        this.id = contactMessage.getMessageId();
+        this.name = contactMessage.getFullName();
         this.email = contactMessage.getEmail();
         this.subject = contactMessage.getSubject();
-        this.message = contactMessage.getMessage();
+        this.message = contactMessage.getContent();
         this.isReplied = contactMessage.getIsReplied();
         this.createdAt = contactMessage.getCreatedAt();
-        this.updatedAt = contactMessage.getUpdatedAt();
+        this.updatedAt = contactMessage.getCreatedAt(); // ContactMessage doesn't have updatedAt field
     }
     
     public ContactMessageResponse(UUID id, String name, String email, String subject, 

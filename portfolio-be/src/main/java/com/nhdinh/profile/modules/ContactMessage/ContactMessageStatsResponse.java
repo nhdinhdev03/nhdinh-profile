@@ -15,6 +15,20 @@ public class ContactMessageStatsResponse {
     public ContactMessageStatsResponse() {
     }
     
+    // Simple constructor for basic stats
+    public ContactMessageStatsResponse(long totalMessages, long pendingMessages, long repliedMessages,
+                                     long recentCount, long thisMonthCount) {
+        this.totalMessages = totalMessages;
+        this.pendingMessages = pendingMessages;
+        this.repliedMessages = repliedMessages;
+        this.replyRate = totalMessages > 0 ? (double) repliedMessages / totalMessages * 100 : 0.0;
+        this.messagesThisMonth = thisMonthCount;
+        this.messagesLastMonth = 0; // Default value
+        this.monthlyGrowthRate = 0.0; // Default value
+        this.messagesThisWeek = recentCount;
+        this.messagesToday = 0; // Default value
+    }
+    
     public ContactMessageStatsResponse(long totalMessages, long pendingMessages, long repliedMessages,
                                      double replyRate, long messagesThisMonth, long messagesLastMonth,
                                      double monthlyGrowthRate, long messagesThisWeek, long messagesToday) {

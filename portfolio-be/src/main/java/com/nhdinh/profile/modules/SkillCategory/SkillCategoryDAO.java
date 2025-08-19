@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.nhdinh.profile.config.DatabaseConnection;
+// import com.nhdinh.profile.config.DatabaseConnection;
 
 /**
  * SkillCategory Data Access Object
@@ -19,9 +19,9 @@ public class SkillCategoryDAO {
     
     private Connection connection;
     
-    public SkillCategoryDAO() {
-        this.connection = DatabaseConnection.getConnection();
-    }
+    // public SkillCategoryDAO() {
+    //     this.connection = DatabaseConnection.getConnection();
+    // }
     
     /**
      * Get all active skill categories ordered by sortOrder

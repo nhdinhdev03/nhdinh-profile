@@ -28,12 +28,12 @@ public class ContactMessageService {
         }
         
         // Check for potential duplicates (same content within 24 hours)
-        if (request.getSubject() != null && request.getContent() != null) {
+        if (request.getSubject() != null && request.getMessage() != null) {
             LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
             List<ContactMessage> duplicates = contactMessageDAO.findPotentialDuplicates(
                 request.getEmail(), 
                 request.getSubject(), 
-                request.getContent(), 
+                request.getMessage(), 
                 oneDayAgo
             );
             
@@ -43,10 +43,10 @@ public class ContactMessageService {
         }
         
         ContactMessage contactMessage = new ContactMessage(
-            request.getFullName(),
+            request.getName(),
             request.getEmail(),
             request.getSubject(),
-            request.getContent()
+            request.getMessage()
         );
         
         return contactMessageDAO.save(contactMessage);

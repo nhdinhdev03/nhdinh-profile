@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ProjectTag;
+package com.nhdinh.profile.request.ProjectTag;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectTagUpdateRequest {
+public class ProjectTagCreateRequest {
     
     @NotBlank(message = "Name không được để trống")
     @Size(max = 50, message = "Name không được vượt quá 50 ký tự")

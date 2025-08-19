@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nhdinh.profile.request.ProjectTag.ProjectTagCreateRequest;
+import com.nhdinh.profile.request.ProjectTag.ProjectTagUpdateRequest;
+import com.nhdinh.profile.response.ProjectTag.ProjectTagResponse;
+import com.nhdinh.profile.service.ProjectTag.ProjectTagService;
+
 import jakarta.validation.Valid;
 
 @RestController

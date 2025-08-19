@@ -15,9 +15,9 @@ import com.nhdinh.profile.modules.Project.ProjectDAO;
 import com.nhdinh.profile.modules.ProjectCategory.ProjectCategory;
 import com.nhdinh.profile.modules.ProjectCategory.ProjectCategoryDAO;
 import com.nhdinh.profile.modules.ProjectTag.ProjectTag;
-import com.nhdinh.profile.modules.ProjectTag.ProjectTagService;
 import com.nhdinh.profile.request.Project.ProjectCreateRequest;
 import com.nhdinh.profile.request.Project.ProjectUpdateRequest;
+import com.nhdinh.profile.service.ProjectTag.ProjectTagService;
 
 @Service
 @Transactional

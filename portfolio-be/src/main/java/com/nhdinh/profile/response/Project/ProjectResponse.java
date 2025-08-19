@@ -6,8 +6,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.nhdinh.profile.modules.Project.Project;
-import com.nhdinh.profile.modules.ProjectTag.ProjectTagResponse;
 import com.nhdinh.profile.response.ProjectCategory.ProjectCategoryResponse;
+import com.nhdinh.profile.response.ProjectTag.ProjectTagResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

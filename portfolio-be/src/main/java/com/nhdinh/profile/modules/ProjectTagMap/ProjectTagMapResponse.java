@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-import com.nhdinh.profile.modules.ProjectTag.ProjectTagResponse;
 import com.nhdinh.profile.response.Project.ProjectResponse;
+import com.nhdinh.profile.response.ProjectTag.ProjectTagResponse;
 
 @Data
 @NoArgsConstructor

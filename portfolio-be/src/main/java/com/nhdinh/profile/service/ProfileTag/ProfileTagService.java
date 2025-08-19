@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ProfileTag;
+package com.nhdinh.profile.service.ProfileTag;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +7,11 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.nhdinh.profile.modules.ProfileTag.ProfileTag;
+import com.nhdinh.profile.modules.ProfileTag.ProfileTagDAO;
+import com.nhdinh.profile.request.ProfileTag.ProfileTagCreateRequest;
+import com.nhdinh.profile.request.ProfileTag.ProfileTagUpdateRequest;
 
 @Service
 @Transactional

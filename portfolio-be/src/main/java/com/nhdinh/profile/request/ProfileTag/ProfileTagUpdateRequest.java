@@ -1,4 +1,4 @@
-package com.nhdinh.profile.modules.ProfileTag;
+package com.nhdinh.profile.request.ProfileTag;
 
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

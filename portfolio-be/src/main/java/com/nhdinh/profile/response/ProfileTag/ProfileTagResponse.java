@@ -1,6 +1,8 @@
-package com.nhdinh.profile.modules.ProfileTag;
+package com.nhdinh.profile.response.ProfileTag;
 
 import java.util.UUID;
+
+import com.nhdinh.profile.modules.ProfileTag.ProfileTag;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

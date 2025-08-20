@@ -45,12 +45,6 @@ export const ValidationUtils = {
     return emailRegex.test(email);
   },
 
-  // Validate locale format (e.g., 'vi', 'en', 'vi-VN', 'en-US')
-  isValidLocale: (locale) => {
-    const localeRegex = /^[a-zA-Z]{2}(-[a-zA-Z]{2})?$/;
-    return localeRegex.test(locale);
-  },
-
   // Check minimum length
   minLength: (value, min) => {
     return value && value.toString().trim().length >= min;
@@ -86,13 +80,6 @@ export const ValidationUtils = {
   // Custom validation for hero section
   validateHeroFields: (heroSection) => {
     const errors = {};
-    
-    // Validate locale
-    if (ValidationUtils.isEmpty(heroSection.locale)) {
-      errors.locale = "Locale không được để trống";
-    } else if (!ValidationUtils.isValidLocale(heroSection.locale.trim())) {
-      errors.locale = "Locale phải có định dạng như 'vi', 'en', 'vi-VN'";
-    }
     
     // Validate preHeading
     if (ValidationUtils.isEmpty(heroSection.preHeading)) {

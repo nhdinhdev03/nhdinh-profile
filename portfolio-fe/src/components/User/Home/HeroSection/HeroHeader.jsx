@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import useTypewriter from "hooks/useTypewriter";
 import useIsMobile from "hooks/useIsMobile";
-import useHeroData from "hooks/useHeroData";
+
 import { ROUTES } from "router/routeConstants";
+import useHeroData from "hooks/Home/useHeroData";
 
 
 /**
@@ -17,8 +18,8 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
   const controls = useAnimation();
   const [isVisible, setIsVisible] = useState(false);
 
-  // Fetch hero data from API - always use Vietnamese locale
-  const { heroData, subHeadings, loading, error, hasData } = useHeroData('vi');
+  // Fetch hero data from API
+  const { heroData, subHeadings, loading, error, hasData } = useHeroData();
 
   // Get dynamic sub-headings or fallback to default Vietnamese
   const typewriterTexts = useMemo(() => {

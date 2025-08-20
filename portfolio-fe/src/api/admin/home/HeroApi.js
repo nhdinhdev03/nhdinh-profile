@@ -6,24 +6,9 @@ class HeroApi extends BaseApi {
     super("heroes");
   }
 
-  // Get hero by locale
-  async getByLocale(locale) {
-    return axiosClient.get(`${this.uri}/locale/${locale}`);
-  }
-
-  // Check if locale exists
-  async checkLocaleExists(locale) {
-    try {
-      const response = await this.getByLocale(locale);
-      return response.data ? true : false;
-    } catch (error) {
-      // If 404, locale doesn't exist
-      if (error.response?.status === 404) {
-        return false;
-      }
-      // For other errors, assume it exists to be safe
-      return true;
-    }
+  // Get active hero (single hero)
+  async getActiveHero() {
+    return axiosClient.get(`${this.uri}/active`);
   }
 
   // Restore deleted hero
@@ -46,10 +31,17 @@ class HeroApi extends BaseApi {
     return axiosClient.get(`${this.uri}/all-include-deleted`);
   }
 
-  // Override create to match backend request format
+  // Get hero statistics
+  async getStats() {
+    console.log("📊 Calling Hero Stats API...");
+    const response = await axiosClient.get(`${this.uri}/stats`);
+    console.log("📊 Hero Stats API Response:", response);
+    return response;
+  }
+
+  // Override create to match backend request format (no locale)
   async create(data) {
     const payload = {
-      locale: data.locale || 'vi',
       preHeading: data.preHeading || '',
       heading: data.heading || '',
       introHtml: data.introHtml || ''
@@ -57,10 +49,9 @@ class HeroApi extends BaseApi {
     return axiosClient.post(this.uri, payload);
   }
 
-  // Override update to match backend request format
+  // Override update to match backend request format (no locale)
   async update(id, data) {
     const payload = {
-      locale: data.locale || 'vi',
       preHeading: data.preHeading || '',
       heading: data.heading || '',
       introHtml: data.introHtml || ''

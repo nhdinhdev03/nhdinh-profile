@@ -11,10 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class HeroUpdateRequest {
     
-    @NotBlank(message = "Locale không được để trống")
-    @Size(max = 10, message = "Locale không được vượt quá 10 ký tự")
-    private String locale;
-    
     @Size(max = 256, message = "PreHeading không được vượt quá 256 ký tự")
     private String preHeading;
     

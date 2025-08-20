@@ -10,10 +10,10 @@ class UserHeroApi extends BaseApi {
     super("heroes");
   }
 
-  // Get active hero by locale for user pages
-  async getActiveByLocale(locale) {
+  // Get active hero (no locale needed)
+  async getActiveHero() {
     try {
-      const response = await axiosClient.get(`${this.uri}/locale/${locale}`);
+      const response = await axiosClient.get(`${this.uri}/active`);
       return response;
     } catch (error) {
       // If 404, return null data instead of throwing

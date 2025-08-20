@@ -5,7 +5,7 @@ import useHeroData from '../hooks/useHeroData';
  * Simple test component to verify API connection
  */
 const HeroDataTest = () => {
-  const { heroData, subHeadings, loading, error, hasData } = useHeroData('vi');
+  const { heroData, subHeadings, loading, error, hasData } = useHeroData();
 
   if (loading) return <div style={{background: 'yellow', padding: '10px', margin: '10px'}}>🔄 Loading hero data...</div>;
   if (error) return <div style={{background: 'red', color: 'white', padding: '10px', margin: '10px'}}>❌ Error: {error.message}</div>;

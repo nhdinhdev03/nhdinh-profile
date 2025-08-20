@@ -18,15 +18,6 @@ public interface HeroSubHeadingDAO extends JpaRepository<HeroSubHeading, UUID> {
     List<HeroSubHeading> findByHeroIdOrderBySortOrder(@Param("heroId") UUID heroId);
     
     /**
-     * Tìm tất cả SubHeading theo Hero locale
-     */
-    @Query("SELECT hs FROM HeroSubHeading hs " +
-           "INNER JOIN hs.hero h " +
-           "WHERE h.locale = :locale AND h.isDeleted = false " +
-           "ORDER BY hs.sortOrder ASC")
-    List<HeroSubHeading> findByHeroLocaleOrderBySortOrder(@Param("locale") String locale);
-    
-    /**
      * Kiểm tra xem text đã tồn tại cho Hero này chưa (trừ record hiện tại)
      */
     @Query("SELECT COUNT(hs) > 0 FROM HeroSubHeading hs " +

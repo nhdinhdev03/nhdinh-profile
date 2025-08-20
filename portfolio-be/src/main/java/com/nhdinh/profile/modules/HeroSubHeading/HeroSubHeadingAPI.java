@@ -51,23 +51,6 @@ public class HeroSubHeadingAPI {
     }
     
     /**
-     * Lấy tất cả SubHeadings theo locale
-     */
-    @GetMapping("/locale/{locale}")
-    public ResponseEntity<List<HeroSubHeadingResponse>> getSubHeadingsByLocale(@PathVariable String locale) {
-        try {
-            List<HeroSubHeading> subHeadings = heroSubHeadingService.getSubHeadingsByLocale(locale);
-            List<HeroSubHeadingResponse> responses = subHeadings.stream()
-                    .map(HeroSubHeadingResponse::fromEntity)
-                    .collect(Collectors.toList());
-            
-            return ResponseEntity.ok(responses);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-    
-    /**
      * Lấy SubHeading theo ID
      */
     @GetMapping("/{subId}")

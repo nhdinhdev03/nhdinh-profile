@@ -21,7 +21,6 @@ const HomeManagement = () => {
   // State for current hero being edited
   const [heroSection, setHeroSection] = useState({
     heroId: "",
-    locale: "vi",
     preHeading: "",
     heading: "",
     introHtml: "",
@@ -51,16 +50,21 @@ const HomeManagement = () => {
   const [showDeleted, setShowDeleted] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState("active"); // "active", "defleted", "all"
+  const [viewMode, setViewMode] = useState("active"); // "active", "archived", "all"
   const [lastNotificationId, setLastNotificationId] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Stats for tabs
   const [tabStats, setTabStats] = useState({
     active: 0,
-    deleted: 0,
+    archived: 0,
     total: 0,
   });
+
+  // Debug log when tabStats changes
+  useEffect(() => {
+    console.log("📊 TabStats updated:", tabStats);
+  }, [tabStats]);
 
   // Debounce search term
   const { debouncedFunction: updateSearch } = useDebounce((term) => {
@@ -97,7 +101,6 @@ const HomeManagement = () => {
         return (
           hero.heading?.toLowerCase().includes(searchLower) ||
           hero.preHeading?.toLowerCase().includes(searchLower) ||
-          hero.locale?.toLowerCase().includes(searchLower) ||
           hero.introHtml?.toLowerCase().includes(searchLower)
         );
       }
@@ -110,10 +113,9 @@ const HomeManagement = () => {
   const stats = React.useMemo(() => {
     const total = heroes.length;
     const active = heroes.filter((h) => !h.isDeleted).length;
-    const deleted = total - active;
-    const locales = [...new Set(heroes.map((h) => h.locale))].length;
+    const archived = total - active;
 
-    return { total, active, deleted, locales };
+    return { total, active, archived };
   }, [heroes]);
 
   // Check if selected hero is hidden by current filter
@@ -270,20 +272,43 @@ const HomeManagement = () => {
 
   // Load tab statistics
   const loadTabStats = useCallback(async () => {
+    console.log("🔄 Loading tab stats...");
     try {
-      const [activeRes, deletedRes, allRes] = await Promise.all([
-        heroApi.getAllActive(),
-        heroApi.getAllDeleted(),
-        heroApi.getAllIncludeDeleted(),
-      ]);
-
+      const response = await heroApi.getStats();
+      console.log("📊 Stats API response:", response.data);
+      
       setTabStats({
-        active: activeRes.data?.length || 0,
-        deleted: deletedRes.data?.length || 0,
-        total: allRes.data?.length || 0,
+        active: response.data?.active || 0,
+        archived: response.data?.archived || 0,
+        total: response.data?.total || 0,
+      });
+      console.log("✅ Tab stats updated:", {
+        active: response.data?.active || 0,
+        archived: response.data?.archived || 0,
+        total: response.data?.total || 0,
       });
     } catch (err) {
-      console.error("Error loading tab stats:", err);
+      console.error("❌ Error loading tab stats:", err);
+      // Fallback to individual API calls if stats endpoint fails
+      try {
+        console.log("🔄 Falling back to individual API calls...");
+        const [activeRes, archivedRes, allRes] = await Promise.all([
+          heroApi.getAllActive(),
+          heroApi.getAllDeleted(),
+          heroApi.getAllIncludeDeleted(),
+        ]);
+
+        const fallbackStats = {
+          active: activeRes.data?.length || 0,
+          archived: archivedRes.data?.length || 0,
+          total: allRes.data?.length || 0,
+        };
+        
+        setTabStats(fallbackStats);
+        console.log("✅ Fallback stats updated:", fallbackStats);
+      } catch (fallbackErr) {
+        console.error("❌ Error loading tab stats (fallback):", fallbackErr);
+      }
     }
   }, []);
 
@@ -299,7 +324,7 @@ const HomeManagement = () => {
           case "active":
             response = await heroApi.getAllActive();
             break;
-          case "deleted":
+          case "archived":
             response = await heroApi.getAllDeleted();
             break;
           case "all":
@@ -356,24 +381,10 @@ const HomeManagement = () => {
       setSaving(true);
       setError(null);
 
-      // Kiểm tra xem locale đã tồn tại chưa (frontend check)
-      const existingHero = heroes.find(
-        (hero) => hero.locale === heroSection.locale.trim()
-      );
-      if (existingHero) {
-        const errorMsg = `Locale "${heroSection.locale}" đã tồn tại. Vui lòng chọn locale khác hoặc chỉnh sửa Hero hiện có.`;
-        setError(errorMsg);
-        notification.warning(errorMsg, 5000, { position: "top-right" });
-        setSaving(false);
-        return;
-      }
-
-      // Kiểm tra thêm bằng API (backend check)
-      const localeExists = await heroApi.checkLocaleExists(
-        heroSection.locale.trim()
-      );
-      if (localeExists) {
-        const errorMsg = `Locale "${heroSection.locale}" đã tồn tại trong database. Vui lòng chọn locale khác.`;
+      // Kiểm tra xem đã có Hero nào chưa (chỉ cho phép 1 Hero)
+      const existingActiveHero = heroes.find(hero => !hero.isDeleted);
+      if (existingActiveHero) {
+        const errorMsg = "Đã tồn tại Hero đang hoạt động. Chỉ được phép có 1 Hero duy nhất.";
         setError(errorMsg);
         notification.warning(errorMsg, 5000, { position: "top-right" });
         setSaving(false);
@@ -381,7 +392,6 @@ const HomeManagement = () => {
       }
 
       const dataToSave = {
-        locale: heroSection.locale.trim(),
         preHeading: heroSection.preHeading.trim(),
         heading: heroSection.heading.trim(),
         introHtml: heroSection.introHtml.trim(),
@@ -400,7 +410,6 @@ const HomeManagement = () => {
         setSelectedHero(newHero);
         setHeroSection({
           heroId: newHero.heroId,
-          locale: newHero.locale,
           preHeading: newHero.preHeading || "",
           heading: newHero.heading || "",
           introHtml: newHero.introHtml || "",
@@ -428,14 +437,7 @@ const HomeManagement = () => {
       if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       } else if (err.message) {
-        if (
-          err.message.includes("UNIQUE KEY constraint") ||
-          err.message.includes("duplicate key")
-        ) {
-          errorMessage = `Locale "${heroSection.locale}" đã tồn tại. Vui lòng chọn locale khác.`;
-        } else {
-          errorMessage = err.message;
-        }
+        errorMessage = err.message;
       }
 
       setError(errorMessage);
@@ -459,40 +461,7 @@ const HomeManagement = () => {
       setSaving(true);
       setError(null);
 
-      // Kiểm tra nếu locale thay đổi và đã tồn tại
-      const currentHero = heroes.find(
-        (hero) => hero.heroId === heroSection.heroId
-      );
-      if (currentHero && currentHero.locale !== heroSection.locale.trim()) {
-        // Locale đã thay đổi, kiểm tra xem locale mới đã tồn tại chưa
-        const existingHero = heroes.find(
-          (hero) =>
-            hero.locale === heroSection.locale.trim() &&
-            hero.heroId !== heroSection.heroId
-        );
-        if (existingHero) {
-          const errorMsg = `Không thể đổi sang locale "${heroSection.locale}" vì đã tồn tại Hero khác với locale này. Vui lòng chọn locale khác.`;
-          setError(errorMsg);
-          notification.warning(errorMsg, 6000, { position: "top-right" });
-          setSaving(false);
-          return;
-        }
-
-        // Kiểm tra thêm bằng API (backend check)
-        const localeExists = await heroApi.checkLocaleExists(
-          heroSection.locale.trim()
-        );
-        if (localeExists) {
-          const errorMsg = `Locale "${heroSection.locale}" đã tồn tại trong database. Không thể cập nhật.`;
-          setError(errorMsg);
-          notification.warning(errorMsg, 6000, { position: "top-right" });
-          setSaving(false);
-          return;
-        }
-      }
-
       const dataToSave = {
-        locale: heroSection.locale,
         preHeading: heroSection.preHeading,
         heading: heroSection.heading,
         introHtml: heroSection.introHtml,
@@ -518,14 +487,7 @@ const HomeManagement = () => {
       if (err.response?.data?.message) {
         errorMessage = err.response.data.message;
       } else if (err.message) {
-        if (
-          err.message.includes("UNIQUE KEY constraint") ||
-          err.message.includes("duplicate key")
-        ) {
-          errorMessage = `Locale "${heroSection.locale}" đã tồn tại. Không thể cập nhật.`;
-        } else {
-          errorMessage = err.message;
-        }
+        errorMessage = err.message;
       }
 
       setError(errorMessage);
@@ -620,48 +582,37 @@ const HomeManagement = () => {
     (hero) => {
       setSelectedHero(hero);
       setIsEditingHero(true);
-      setHeroSection({
-        heroId: hero.heroId,
-        locale: hero.locale,
-        preHeading: hero.preHeading || "",
-        heading: hero.heading || "",
-        introHtml: hero.introHtml || "",
-        createdAt: hero.createdAt,
-        updatedAt: hero.updatedAt,
-      });
+        setHeroSection({
+          heroId: hero.heroId,
+          preHeading: hero.preHeading || "",
+          heading: hero.heading || "",
+          introHtml: hero.introHtml || "",
+          createdAt: hero.createdAt,
+          updatedAt: hero.updatedAt,
+        });
 
-      // Load sub-headings for this hero
-      fetchSubHeadings(hero.heroId);
-    },
-    [fetchSubHeadings]
-  );
-
-  // Reset form for new hero
-  const resetHeroForm = () => {
-    // Tìm locale khả dụng
-    const availableLocales = ["vi", "en", "fr", "de"];
-    const usedLocales = heroes.map((hero) => hero.locale);
-    const availableLocale = availableLocales.find(
-      (locale) => !usedLocales.includes(locale)
+        // Load sub-headings for this hero
+        fetchSubHeadings(hero.heroId);
+      },
+      [fetchSubHeadings]
     );
 
-    setHeroSection({
-      heroId: "",
-      locale: availableLocale || "vi", // Fallback to 'vi' if all are used
-      preHeading: "",
-      heading: "",
-      introHtml: "",
-      createdAt: null,
-      updatedAt: null,
-    });
-    setSelectedHero(null);
-    setIsEditingHero(false);
-    setSubHeadings([]); // Clear sub-headings
-    setNewSubHeading(""); // Clear new sub-heading input
-    setEditingSubHeading(null); // Clear editing state
-  };
-
-  // Handle save (create or update)
+    // Reset form for new hero
+    const resetHeroForm = () => {
+      setHeroSection({
+        heroId: "",
+        preHeading: "",
+        heading: "",
+        introHtml: "",
+        createdAt: null,
+        updatedAt: null,
+      });
+      setSelectedHero(null);
+      setIsEditingHero(false);
+      setSubHeadings([]); // Clear sub-headings
+      setNewSubHeading(""); // Clear new sub-heading input
+      setEditingSubHeading(null); // Clear editing state
+    };  // Handle save (create or update)
   const handleSave = () => {
     if (heroSection.heroId) {
       updateHero();
@@ -753,6 +704,7 @@ const HomeManagement = () => {
       }
     };
 
+    console.log("🏠 Component mounted/viewMode changed:", viewMode);
     loadData();
     loadTabStats(); // Also update tab stats
   }, [viewMode, notification, loadTabStats]);
@@ -774,12 +726,12 @@ const HomeManagement = () => {
         const notificationKey = `${selectedHero.heroId}-${viewMode}`;
 
         if (hasActiveSearch && lastNotificationId !== notificationKey) {
-          const heroStatus = selectedHero.isDeleted ? "đã xóa" : "hoạt động";
+          const heroStatus = selectedHero.isDeleted ? "đã lưu trữ" : "hoạt động";
           const currentView =
             viewMode === "active"
               ? "Heroes hoạt động"
-              : viewMode === "deleted"
-              ? "Thùng rác"
+              : viewMode === "archived"
+              ? "Kho lưu trữ"
               : "view hiện tại";
 
           showControlledNotification(
@@ -819,10 +771,10 @@ const HomeManagement = () => {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event) => {
-      // Ctrl/Cmd + D: Toggle deleted heroes
+      // Ctrl/Cmd + D: Toggle archived heroes
       if ((event.ctrlKey || event.metaKey) && event.key === "d") {
         event.preventDefault();
-        setViewMode((prev) => (prev === "deleted" ? "active" : "deleted"));
+        setViewMode((prev) => (prev === "archived" ? "active" : "archived"));
       }
 
       // Ctrl/Cmd + A: Show all heroes
@@ -842,7 +794,7 @@ const HomeManagement = () => {
       }
       if (event.key === "2" && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();
-        setViewMode("deleted");
+        setViewMode("archived");
       }
       if (event.key === "3" && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();
@@ -931,16 +883,16 @@ const HomeManagement = () => {
               </span>
             </button>
             <button
-              onClick={() => setViewMode("deleted")}
+              onClick={() => setViewMode("archived")}
               className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-                viewMode === "deleted"
-                  ? "border-red-500 text-red-600"
+                viewMode === "archived"
+                  ? "border-orange-500 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
-              Thùng rác
-              <span className="ml-2 bg-red-100 text-red-900 hidden sm:inline-block py-0.5 px-2.5 rounded-full text-xs font-medium">
-                {tabStats.deleted}
+              Kho lưu trữ
+              <span className="ml-2 bg-orange-100 text-orange-900 hidden sm:inline-block py-0.5 px-2.5 rounded-full text-xs font-medium">
+                {tabStats.archived}
               </span>
             </button>
             <button
@@ -985,8 +937,8 @@ const HomeManagement = () => {
                   placeholder={`Tìm kiếm trong ${
                     viewMode === "active"
                       ? "heroes hoạt động"
-                      : viewMode === "deleted"
-                      ? "thùng rác"
+                      : viewMode === "archived"
+                      ? "kho lưu trữ"
                       : "tất cả heroes"
                   }... (Ctrl+F)`}
                   value={searchTerm}
@@ -998,7 +950,7 @@ const HomeManagement = () => {
 
             <div className="flex items-center space-x-4">
               {/* View-specific actions */}
-              {viewMode === "deleted" && stats.deleted > 0 && (
+              {viewMode === "archived" && stats.archived > 0 && (
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => {
@@ -1033,8 +985,8 @@ const HomeManagement = () => {
                     {filteredHeroes.length}
                     {viewMode === "active"
                       ? " hoạt động"
-                      : viewMode === "deleted"
-                      ? " đã xóa"
+                      : viewMode === "archived"
+                      ? " đã lưu trữ"
                       : " heroes"}
                   </span>
                   {viewMode === "all" && (
@@ -1042,8 +994,8 @@ const HomeManagement = () => {
                       <span className="text-green-600">
                         ({stats.active} hoạt động)
                       </span>
-                      <span className="text-red-600">
-                        ({stats.deleted} đã xóa)
+                      <span className="text-orange-600">
+                        ({stats.archived} lưu trữ)
                       </span>
                     </>
                   )}
@@ -1081,7 +1033,7 @@ const HomeManagement = () => {
               <input
                 id="hero-search"
                 type="text"
-                placeholder="Tìm kiếm theo heading, locale, nội dung... (Ctrl+F)"
+                placeholder="Tìm kiếm theo heading, nội dung... (Ctrl+F)"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -1135,7 +1087,6 @@ const HomeManagement = () => {
                 {stats.deleted > 0 && (
                   <span className="text-red-600">{stats.deleted} đã xóa</span>
                 )}
-                <span className="text-blue-600">{stats.locales} ngôn ngữ</span>
               </div>
             </div>
           </div>
@@ -1215,109 +1166,6 @@ const HomeManagement = () => {
                   <p className="text-xs text-gray-500 mt-1">
                     Nội dung sẽ được bọc trong thẻ &lt;p&gt;
                   </p>
-                </div>
-                <div>
-                  <label
-                    htmlFor="locale"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Ngôn ngữ (Locale)
-                    {(() => {
-                      // Kiểm tra conflict locale
-                      const isConflict = heroes.some(
-                        (hero) =>
-                          hero.locale === heroSection.locale &&
-                          hero.heroId !== heroSection.heroId
-                      );
-
-                      if (isConflict) {
-                        return (
-                          <span className="text-xs text-red-600 ml-2">
-                            (Locale này đã được sử dụng bởi Hero khác!)
-                          </span>
-                        );
-                      }
-
-                      return null;
-                    })()}
-                  </label>
-                  <select
-                    id="locale"
-                    value={heroSection.locale}
-                    onChange={(e) =>
-                      setHeroSection({ ...heroSection, locale: e.target.value })
-                    }
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                  >
-                    <option
-                      value="vi"
-                      disabled={heroes.some(
-                        (hero) =>
-                          hero.locale === "vi" &&
-                          hero.heroId !== heroSection.heroId
-                      )}
-                    >
-                      Tiếng Việt (vi){" "}
-                      {heroes.some(
-                        (hero) =>
-                          hero.locale === "vi" &&
-                          hero.heroId !== heroSection.heroId
-                      )
-                        ? "(Đã sử dụng)"
-                        : ""}
-                    </option>
-                    <option
-                      value="en"
-                      disabled={heroes.some(
-                        (hero) =>
-                          hero.locale === "en" &&
-                          hero.heroId !== heroSection.heroId
-                      )}
-                    >
-                      English (en){" "}
-                      {heroes.some(
-                        (hero) =>
-                          hero.locale === "en" &&
-                          hero.heroId !== heroSection.heroId
-                      )
-                        ? "(Đã sử dụng)"
-                        : ""}
-                    </option>
-                    <option
-                      value="fr"
-                      disabled={heroes.some(
-                        (hero) =>
-                          hero.locale === "fr" &&
-                          hero.heroId !== heroSection.heroId
-                      )}
-                    >
-                      Français (fr){" "}
-                      {heroes.some(
-                        (hero) =>
-                          hero.locale === "fr" &&
-                          hero.heroId !== heroSection.heroId
-                      )
-                        ? "(Đã sử dụng)"
-                        : ""}
-                    </option>
-                    <option
-                      value="de"
-                      disabled={heroes.some(
-                        (hero) =>
-                          hero.locale === "de" &&
-                          hero.heroId !== heroSection.heroId
-                      )}
-                    >
-                      Deutsch (de){" "}
-                      {heroes.some(
-                        (hero) =>
-                          hero.locale === "de" &&
-                          hero.heroId !== heroSection.heroId
-                      )
-                        ? "(Đã sử dụng)"
-                        : ""}
-                    </option>
-                  </select>
                 </div>
 
                 {/* Sub-headings Management - Chỉ hiển thị khi edit hero */}
@@ -1487,14 +1335,12 @@ const HomeManagement = () => {
                   <div className="mt-4 text-xs text-gray-500">
                     <p>
                       Tạo:{" "}
-                      {new Date(heroSection.createdAt).toLocaleString("vi-VN")}
+                      {new Date(heroSection.createdAt).toLocaleString()}
                     </p>
                     {heroSection.updatedAt && (
                       <p>
                         Cập nhật:{" "}
-                        {new Date(heroSection.updatedAt).toLocaleString(
-                          "vi-VN"
-                        )}
+                        {new Date(heroSection.updatedAt).toLocaleString()}
                       </p>
                     )}
                   </div>
@@ -1537,8 +1383,8 @@ const HomeManagement = () => {
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">
-              {viewMode === "deleted"
-                ? "🗑️ Thùng rác"
+              {viewMode === "archived"
+                ? "� Kho lưu trữ"
                 : viewMode === "active"
                 ? "📋 Heroes hoạt động"
                 : "📁 Tất cả Heroes"}
@@ -1573,11 +1419,11 @@ const HomeManagement = () => {
                 </span>
               )}
 
-              {viewMode === "deleted" && (
+              {viewMode === "archived" && (
                 <div className="text-sm text-gray-500">
-                  <span className="text-red-600">🗑️ Chế độ xem thùng rác</span>
+                  <span className="text-orange-600">� Chế độ xem kho lưu trữ</span>
                   <span className="mx-2">•</span>
-                  <span>Chỉ xem và khôi phục</span>
+                  <span>Khôi phục hoặc xóa vĩnh viễn</span>
                 </div>
               )}
             </div>
@@ -1600,8 +1446,8 @@ const HomeManagement = () => {
                   </p>
                 
                 </>
-              ) : viewMode === "deleted" ? (
-                // No deleted heroes
+              ) : viewMode === "archived" ? (
+                // No archived heroes
                 <>
                   <div className="text-gray-400 mb-4">
                     <svg
@@ -1619,12 +1465,12 @@ const HomeManagement = () => {
                     </svg>
                   </div>
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Thùng rác trống
+                    Kho lưu trữ trống
                   </h3>
                   <p className="text-gray-500 mb-4">
                     {searchTerm
-                      ? `Không tìm thấy hero đã xóa nào cho "${searchTerm}"`
-                      : "Không có hero nào đã bị xóa"}
+                      ? `Không tìm thấy hero đã lưu trữ nào cho "${searchTerm}"`
+                      : "Không có hero nào đã được lưu trữ"}
                   </p>
                   {searchTerm && (
                     <button
@@ -1659,8 +1505,8 @@ const HomeManagement = () => {
                   <p className="text-gray-500 mb-4">
                     {searchTerm
                       ? `Không có kết quả cho "${searchTerm}"`
-                      : stats.deleted > 0
-                      ? `Tất cả ${stats.total} heroes đã bị xóa`
+                      : stats.archived > 0
+                      ? `Tất cả ${stats.total} heroes đã được lưu trữ`
                       : "Tạo hero mới để bắt đầu"}
                   </p>
                   <div className="flex justify-center space-x-3">
@@ -1672,12 +1518,12 @@ const HomeManagement = () => {
                         Xóa tìm kiếm
                       </button>
                     )}
-                    {stats.deleted > 0 && (
+                    {stats.archived > 0 && (
                       <button
-                        onClick={() => setViewMode("deleted")}
+                        onClick={() => setViewMode("archived")}
                         className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                       >
-                        Xem thùng rác ({stats.deleted})
+                        Xem kho lưu trữ ({stats.archived})
                       </button>
                     )}
                     <button
@@ -1737,16 +1583,13 @@ const HomeManagement = () => {
                     Hero
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ngôn ngữ
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Trạng thái
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {viewMode === "deleted" ? "Ngày xóa" : "Cập nhật cuối"}
+                    {viewMode === "archived" ? "Ngày lưu trữ" : "Cập nhật cuối"}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {viewMode === "deleted" ? "Khôi phục" : "Thao tác"}
+                    {viewMode === "archived" ? "Thao tác" : "Thao tác"}
                   </th>
                 </tr>
               </thead>
@@ -1775,29 +1618,24 @@ const HomeManagement = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {hero.locale.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {viewMode === "deleted" ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          🗑️ Đã xóa
+                      {viewMode === "archived" ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                          � Đã lưu trữ
                         </span>
                       ) : (
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             hero.isDeleted
-                              ? "bg-red-100 text-red-800"
+                              ? "bg-orange-100 text-orange-800"
                               : "bg-green-100 text-green-800"
                           }`}
                         >
-                          {hero.isDeleted ? "Đã xóa" : "Hoạt động"}
+                          {hero.isDeleted ? "Đã lưu trữ" : "Hoạt động"}
                         </span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {viewMode === "deleted" ? (
+                      {viewMode === "archived" ? (
                         <div className="flex flex-col">
                           <span>
                             {hero.updatedAt
@@ -1833,9 +1671,9 @@ const HomeManagement = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {viewMode === "deleted" ? (
-                        // Simple restore-only interface for deleted view
-                        <div className="flex items-center justify-center">
+                      {viewMode === "archived" ? (
+                        // Interface for archived view with restore and permanent delete
+                        <div className="flex items-center justify-center space-x-2">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1846,6 +1684,33 @@ const HomeManagement = () => {
                           >
                             <ArrowPathIcon className="h-4 w-4 mr-1" />
                             Khôi phục
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // TODO: Implement permanent delete
+                              notification.warning(
+                                "Tính năng xóa vĩnh viễn sẽ được thêm sau",
+                                3000
+                              );
+                            }}
+                            className="inline-flex items-center px-3 py-1.5 bg-red-100 text-red-700 rounded-md hover:bg-red-200 font-medium transition-colors"
+                            title="Xóa vĩnh viễn hero này"
+                          >
+                            <svg
+                              className="h-4 w-4 mr-1"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                            Xóa vĩnh viễn
                           </button>
                         </div>
                       ) : (
@@ -1863,7 +1728,7 @@ const HomeManagement = () => {
                           </button>
 
                           {/* Actions based on view mode and hero status */}
-                          {viewMode === "deleted" || hero.isDeleted ? (
+                          {viewMode === "archived" || hero.isDeleted ? (
                             <>
                               <button
                                 onClick={(e) => {
@@ -1874,13 +1739,13 @@ const HomeManagement = () => {
                                 title="Khôi phục"
                               >
                                 <ArrowPathIcon className="h-4 w-4" />
-                                {viewMode === "deleted" && (
+                                {viewMode === "archived" && (
                                   <span className="text-xs hidden sm:inline">
                                     Khôi phục
                                   </span>
                                 )}
                               </button>
-                              {viewMode === "deleted" && (
+                              {viewMode === "archived" && (
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -1918,13 +1783,25 @@ const HomeManagement = () => {
                                 e.stopPropagation();
                                 setShowDeleteConfirm(hero);
                               }}
-                              className="text-red-600 hover:text-red-900 flex items-center space-x-1"
-                              title="Xóa mềm"
+                              className="text-orange-600 hover:text-orange-900 flex items-center space-x-1"
+                              title="Lưu trữ"
                             >
-                              <TrashIcon className="h-4 w-4" />
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                                />
+                              </svg>
                               {viewMode === "active" && (
                                 <span className="text-xs hidden sm:inline">
-                                  Xóa
+                                  Lưu trữ
                                 </span>
                               )}
                             </button>
@@ -1940,7 +1817,7 @@ const HomeManagement = () => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Archive Confirmation Modal */}
       <DeleteConfirmationModal
         isOpen={!!showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(null)}
@@ -1953,12 +1830,12 @@ const HomeManagement = () => {
         itemType="Hero"
         loading={saving}
         canRestore={true}
+        title="Lưu trữ Hero?"
+        confirmText="Lưu trữ"
+        message="Hero sẽ được chuyển vào kho lưu trữ và có thể khôi phục sau."
         additionalInfo={
           showDeleteConfirm && (
             <div className="text-left">
-              <p>
-                <strong>Locale:</strong> {showDeleteConfirm.locale}
-              </p>
               <p>
                 <strong>Pre-heading:</strong> {showDeleteConfirm.preHeading}
               </p>

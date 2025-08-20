@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import userHeroApi from 'api/services/userHeroApi';
 
 /**
- * Custom hook to fetch hero data for user pages - Vietnamese only
+ * Custom hook to fetch hero data for user pages - Single Hero
  */
-const useHeroData = (locale = 'vi') => {
+const useHeroData = () => {
   const [heroData, setHeroData] = useState(null);
   const [subHeadings, setSubHeadings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,10 +16,10 @@ const useHeroData = (locale = 'vi') => {
         setLoading(true);
         setError(null);
 
-        console.log('🔍 Fetching hero data for locale:', locale);
+        console.log('🔍 Fetching hero data...');
 
-        // Fetch hero by locale using user API
-        const heroResponse = await userHeroApi.getActiveByLocale(locale);
+        // Fetch active hero using user API
+        const heroResponse = await userHeroApi.getActiveHero();
         console.log('📥 Hero response:', heroResponse);
         
         if (heroResponse.data) {
@@ -53,7 +53,7 @@ const useHeroData = (locale = 'vi') => {
     };
 
     fetchHeroData();
-  }, [locale]);
+  }, []); // No locale dependency
 
   return {
     heroData,

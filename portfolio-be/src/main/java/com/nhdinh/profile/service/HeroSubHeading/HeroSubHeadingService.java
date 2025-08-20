@@ -1,5 +1,13 @@
 package com.nhdinh.profile.service.HeroSubHeading;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.nhdinh.profile.modules.Hero.Hero;
 import com.nhdinh.profile.modules.Hero.HeroDAO;
 import com.nhdinh.profile.modules.HeroSubHeading.HeroSubHeading;
@@ -7,14 +15,6 @@ import com.nhdinh.profile.modules.HeroSubHeading.HeroSubHeadingDAO;
 import com.nhdinh.profile.request.HeroSubHeading.HeroSubHeadingCreateRequest;
 import com.nhdinh.profile.request.HeroSubHeading.HeroSubHeadingReorderRequest;
 import com.nhdinh.profile.request.HeroSubHeading.HeroSubHeadingUpdateRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -32,14 +32,6 @@ public class HeroSubHeadingService {
     @Transactional(readOnly = true)
     public List<HeroSubHeading> getSubHeadingsByHeroId(UUID heroId) {
         return heroSubHeadingDAO.findByHeroIdOrderBySortOrder(heroId);
-    }
-    
-    /**
-     * Lấy tất cả SubHeading theo locale
-     */
-    @Transactional(readOnly = true)
-    public List<HeroSubHeading> getSubHeadingsByLocale(String locale) {
-        return heroSubHeadingDAO.findByHeroLocaleOrderBySortOrder(locale);
     }
     
     /**

@@ -39,11 +39,6 @@ public class Hero {
     @Column(name = "HeroId", columnDefinition = "UNIQUEIDENTIFIER")
     private UUID heroId;
     
-    @NotBlank(message = "Locale không được để trống")
-    @Size(max = 10, message = "Locale không được vượt quá 10 ký tự")
-    @Column(name = "Locale", length = 10, nullable = false, unique = true)
-    private String locale;
-    
     @Size(max = 256, message = "PreHeading không được vượt quá 256 ký tự")
     @Column(name = "PreHeading", length = 256)
     private String preHeading;

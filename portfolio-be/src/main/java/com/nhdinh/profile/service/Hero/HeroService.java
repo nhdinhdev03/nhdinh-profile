@@ -1,132 +1,143 @@
 package com.nhdinh.profile.service.Hero;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nhdinh.profile.modules.Hero.Hero;
 import com.nhdinh.profile.modules.Hero.HeroDAO;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
 
 @Service
 @Transactional
 public class HeroService {
-    
+
     @Autowired
     private HeroDAO heroDAO;
-    
+
     /**
      * Lấy tất cả Hero chưa bị xóa
      */
-    @Transactional(readOnly = true)
     public List<Hero> getAllHeroes() {
         return heroDAO.findAllNotDeleted();
     }
-    
+
     /**
-     * Lấy tất cả Hero đã bị xóa mềm
+     * Lấy tất cả Hero đã bị xóa (lưu trữ)
      */
-    @Transactional(readOnly = true)
     public List<Hero> getDeletedHeroes() {
-        return heroDAO.findByIsDeleted(true);
+        return heroDAO.findAllDeleted();
     }
-    
+
     /**
-     * Lấy tất cả Hero (bao gồm cả đã xóa và chưa xóa)
+     * Lấy tất cả Hero bao gồm cả bị xóa
      */
-    @Transactional(readOnly = true)
     public List<Hero> getAllHeroesIncludeDeleted() {
         return heroDAO.findAll();
     }
-    
+
     /**
-     * Lấy Hero theo ID
+     * Lấy Hero by UUID
      */
-    @Transactional(readOnly = true)
     public Optional<Hero> getHeroById(UUID heroId) {
-        return heroDAO.findById(heroId)
-                .filter(hero -> !hero.getIsDeleted());
+        return heroDAO.findById(heroId);
     }
-    
+
     /**
-     * Lấy Hero theo locale
+     * Lấy Hero by Long ID
      */
-    @Transactional(readOnly = true)
-    public Optional<Hero> getHeroByLocale(String locale) {
-        return heroDAO.findByLocaleAndNotDeleted(locale);
+    public Optional<Hero> getHeroById(Long heroId) {
+        return heroDAO.findById(UUID.fromString(heroId.toString()));
     }
-    
+
+    /**
+     * Lấy Hero đang hoạt động (chưa bị xóa) - sử dụng cache
+     */
+    @Cacheable(value = "activeHero")
+    public Optional<Hero> getActiveHero() {
+        return heroDAO.findFirstNotDeleted();
+    }
+
     /**
      * Tạo mới Hero
      */
+    @CacheEvict(value = "activeHero", allEntries = true)
     public Hero createHero(Hero hero) {
-        // Kiểm tra locale đã tồn tại chưa
-        if (heroDAO.existsByLocaleAndNotDeleted(hero.getLocale())) {
-            throw new RuntimeException("Locale '" + hero.getLocale() + "' đã tồn tại");
+        // Kiểm tra có Hero nào đang hoạt động không
+        Optional<Hero> existingHero = heroDAO.findFirstNotDeleted();
+        if (existingHero.isPresent()) {
+            throw new RuntimeException("Đã tồn tại Hero. Chỉ được phép có 1 Hero duy nhất.");
         }
         
-        hero.setHeroId(null); // Đảm bảo tạo mới
         hero.setIsDeleted(false);
-        
         return heroDAO.save(hero);
     }
-    
+
     /**
      * Cập nhật Hero
      */
-    public Hero updateHero(UUID heroId, Hero heroUpdate) {
-        Hero existingHero = heroDAO.findById(heroId)
-                .filter(hero -> !hero.getIsDeleted())
+    @CacheEvict(value = "activeHero", allEntries = true)
+    public Hero updateHero(UUID heroId, Hero heroDetails) {
+        Hero hero = heroDAO.findById(heroId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Hero với ID: " + heroId));
-        
-        // Kiểm tra locale đã tồn tại chưa (trừ chính nó)
-        if (!existingHero.getLocale().equals(heroUpdate.getLocale()) && 
-            heroDAO.existsByLocaleAndNotSelf(heroUpdate.getLocale(), heroId)) {
-            throw new RuntimeException("Locale '" + heroUpdate.getLocale() + "' đã tồn tại");
-        }
-        
-        // Cập nhật các field
-        existingHero.setLocale(heroUpdate.getLocale());
-        existingHero.setPreHeading(heroUpdate.getPreHeading());
-        existingHero.setHeading(heroUpdate.getHeading());
-        existingHero.setIntroHtml(heroUpdate.getIntroHtml());
-        
-        return heroDAO.save(existingHero);
+
+        // Cập nhật các trường
+        hero.setPreHeading(heroDetails.getPreHeading());
+        hero.setHeading(heroDetails.getHeading());
+        hero.setIntroHtml(heroDetails.getIntroHtml());
+
+        return heroDAO.save(hero);
     }
-    
+
     /**
      * Xóa mềm Hero
      */
+    @CacheEvict(value = "activeHero", allEntries = true)
     public void deleteHero(UUID heroId) {
         Hero hero = heroDAO.findById(heroId)
-                .filter(h -> !h.getIsDeleted())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Hero với ID: " + heroId));
-        
+
         hero.setIsDeleted(true);
         heroDAO.save(hero);
     }
-    
+
+    /**
+     * Xóa vĩnh viễn Hero
+     */
+    @CacheEvict(value = "activeHero", allEntries = true)
+    public void permanentDeleteHero(UUID heroId) {
+        Hero hero = heroDAO.findById(heroId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Hero với ID: " + heroId));
+
+        heroDAO.delete(hero);
+    }
+
     /**
      * Khôi phục Hero đã xóa
      */
+    @CacheEvict(value = "activeHero", allEntries = true)
     public Hero restoreHero(UUID heroId) {
         Hero hero = heroDAO.findById(heroId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Hero với ID: " + heroId));
-        
+
         if (!hero.getIsDeleted()) {
             throw new RuntimeException("Hero chưa bị xóa");
         }
-        
-        // Kiểm tra locale có trùng với record khác không
-        if (heroDAO.existsByLocaleAndNotDeleted(hero.getLocale())) {
-            throw new RuntimeException("Không thể khôi phục: Locale '" + hero.getLocale() + "' đã tồn tại");
+
+        // Kiểm tra xem có Hero nào khác đang hoạt động không
+        Optional<Hero> existingActiveHero = heroDAO.findFirstNotDeleted();
+        if (existingActiveHero.isPresent()) {
+            throw new RuntimeException("Không thể khôi phục: Đã tồn tại Hero khác đang hoạt động");
         }
-        
+
         hero.setIsDeleted(false);
-        
         return heroDAO.save(hero);
     }
 }

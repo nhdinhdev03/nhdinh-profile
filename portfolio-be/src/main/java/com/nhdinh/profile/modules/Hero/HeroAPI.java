@@ -84,6 +84,31 @@ public class HeroAPI {
     }
     
     /**
+     * Lấy thống kê số lượng Heroes theo trạng thái
+     */
+    @GetMapping("/stats")
+    public ResponseEntity<HeroStatsResponse> getHeroStats() {
+        try {
+            List<Hero> allHeroes = heroService.getAllHeroesIncludeDeleted();
+            
+            long activeCount = allHeroes.stream()
+                    .filter(hero -> !hero.getIsDeleted())
+                    .count();
+            
+            long archivedCount = allHeroes.stream()
+                    .filter(Hero::getIsDeleted)
+                    .count();
+            
+            long totalCount = allHeroes.size();
+            
+            HeroStatsResponse stats = new HeroStatsResponse(activeCount, archivedCount, totalCount);
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
      * Lấy Hero theo ID
      */
     @GetMapping("/{heroId}")
@@ -97,13 +122,14 @@ public class HeroAPI {
         }
     }
     
+    
     /**
-     * Lấy Hero theo locale
+     * Lấy Hero đầu tiên (duy nhất)
      */
-    @GetMapping("/locale/{locale}")
-    public ResponseEntity<HeroResponse> getHeroByLocale(@PathVariable String locale) {
+    @GetMapping("/active")
+    public ResponseEntity<HeroResponse> getActiveHero() {
         try {
-            return heroService.getHeroByLocale(locale)
+            return heroService.getActiveHero()
                     .map(hero -> ResponseEntity.ok(HeroResponse.fromEntity(hero)))
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -118,7 +144,6 @@ public class HeroAPI {
     public ResponseEntity<?> createHero(@Valid @RequestBody HeroCreateRequest request) {
         try {
             Hero hero = new Hero();
-            hero.setLocale(request.getLocale());
             hero.setPreHeading(request.getPreHeading());
             hero.setHeading(request.getHeading());
             hero.setIntroHtml(request.getIntroHtml());
@@ -144,7 +169,6 @@ public class HeroAPI {
             @Valid @RequestBody HeroUpdateRequest request) {
         try {
             Hero heroUpdate = new Hero();
-            heroUpdate.setLocale(request.getLocale());
             heroUpdate.setPreHeading(request.getPreHeading());
             heroUpdate.setHeading(request.getHeading());
             heroUpdate.setIntroHtml(request.getIntroHtml());
@@ -226,6 +250,42 @@ public class HeroAPI {
         
         public String getStatus() {
             return status;
+        }
+    }
+    
+    public static class HeroStatsResponse {
+        private long active;
+        private long archived;
+        private long total;
+        
+        public HeroStatsResponse(long active, long archived, long total) {
+            this.active = active;
+            this.archived = archived;
+            this.total = total;
+        }
+        
+        public long getActive() {
+            return active;
+        }
+        
+        public void setActive(long active) {
+            this.active = active;
+        }
+        
+        public long getArchived() {
+            return archived;
+        }
+        
+        public void setArchived(long archived) {
+            this.archived = archived;
+        }
+        
+        public long getTotal() {
+            return total;
+        }
+        
+        public void setTotal(long total) {
+            this.total = total;
         }
     }
 }

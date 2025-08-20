@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense } from "react";
 import "./HomeIndex.scss";
 import { HeroSection, ProjectShowcase, StatsStrip, TechMarquee } from "components"; // keep hero eager (above the fold)
 import useIsMobile from "hooks/Mobile/useIsMobile";
@@ -28,7 +28,6 @@ function HomeIndex() {
       </div>
 
       <div>
-        {/* Tech marquee placeholder for intersection-based lazy mount */}
         <div ref={marqueeRef} style={{ minHeight: 120 }}>
           {showMarquee && (
             <Suspense

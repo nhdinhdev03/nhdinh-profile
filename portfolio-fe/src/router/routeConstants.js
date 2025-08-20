@@ -1,9 +1,9 @@
-export const API_VERSION = "nhdinh";
-export const ADMIN_PREFIX = "/admin"; // luôn có /
+export const API_VERSION = "nhdinh/siuuuuuuuuu";
+export const ADMIN_PREFIX = "/admin/siuuuuuuuuuuu"; // luôn có /
 
 
 // Đường dẫn login riêng biệt
-export const AUTH_LOGIN = "/auth/login"; // luôn có /
+export const AUTH_LOGIN = "/nhdinh/auth/login"; // luôn có /
 
 export const ROUTES = {
   //user

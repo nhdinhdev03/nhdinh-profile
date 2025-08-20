@@ -33,10 +33,7 @@ class HeroApi extends BaseApi {
 
   // Get hero statistics
   async getStats() {
-    console.log("📊 Calling Hero Stats API...");
-    const response = await axiosClient.get(`${this.uri}/stats`);
-    console.log("📊 Hero Stats API Response:", response);
-    return response;
+    return axiosClient.get(`${this.uri}/stats`);
   }
 
   // Override create to match backend request format (no locale)

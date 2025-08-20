@@ -400,7 +400,10 @@ const ContactManagement = () => {
                   variant="primary"
                   fullWidth
                   icon={ChatBubbleLeftRightIcon}
-                  onClick={() => console.log('Reply to contact')}
+                  onClick={() => {
+                    // TODO: Implement reply to contact functionality
+                    // console.log('Reply to contact');
+                  }}
                 >
                   Trả lời
                 </Button>

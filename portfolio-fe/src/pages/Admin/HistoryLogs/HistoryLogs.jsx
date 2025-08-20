@@ -4,7 +4,7 @@ import {
   UserIcon, 
   DocumentTextIcon,
   FolderIcon,
-  TrashIcon,
+  // TrashIcon, // Không sử dụng - có thể uncomment khi cần chức năng xóa log
   EyeIcon,
   FunnelIcon
 } from '@heroicons/react/24/outline';

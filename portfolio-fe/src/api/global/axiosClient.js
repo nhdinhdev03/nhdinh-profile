@@ -25,7 +25,8 @@ axiosClient.interceptors.response.use(
         if (error.response) {
             switch (error.response.status) {
                 case httpStatus.INTERNAL_SERVER_ERROR:
-                         console.error('Thiết lập header xác thực không thành công:', error);
+                    // TODO: Implement proper error handling for server errors
+                    // console.error('Thiết lập header xác thực không thành công:', error);
                     break;
                 // case 401:
                 //     funcUtils.notify(error.response.data.message, 'error');
@@ -34,7 +35,8 @@ axiosClient.interceptors.response.use(
                 //     funcUtils.notify(error.response.data, 'error');
                 //     break;
                 default:
-                    console.log(error);
+                    // TODO: Implement proper error logging system
+                    // console.log(error);
                     break;
             }
         }

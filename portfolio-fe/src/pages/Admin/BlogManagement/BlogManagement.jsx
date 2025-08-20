@@ -64,7 +64,9 @@ const BlogManagement = () => {
     setPosts(posts.filter(post => post.id !== id));
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleToggleFeatured = (id) => {
+    // Chức năng toggle bài viết nổi bật (sẽ implement trong tương lai)
     setPosts(posts.map(post => 
       post.id === id ? { ...post, featured: !post.featured } : post
     ));
@@ -176,7 +178,10 @@ const BlogManagement = () => {
             variant="secondary"
             size="sm"
             icon={PencilSquareIcon}
-            onClick={() => console.log('Edit post', post.id)}
+            onClick={() => {
+              // TODO: Implement edit post functionality
+              // console.log('Edit post', post.id);
+            }}
           >
             Sửa
           </Button>
@@ -184,7 +189,10 @@ const BlogManagement = () => {
             variant="ghost"
             size="sm"
             icon={EyeIcon}
-            onClick={() => console.log('View post', post.id)}
+            onClick={() => {
+              // TODO: Implement view post functionality
+              // console.log('View post', post.id);
+            }}
           />
           <Button
             variant="danger"
@@ -216,7 +224,10 @@ const BlogManagement = () => {
           <Button
             variant="primary"
             icon={PlusIcon}
-            onClick={() => console.log('Create new post')}
+            onClick={() => {
+              // TODO: Implement create new post functionality
+              // console.log('Create new post');
+            }}
           >
             Tạo bài viết mới
           </Button>

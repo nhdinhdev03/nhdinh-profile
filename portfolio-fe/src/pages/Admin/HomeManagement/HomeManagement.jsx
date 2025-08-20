@@ -1,5 +1,10 @@
+// =============================
+// HomeManagement Component (Admin)
+// Quản lý phần "Hero" của trang chủ: tạo / cập nhật / lưu trữ / khôi phục hero
+// và quản lý các sub-headings (danh sách mô tả ngắn: "Full-Stack Developer", ...)
+// Bao gồm: tìm kiếm, phân tab (Active / Archived / All), preview thời gian thực.
+// =============================
 import React, { useState, useEffect, useCallback } from "react";
-
 import {
   PlusIcon,
   PencilIcon,
@@ -8,17 +13,19 @@ import {
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 
+
 import heroSubHeadingApi from "api/admin/home/HeroSubHeadingApi";
 import heroApi from "api/admin/home/HeroApi";
 import { useNotificationContext } from "components/Notification";
+import InlineConfirmation from "components/UI/InlineConfirmation";
 import { ErrorFormatter, ValidationUtils, useDebounce } from "utils/validation";
-import { DeleteConfirmationModal } from "components/UI/ConfirmationModal";
+
 
 const HomeManagement = () => {
-  // Notification system
+
   const notification = useNotificationContext();
 
-  // State for current hero being edited
+  // ====== STATE: Dữ liệu form Hero đang thao tác ======
   const [heroSection, setHeroSection] = useState({
     heroId: "",
     preHeading: "",
@@ -28,50 +35,52 @@ const HomeManagement = () => {
     updatedAt: null,
   });
 
-  // State for hero list management
-  const [heroes, setHeroes] = useState([]);
-  const [selectedHero, setSelectedHero] = useState(null);
 
-  // State for hero sub-headings
-  const [subHeadings, setSubHeadings] = useState([]);
-  const [newSubHeading, setNewSubHeading] = useState("");
-  const [editingSubHeading, setEditingSubHeading] = useState(null);
+  // ====== STATE: Sub-headings của hero được chọn ======
+  const [subHeadings, setSubHeadings] = useState([]); // Danh sách sub-heading hiện tại
+  const [newSubHeading, setNewSubHeading] = useState(""); // Input tạo mới
+  const [editingSubHeading, setEditingSubHeading] = useState(null); // subId đang edit inline
+  // ====== STATE: Danh sách heroes & hero đang select ======
+  const [heroes, setHeroes] = useState([]); // Danh sách heroes theo viewMode
+  const [selectedHero, setSelectedHero] = useState(null); // Hero đang chỉnh sửa
 
-  // UI states
-  const [heroData, setHeroData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
-  const [validationErrors, setValidationErrors] = useState({});
-  const [isEditingHero, setIsEditingHero] = useState(false);
 
-  // Filter states
-  const [showDeleted, setShowDeleted] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState("active"); // "active", "archived", "all"
-  const [lastNotificationId, setLastNotificationId] = useState(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Stats for tabs
+  // ====== STATE: Thống kê theo backend (active/archived/total) ======
   const [tabStats, setTabStats] = useState({
     active: 0,
     archived: 0,
     total: 0,
   });
 
-  // Debug log when tabStats changes
-  useEffect(() => {
-    console.log("📊 TabStats updated:", tabStats);
-  }, [tabStats]);
+  const [loading, setLoading] = useState(false);
+
+  // eslint-disable-next-line no-unused-vars
+  const [error, setError] = useState(null); // Trạng thái lỗi (dự phòng cho hiển thị thông báo)
+  const [saving, setSaving] = useState(false);
+
+  // Modal and edit states
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null); // Hiển thị InlineConfirmation cho hero nào
+  const [isEditingHero, setIsEditingHero] = useState(false); // Bật form edit / create
+
+  // eslint-disable-next-line no-unused-vars
+  const [validationErrors, setValidationErrors] = useState({}); // Lỗi validation form (dự phòng cho hiển thị)
+
+  // ====== STATE: UI / Filter / View mode ======
+  const [showDeleted, setShowDeleted] = useState(false); // (Legacy) checkbox cũ, UI đang ẩn
+  const [searchTerm, setSearchTerm] = useState(""); // Chuỗi nhập thô
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // Chuỗi sau debounce để filter
+  const [viewMode, setViewMode] = useState("active"); // active | archived | all
+  const [lastNotificationId, setLastNotificationId] = useState(null); // Tránh spam khi hero bị ẩn do filter
+  const [isTransitioning, setIsTransitioning] = useState(false); // Cooldown khi đổi tab/search
 
   // Debounce search term
   const { debouncedFunction: updateSearch } = useDebounce((term) => {
     setDebouncedSearchTerm(term);
   }, 300);
 
-  // Utility to show controlled notification
+ 
+  // Helper: đảm bảo mỗi lần chỉ hiển thị 1 notification (dismissAll trước), tránh chồng chéo
   const showControlledNotification = useCallback(
     (message, type = "info", duration = 4000) => {
       // Always dismiss existing notifications first
@@ -90,47 +99,51 @@ const HomeManagement = () => {
     updateSearch(searchTerm);
   }, [searchTerm, updateSearch]);
 
-  // Computed filtered heroes (only search, no isDeleted filter since it's handled by backend)
+  // Memo: Áp dụng bộ lọc tìm kiếm (các filter khác xử lý từ backend qua viewMode)
   const filteredHeroes = React.useMemo(() => {
     if (!heroes) return [];
 
-    return heroes.filter((hero) => {
-      // Filter by search term only
-      if (debouncedSearchTerm.trim()) {
-        const searchLower = debouncedSearchTerm.toLowerCase();
-        return (
+    // Apply search filter only
+    if (debouncedSearchTerm.trim()) {
+      const searchLower = debouncedSearchTerm.toLowerCase();
+      return heroes.filter(
+        (hero) =>
           hero.heading?.toLowerCase().includes(searchLower) ||
           hero.preHeading?.toLowerCase().includes(searchLower) ||
           hero.introHtml?.toLowerCase().includes(searchLower)
-        );
-      }
+      );
+    }
 
-      return true;
-    });
+    return heroes;
   }, [heroes, debouncedSearchTerm]);
 
   // Statistics
+  // Memo: Thống kê nhanh từ danh sách (phục vụ hiển thị tại chỗ, khác với tabStats gọi API)
   const stats = React.useMemo(() => {
     const total = heroes.length;
     const active = heroes.filter((h) => !h.isDeleted).length;
-    const archived = total - active;
+    const deleted = heroes.filter((h) => h.isDeleted).length;
+    const archived = deleted; // archived = deleted
 
-    return { total, active, archived };
+    return { total, active, archived, deleted };
   }, [heroes]);
 
   // Check if selected hero is hidden by current filter
+  // Memo: Hero đang chọn có còn xuất hiện trong danh sách sau filter không
   const isSelectedHeroHidden = React.useMemo(() => {
     if (!selectedHero) return false;
     return !filteredHeroes.some((hero) => hero.heroId === selectedHero.heroId);
   }, [selectedHero, filteredHeroes]);
 
   // Validation functions
+  // Validate form Hero (preHeading / heading / introHtml) -> cập nhật validationErrors để highlight input
   const validateHeroSection = () => {
     const errors = ValidationUtils.validateHeroFields(heroSection);
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
+  // Validate 1 sub-heading (tránh rỗng / trùng / vi phạm rule)
   const validateSubHeading = (text) => {
     const errors = ValidationUtils.validateSubHeading(text, subHeadings);
 
@@ -142,12 +155,13 @@ const HomeManagement = () => {
   };
 
   // Fetch hero sub-headings
+  // Lấy danh sách sub-headings của hero theo heroId
   const fetchSubHeadings = useCallback(async (heroId) => {
     if (!heroId) return;
 
     try {
       const response = await heroSubHeadingApi.getByHeroId(heroId);
-      console.log("SubHeadings Response:", response);
+      // console.log("SubHeadings Response:", response); // Debug log - removed for production
 
       if (response.data) {
         // Sort by sortOrder
@@ -162,6 +176,7 @@ const HomeManagement = () => {
   }, []);
 
   // Create new sub-heading
+  // Tạo mới sub-heading cho hero đang chọn
   const createSubHeading = async () => {
     if (!newSubHeading.trim() || !selectedHero) {
       notification.warning("Vui lòng nhập nội dung sub-heading", 3000);
@@ -201,6 +216,7 @@ const HomeManagement = () => {
   };
 
   // Update sub-heading
+  // Cập nhật text sub-heading (khi blur hoặc Enter trong ô input inline)
   const updateSubHeading = async (subId, newText) => {
     if (!validateSubHeading(newText)) return;
 
@@ -224,15 +240,13 @@ const HomeManagement = () => {
   };
 
   // Delete sub-heading
+  // Xóa sub-heading theo subId
   const deleteSubHeading = async (subId) => {
     try {
-      // Get the sub-heading text before deleting for notification
       const subHeading = subHeadings.find((sub) => sub.subId === subId);
 
       await heroSubHeadingApi.delete(subId);
       await fetchSubHeadings(selectedHero.heroId);
-
-      // Show success notification
       notification.success(
         `Sub-heading "${subHeading?.text || "N/A"}" đã được xóa thành công!`,
         3000,
@@ -251,12 +265,11 @@ const HomeManagement = () => {
   };
 
   // Update sort order
+  // Thay đổi sortOrder (di chuyển lên / xuống)
   const updateSortOrder = async (subId, newSortOrder) => {
     try {
       await heroSubHeadingApi.updateSortOrder(subId, newSortOrder);
       await fetchSubHeadings(selectedHero.heroId);
-
-      // Show subtle info notification for sort order changes
       notification.info(`Thứ tự sub-heading đã được cập nhật`, 2000, {
         position: "top-right",
       });
@@ -271,27 +284,19 @@ const HomeManagement = () => {
   };
 
   // Load tab statistics
+  // Gọi API /stats để lấy thống kê; nếu lỗi -> fallback 3 API đơn lẻ
   const loadTabStats = useCallback(async () => {
-    console.log("🔄 Loading tab stats...");
     try {
       const response = await heroApi.getStats();
-      console.log("📊 Stats API response:", response.data);
-      
+
       setTabStats({
-        active: response.data?.active || 0,
-        archived: response.data?.archived || 0,
-        total: response.data?.total || 0,
-      });
-      console.log("✅ Tab stats updated:", {
         active: response.data?.active || 0,
         archived: response.data?.archived || 0,
         total: response.data?.total || 0,
       });
     } catch (err) {
       console.error("❌ Error loading tab stats:", err);
-      // Fallback to individual API calls if stats endpoint fails
       try {
-        console.log("🔄 Falling back to individual API calls...");
         const [activeRes, archivedRes, allRes] = await Promise.all([
           heroApi.getAllActive(),
           heroApi.getAllDeleted(),
@@ -303,15 +308,15 @@ const HomeManagement = () => {
           archived: archivedRes.data?.length || 0,
           total: allRes.data?.length || 0,
         };
-        
+
         setTabStats(fallbackStats);
-        console.log("✅ Fallback stats updated:", fallbackStats);
       } catch (fallbackErr) {
         console.error("❌ Error loading tab stats (fallback):", fallbackErr);
       }
     }
   }, []);
 
+  // Lấy danh sách heroes tuỳ theo viewMode (active / archived / all)
   const fetchHeroData = useCallback(
     async (showSuccessNotification = false) => {
       try {
@@ -336,24 +341,18 @@ const HomeManagement = () => {
 
         if (response.data && response.data.length > 0) {
           setHeroes(response.data);
-          setHeroData(response.data);
-
-          // Show success notification if requested (manual refresh)
+  
           if (showSuccessNotification) {
             showControlledNotification(
               `Đã tải ${response.data.length} Heroes thành công!`,
               "success",
               3000
             );
-            // Also refresh tab stats
             loadTabStats();
           }
-
-          // Không tự động load hero để edit nữa - chỉ load danh sách
-          // Người dùng sẽ phải click "Edit" để chỉnh sửa hero
         } else {
           setHeroes([]);
-          setHeroData([]);
+ 
         }
       } catch (err) {
         console.error("API Error:", err);
@@ -370,8 +369,8 @@ const HomeManagement = () => {
   );
 
   // Create new hero
+  // Create Hero mới (kiểm tra rule: chỉ cho phép 1 hero active cùng thời điểm)
   const createHero = async () => {
-    // Validate form before submitting
     if (!validateHeroSection()) {
       notification.error("Vui lòng kiểm tra lại thông tin đã nhập", 4000);
       return;
@@ -380,11 +379,10 @@ const HomeManagement = () => {
     try {
       setSaving(true);
       setError(null);
-
-      // Kiểm tra xem đã có Hero nào chưa (chỉ cho phép 1 Hero)
-      const existingActiveHero = heroes.find(hero => !hero.isDeleted);
+      const existingActiveHero = heroes.find((hero) => !hero.isDeleted);
       if (existingActiveHero) {
-        const errorMsg = "Đã tồn tại Hero đang hoạt động. Chỉ được phép có 1 Hero duy nhất.";
+        const errorMsg =
+          "Đã tồn tại Hero đang hoạt động. Chỉ được phép có 1 Hero duy nhất.";
         setError(errorMsg);
         notification.warning(errorMsg, 5000, { position: "top-right" });
         setSaving(false);
@@ -398,7 +396,7 @@ const HomeManagement = () => {
       };
 
       const response = await heroApi.create(dataToSave);
-      console.log("Created hero:", response);
+      // console.log("Created hero:", response); // Debug log - removed for production
 
       // Refresh data
       await fetchHeroData();
@@ -426,9 +424,7 @@ const HomeManagement = () => {
           4000,
           { position: "top-right" }
         );
-        console.log(
-          "✅ Hero created successfully! You can now add sub-headings."
-        );
+        // console.log("✅ Hero created successfully! You can now add sub-headings."); // Debug log - removed for production
       }
     } catch (err) {
       console.error("Create Error:", err);
@@ -450,8 +446,8 @@ const HomeManagement = () => {
   };
 
   // Update existing hero
+  // Update Hero hiện có dựa theo heroSection.heroId
   const updateHero = async () => {
-    // Validate form before submitting
     if (!validateHeroSection()) {
       notification.error("Vui lòng kiểm tra lại thông tin đã nhập", 4000);
       return;
@@ -467,8 +463,8 @@ const HomeManagement = () => {
         introHtml: heroSection.introHtml,
       };
 
-      const response = await heroApi.update(heroSection.heroId, dataToSave);
-      console.log("Updated hero:", response);
+      await heroApi.update(heroSection.heroId, dataToSave);
+      // console.log("Updated hero:", response); // Debug log - removed for production
 
       // Refresh data
       await fetchHeroData();
@@ -500,13 +496,14 @@ const HomeManagement = () => {
   };
 
   // Delete hero
+  // "Xóa" hero -> chuyển trạng thái isDeleted (lưu trữ) thay vì xoá cứng
   const deleteHero = async (heroId) => {
     try {
       setLoading(true);
       setError(null);
 
       await heroApi.delete(heroId);
-      console.log("Deleted hero:", heroId);
+      // console.log("Deleted hero:", heroId); // Debug log - removed for production
 
       // Refresh data
       await fetchHeroData();
@@ -541,13 +538,14 @@ const HomeManagement = () => {
   };
 
   // Restore hero
+  // Khôi phục hero đã lưu trữ
   const restoreHero = async (heroId) => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await heroApi.restore(heroId);
-      console.log("Restored hero:", response);
+      await heroApi.restore(heroId);
+      // console.log("Restored hero:", response); // Debug log - removed for production
 
       // Refresh data
       await fetchHeroData();
@@ -577,42 +575,44 @@ const HomeManagement = () => {
     }
   };
 
-  // Select hero for editing
+  // Chọn 1 hero để chỉnh sửa -> load form + sub-headings
   const selectHero = useCallback(
     (hero) => {
       setSelectedHero(hero);
       setIsEditingHero(true);
-        setHeroSection({
-          heroId: hero.heroId,
-          preHeading: hero.preHeading || "",
-          heading: hero.heading || "",
-          introHtml: hero.introHtml || "",
-          createdAt: hero.createdAt,
-          updatedAt: hero.updatedAt,
-        });
-
-        // Load sub-headings for this hero
-        fetchSubHeadings(hero.heroId);
-      },
-      [fetchSubHeadings]
-    );
-
-    // Reset form for new hero
-    const resetHeroForm = () => {
       setHeroSection({
-        heroId: "",
-        preHeading: "",
-        heading: "",
-        introHtml: "",
-        createdAt: null,
-        updatedAt: null,
+        heroId: hero.heroId,
+        preHeading: hero.preHeading || "",
+        heading: hero.heading || "",
+        introHtml: hero.introHtml || "",
+        createdAt: hero.createdAt,
+        updatedAt: hero.updatedAt,
       });
-      setSelectedHero(null);
-      setIsEditingHero(false);
-      setSubHeadings([]); // Clear sub-headings
-      setNewSubHeading(""); // Clear new sub-heading input
-      setEditingSubHeading(null); // Clear editing state
-    };  // Handle save (create or update)
+
+      // Load sub-headings for this hero
+      fetchSubHeadings(hero.heroId);
+    },
+    [fetchSubHeadings]
+  );
+
+  // Reset form for new hero
+  // Reset form về trạng thái tạo mới (clear heroId và các trường)
+  const resetHeroForm = () => {
+    setHeroSection({
+      heroId: "",
+      preHeading: "",
+      heading: "",
+      introHtml: "",
+      createdAt: null,
+      updatedAt: null,
+    });
+    setSelectedHero(null);
+    setIsEditingHero(false);
+    setSubHeadings([]); // Clear sub-headings
+    setNewSubHeading(""); // Clear new sub-heading input
+    setEditingSubHeading(null); // Clear editing state
+  }; // Handle save (create or update)
+  // Lưu form -> tự xác định create hay update tuỳ vào việc có heroId hay chưa
   const handleSave = () => {
     if (heroSection.heroId) {
       updateHero();
@@ -622,6 +622,7 @@ const HomeManagement = () => {
   };
 
   // Get button text for save action
+  // Text động hiển thị trên nút lưu
   const getSaveButtonText = () => {
     if (saving) return "Đang lưu...";
     if (heroSection.heroId) return "Cập nhật";
@@ -629,6 +630,7 @@ const HomeManagement = () => {
   };
 
   // Render sub-headings preview
+  // Phần hiển thị preview sub-headings (hero chưa lưu thì nhắc nhở)
   const renderSubHeadingsPreview = () => {
     if (heroSection.heroId && subHeadings.length > 0) {
       return (
@@ -661,55 +663,14 @@ const HomeManagement = () => {
   };
 
   // Fetch data on mount and when view mode changes
+  // Load dữ liệu + thống kê khi mount hoặc khi viewMode đổi
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        let response;
-        switch (viewMode) {
-          case "active":
-            response = await heroApi.getAllActive();
-            break;
-          case "deleted":
-            response = await heroApi.getAllDeleted();
-            break;
-          case "all":
-            response = await heroApi.getAllIncludeDeleted();
-            break;
-          default:
-            response = await heroApi.getAllActive();
-        }
-
-        if (response.data && response.data.length > 0) {
-          setHeroes(response.data);
-          setHeroData(response.data);
-
-          // Không tự động load hero để edit nữa - chỉ load danh sách
-          // Người dùng sẽ phải click "Edit" để chỉnh sửa hero
-        } else {
-          setHeroes([]);
-          setHeroData([]);
-        }
-      } catch (err) {
-        console.error("API Error:", err);
-        setError(err.message || "Failed to fetch hero data");
-        notification.error(
-          "Không thể tải dữ liệu: " +
-            (err.response?.data?.message || err.message)
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    console.log("🏠 Component mounted/viewMode changed:", viewMode);
-    loadData();
-    loadTabStats(); // Also update tab stats
-  }, [viewMode, notification, loadTabStats]);
+    fetchHeroData();
+    loadTabStats();
+  }, [fetchHeroData, loadTabStats]);
 
   // Auto-select appropriate hero when filters change
+  // Kiểm tra hero đang chỉnh sửa có bị ẩn do bộ lọc / search hiện tại không -> nếu có thì thông báo
   useEffect(() => {
     // Skip if no heroes loaded yet or during transitions
     if (!heroes || heroes.length === 0 || isTransitioning) return;
@@ -726,7 +687,9 @@ const HomeManagement = () => {
         const notificationKey = `${selectedHero.heroId}-${viewMode}`;
 
         if (hasActiveSearch && lastNotificationId !== notificationKey) {
-          const heroStatus = selectedHero.isDeleted ? "đã lưu trữ" : "hoạt động";
+          const heroStatus = selectedHero.isDeleted
+            ? "đã lưu trữ"
+            : "hoạt động";
           const currentView =
             viewMode === "active"
               ? "Heroes hoạt động"
@@ -756,6 +719,7 @@ const HomeManagement = () => {
   ]);
 
   // Reset notification tracking when user actively changes view or search
+  // Mỗi lần đổi tab hoặc thay đổi từ khoá search -> reset tracking tránh lặp notification
   useEffect(() => {
     setLastNotificationId(null);
 
@@ -769,6 +733,7 @@ const HomeManagement = () => {
   }, [viewMode, searchTerm]);
 
   // Keyboard shortcuts
+  // Thiết lập phím tắt: Ctrl+1/2/3 (đổi tab), Ctrl+F (focus search), Ctrl+D (toggle archived), Escape (clear search)
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Ctrl/Cmd + D: Toggle archived heroes
@@ -820,12 +785,40 @@ const HomeManagement = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [searchTerm]);
 
+  // Mở một tab mới để xem trang chủ đã publish (không phải bản nháp local)
   const handlePreview = () => {
     window.open("/", "_blank");
   };
 
   return (
     <div className="space-y-6">
+      {/* Error Alert */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-md p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">Lỗi</h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>{error}</p>
+              </div>
+              <div className="mt-4">
+                <button
+                  onClick={() => setError(null)}
+                  className="bg-red-50 px-3 py-1.5 rounded-md text-sm font-medium text-red-800 hover:bg-red-100"
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -935,7 +928,7 @@ const HomeManagement = () => {
                   id="hero-search"
                   type="text"
                   placeholder={`Tìm kiếm trong ${
-                    viewMode === "active"
+                    viewMode === "archived"
                       ? "heroes hoạt động"
                       : viewMode === "archived"
                       ? "kho lưu trữ"
@@ -950,7 +943,7 @@ const HomeManagement = () => {
 
             <div className="flex items-center space-x-4">
               {/* View-specific actions */}
-              {viewMode === "archived" && stats.archived > 0 && (
+              {viewMode === "archived" && tabStats.archived > 0 && (
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => {
@@ -992,10 +985,10 @@ const HomeManagement = () => {
                   {viewMode === "all" && (
                     <>
                       <span className="text-green-600">
-                        ({stats.active} hoạt động)
+                        ({tabStats.active} hoạt động)
                       </span>
                       <span className="text-orange-600">
-                        ({stats.archived} lưu trữ)
+                        ({tabStats.archived} lưu trữ)
                       </span>
                     </>
                   )}
@@ -1083,7 +1076,9 @@ const HomeManagement = () => {
                 <span>
                   {filteredHeroes.length} / {heroes.length} heroes
                 </span>
-                <span className="text-green-600">{stats.active} hoạt động</span>
+                <span className="text-green-600">
+                  {tabStats.active} hoạt động
+                </span>
                 {stats.deleted > 0 && (
                   <span className="text-red-600">{stats.deleted} đã xóa</span>
                 )}
@@ -1093,11 +1088,9 @@ const HomeManagement = () => {
         </div>
       </div>
 
-
       {/* Hero Section Editor - Only show when editing a hero */}
       {viewMode === "active" && isEditingHero && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-
           <div className="p-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
@@ -1119,8 +1112,15 @@ const HomeManagement = () => {
                       })
                     }
                     placeholder="Ví dụ: Xin chào, tôi là"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-1 ${
+                      validationErrors.preHeading 
+                        ? 'border-red-300 focus:ring-red-500' 
+                        : 'border-gray-300 focus:ring-indigo-500'
+                    }`}
                   />
+                  {validationErrors.preHeading && (
+                    <p className="mt-1 text-sm text-red-600">{validationErrors.preHeading}</p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -1140,8 +1140,15 @@ const HomeManagement = () => {
                       })
                     }
                     placeholder="Ví dụ: Nhdinh"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-1 ${
+                      validationErrors.heading 
+                        ? 'border-red-300 focus:ring-red-500' 
+                        : 'border-gray-300 focus:ring-indigo-500'
+                    }`}
                   />
+                  {validationErrors.heading && (
+                    <p className="mt-1 text-sm text-red-600">{validationErrors.heading}</p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -1161,8 +1168,15 @@ const HomeManagement = () => {
                       })
                     }
                     placeholder="Lập trình viên full-stack với đam mê phát triển phần mềm hiện đại"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-1 ${
+                      validationErrors.introHtml 
+                        ? 'border-red-300 focus:ring-red-500' 
+                        : 'border-gray-300 focus:ring-indigo-500'
+                    }`}
                   />
+                  {validationErrors.introHtml && (
+                    <p className="mt-1 text-sm text-red-600">{validationErrors.introHtml}</p>
+                  )}
                   <p className="text-xs text-gray-500 mt-1">
                     Nội dung sẽ được bọc trong thẻ &lt;p&gt;
                   </p>
@@ -1170,143 +1184,147 @@ const HomeManagement = () => {
 
                 {/* Sub-headings Management - Chỉ hiển thị khi edit hero */}
                 {isEditingHero && heroSection.heroId && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sub-headings ({subHeadings.length})
-                  </label>
-                  <div className="space-y-2">
-                    {subHeadings.map((sub, index) => (
-                      <div
-                        key={sub.subId}
-                        className="flex items-center space-x-2 p-2 border border-gray-200 rounded-md"
-                      >
-                        <span className="text-xs text-gray-400 w-6">
-                          {sub.sortOrder}
-                        </span>
-                        {editingSubHeading === sub.subId ? (
-                          <input
-                            type="text"
-                            defaultValue={sub.text}
-                            onBlur={(e) =>
-                              updateSubHeading(sub.subId, e.target.value)
-                            }
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                updateSubHeading(sub.subId, e.target.value);
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Sub-headings ({subHeadings.length})
+                    </label>
+                    <div className="space-y-2">
+                      {subHeadings.map((sub, index) => (
+                        <div
+                          key={sub.subId}
+                          className="flex items-center space-x-2 p-2 border border-gray-200 rounded-md"
+                        >
+                          <span className="text-xs text-gray-400 w-6">
+                            {sub.sortOrder}
+                          </span>
+                          {editingSubHeading === sub.subId ? (
+                            <input
+                              type="text"
+                              defaultValue={sub.text}
+                              onBlur={(e) =>
+                                updateSubHeading(sub.subId, e.target.value)
                               }
-                            }}
-                            className="flex-1 text-sm border-none outline-none bg-white"
-                            autoFocus
-                          />
-                        ) : (
-                          <button
-                            className="flex-1 text-sm text-left cursor-pointer hover:bg-gray-50 p-1 rounded"
-                            onClick={() => setEditingSubHeading(sub.subId)}
-                          >
-                            {sub.text}
-                          </button>
-                        )}
-                        <div className="flex items-center space-x-1">
-                          {index > 0 && (
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  updateSubHeading(sub.subId, e.target.value);
+                                }
+                              }}
+                              className="flex-1 text-sm border-none outline-none bg-white"
+                              autoFocus
+                            />
+                          ) : (
                             <button
-                              onClick={() =>
-                                updateSortOrder(sub.subId, sub.sortOrder - 1)
-                              }
-                              className="text-gray-400 hover:text-gray-600 text-xs"
-                              title="Di chuyển lên"
+                              className="flex-1 text-sm text-left cursor-pointer hover:bg-gray-50 p-1 rounded"
+                              onClick={() => setEditingSubHeading(sub.subId)}
                             >
-                              ↑
+                              {sub.text}
                             </button>
                           )}
-                          {index < subHeadings.length - 1 && (
+                          <div className="flex items-center space-x-1">
+                            {index > 0 && (
+                              <button
+                                onClick={() =>
+                                  updateSortOrder(sub.subId, sub.sortOrder - 1)
+                                }
+                                className="text-gray-400 hover:text-gray-600 text-xs"
+                                title="Di chuyển lên"
+                              >
+                                ↑
+                              </button>
+                            )}
+                            {index < subHeadings.length - 1 && (
+                              <button
+                                onClick={() =>
+                                  updateSortOrder(sub.subId, sub.sortOrder + 1)
+                                }
+                                className="text-gray-400 hover:text-gray-600 text-xs"
+                                title="Di chuyển xuống"
+                              >
+                                ↓
+                              </button>
+                            )}
                             <button
-                              onClick={() =>
-                                updateSortOrder(sub.subId, sub.sortOrder + 1)
-                              }
-                              className="text-gray-400 hover:text-gray-600 text-xs"
-                              title="Di chuyển xuống"
+                              onClick={() => deleteSubHeading(sub.subId)}
+                              className="text-red-400 hover:text-red-600 text-xs"
+                              title="Xóa"
                             >
-                              ↓
+                              <TrashIcon className="h-3 w-3" />
                             </button>
-                          )}
-                          <button
-                            onClick={() => deleteSubHeading(sub.subId)}
-                            className="text-red-400 hover:text-red-600 text-xs"
-                            title="Xóa"
-                          >
-                            <TrashIcon className="h-3 w-3" />
-                          </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
 
-                    {/* Add new sub-heading */}
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="text"
-                        value={newSubHeading}
-                        onChange={(e) => setNewSubHeading(e.target.value)}
-                        placeholder={
-                          heroSection.heroId
-                            ? "Thêm sub-heading mới..."
-                            : "Lưu Hero trước để thêm sub-headings"
-                        }
-                        disabled={!heroSection.heroId}
-                        className="flex-1 text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && heroSection.heroId) {
-                            createSubHeading();
+                      {/* Add new sub-heading */}
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          value={newSubHeading}
+                          onChange={(e) => setNewSubHeading(e.target.value)}
+                          placeholder={
+                            heroSection.heroId
+                              ? "Thêm sub-heading mới..."
+                              : "Lưu Hero trước để thêm sub-headings"
                           }
-                        }}
-                      />
-                      <button
-                        onClick={createSubHeading}
-                        disabled={
-                          !newSubHeading.trim() || saving || !heroSection.heroId
-                        }
-                        className="px-2 py-1 bg-indigo-600 text-white text-xs rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title={
-                          !heroSection.heroId
-                            ? "Lưu Hero trước để thêm sub-headings"
-                            : "Thêm sub-heading"
-                        }
-                      >
-                        <PlusIcon className="h-3 w-3" />
-                      </button>
-                    </div>
+                          disabled={!heroSection.heroId}
+                          className="flex-1 text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && heroSection.heroId) {
+                              createSubHeading();
+                            }
+                          }}
+                        />
+                        <button
+                          onClick={createSubHeading}
+                          disabled={
+                            !newSubHeading.trim() ||
+                            saving ||
+                            !heroSection.heroId
+                          }
+                          className="px-2 py-1 bg-indigo-600 text-white text-xs rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title={
+                            !heroSection.heroId
+                              ? "Lưu Hero trước để thêm sub-headings"
+                              : "Thêm sub-heading"
+                          }
+                        >
+                          <PlusIcon className="h-3 w-3" />
+                        </button>
+                      </div>
 
-                    {/* Thông báo khi chưa có Hero */}
-                    {!heroSection.heroId && (
-                      <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mt-2">
-                        <div className="flex">
-                          <div className="flex-shrink-0">
-                            <svg
-                              className="h-5 w-5 text-amber-400"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-sm text-amber-700">
-                              <strong>Nhập thông tin Hero và lưu trước</strong>
-                            </p>
-                            <p className="text-xs text-amber-600 mt-1">
-                              Sau khi lưu Hero thành công, bạn có thể thêm các
-                              sub-headings như "Full-Stack Developer", "React
-                              Developer", v.v.
-                            </p>
+                      {/* Thông báo khi chưa có Hero */}
+                      {!heroSection.heroId && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mt-2">
+                          <div className="flex">
+                            <div className="flex-shrink-0">
+                              <svg
+                                className="h-5 w-5 text-amber-400"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </div>
+                            <div className="ml-3">
+                              <p className="text-sm text-amber-700">
+                                <strong>
+                                  Nhập thông tin Hero và lưu trước
+                                </strong>
+                              </p>
+                              <p className="text-xs text-amber-600 mt-1">
+                                Sau khi lưu Hero thành công, bạn có thể thêm các
+                                sub-headings như "Full-Stack Developer", "React
+                                Developer", v.v.
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
                 )}
               </div>
               <div className="bg-gray-50 rounded-lg p-6">
@@ -1334,8 +1352,7 @@ const HomeManagement = () => {
                 {heroSection.createdAt && (
                   <div className="mt-4 text-xs text-gray-500">
                     <p>
-                      Tạo:{" "}
-                      {new Date(heroSection.createdAt).toLocaleString()}
+                      Tạo: {new Date(heroSection.createdAt).toLocaleString()}
                     </p>
                     {heroSection.updatedAt && (
                       <p>
@@ -1421,7 +1438,9 @@ const HomeManagement = () => {
 
               {viewMode === "archived" && (
                 <div className="text-sm text-gray-500">
-                  <span className="text-orange-600">� Chế độ xem kho lưu trữ</span>
+                  <span className="text-orange-600">
+                    � Chế độ xem kho lưu trữ
+                  </span>
                   <span className="mx-2">•</span>
                   <span>Khôi phục hoặc xóa vĩnh viễn</span>
                 </div>
@@ -1429,7 +1448,7 @@ const HomeManagement = () => {
             </div>
           </div>
         </div>
-        <div className="overflow-hidden">
+        <div className="overflow-visible">
           {filteredHeroes.length === 0 ? (
             <div className="text-center py-12">
               {heroes.length === 0 ? (
@@ -1444,7 +1463,6 @@ const HomeManagement = () => {
                   <p className="text-gray-500 mb-4">
                     Tạo Hero đầu tiên để bắt đầu
                   </p>
-                
                 </>
               ) : viewMode === "archived" ? (
                 // No archived heroes
@@ -1505,8 +1523,8 @@ const HomeManagement = () => {
                   <p className="text-gray-500 mb-4">
                     {searchTerm
                       ? `Không có kết quả cho "${searchTerm}"`
-                      : stats.archived > 0
-                      ? `Tất cả ${stats.total} heroes đã được lưu trữ`
+                      : tabStats.archived > 0
+                      ? `Tất cả ${tabStats.total} heroes đã được lưu trữ`
                       : "Tạo hero mới để bắt đầu"}
                   </p>
                   <div className="flex justify-center space-x-3">
@@ -1518,12 +1536,12 @@ const HomeManagement = () => {
                         Xóa tìm kiếm
                       </button>
                     )}
-                    {stats.archived > 0 && (
+                    {tabStats.archived > 0 && (
                       <button
                         onClick={() => setViewMode("archived")}
                         className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                       >
-                        Xem kho lưu trữ ({stats.archived})
+                        Xem kho lưu trữ ({tabStats.archived})
                       </button>
                     )}
                     <button
@@ -1670,7 +1688,7 @@ const HomeManagement = () => {
                         </>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium relative">
                       {viewMode === "archived" ? (
                         // Interface for archived view with restore and permanent delete
                         <div className="flex items-center justify-center space-x-2">
@@ -1778,33 +1796,70 @@ const HomeManagement = () => {
                               )}
                             </>
                           ) : (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setShowDeleteConfirm(hero);
-                              }}
-                              className="text-orange-600 hover:text-orange-900 flex items-center space-x-1"
-                              title="Lưu trữ"
-                            >
-                              <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
+                            <div className="relative">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // Đóng confirmation hiện tại nếu đang mở confirmation khác
+                                  if (
+                                    showDeleteConfirm &&
+                                    showDeleteConfirm.heroId !== hero.heroId
+                                  ) {
+                                    setShowDeleteConfirm(null);
+                                    // Delay để tránh conflict animation
+                                    setTimeout(() => {
+                                      setShowDeleteConfirm(hero);
+                                    }, 150);
+                                  } else if (
+                                    showDeleteConfirm?.heroId === hero.heroId
+                                  ) {
+                                    // Nếu đang mở confirmation của chính hero này thì đóng
+                                    setShowDeleteConfirm(null);
+                                  } else {
+                                    // Mở confirmation mới
+                                    setShowDeleteConfirm(hero);
+                                  }
+                                }}
+                                className="text-orange-600 hover:text-orange-900 flex items-center space-x-1"
+                                title="Lưu trữ"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                                />
-                              </svg>
-                              {viewMode === "active" && (
-                                <span className="text-xs hidden sm:inline">
-                                  Lưu trữ
-                                </span>
-                              )}
-                            </button>
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                                  />
+                                </svg>
+                                {viewMode === "active" && (
+                                  <span className="text-xs hidden sm:inline">
+                                    Lưu trữ
+                                  </span>
+                                )}
+                              </button>
+
+                              {/* Inline Confirmation */}
+                              <InlineConfirmation
+                                isOpen={
+                                  showDeleteConfirm?.heroId === hero.heroId
+                                }
+                                onClose={() => setShowDeleteConfirm(null)}
+                                onConfirm={() => {
+                                  if (showDeleteConfirm) {
+                                    deleteHero(showDeleteConfirm.heroId);
+                                  }
+                                }}
+                                loading={saving}
+                                confirmText="Lưu trữ"
+                                cancelText="Hủy"
+                                message={`Lưu trữ hero "${hero.heading}"?`}
+                              />
+                            </div>
                           )}
                         </div>
                       )}
@@ -1817,37 +1872,7 @@ const HomeManagement = () => {
         </div>
       </div>
 
-      {/* Archive Confirmation Modal */}
-      <DeleteConfirmationModal
-        isOpen={!!showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(null)}
-        onConfirm={() => {
-          if (showDeleteConfirm) {
-            deleteHero(showDeleteConfirm.heroId);
-          }
-        }}
-        itemName={showDeleteConfirm?.heading || ""}
-        itemType="Hero"
-        loading={saving}
-        canRestore={true}
-        title="Lưu trữ Hero?"
-        confirmText="Lưu trữ"
-        message="Hero sẽ được chuyển vào kho lưu trữ và có thể khôi phục sau."
-        additionalInfo={
-          showDeleteConfirm && (
-            <div className="text-left">
-              <p>
-                <strong>Pre-heading:</strong> {showDeleteConfirm.preHeading}
-              </p>
-              {subHeadings.length > 0 && (
-                <p className="text-orange-600 font-medium mt-1">
-                  ⚠️ Có {subHeadings.length} sub-heading(s) sẽ bị ảnh hưởng
-                </p>
-              )}
-            </div>
-          )
-        }
-      />
+    
     </div>
   );
 };

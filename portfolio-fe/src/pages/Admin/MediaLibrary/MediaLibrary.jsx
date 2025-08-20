@@ -113,7 +113,9 @@ const MediaLibrary = () => {
     return colors[type] || 'text-gray-600';
   };
 
+  // eslint-disable-next-line no-unused-vars
   const formatFileSize = (size) => {
+    // Hàm format kích thước file (dự phòng cho tương lai)
     return size;
   };
 

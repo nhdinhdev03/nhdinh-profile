@@ -1,4 +1,5 @@
-import { Navigate } from "react-router-dom";
+// TODO: Uncomment import khi implement authentication logic
+// import { Navigate } from "react-router-dom";
 
 // Giả sử bạn sẽ có logic kiểm tra login ở đây
 export default function PrivateRoute({ children }) {

@@ -38,7 +38,7 @@ const Header = ({ setSidebarOpen, currentPath }) => {
   const handleLogout = () => {
     toast.success('Đăng xuất thành công!');
     // Implement logout logic here
-    console.log('Logout clicked');
+    // console.log('Logout clicked'); // Debug log - removed for production
   };
 
   const handleSearch = (e) => {

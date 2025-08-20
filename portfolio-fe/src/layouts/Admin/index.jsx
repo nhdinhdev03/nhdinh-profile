@@ -58,8 +58,4 @@ AdminLayout.propTypes = {
   usePageHeader: PropTypes.bool,
 };
 
-AdminLayout.defaultProps = {
-  usePageHeader: false,
-};
-
 export default AdminLayout;

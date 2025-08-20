@@ -8,13 +8,14 @@ import {
   Shield,
   LogIn,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "./LoginForm.scss";
 import { ROUTES } from "router/routeConstants";
 import { useAuth } from "contexts/AuthContext";
+import { useNotificationContext } from "components/Notification";
+import { getLoginErrorMessage, getErrorMessage } from "utils/errorHandler";
+import { validateLoginForm } from "utils/formValidation";
 
 function LoginForm() {
   const [username, setUsername] = useState("");
@@ -22,66 +23,127 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState({});
   const [fadeIn, setFadeIn] = useState(false);
-  
+  const [shakeError, setShakeError] = useState(false);
+  const [displayError, setDisplayError] = useState(""); // State riêng để hiển thị lỗi
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+
   const navigate = useNavigate();
-  const { login, loading, error: authError, clearError } = useAuth();
+  const location = useLocation();
+  const {
+    login,
+    loading,
+    error: authError,
+    clearError,
+    isAuthenticated,
+  } = useAuth();
+  const notification = useNotificationContext();
+
+  const from = location.state?.from?.pathname || ROUTES.ADMIN.DASHBOARD;
 
   useEffect(() => {
-    // Animation trigger on mount
+    if (isAuthenticated) {
+      navigate(ROUTES.ADMIN.DASHBOARD, { replace: true });
+      return;
+    }
     setFadeIn(true);
-    // Clear any previous auth errors on mount
     clearError();
-  }, [clearError]);
+  }, [clearError, isAuthenticated, navigate]);
 
   const fieldErrors = useMemo(() => {
-    const e = {};
-    if (!username.trim()) e.username = "Bắt buộc";
-    if (password.length < 6) e.password = "Ít nhất 6 ký tự";
-    return e;
+    return validateLoginForm(username, password);
   }, [username, password]);
+
+  useEffect(() => {
+    if ((authError || displayError) && (username || password)) {
+      clearError();
+      setDisplayError("");
+      setShowErrorAlert(false);
+    }
+  }, [username, password, authError, displayError, clearError]);
 
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
       clearError();
+      setDisplayError("");
       setTouched({ username: true, password: true });
-      
+
       if (Object.keys(fieldErrors).length) {
-        toast.error("Vui lòng nhập đầy đủ thông tin", {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        const errorMsg = "⚠️ Vui lòng nhập đầy đủ thông tin";
+        setDisplayError(errorMsg);
+        notification.error(errorMsg, 3000);
         return;
       }
 
       try {
         const result = await login(username, password);
-        
+
         if (result.success) {
-          toast.success("Đăng nhập thành côssssssssssssssssng!", {
-            position: "top-center",
-            autoClose: 2000,
-          });
-                      navigate(ROUTES.ADMIN.DASHBOARD);
-       
+          setDisplayError("");
+          notification.success("✅ Đăng nhập thành công!", 2000);
+          navigate(from, { replace: true });
         } else {
-          toast.error(result.error || "Đăng nhập thất bại. Vui lòng thử lại.", {
-            position: "top-center",
-            autoClose: 4000,
-          });
+          const rawError =
+            result.error ||
+            "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản và mật khẩu.";
+          const friendlyError = getLoginErrorMessage(rawError);
+
+          setDisplayError(friendlyError);
+          setShowErrorAlert(true);
+          notification.error(friendlyError, 6000);
+
+          setShakeError(true);
+          setTimeout(() => setShakeError(false), 600);
+
+          setTimeout(() => setShowErrorAlert(false), 8000);
+
+          if (
+            rawError.toLowerCase().includes("mật khẩu") ||
+            rawError.toLowerCase().includes("password") ||
+            rawError.toLowerCase().includes("invalid credentials") ||
+            rawError.toLowerCase().includes("sai") ||
+            rawError.toLowerCase().includes("unauthorized") ||
+            rawError.toLowerCase().includes("401")
+          ) {
+            setTimeout(() => {
+              const passwordField = document.getElementById("password");
+              if (passwordField) {
+                passwordField.focus();
+                passwordField.select();
+              }
+            }, 100);
+          }
         }
       } catch (error) {
-        toast.error("Có lỗi xảy ra. Vui lòng thử lại.", {
-          position: "top-center",
-          autoClose: 4000,
-        });
+        console.error("Login error in component:", error);
+        const rawError =
+          error.response?.data?.message ||
+          error.message ||
+          "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại.";
+        const friendlyError = getErrorMessage(rawError);
+
+        setDisplayError(friendlyError);
+        setShowErrorAlert(true);
+        notification.error(friendlyError, 6000);
+
+        // Trigger shake animation
+        setShakeError(true);
+        setTimeout(() => setShakeError(false), 600);
+
+        // Auto hide error alert sau 8 giây
+        setTimeout(() => setShowErrorAlert(false), 8000);
       }
     },
-    [fieldErrors, login, username, password, navigate, clearError]
+    [
+      fieldErrors,
+      login,
+      username,
+      password,
+      navigate,
+      clearError,
+      from,
+      notification,
+    ]
   );
 
   const togglePw = useCallback(() => setShowPassword((s) => !s), []);
@@ -144,15 +206,69 @@ function LoginForm() {
         </Link>
       </motion.div>
 
-      <ToastContainer />
+      {/* Error Alert Popup - hiển thị phía trên form */}
+      <AnimatePresence>
+        {showErrorAlert && (
+          <motion.div
+            className="error-alert-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowErrorAlert(false)}
+          >
+            <motion.div
+              className="error-alert-popup"
+              initial={{ opacity: 0, scale: 0.8, y: -50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: -50 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="error-alert-header">
+                <div className="error-alert-icon">🚨</div>
+                <h3>Lỗi Đăng Nhập</h3>
+                <button
+                  className="error-alert-close"
+                  onClick={() => setShowErrorAlert(false)}
+                  aria-label="Đóng"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="error-alert-body">
+                <p>{displayError}</p>
+              </div>
+              <div className="error-alert-footer">
+                <button
+                  className="error-alert-button"
+                  onClick={() => {
+                    setShowErrorAlert(false);
+                    const usernameField = document.getElementById("username");
+                    if (usernameField) usernameField.focus();
+                  }}
+                >
+                  Thử Lại
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <motion.div
-        className="auth-wrapper"
+        className={`auth-wrapper ${shakeError ? "shake-error" : ""}`}
         role="main"
         aria-labelledby="auth-title"
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: fadeIn ? 1 : 0, y: fadeIn ? 0 : 20 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        animate={{
+          opacity: fadeIn ? 1 : 0,
+          y: fadeIn ? 0 : 20,
+          x: shakeError ? [0, -10, 10, -10, 10, 0] : 0,
+        }}
+        transition={{
+          duration: 0.6,
+          ease: shakeError ? "easeInOut" : "easeOut",
+        }}
       >
         <div className="panel" data-elevated>
           <div className="glass-effect"></div>
@@ -200,7 +316,9 @@ function LoginForm() {
             className="auth-form"
             onSubmit={handleSubmit}
             noValidate
-            aria-describedby={authError ? "form-error" : undefined}
+            aria-describedby={
+              authError || displayError ? "form-error" : undefined
+            }
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -321,16 +439,22 @@ function LoginForm() {
               </motion.div>
             </AnimatePresence>
 
-            {authError && (
+            {(authError || displayError) && (
               <motion.div
                 id="form-error"
                 className="form-error-banner"
                 role="alert"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
               >
-                {authError}
+                <div className="error-content">
+                  <div className="error-icon">🚨</div>
+                  <div className="error-text">
+                    {displayError || getErrorMessage(authError)}
+                  </div>
+                </div>
               </motion.div>
             )}
 

@@ -140,7 +140,38 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Login error:', error);
       console.error('Error response:', error.response);
-      const errorMessage = error.response?.data?.message || error.message || 'Đăng nhập thất bại';
+      
+      let errorMessage = 'Đăng nhập thất bại';
+      
+      if (error.response) {
+        const status = error.response.status;
+        const serverMessage = error.response.data?.message;
+        
+        switch (status) {
+          case 401:
+            errorMessage = serverMessage || 'Tài khoản hoặc mật khẩu không chính xác';
+            break;
+          case 403:
+            errorMessage = serverMessage || 'Tài khoản của bạn chưa được kích hoạt hoặc không có quyền truy cập';
+            break;
+          case 404:
+            errorMessage = serverMessage || 'Tài khoản không tồn tại';
+            break;
+          case 423:
+            errorMessage = serverMessage || 'Tài khoản của bạn đã bị khóa';
+            break;
+          case 500:
+            errorMessage = serverMessage || 'Lỗi máy chủ. Vui lòng thử lại sau';
+            break;
+          default:
+            errorMessage = serverMessage || `Lỗi đăng nhập (${status})`;
+        }
+      } else if (error.request) {
+        errorMessage = 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối internet';
+      } else {
+        errorMessage = error.message || 'Có lỗi xảy ra khi đăng nhập';
+      }
+      
       dispatch({
         type: 'LOGIN_FAILURE',
         payload: errorMessage

@@ -1,66 +1,85 @@
-import React, { useState } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
-import { 
+import React, { useState, Fragment } from "react";
+import PropTypes from "prop-types";
+import { Menu, Transition } from "@headlessui/react";
+import {
   Bars3Icon,
   BellIcon,
   MagnifyingGlassIcon,
-  ArrowRightOnRectangleIcon,
   UserCircleIcon,
   CogIcon,
-  ChevronDownIcon
-} from '@heroicons/react/24/outline';
-import { ROUTES } from 'router/routeConstants';
-import { useToast } from '../../../components/Admin/Toast';
+  ChevronDownIcon,
+  ArrowRightStartOnRectangleIcon,
+} from "@heroicons/react/24/outline";
+import { ROUTES } from "router/routeConstants";
+
+import { useNavigate } from "react-router-dom";
+import { useNotificationContext } from "components/Notification";
+import { useAuth } from "contexts/AuthContext";
 
 const Header = ({ setSidebarOpen, currentPath }) => {
-  const [searchValue, setSearchValue] = useState('');
-  const { toast } = useToast();
+  const [searchValue, setSearchValue] = useState("");
+  const notification = useNotificationContext();
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
 
   const getPageTitle = () => {
     const pathTitles = {
-      [ROUTES.ADMIN.DASHBOARD]: 'Dashboard',
-      [ROUTES.ADMIN.HOME_MANAGEMENT]: 'Trang chủ',
-      [ROUTES.ADMIN.ABOUT_MANAGEMENT]: 'Giới thiệu',
-      [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: 'Dự án',
-      [ROUTES.ADMIN.BLOG_MANAGEMENT]: 'Blog',
-      [ROUTES.ADMIN.CONTACT_MANAGEMENT]: 'Liên hệ',
-      [ROUTES.ADMIN.ACCOUNTS_MANAGEMENT]: 'Tài khoản',
-      [ROUTES.ADMIN.HISTORY_LOGS]: 'Lịch sử thay đổi',
-      [ROUTES.ADMIN.MEDIA_LIBRARY]: 'Thư viện Media',
-      [ROUTES.ADMIN.ANALYTICS]: 'Thống kê',
-      [ROUTES.ADMIN.SETTINGS]: 'Cài đặt',
-      [ROUTES.ADMIN.PROFILE]: 'Hồ sơ',
+      [ROUTES.ADMIN.DASHBOARD]: "Dashboard",
+      [ROUTES.ADMIN.HOME_MANAGEMENT]: "Trang chủ",
+      [ROUTES.ADMIN.ABOUT_MANAGEMENT]: "Giới thiệu",
+      [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: "Dự án",
+      [ROUTES.ADMIN.BLOG_MANAGEMENT]: "Blog",
+      [ROUTES.ADMIN.CONTACT_MANAGEMENT]: "Liên hệ",
+      [ROUTES.ADMIN.ACCOUNTS_MANAGEMENT]: "Tài khoản",
+      [ROUTES.ADMIN.HISTORY_LOGS]: "Lịch sử thay đổi",
+      [ROUTES.ADMIN.MEDIA_LIBRARY]: "Thư viện Media",
+      [ROUTES.ADMIN.ANALYTICS]: "Thống kê",
+      [ROUTES.ADMIN.SETTINGS]: "Cài đặt",
+      [ROUTES.ADMIN.PROFILE]: "Hồ sơ",
     };
-    return pathTitles[currentPath] || 'Admin Portal';
+    return pathTitles[currentPath] || "Admin Portal";
   };
 
-  const handleLogout = () => {
-    toast.success('Đăng xuất thành công!');
-    // Implement logout logic here
-    // console.log('Logout clicked'); // Debug log - removed for production
+  const handleLogout = async () => {
+    try {
+      await logout();
+      notification.success("Đăng xuất thành công!");
+      navigate(ROUTES.ADMIN.LOGIN);
+    } catch (error) {
+      console.error("Logout error:", error);
+      notification.error("Có lỗi xảy ra khi đăng xuất");
+    }
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchValue.trim()) {
-      toast.info(`Đang tìm kiếm: "${searchValue}"`);
+      notification.info(`Đang tìm kiếm: "${searchValue}"`);
       // Implement search logic here
     }
   };
 
-  const userMenuItems = [
+  // Optimized user menu items with useMemo for performance
+  const userMenuItems = React.useMemo(() => [
     {
-      name: 'Hồ sơ cá nhân',
+      id: 'profile',
+      name: "Hồ sơ cá nhân",
       href: ROUTES.ADMIN.PROFILE,
-      icon: UserCircleIcon
+      icon: UserCircleIcon,
+      description: "Xem và chỉnh sửa thông tin cá nhân"
     },
     {
-      name: 'Cài đặt',
+      id: 'settings',
+      name: "Cài đặt",
       href: ROUTES.ADMIN.SETTINGS,
-      icon: CogIcon
-    }
-  ];
+      icon: CogIcon,
+      description: "Cấu hình hệ thống và tùy chọn"
+    },
+  ], []);
+
+  const handleMenuItemClick = (href) => {
+    navigate(href);
+  };
 
   return (
     <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
@@ -78,14 +97,19 @@ const Header = ({ setSidebarOpen, currentPath }) => {
 
       <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
         <div className="relative flex flex-1 items-center">
-          <h1 className="text-xl font-semibold text-gray-900">{getPageTitle()}</h1>
+          <h1 className="text-xl font-semibold text-gray-900">
+            {getPageTitle()}
+          </h1>
         </div>
 
         <div className="flex items-center gap-x-4 lg:gap-x-6">
           {/* Search */}
           <form onSubmit={handleSearch} className="relative hidden sm:block">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              <MagnifyingGlassIcon
+                className="h-5 w-5 text-gray-400"
+                aria-hidden="true"
+              />
             </div>
             <input
               id="search-field"
@@ -102,7 +126,7 @@ const Header = ({ setSidebarOpen, currentPath }) => {
           <button
             type="button"
             className="relative -m-2.5 p-2.5 text-gray-400 hover:text-gray-500 transition-colors"
-            onClick={() => toast.info('Hiện tại không có thông báo mới')}
+            onClick={() => notification.info("Hiện tại không có thông báo mới")}
           >
             <span className="sr-only">View notifications</span>
             <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -110,9 +134,13 @@ const Header = ({ setSidebarOpen, currentPath }) => {
           </button>
 
           {/* Separator */}
-          <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" aria-hidden="true" />
+          <div
+            className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
+            aria-hidden="true"
+          />
 
           {/* Profile dropdown */}
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <Menu as="div" className="relative">
             <Menu.Button className="flex items-center gap-x-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50 rounded-lg p-2 transition-colors">
               <img
@@ -121,11 +149,16 @@ const Header = ({ setSidebarOpen, currentPath }) => {
                 alt="Admin"
               />
               <span className="hidden lg:flex lg:items-center">
-                <span className="ml-2 text-sm font-semibold leading-6 text-gray-900">Admin</span>
-                <ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                <span className="ml-2 text-sm font-semibold leading-6 text-gray-900">
+                  {user?.fullName || "Admin"}
+                </span>
+                <ChevronDownIcon
+                  className="ml-2 h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
               </span>
             </Menu.Button>
-            
+
             <Transition
               as={Fragment}
               enter="transition ease-out duration-100"
@@ -137,36 +170,44 @@ const Header = ({ setSidebarOpen, currentPath }) => {
             >
               <Menu.Items className="absolute right-0 z-10 mt-2.5 w-64 origin-top-right rounded-lg bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                 <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900">Đăng nhập với</p>
-                  <p className="text-sm text-gray-500 truncate">admin@nhdinh.dev</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    Đăng nhập với
+                  </p>
+                  <p className="text-sm text-gray-500 truncate">
+                    {user?.username || user?.phoneNumber || "admin@nhdinh.dev"}
+                  </p>
                 </div>
-                
+
                 {userMenuItems.map((item) => (
-                  <Menu.Item key={item.name}>
+                  <Menu.Item key={item.id}>
                     {({ active }) => (
-                      <a
-                        href={item.href}
-                        className={`group flex items-center px-4 py-2 text-sm ${
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                      <button
+                        onClick={() => handleMenuItemClick(item.href)}
+                        className={`group flex w-full items-center px-4 py-2 text-sm text-left transition-colors ${
+                          active ? "bg-gray-100 text-gray-900" : "text-gray-700"
                         }`}
+                        title={item.description}
                       >
-                        <item.icon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                        {item.name}
-                      </a>
+                        <item.icon 
+                          className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 transition-colors" 
+                          aria-hidden="true"
+                        />
+                        <span>{item.name}</span>
+                      </button>
                     )}
                   </Menu.Item>
                 ))}
-                
+
                 <div className="border-t border-gray-100 pt-2">
                   <Menu.Item>
                     {({ active }) => (
                       <button
                         onClick={handleLogout}
                         className={`group flex w-full items-center px-4 py-2 text-sm ${
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                          active ? "bg-gray-100 text-gray-900" : "text-gray-700"
                         }`}
                       >
-                        <ArrowRightOnRectangleIcon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
+                        <ArrowRightStartOnRectangleIcon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
                         Đăng xuất
                       </button>
                     )}
@@ -181,5 +222,9 @@ const Header = ({ setSidebarOpen, currentPath }) => {
   );
 };
 
+Header.propTypes = {
+  setSidebarOpen: PropTypes.func.isRequired,
+  currentPath: PropTypes.string.isRequired,
+};
+
 export default Header;
-    

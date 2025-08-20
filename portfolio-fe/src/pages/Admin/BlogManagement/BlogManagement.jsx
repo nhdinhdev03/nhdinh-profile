@@ -104,7 +104,7 @@ const BlogManagement = () => {
   const columns = [
     {
       key: 'title',
-      label: 'Tiêu đề',
+      title: 'Tiêu đề',
       render: (post) => (
         <div className="space-y-1">
           <h4 className="font-medium text-gray-900 line-clamp-1">{post.title}</h4>
@@ -125,7 +125,7 @@ const BlogManagement = () => {
     },
     {
       key: 'category',
-      label: 'Danh mục',
+      title: 'Danh mục',
       render: (post) => (
         <div className="space-y-1">
           <span className="text-sm font-medium text-gray-900">{post.category}</span>
@@ -144,12 +144,12 @@ const BlogManagement = () => {
     },
     {
       key: 'status',
-      label: 'Trạng thái',
+      title: 'Trạng thái',
       render: (post) => getStatusBadge(post.status)
     },
     {
       key: 'stats',
-      label: 'Thống kê',
+      title: 'Thống kê',
       render: (post) => (
         <div className="space-y-1">
           <div className="flex items-center space-x-3 text-xs text-gray-500">
@@ -171,7 +171,7 @@ const BlogManagement = () => {
     },
     {
       key: 'actions',
-      label: 'Thao tác',
+      title: 'Thao tác',
       render: (post) => (
         <div className="flex items-center space-x-2">
           <Button

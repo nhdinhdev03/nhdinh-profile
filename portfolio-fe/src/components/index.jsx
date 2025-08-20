@@ -5,6 +5,9 @@ export { showNotification, NotificationContextProvider } from "./Notification";
 export { default as PageTransition } from "./PageTransition/PageTransition";
 export { default as HeroSection } from "./User/Home/HeroSection";
 
+// Protected Route
+export { default as ProtectedRoute } from "./ProtectedRoute";
+
 // Admin Components
 export { default as AdminDashboard } from "pages/Admin/Dashboard/Dashboard";
 export { default as AdminSidebar } from "layouts/Admin/Sidebar";

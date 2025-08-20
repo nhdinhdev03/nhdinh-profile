@@ -3,10 +3,13 @@ import { motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import useTypewriter from "hooks/useTypewriter";
-import useIsMobile from "hooks/useIsMobile";
+
 
 import { ROUTES } from "router/routeConstants";
+
+import useIsMobile from "hooks/Mobile/useIsMobile";
 import useHeroData from "hooks/Home/useHeroData";
+
 
 
 /**

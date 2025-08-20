@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import "./TechMarquee.scss";
-import useIsMobile from "hooks/useIsMobile";
+import useIsMobile from "hooks/Mobile/useIsMobile";
+
 
 // Inline SVG logos with React.memo for performance
 const Logo = React.memo(({ type }) => {

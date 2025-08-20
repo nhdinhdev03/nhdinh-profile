@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import HeroBackground from "./HeroBackground";
 import HeroHeader from "./HeroHeader";
-import useIsMobile from "hooks/useIsMobile";
+import useIsMobile from "hooks/Mobile/useIsMobile";
+
 
 function HeroSection() {
   const heroRef = useRef(null);

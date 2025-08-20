@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import "./ProjectShowcase.scss";
 import { Link } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
-import useIsMobile from "hooks/useIsMobile";
+import useIsMobile from "hooks/Mobile/useIsMobile";
+
 
 // Enhanced featured projects with more professional presentation
 const featured = [

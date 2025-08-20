@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import './PageTransition.scss';
-import useIsMobile from 'hooks/useIsMobile';
+import useIsMobile from 'hooks/Mobile/useIsMobile';
+
 
 const PageTransition = ({ children }) => {
   const location = useLocation();

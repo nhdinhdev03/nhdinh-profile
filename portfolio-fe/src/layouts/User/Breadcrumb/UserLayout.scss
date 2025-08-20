@@ -1,0 +1,17 @@
+/* UserLayout styling */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-container {
+  flex: 1;
+  padding-top: 0.5rem; /* Khoảng trống mặc định cho các trang thông thường */
+}
+
+/* Loại bỏ khoảng trống đầu trang cho trang Home */
+.home-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}

@@ -1,0 +1,92 @@
+.page-transition {
+  transition: opacity 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              transform 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+.page-transition.fadeIn {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.page-transition.fadeOut {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0); /* Reduced movement for smoother feel */
+}
+
+/* Enhanced home page transition with stagger effect */
+.page-transition.home-transition.fadeIn {
+  animation: homeReveal 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes homeReveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 15px, 0) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Optimize z-index layering */
+.page-transition > * {
+  position: relative;
+  z-index: 1;
+  transform: translateZ(0); /* Force layer creation */
+}
+
+/* Reduce motion for accessibility and mobile optimization */
+@media (prefers-reduced-motion: reduce) {
+  .page-transition,
+  .page-transition.home-transition.fadeIn {
+    transition: opacity 150ms ease-out;
+    animation: none;
+  }
+  
+  .page-transition.fadeOut {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Mobile optimizations - lighter animations */
+@media (max-width: 768px) {
+  .page-transition {
+    transition: opacity 200ms ease-out, transform 200ms ease-out;
+  }
+  
+  .page-transition.home-transition.fadeIn {
+    animation: homeRevealMobile 400ms ease-out forwards;
+  }
+  
+  .page-transition.fadeOut {
+    transform: translate3d(0, 4px, 0); /* Reduce movement on mobile */
+  }
+  
+  .mobile-transition {
+    /* Force hardware acceleration on mobile */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  .mobile-transition * {
+    /* Optimize all children for mobile rendering */
+    transform: translateZ(0);
+  }
+}
+
+@keyframes homeRevealMobile {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+   

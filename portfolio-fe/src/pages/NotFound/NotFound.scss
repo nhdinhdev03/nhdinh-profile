@@ -1,0 +1,43 @@
+.not-found-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f9fafc; /* Light background */
+  padding: 0 20px;
+}
+
+.not-found-content {
+  text-align: center;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.not-found-title {
+  font-size: 5rem;
+  font-weight: bold;
+  color: #1367e4; /* Primary color for the 404 text */
+}
+
+.not-found-message {
+  font-size: 1.2rem;
+  color: #555;
+  margin: 20px 0;
+}
+
+.back-home-link {
+  background-color: #1367e4;
+  color: white;
+  padding: 14px 36px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #4285f4;
+  }
+}

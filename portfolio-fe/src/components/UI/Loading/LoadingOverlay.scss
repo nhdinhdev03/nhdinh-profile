@@ -1,0 +1,33 @@
+/* Loading Overlay Styles */
+
+.loading-overlay {
+  position: relative;
+  
+  &__content {
+    transition: filter 0.3s ease;
+    
+    &--blur {
+      filter: blur(4px);
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+  
+  &__spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    
+    .dark & {
+      background: rgba(15, 23, 42, 0.8);
+    }
+  }
+}

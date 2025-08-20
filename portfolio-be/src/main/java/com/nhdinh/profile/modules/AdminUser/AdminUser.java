@@ -47,13 +47,19 @@ public class AdminUser {
     private Boolean isActive = true;
     
     @Version
-    @Column(name = "RowVer", columnDefinition = "ROWVERSION")
+    @Column(name = "RowVer", columnDefinition = "ROWVERSION", insertable = false, updatable = false)
     private byte[] rowVer;
     
     // Constructors
     public AdminUser() {
-        this.createdAt = LocalDateTime.now();
         this.isActive = true;
+    }
+    
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
     
     public AdminUser(String phoneNumber, String passwordHash) {

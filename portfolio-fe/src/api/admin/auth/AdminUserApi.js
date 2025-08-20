@@ -1,53 +1,96 @@
 import BaseApi from "api/global/baseApi";
+import axiosClient from "api/global/axiosClient";
 
 class AdminUserApi extends BaseApi {
   constructor() {
-    super("admin-users");
+    super("auth");
   }
 
-  // Login
-  async login(phoneNumber, password) {
-    return this.axiosClient.post(`${this.uri}/login`, {
-      phoneNumber,
+  // Register
+  async register(userData) {
+    return axiosClient.post(`${this.uri}/register`, userData);
+  }
+
+  // Login - sử dụng identifier thay vì phoneNumber để hỗ trợ cả phone và username
+  async login(identifier, password) {
+    const url = `${this.uri}/login`;
+    console.log('AdminUserApi login URL:', url);
+    console.log('Full URL will be:', axiosClient.defaults.baseURL + url);
+    
+    const response = await axiosClient.post(url, {
+      identifier,
       password
     });
+    
+    console.log('Raw response from axios:', response);
+    console.log('Response data:', response.data);
+    
+    return response;
+  }
+
+  // Logout
+  async logout() {
+    return axiosClient.post(`${this.uri}/logout`);
+  }
+
+  // Get current user info
+  async getCurrentUser() {
+    return axiosClient.get(`${this.uri}/me`);
   }
 
   // Change password
   async changePassword(userId, currentPassword, newPassword) {
-    return this.axiosClient.patch(`${this.uri}/${userId}/change-password`, {
+    return axiosClient.patch(`admin-users/${userId}/change-password`, {
       currentPassword,
       newPassword
     });
   }
 
-  // Get current user info
-  async getCurrentUser() {
-    return this.axiosClient.get(`${this.uri}/me`);
-  }
-
   // Update profile
   async updateProfile(userId, profileData) {
-    return this.axiosClient.patch(`${this.uri}/${userId}/profile`, profileData);
+    return axiosClient.patch(`admin-users/${userId}/profile`, profileData);
   }
 
   // Activate/Deactivate user
   async toggleActive(userId, isActive) {
-    return this.axiosClient.patch(`${this.uri}/${userId}/toggle-active`, { isActive });
+    return axiosClient.patch(`admin-users/${userId}/toggle-active`, { isActive });
   }
 
   // Check if phone number exists
   async checkPhoneExists(phoneNumber) {
-    return this.axiosClient.get(`${this.uri}/check-phone`, {
+    return axiosClient.get(`admin-users/check-phone`, {
       params: { phoneNumber }
     });
   }
 
   // Check if username exists
   async checkUsernameExists(username) {
-    return this.axiosClient.get(`${this.uri}/check-username`, {
+    return axiosClient.get(`admin-users/check-username`, {
       params: { username }
     });
+  }
+
+  // Token management
+  setToken(token) {
+    if (token) {
+      localStorage.setItem('token', token);
+      axiosClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+  }
+
+  getToken() {
+    return localStorage.getItem('token');
+  }
+
+  removeToken() {
+    localStorage.removeItem('token');
+    delete axiosClient.defaults.headers.common['Authorization'];
+  }
+
+  // Check if user is authenticated
+  isAuthenticated() {
+    const token = this.getToken();
+    return token && token !== 'undefined' && token !== 'null';
   }
 }
 

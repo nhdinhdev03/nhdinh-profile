@@ -3,6 +3,7 @@ import { publicRoutes, privateRoutes } from "./router";
 import NotFound from "pages/NotFound";
 import ScrollToTop from "router/ScrollToHash";
 import { NotificationContextProvider, PageTransition } from "components";
+import { AuthProvider } from "contexts/AuthContext";
 import { useEffect } from "react";
 
 
@@ -29,49 +30,51 @@ const ResourcePrefetcher = () => {
 
 function App() {
   return (
-    <NotificationContextProvider>
-      <BrowserRouter>
-        <ResourcePrefetcher />
-        <ScrollToTop />
-        <Routes>
-          {publicRoutes.map(({ path, component: Component, layout: Layout }) => (
-            <Route
-              key={path}
-              path={path}
-              element={
-                <Layout>
-                  <PageTransition>
-                    <Component />
-                  </PageTransition>
-                </Layout>
-              }
-            />
-          ))}
-
-          {privateRoutes.map(({ path, component: Component, layout: Layout }) => (
-            <Route
-              key={path}
-              path={path}
-              element={
-                Layout ? (
+    <AuthProvider>
+      <NotificationContextProvider>
+        <BrowserRouter>
+          <ResourcePrefetcher />
+          <ScrollToTop />
+          <Routes>
+            {publicRoutes.map(({ path, component: Component, layout: Layout }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
                   <Layout>
                     <PageTransition>
                       <Component />
                     </PageTransition>
                   </Layout>
-                ) : (
-                  <PageTransition>
-                    <Component />
-                  </PageTransition>
-                )
-              }
-            />
-          ))}
+                }
+              />
+            ))}
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </NotificationContextProvider>
+            {privateRoutes.map(({ path, component: Component, layout: Layout }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  Layout ? (
+                    <Layout>
+                      <PageTransition>
+                        <Component />
+                      </PageTransition>
+                    </Layout>
+                  ) : (
+                    <PageTransition>
+                      <Component />
+                    </PageTransition>
+                  )
+                }
+              />
+            ))}
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </NotificationContextProvider>
+    </AuthProvider>
   );
 }
 export default App;

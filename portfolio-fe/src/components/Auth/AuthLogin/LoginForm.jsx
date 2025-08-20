@@ -8,25 +8,30 @@ import {
   Shield,
   LogIn,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./LoginForm.scss";
+import { ROUTES } from "router/routeConstants";
+import { useAuth } from "contexts/AuthContext";
 
 function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [touched, setTouched] = useState({});
   const [fadeIn, setFadeIn] = useState(false);
+  
+  const navigate = useNavigate();
+  const { login, loading, error: authError, clearError } = useAuth();
 
   useEffect(() => {
     // Animation trigger on mount
     setFadeIn(true);
-  }, []);
+    // Clear any previous auth errors on mount
+    clearError();
+  }, [clearError]);
 
   const fieldErrors = useMemo(() => {
     const e = {};
@@ -38,10 +43,10 @@ function LoginForm() {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      setError("");
+      clearError();
       setTouched({ username: true, password: true });
+      
       if (Object.keys(fieldErrors).length) {
-        setError("Vui lòng kiểm tra các trường bắt buộc.");
         toast.error("Vui lòng nhập đầy đủ thông tin", {
           position: "top-center",
           autoClose: 3000,
@@ -52,26 +57,31 @@ function LoginForm() {
         });
         return;
       }
-      setIsLoading(true);
-      try {
 
-        await new Promise((r) => setTimeout(r, 1000));
-        // success flow placeholder
-        toast.success("Đăng nhập thành công!", {
-          position: "top-center",
-          autoClose: 2000,
-        });
-      } catch (_) {
-        setError("Đăng nhập thất bại. Vui lòng thử lại.");
-        toast.error("Đăng nhập thất bại. Vui lòng thử lại.", {
+      try {
+        const result = await login(username, password);
+        
+        if (result.success) {
+          toast.success("Đăng nhập thành côssssssssssssssssng!", {
+            position: "top-center",
+            autoClose: 2000,
+          });
+                      navigate(ROUTES.ADMIN.DASHBOARD);
+       
+        } else {
+          toast.error(result.error || "Đăng nhập thất bại. Vui lòng thử lại.", {
+            position: "top-center",
+            autoClose: 4000,
+          });
+        }
+      } catch (error) {
+        toast.error("Có lỗi xảy ra. Vui lòng thử lại.", {
           position: "top-center",
           autoClose: 4000,
         });
-      } finally {
-        setIsLoading(false);
       }
     },
-    [fieldErrors]
+    [fieldErrors, login, username, password, navigate, clearError]
   );
 
   const togglePw = useCallback(() => setShowPassword((s) => !s), []);
@@ -190,10 +200,11 @@ function LoginForm() {
             className="auth-form"
             onSubmit={handleSubmit}
             noValidate
-            aria-describedby={error ? "form-error" : undefined}
+            aria-describedby={authError ? "form-error" : undefined}
           >
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
               <motion.div
+                key="username-field"
                 className={`field ${
                   touched.username && fieldErrors.username ? "has-error" : ""
                 }`}
@@ -222,7 +233,7 @@ function LoginForm() {
                         ? "err-username"
                         : undefined
                     }
-                    disabled={isLoading}
+                    disabled={loading}
                     className="modern-input"
                   />
                   {username && (
@@ -249,6 +260,7 @@ function LoginForm() {
               </motion.div>
 
               <motion.div
+                key="password-field"
                 className={`field ${
                   touched.password && fieldErrors.password ? "has-error" : ""
                 }`}
@@ -277,7 +289,7 @@ function LoginForm() {
                         ? "err-password"
                         : undefined
                     }
-                    disabled={isLoading}
+                    disabled={loading}
                     className="modern-input"
                   />
                   <motion.button
@@ -309,7 +321,7 @@ function LoginForm() {
               </motion.div>
             </AnimatePresence>
 
-            {error && (
+            {authError && (
               <motion.div
                 id="form-error"
                 className="form-error-banner"
@@ -318,7 +330,7 @@ function LoginForm() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                {error}
+                {authError}
               </motion.div>
             )}
 
@@ -340,14 +352,14 @@ function LoginForm() {
             <motion.button
               type="submit"
               className="btn-submit"
-              disabled={isLoading}
+              disabled={loading}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.9 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {isLoading ? (
+              {loading ? (
                 <span className="loading">
                   <span className="spinner" aria-hidden="true" />
                   <span>Đang xác thực...</span>

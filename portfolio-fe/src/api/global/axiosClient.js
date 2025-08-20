@@ -1,19 +1,34 @@
 import axios from 'axios';
 import httpStatus from './httpStatus';
-// import authApi from 'api/Admin/Auth/auth';
-
 
 const baseUrl = process.env.REACT_APP_Profile_PRODUCTION_REST_API;
-// setup axios client
+
+console.log('Axios baseURL configured as:', baseUrl);
 
 const axiosClient = axios.create({
     baseURL: baseUrl,
     headers: {
         'Content-type': 'application/json',
     },
-    // withCredentials: true,
 });
 
+// Request interceptor để thêm token vào header
+axiosClient.interceptors.request.use(
+    (config) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (token && token !== 'undefined' && token !== 'null') {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
+        } catch (error) {
+            console.error('Thiết lập header xác thực không thành công:', error);
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+// Response interceptor để xử lý lỗi
 axiosClient.interceptors.response.use(
     (response) => {
         if (response && response.data) {
@@ -24,19 +39,23 @@ axiosClient.interceptors.response.use(
     (error) => {
         if (error.response) {
             switch (error.response.status) {
-                case httpStatus.INTERNAL_SERVER_ERROR:
-                    // TODO: Implement proper error handling for server errors
-                    // console.error('Thiết lập header xác thực không thành công:', error);
+                case httpStatus.UNAUTHORIZED:
+                    // Token hết hạn hoặc không hợp lệ
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    // Redirect to login if needed
+                    if (window.location.pathname !== '/login') {
+                        window.location.href = '/login';
+                    }
                     break;
-                // case 401:
-                //     funcUtils.notify(error.response.data.message, 'error');
-                //     break;
-                // case httpStatus.CONFLICT:
-                //     funcUtils.notify(error.response.data, 'error');
-                //     break;
+                case httpStatus.INTERNAL_SERVER_ERROR:
+                    console.error('Server error:', error);
+                    break;
+                case httpStatus.CONFLICT:
+                    // Xử lý conflict errors
+                    break;
                 default:
-                    // TODO: Implement proper error logging system
-                    // console.log(error);
+                    console.log('API Error:', error);
                     break;
             }
         }
@@ -44,18 +63,4 @@ axiosClient.interceptors.response.use(
     },
 );
 
-// axiosClient.interceptors.request.use(
-//     (config) => {
-//         try {
-//             const token = authApi.getToken();
-//             if (token && token !== 'undefined') {
-//                 config.headers['Authorization'] = token;
-//             }
-//         } catch (error) {
-//             console.error('Thiết lập header xác thực không thành công:', error);
-//         }
-//         return config;
-//     },
-//     (error) => Promise.reject(error)
-// );
 export default axiosClient;

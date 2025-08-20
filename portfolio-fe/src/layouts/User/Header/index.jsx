@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Header.scss";
-import { ROUTES } from "router/routeConstants";
+import { AUTH_LOGIN, ROUTES } from "router/routeConstants";
 import img from "assets/Img";
-import { useUserTheme } from "../../../theme";
-import { useAuth } from "../../../contexts/AuthContext";
-import { useNotificationContext } from "../../../components/Notification";
+import { useUserTheme } from "theme";
+import { useAuth } from "contexts/AuthContext";
+import { useNotificationContext } from "components/Notification";
 
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -96,7 +96,7 @@ function Header() {
     try {
       await logout();
       notification.success("Đăng xuất thành công!", 3000);
-      navigate(ROUTES.ADMIN.LOGIN);
+      navigate(AUTH_LOGIN);
       setIsMobileMenuOpen(false);
     } catch (error) {
       console.error('Logout failed:', error);
@@ -193,7 +193,7 @@ function Header() {
             <button
               type="button"
               className="header__settings"
-              onClick={() => handleNavigation(ROUTES.ADMIN.LOGIN)}
+              onClick={() => handleNavigation(AUTH_LOGIN)}
               aria-label="Đi đến trang đăng nhập"
               title="Đăng nhập"
             >
@@ -353,7 +353,7 @@ function Header() {
                 <button
                   type="button"
                   className="header__mobile-action"
-                  onClick={() => handleNavigation(ROUTES.ADMIN.LOGIN)}
+                  onClick={() => handleNavigation(AUTH_LOGIN)}
                   aria-label="Đi đến trang đăng nhập"
                 >
                   <div className="header__mobile-action-icon">

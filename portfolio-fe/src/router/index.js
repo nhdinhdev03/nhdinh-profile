@@ -4,9 +4,9 @@ import { AdminLayout, UserLayout } from "layouts";
 import * as PageAdmin from "pages/Admin";
 import * as PageUser from "pages/User";
 import * as AuthComponents from "components/Auth";
+import { AUTH_LOGIN, ROUTES } from "./routeConstants";
 
 
-import { ROUTES } from "./routeConstants";
 
 // Mẹo: luôn dùng ROUTES.* để không hard-code chuỗi
 export const publicRoutes = [
@@ -22,7 +22,7 @@ export const publicRoutes = [
 export const privateRoutes = [
   // Auth
   {
-    path: ROUTES.ADMIN.LOGIN,
+    path: AUTH_LOGIN,
     component: AuthComponents.LoginForm,
   },
   

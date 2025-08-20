@@ -10,7 +10,7 @@ import {
   ChevronDownIcon,
   ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { ROUTES } from "router/routeConstants";
+import { AUTH_LOGIN, ROUTES } from "router/routeConstants";
 
 import { useNavigate } from "react-router-dom";
 import { useNotificationContext } from "components/Notification";
@@ -44,7 +44,7 @@ const Header = ({ setSidebarOpen, currentPath }) => {
     try {
       await logout();
       notification.success("Đăng xuất thành công!");
-      navigate(ROUTES.ADMIN.LOGIN);
+      navigate(AUTH_LOGIN);
     } catch (error) {
       console.error("Logout error:", error);
       notification.error("Có lỗi xảy ra khi đăng xuất");

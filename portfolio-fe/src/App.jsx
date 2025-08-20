@@ -8,7 +8,7 @@ import {
   ProtectedRoute,
 } from "components";
 import { AuthProvider } from "contexts/AuthContext";
-import { ROUTES } from "router/routeConstants";
+import { ROUTES, AUTH_LOGIN } from "router/routeConstants";
 
 
 
@@ -38,7 +38,7 @@ function App() {
             {privateRoutes.map(
               ({ path, component: Component, layout: Layout }) => {
                 // Login page doesn't need protection
-                if (path === ROUTES.ADMIN.LOGIN) {
+                if (path === AUTH_LOGIN) {
                   return (
                     <Route
                       key={path}

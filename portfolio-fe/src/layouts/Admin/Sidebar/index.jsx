@@ -22,8 +22,7 @@ const SidebarContent = ({
   navigationGroups,
   currentPath,
   handleNavigation,
-  expandedGroups,
-  toggleGroup,
+
 }) => (
   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 ring-1 ring-white/10 sidebar-content">
     <div className="flex h-16 shrink-0 items-center">

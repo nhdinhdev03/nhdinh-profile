@@ -1,6 +1,8 @@
 export const API_VERSION = "nhdinh";
 export const ADMIN_PREFIX = "/admin"; // luôn có /
 
+
+// Đường dẫn login riêng biệt
 export const AUTH_LOGIN = "/auth/login"; // luôn có /
 
 export const ROUTES = {
@@ -11,15 +13,9 @@ export const ROUTES = {
   CONTACT: `/${API_VERSION}/contact`,
   PROJECTS: `/${API_VERSION}/projects`,
   
-  //test
 
-
-  //login
-  LOGIN: `/${AUTH_LOGIN}/login`,
-
-  //admin
   ADMIN: {
-    LOGIN: `${ADMIN_PREFIX}/login`,
+
     DASHBOARD: `${ADMIN_PREFIX}/dashboard`,
     HOME_MANAGEMENT: `${ADMIN_PREFIX}/home`,
     ABOUT_MANAGEMENT: `${ADMIN_PREFIX}/about`,

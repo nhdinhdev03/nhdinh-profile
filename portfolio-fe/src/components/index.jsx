@@ -6,7 +6,7 @@ export { default as PageTransition } from "./PageTransition/PageTransition";
 export { default as HeroSection } from "./User/Home/HeroSection";
 
 // Protected Route
-export { default as ProtectedRoute } from "./ProtectedRoute";
+export { default as ProtectedRoute } from "./Auth/ProtectedRoute";
 
 // Admin Components
 export { default as AdminDashboard } from "pages/Admin/Dashboard/Dashboard";

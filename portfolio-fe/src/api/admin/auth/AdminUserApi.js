@@ -14,16 +14,16 @@ class AdminUserApi extends BaseApi {
   // Login - sử dụng identifier thay vì phoneNumber để hỗ trợ cả phone và username
   async login(identifier, password) {
     const url = `${this.uri}/login`;
-    console.log('AdminUserApi login URL:', url);
-    console.log('Full URL will be:', axiosClient.defaults.baseURL + url);
+    // console.log('AdminUserApi login URL:', url);
+    // console.log('Full URL will be:', axiosClient.defaults.baseURL + url);
     
     const response = await axiosClient.post(url, {
       identifier,
       password
     });
     
-    console.log('Raw response from axios:', response);
-    console.log('Response data:', response.data);
+    // console.log('Raw response from axios:', response);
+    // console.log('Response data:', response.data);
     
     return response;
   }

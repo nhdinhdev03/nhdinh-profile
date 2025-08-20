@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
           }
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
+        // console.error('Auth check failed:', error);
       }
     };
 
@@ -103,9 +103,9 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('Login attempt with:', { identifier, password: '***' });
       const response = await adminUserApi.login(identifier, password);
-      console.log('Login response:', response);
+      // console.log('Login response:', response);
       const { data } = response;
-      console.log('Response data:', data);
+      // console.log('Response data:', data);
       
       if (data && data.token) {
         // Save to localStorage
@@ -138,8 +138,8 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Không nhận được token từ server');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      console.error('Error response:', error.response);
+      // console.error('Login error:', error);
+      // console.error('Error response:', error.response);
       
       let errorMessage = 'Đăng nhập thất bại';
       
@@ -200,7 +200,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await adminUserApi.logout();
     } catch (error) {
-      console.error('Logout API failed:', error);
+      // console.error('Logout API failed:', error);
     } finally {
       // Always clear local storage and state
       adminUserApi.removeToken();

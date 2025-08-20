@@ -330,7 +330,7 @@ const LOGOS = [
   { key: "python", label: "Python" },
 ];
 
-function TechMarquee({ direction = "ltr", speed }) {
+function TechMarquee({ direction = "ltr", speed = null }) {
   const { isMobile } = useIsMobile();
   const marqueeRef = useRef(null);
   const [isInView, setIsInView] = useState(false);
@@ -560,11 +560,5 @@ function TechMarquee({ direction = "ltr", speed }) {
     </section>
   );
 }
-
-// Add prop validation
-TechMarquee.defaultProps = {
-  direction: "ltr",
-  speed: null
-};
 
 export default TechMarquee;

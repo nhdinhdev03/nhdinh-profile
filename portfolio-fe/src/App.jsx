@@ -8,32 +8,15 @@ import {
   ProtectedRoute,
 } from "components";
 import { AuthProvider } from "contexts/AuthContext";
-import { useEffect } from "react";
 import { ROUTES } from "router/routeConstants";
 
-// Resource Prefetcher component to preload critical resources
-const ResourcePrefetcher = () => {
-  useEffect(() => {
-    // Preload critical images
-    const preloadLinks = ["/static/media/Logo.266ee6b125e665314f27.png"];
 
-    preloadLinks.forEach((url) => {
-      const link = document.createElement("link");
-      link.rel = "prefetch";
-      link.href = url;
-      document.head.appendChild(link);
-    });
-  }, []);
-
-  return null;
-};
 
 function App() {
   return (
     <AuthProvider>
       <NotificationContextProvider>
         <BrowserRouter>
-          <ResourcePrefetcher />
           <ScrollToTop />
           <Routes>
             {publicRoutes.map(

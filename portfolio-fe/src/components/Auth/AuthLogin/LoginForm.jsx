@@ -115,7 +115,6 @@ function LoginForm() {
           }
         }
       } catch (error) {
-        console.error("Login error in component:", error);
         const rawError =
           error.response?.data?.message ||
           error.message ||

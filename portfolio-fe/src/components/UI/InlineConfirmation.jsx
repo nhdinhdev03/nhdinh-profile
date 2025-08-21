@@ -1,20 +1,94 @@
-import React, { useEffect, useRef } from 'react';
+/* eslint-disable react/prop-types */
+import React, { useEffect, useRef, useLayoutEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { createPortal } from 'react-dom';
+import PropTypes from 'prop-types';
 
+/**
+ * @typedef {Object} InlineConfirmationProps
+ * @property {boolean} isOpen
+ * @property {() => void} onClose
+ * @property {() => void} onConfirm
+ * @property {string|React.ReactNode} message
+ * @property {string} [confirmText]
+ * @property {string} [cancelText]
+ * @property {boolean} [loading]
+ * @property {React.RefObject=} triggerRef
+ * @property {HTMLElement=} anchorEl
+ * @property {('top'|'bottom')} [placement]
+ * @property {number} [offset]
+ * @property {number} [boundaryPadding]
+ * @property {boolean} [usePortal]
+ */
+
+/** @param {InlineConfirmationProps} props */
 const InlineConfirmation = ({
   isOpen,
   onClose,
   onConfirm,
   message,
-  confirmText = "Xác nhận",
-  cancelText = "Hủy",
+  confirmText = 'Xác nhận',
+  cancelText = 'Hủy',
   loading = false,
-  triggerRef = null // ref của element trigger để position relative
+  triggerRef = null,
+  anchorEl = null,
+  placement = 'bottom',
+  offset = 8,
+  boundaryPadding = 8,
+  usePortal = true
 }) => {
   const confirmRef = useRef(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0, origin: 'top' });
+  const [strategy, setStrategy] = useState('absolute');
 
-  // Handle keyboard events
+  // Tính toán vị trí động để tránh tràn màn hình
+    const computePosition = useCallback((el, dialog) => {
+      const rect = el.getBoundingClientRect();
+      const dialogRect = dialog?.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const desiredPlacement = placement;
+      let actualPlacement = desiredPlacement;
+      const spaceBelow = vh - rect.bottom;
+      const spaceAbove = rect.top;
+      let needFlip = false;
+      if (dialogRect) {
+        if (desiredPlacement === 'bottom') {
+          needFlip = dialogRect.height + offset + boundaryPadding > spaceBelow && spaceAbove > spaceBelow;
+        } else {
+          needFlip = dialogRect.height + offset + boundaryPadding > spaceAbove && spaceBelow > spaceAbove;
+        }
+      }
+      if (needFlip) actualPlacement = desiredPlacement === 'bottom' ? 'top' : 'bottom';
+      let top = rect.bottom + offset;
+      if (actualPlacement === 'top') {
+        top = rect.top - (dialogRect?.height || 0) - offset;
+      }
+      let left = rect.left + rect.width / 2 - (dialogRect?.width || 0) / 2;
+      if (left < boundaryPadding) left = boundaryPadding;
+      if (dialogRect && left + dialogRect.width + boundaryPadding > vw) {
+        left = vw - dialogRect.width - boundaryPadding;
+      }
+      return { top: Math.max(boundaryPadding, top), left, origin: actualPlacement };
+    }, [placement, offset, boundaryPadding]);
+
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    const el = anchorEl || triggerRef?.current;
+    if (!el) return;
+    const dialog = confirmRef.current;
+    if (dialog) {
+      dialog.style.visibility = 'hidden';
+      dialog.style.transform = 'none';
+    }
+    requestAnimationFrame(() => {
+      const c = computePosition(el, dialog);
+      setCoords(c);
+      setStrategy('fixed');
+      if (dialog) dialog.style.visibility = '';
+    });
+  }, [isOpen, anchorEl, triggerRef, placement, offset, boundaryPadding, computePosition]);
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
@@ -77,7 +151,7 @@ const InlineConfirmation = ({
     }
   };
 
-  return (
+  const content = (
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -86,12 +160,22 @@ const InlineConfirmation = ({
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="absolute top-full left-0 mt-1 z-[60] bg-white rounded-lg shadow-lg border border-gray-200 p-3 min-w-[280px]"
-          style={{ 
-            transform: 'translateX(-50%)',
-            left: '50%'
-          }}
+          className={`z-[200] bg-white rounded-lg shadow-lg border border-gray-200 p-3 min-w-[280px] ${!anchorEl && 'absolute top-full left-1/2 mt-1'} `}
+          style={anchorEl ? { position: strategy, top: coords.top, left: coords.left } : { transform: 'translateX(-50%)' }}
         >
+          {/* Arrow pointer */}
+          {!anchorEl && (
+            <div className="absolute -top-1 left-1/2 transform -translate-x-1/2">
+              <div className="w-2 h-2 bg-white border-l border-t border-gray-200 transform rotate-45"></div>
+            </div>
+          )}
+          {anchorEl && (
+            <div
+              className={`absolute left-1/2 -translate-x-1/2 ${coords.origin === 'top' ? 'bottom-0 -mb-1' : 'top-0 -mt-1'}`}
+            >
+              <div className={`w-2 h-2 bg-white border-gray-200 transform rotate-45 ${coords.origin === 'top' ? 'border-b border-r' : 'border-t border-l'}`}></div>
+            </div>
+          )}
           {/* Header */}
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center">
@@ -105,12 +189,8 @@ const InlineConfirmation = ({
               <XMarkIcon className="w-3 h-3" />
             </button>
           </div>
-
           {/* Message */}
-          <p className="text-xs text-gray-600 mb-3 leading-relaxed">
-            {message}
-          </p>
-
+          <p className="text-xs text-gray-600 mb-3 leading-relaxed">{message}</p>
           {/* Actions */}
           <div className="flex items-center justify-end space-x-2">
             <button
@@ -136,15 +216,31 @@ const InlineConfirmation = ({
               )}
             </button>
           </div>
-
-          {/* Arrow pointer */}
-          <div className="absolute -top-1 left-1/2 transform -translate-x-1/2">
-            <div className="w-2 h-2 bg-white border-l border-t border-gray-200 transform rotate-45"></div>
-          </div>
         </motion.div>
       )}
     </AnimatePresence>
   );
+
+  if (anchorEl && usePortal) {
+    return createPortal(content, document.body);
+  }
+  return content;
+};
+
+InlineConfirmation.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+  confirmText: PropTypes.string,
+  cancelText: PropTypes.string,
+  loading: PropTypes.bool,
+  triggerRef: PropTypes.object,
+  anchorEl: PropTypes.instanceOf(Element),
+  placement: PropTypes.oneOf(['top', 'bottom']),
+  offset: PropTypes.number,
+  boundaryPadding: PropTypes.number,
+  usePortal: PropTypes.bool
 };
 
 export default InlineConfirmation;

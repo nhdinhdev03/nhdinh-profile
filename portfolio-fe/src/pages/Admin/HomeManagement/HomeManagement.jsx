@@ -61,7 +61,8 @@ const HomeManagement = () => {
   const [saving, setSaving] = useState(false);
 
   // Modal and edit states
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null); // Hiển thị InlineConfirmation cho hero nào
+  // Hiển thị InlineConfirmation cho hero nào; lưu thêm anchorEl để position chính xác (portal)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null); // { heroId, anchorEl, data: hero }
   const [isEditingHero, setIsEditingHero] = useState(false); // Bật form edit / create
 
   // eslint-disable-next-line no-unused-vars
@@ -1801,24 +1802,19 @@ const HomeManagement = () => {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  // Đóng confirmation hiện tại nếu đang mở confirmation khác
+                                  const anchorEl = e.currentTarget;
                                   if (
                                     showDeleteConfirm &&
                                     showDeleteConfirm.heroId !== hero.heroId
                                   ) {
                                     setShowDeleteConfirm(null);
-                                    // Delay để tránh conflict animation
                                     setTimeout(() => {
-                                      setShowDeleteConfirm(hero);
-                                    }, 150);
-                                  } else if (
-                                    showDeleteConfirm?.heroId === hero.heroId
-                                  ) {
-                                    // Nếu đang mở confirmation của chính hero này thì đóng
+                                      setShowDeleteConfirm({ heroId: hero.heroId, anchorEl, data: hero });
+                                    }, 120);
+                                  } else if (showDeleteConfirm?.heroId === hero.heroId) {
                                     setShowDeleteConfirm(null);
                                   } else {
-                                    // Mở confirmation mới
-                                    setShowDeleteConfirm(hero);
+                                    setShowDeleteConfirm({ heroId: hero.heroId, anchorEl, data: hero });
                                   }
                                 }}
                                 className="text-orange-600 hover:text-orange-900 flex items-center space-x-1"
@@ -1846,9 +1842,7 @@ const HomeManagement = () => {
 
                               {/* Inline Confirmation */}
                               <InlineConfirmation
-                                isOpen={
-                                  showDeleteConfirm?.heroId === hero.heroId
-                                }
+                                isOpen={showDeleteConfirm?.heroId === hero.heroId}
                                 onClose={() => setShowDeleteConfirm(null)}
                                 onConfirm={() => {
                                   if (showDeleteConfirm) {
@@ -1859,6 +1853,8 @@ const HomeManagement = () => {
                                 confirmText="Lưu trữ"
                                 cancelText="Hủy"
                                 message={`Lưu trữ hero "${hero.heading}"?`}
+                                anchorEl={showDeleteConfirm?.anchorEl}
+                                placement="bottom"
                               />
                             </div>
                           )}

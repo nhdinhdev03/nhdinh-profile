@@ -1,0 +1,324 @@
+/* Contact Management Specific Styles */
+
+.contact-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.contact-table-wrapper table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 800px; /* Ensure minimum width for proper layout */
+}
+
+.contact-table-wrapper td {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  padding: 1rem 0.75rem;
+}
+
+.contact-table-wrapper th {
+  padding: 1rem 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-size: 0.75rem;
+}
+
+/* Responsive column widths */
+.contact-info-col {
+  width: 22%;
+  min-width: 200px;
+}
+
+.subject-content-col {
+  width: 40%;
+  min-width: 280px;
+}
+
+.status-col {
+  width: 12%;
+  min-width: 120px;
+}
+
+.actions-col {
+  width: 26%;
+  min-width: 160px;
+}
+
+/* Modal specific styles */
+.contact-detail-modal {
+  position: fixed !important;
+  inset: 50% auto auto 50% !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+  z-index: 100000 !important;
+  max-width: min(1200px, 92vw) !important;
+  width: 100%;
+  height: auto;
+  max-height: 88vh !important;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  outline: none;
+  animation: modal-fade-in .25s ease, modal-scale-in .25s ease;
+}
+
+.modal-root { position: fixed; inset:0; z-index: 99990; }
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(55,65,81,0.55);
+  backdrop-filter: blur(2px);
+  cursor: default;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99995;
+}
+.modal-backdrop:focus { outline: none; }
+
+.contact-detail-modal .modal-header {
+  flex: 0 0 auto;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+.contact-detail-modal .modal-body {
+  flex: 1 1 auto;
+  max-height: calc(88vh - 140px);
+  padding: 2rem 1.5rem;
+  overflow-y: auto;
+}
+.contact-detail-modal .modal-footer {
+  flex: 0 0 auto;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@keyframes modal-fade-in { from { opacity:0;} to {opacity:1;} }
+@keyframes modal-scale-in { from { transform: translate(-50%, -50%) scale(.97);} to { transform: translate(-50%, -50%) scale(1);} }
+
+/* Exit animation utility (apply via class when closing if needed) */
+.modal-exit { animation: modal-fade-out .2s ease forwards, modal-scale-out .2s ease forwards; }
+@keyframes modal-fade-out { to { opacity:0; } }
+@keyframes modal-scale-out { to { transform: translate(-50%, -50%) scale(.97);} }
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+
+/* Ensure modal appears above everything */
+.fixed.inset-0.z-50 {
+  z-index: 99999 !important;
+}
+
+/* Responsive grid improvements */
+@media (max-width: 1280px) {
+  .contact-detail-modal .modal-body {
+    padding: 1.5rem;
+  }
+  
+  .contact-detail-modal { max-width: min(1000px, 92vw); }
+}
+
+@media (max-width: 768px) {
+  .contact-detail-modal {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    height: 100vh;
+    inset: 0 !important;
+    transform: none !important;
+    border-radius: 0 !important;
+  }
+  .contact-detail-modal .modal-body { padding: 1rem; max-height: calc(100vh - 140px); }
+  .contact-detail-modal .modal-header, .contact-detail-modal .modal-footer { padding: 1rem 1rem; }
+  
+  .contact-table-wrapper td,
+  .contact-table-wrapper th {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+/* Enhanced hover effects */
+.contact-table-wrapper tbody tr:hover {
+  background-color: #f8fafc;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Line clamp utilities for content truncation */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Enhanced content preview */
+.content-preview {
+  position: relative;
+}
+
+.content-preview .bg-gray-50 {
+  border-left: 3px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.content-preview .bg-gray-50:hover {
+  border-left-color: #6366f1;
+  background-color: #f8fafc;
+}
+
+/* Compact button styling */
+.actions-col .flex {
+  white-space: nowrap;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
+  .contact-info-col {
+    width: 20%;
+    min-width: 160px;
+  }
+  
+  .subject-content-col {
+    width: 42%;
+    min-width: 220px;
+  }
+  
+  .status-col {
+    width: 10%;
+    min-width: 80px;
+  }
+  
+  .actions-col {
+    width: 28%;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-table-wrapper {
+    font-size: 0.875rem;
+  }
+  
+  .contact-info-col,
+  .subject-content-col,
+  .status-col,
+  .actions-col {
+    width: auto;
+    min-width: auto;
+  }
+  
+  .actions-col .flex {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .actions-col .flex > div {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+/* Custom scrollbar for detail view */
+.detail-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.detail-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.detail-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.detail-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .contact-table-wrapper {
+    font-size: 14px;
+  }
+  
+  .contact-info-col,
+  .subject-content-col,
+  .status-col,
+  .actions-col {
+    min-width: auto;
+  }
+  
+  .subject-content-col {
+    width: 35%;
+  }
+  
+  .actions-col {
+    width: 25%;
+  }
+}
+
+/* Dark mode (optional if theme supports) */
+.dark .contact-detail-modal { background:#1f2937; color:#e5e7eb; }
+.dark .modal-backdrop { background: rgba(0,0,0,0.65); }
+.dark .contact-detail-modal .modal-header { background: linear-gradient(135deg,#1e293b,#0f172a); }
+.dark .contact-detail-modal .modal-footer { background: #111827; }
+
+/* Hover effects */
+.contact-row:hover {
+  background-color: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.status-badge-replied {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-badge-unreplied {
+  background-color: #fef3c7;
+  color: #92400e;
+}

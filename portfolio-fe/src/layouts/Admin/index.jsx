@@ -16,7 +16,7 @@ function AdminLayout({ children, usePageHeader = false }) {
   return (
     <AdminThemeProvider>
       <ToastProvider>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50/50">
           {/* Sidebar */}
           <Sidebar 
             sidebarOpen={sidebarOpen} 
@@ -26,7 +26,7 @@ function AdminLayout({ children, usePageHeader = false }) {
           />
           
           {/* Main content */}
-          <div className="lg:pl-72">
+          <div className="lg:pl-72 transition-all duration-300 ease-in-out">
             <Header 
               setSidebarOpen={setSidebarOpen}
               currentPath={location.pathname}
@@ -36,14 +36,20 @@ function AdminLayout({ children, usePageHeader = false }) {
             {!usePageHeader && (
               <AdminBreadcrumb 
                 showIcons={true}
-                className="sticky top-16 z-30"
+                className="sticky top-16 z-30 bg-white/80 backdrop-blur-sm border-b border-gray-100"
               />
             )}
             
             {/* Page content */}
             <main className={usePageHeader ? "pb-6" : "py-6"}>
-              <div className={usePageHeader ? "" : "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"}>
-                {children}
+              <div className={
+                usePageHeader 
+                  ? "mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16" 
+                  : "mx-auto max-w-[1680px] px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12"
+              }>
+                <div className="w-full">
+                  {children}
+                </div>
               </div>
             </main>
           </div>

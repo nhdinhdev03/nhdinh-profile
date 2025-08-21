@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import { AdminThemeProvider } from "../../theme";
-import { ToastProvider } from "../../components/Admin/Toast";
+
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import AdminBreadcrumb from "./Breadcrumb";
-import "../../styles/admin-enhancements.css";
+import AdminBreadcrumb from "./Breadcrumb";import { AdminThemeProvider } from "theme";
+import { ToastProvider } from "components/Admin";
+;
 
 function AdminLayout({ children, usePageHeader = false }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -254,38 +254,38 @@ public class ContactMessageAPI {
         }
     }
     
-    // // Get message statistics (admin)
-    // @GetMapping("/statistics")
-    // public ResponseEntity<ContactMessageStatsResponse> getMessageStatistics() {
-    //     try {
-    //         ContactMessageStatsResponse stats = contactMessageService.getMessageStatistics();
-    //         return ResponseEntity.ok(stats);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    //     }
-    // }
+    // Get message statistics (admin)
+    @GetMapping("/statistics")
+    public ResponseEntity<ContactMessageStatsResponse> getMessageStatistics() {
+        try {
+            ContactMessageStatsResponse stats = contactMessageService.getMessageStatistics();
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     
-    // // Get monthly statistics (admin)
-    // @GetMapping("/statistics/monthly")
-    // public ResponseEntity<List<ContactMessageMonthlyStats>> getMonthlyStatistics() {
-    //     try {
-    //         List<ContactMessageMonthlyStats> stats = contactMessageService.getMonthlyStatistics();
-    //         return ResponseEntity.ok(stats);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    //     }
-    // }
+    // Get monthly statistics (admin)
+    @GetMapping("/statistics/monthly")
+    public ResponseEntity<List<ContactMessageMonthlyStats>> getMonthlyStatistics() {
+        try {
+            List<ContactMessageMonthlyStats> stats = contactMessageService.getMonthlyStatistics();
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     
-    // // Get top email domains (admin)
-    // @GetMapping("/statistics/email-domains")
-    // public ResponseEntity<List<EmailDomainStats>> getTopEmailDomains() {
-    //     try {
-    //         List<EmailDomainStats> stats = contactMessageService.getTopEmailDomains();
-    //         return ResponseEntity.ok(stats);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    //     }
-    // }
+    // Get top email domains (admin)
+    @GetMapping("/statistics/email-domains")
+    public ResponseEntity<List<EmailDomainStats>> getTopEmailDomains() {
+        try {
+            List<EmailDomainStats> stats = contactMessageService.getTopEmailDomains();
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     
     // Batch mark as replied (admin)
     @PutMapping("/batch/mark-replied")

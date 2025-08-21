@@ -17,12 +17,12 @@ class ContactMessageApi extends BaseApi {
 
   // Mark message as replied
   async markAsReplied(id) {
-    return this.axiosClient.patch(`${this.uri}/${id}/mark-replied`);
+    return this.axiosClient.put(`${this.uri}/${id}/mark-replied`);
   }
 
   // Mark message as unreplied
   async markAsUnreplied(id) {
-    return this.axiosClient.patch(`${this.uri}/${id}/mark-unreplied`);
+    return this.axiosClient.put(`${this.uri}/${id}/mark-unreplied`);
   }
 
   // Get messages by date range

@@ -1,6 +1,7 @@
 package com.nhdinh.profile.service.ContactMessage;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,8 @@ import com.nhdinh.profile.modules.ContactMessage.EmailDomainStats;
 import com.nhdinh.profile.request.ContactMessage.ContactMessageRequest;
 import com.nhdinh.profile.response.ContactMessage.ContactMessageStatsResponse;
 import com.nhdinh.profile.response.ContactMessage.ContactMessageSummaryResponse;
+import com.nhdinh.profile.service.email.AsyncEmailService;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,17 +25,42 @@ import java.util.stream.Collectors;
 @Transactional
 public class ContactMessageService {
     
-    @Autowired
-    private ContactMessageDAO contactMessageDAO;
+    private static final Logger logger = LoggerFactory.getLogger(ContactMessageService.class);
+    
+    private final ContactMessageDAO contactMessageDAO;
+    private final AsyncEmailService asyncEmailService;
+    
+    public ContactMessageService(ContactMessageDAO contactMessageDAO, AsyncEmailService asyncEmailService) {
+        this.contactMessageDAO = contactMessageDAO;
+        this.asyncEmailService = asyncEmailService;
+    }
     
     // Create new contact message
     public ContactMessage createContactMessage(ContactMessageRequest request) {
+        logger.info("Tạo tin nhắn liên hệ mới từ: {}", request.getEmail());
+        
         // Check for recent duplicate messages to prevent spam
-        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
-        boolean hasRecentMessage = contactMessageDAO.hasRecentMessageFromEmail(request.getEmail(), oneHourAgo);
+        LocalDateTime fifteenMinutesAgo = LocalDateTime.now().minusMinutes(15);
+        boolean hasRecentMessage = contactMessageDAO.hasRecentMessageFromEmail(request.getEmail(), fifteenMinutesAgo);
         
         if (hasRecentMessage) {
-            throw new IllegalArgumentException("You have already sent a message recently. Please wait before sending another message.");
+            // Get the most recent message to calculate remaining time
+            List<ContactMessage> recentMessages = contactMessageDAO.findByEmailIgnoreCaseOrderByCreatedAtDesc(request.getEmail());
+            if (!recentMessages.isEmpty()) {
+                ContactMessage lastMessage = recentMessages.get(0);
+                LocalDateTime nextAllowedTime = lastMessage.getCreatedAt().plusMinutes(15);
+                long minutesRemaining = java.time.Duration.between(LocalDateTime.now(), nextAllowedTime).toMinutes();
+                
+                if (minutesRemaining > 0) {
+                    logger.warn("Từ chối tin nhắn từ {} - còn {} phút nữa mới được gửi lại", request.getEmail(), minutesRemaining);
+                    throw new IllegalArgumentException(
+                        String.format("Bạn đã gửi tin nhắn gần đây. Vui lòng chờ %d phút nữa trước khi gửi tin nhắn khác để tránh spam.", 
+                        minutesRemaining + 1)
+                    );
+                }
+            }
+            logger.warn("Từ chối tin nhắn từ {} - đã gửi trong vòng 15 phút", request.getEmail());
+            throw new IllegalArgumentException("Bạn đã gửi tin nhắn gần đây. Vui lòng chờ 15 phút trước khi gửi tin nhắn khác để tránh spam.");
         }
         
         // Check for potential duplicates (same content within 24 hours)
@@ -46,7 +74,8 @@ public class ContactMessageService {
             );
             
             if (!duplicates.isEmpty()) {
-                throw new IllegalArgumentException("A similar message has already been sent recently.");
+                logger.warn("Từ chối tin nhắn trùng lặp từ {}", request.getEmail());
+                throw new IllegalArgumentException("Tin nhắn tương tự đã được gửi gần đây. Vui lòng không gửi lại nội dung trùng lặp.");
             }
         }
         
@@ -57,7 +86,15 @@ public class ContactMessageService {
             request.getMessage()
         );
         
-        return contactMessageDAO.save(contactMessage);
+        // Save contact message first
+        ContactMessage savedMessage = contactMessageDAO.save(contactMessage);
+        logger.info("Đã lưu tin nhắn liên hệ: ID={}, từ={}", savedMessage.getMessageId(), savedMessage.getEmail());
+        
+        // Send email notifications asynchronously (don't fail the request if email fails)
+        asyncEmailService.sendNewContactMessageNotificationAsync(savedMessage);
+        asyncEmailService.sendContactConfirmationEmailAsync(savedMessage);
+        
+        return savedMessage;
     }
     
     // Get all contact messages
@@ -88,6 +125,28 @@ public class ContactMessageService {
         }
         
         ContactMessage message = contactMessage.get();
+        message.markAsReplied();
+        return contactMessageDAO.save(message);
+    }
+    
+    // Reply to contact message and send email
+    public ContactMessage replyToContactMessage(UUID messageId, String replyMessage) {
+        Optional<ContactMessage> contactMessage = contactMessageDAO.findById(messageId);
+        if (!contactMessage.isPresent()) {
+            throw new IllegalArgumentException("Contact message not found");
+        }
+        
+        ContactMessage message = contactMessage.get();
+        
+        // Send reply email asynchronously
+        asyncEmailService.sendContactReplyEmailAsync(
+            message.getEmail(),
+            message.getSubject() != null ? message.getSubject() : "Your Contact Message",
+            message.getContent(),
+            replyMessage
+        );
+        
+        // Mark as replied
         message.markAsReplied();
         return contactMessageDAO.save(message);
     }

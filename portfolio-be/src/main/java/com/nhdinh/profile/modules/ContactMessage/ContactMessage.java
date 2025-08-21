@@ -45,7 +45,7 @@ public class ContactMessage {
     private LocalDateTime createdAt;
     
     @Version
-    @Column(name = "RowVer")
+    @Column(name = "RowVer", insertable = false, updatable = false)
     private byte[] rowVer;
     
     // Default constructor

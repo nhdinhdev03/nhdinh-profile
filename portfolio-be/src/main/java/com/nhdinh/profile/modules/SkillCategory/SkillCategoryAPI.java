@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,17 +18,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nhdinh.profile.utils.ErrorResponse;
+import com.nhdinh.profile.utils.SuccessResponse;
+
 import jakarta.validation.Valid;
 
 /**
  * SkillCategory REST API Controller
- * Handles HTTP requests for skill category operations
+ * Handles HTTP requests for skill category operations with professional error handling
  */
 @RestController
 @RequestMapping("/api/skill-categories")
 @CrossOrigin(origins = "*")
 public class SkillCategoryAPI {
     
+    private static final Logger logger = LoggerFactory.getLogger(SkillCategoryAPI.class);
     private final SkillCategoryDAO skillCategoryDAO;
     
     public SkillCategoryAPI(SkillCategoryDAO skillCategoryDAO) {
@@ -34,41 +40,42 @@ public class SkillCategoryAPI {
     }
     
     /**
-     * GET /api/skill-categories/active/all
-     * Get all active skill categories
+     * GET /api/skill-categories/active/all - Get all active skill categories
      */
     @GetMapping("/active/all")
-    public ResponseEntity<List<SkillCategory>> getAllActiveCategories() {
+    public ResponseEntity<Object> getAllActiveCategories() {
         try {
             List<SkillCategory> categories = skillCategoryDAO.getAllActiveCategories();
             return ResponseEntity.ok(categories);
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Lỗi khi lấy danh sách danh mục kỹ năng đang hoạt động: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Không thể tải danh mục kỹ năng. Vui lòng thử lại sau.", 
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
     
     /**
-     * GET /api/skill-categories/all
-     * Get all skill categories (including inactive)
+     * GET /api/skill-categories/all - Get all skill categories (including inactive)
      */
     @GetMapping("/all")
-    public ResponseEntity<List<SkillCategory>> getAllCategories() {
+    public ResponseEntity<Object> getAllSkillCategories() {
         try {
-            List<SkillCategory> categories = skillCategoryDAO.getAllCategories();
+            List<SkillCategory> categories = skillCategoryDAO.findAll();
             return ResponseEntity.ok(categories);
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Lỗi khi lấy tất cả danh mục kỹ năng: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Không thể tải danh mục kỹ năng. Vui lòng thử lại sau.", 
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
     
     /**
-     * GET /api/skill-categories/{id}
-     * Get skill category by ID
+     * GET /api/skill-categories/{id} - Get skill category by ID
      */
     @GetMapping("/{id}")
-    public ResponseEntity<SkillCategory> getCategoryById(@PathVariable("id") String categoryId) {
+    public ResponseEntity<Object> getSkillCategoryById(@PathVariable("id") String categoryId) {
         try {
             UUID id = UUID.fromString(categoryId);
             Optional<SkillCategory> category = skillCategoryDAO.findById(id);
@@ -76,103 +83,97 @@ public class SkillCategoryAPI {
             if (category.isPresent()) {
                 return ResponseEntity.ok(category.get());
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("Không tìm thấy danh mục kỹ năng với ID được cung cấp.", 
+                        HttpStatus.NOT_FOUND.value()));
             }
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            logger.warn("ID danh mục kỹ năng không hợp lệ: {}", categoryId);
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse("ID danh mục không hợp lệ.", HttpStatus.BAD_REQUEST.value()));
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Lỗi khi lấy danh mục kỹ năng với ID {}: {}", categoryId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Không thể tải thông tin danh mục kỹ năng. Vui lòng thử lại sau.", 
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
     
     /**
-     * POST /api/skill-categories
-     * Create new skill category
+     * POST /api/skill-categories - Create new skill category
      */
     @PostMapping
-    public ResponseEntity<SkillCategory> createCategory(@Valid @RequestBody SkillCategory category) {
+    public ResponseEntity<Object> createSkillCategory(@Valid @RequestBody SkillCategory skillCategory) {
         try {
-            SkillCategory createdCategory = skillCategoryDAO.save(category);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
+            SkillCategory savedCategory = skillCategoryDAO.save(skillCategory);
+            logger.info("Đã tạo danh mục kỹ năng mới: {} (ID: {})", savedCategory.getName(), savedCategory.getCategoryId());
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new SuccessResponse<>("Tạo danh mục kỹ năng thành công.", savedCategory, HttpStatus.CREATED.value()));
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Lỗi khi tạo danh mục kỹ năng mới: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Không thể tạo danh mục kỹ năng mới. Vui lòng thử lại sau.", 
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
     
     /**
-     * PUT /api/skill-categories/{id}
-     * Update skill category
+     * PUT /api/skill-categories/{id} - Update existing skill category
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCategory(
-            @PathVariable("id") String categoryId,
-            @Valid @RequestBody SkillCategory category) {
+    public ResponseEntity<Object> updateSkillCategory(@PathVariable("id") String categoryId, 
+            @Valid @RequestBody SkillCategory skillCategory) {
         try {
             UUID id = UUID.fromString(categoryId);
             
-            if (skillCategoryDAO.existsById(id)) {
-                category.setCategoryId(id);
-                skillCategoryDAO.save(category);
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.notFound().build();
+            if (!skillCategoryDAO.existsById(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("Không tìm thấy danh mục kỹ năng để cập nhật.", 
+                        HttpStatus.NOT_FOUND.value()));
             }
+            
+            skillCategory.setCategoryId(id);
+            SkillCategory updatedCategory = skillCategoryDAO.save(skillCategory);
+            logger.info("Đã cập nhật danh mục kỹ năng: {} (ID: {})", updatedCategory.getName(), updatedCategory.getCategoryId());
+            return ResponseEntity.ok(new SuccessResponse<>("Cập nhật danh mục kỹ năng thành công.", updatedCategory, HttpStatus.OK.value()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            logger.warn("ID danh mục kỹ năng không hợp lệ khi cập nhật: {}", categoryId);
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse("ID danh mục không hợp lệ.", HttpStatus.BAD_REQUEST.value()));
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Lỗi khi cập nhật danh mục kỹ năng với ID {}: {}", categoryId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Không thể cập nhật danh mục kỹ năng. Vui lòng thử lại sau.", 
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
     
     /**
-     * DELETE /api/skill-categories/{id}
-     * Soft delete skill category (set IsActive to false)
+     * DELETE /api/skill-categories/{id} - Delete skill category by ID
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable("id") String categoryId) {
-        try {
-            UUID id = UUID.fromString(categoryId);
-            Optional<SkillCategory> categoryOpt = skillCategoryDAO.findById(id);
-            
-            if (categoryOpt.isPresent()) {
-                SkillCategory category = categoryOpt.get();
-                category.setActive(false);
-                skillCategoryDAO.save(category);
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-    
-    /**
-     * DELETE /api/skill-categories/{id}/hard
-     * Hard delete skill category (permanent delete)
-     */
-    @DeleteMapping("/{id}/hard")
-    public ResponseEntity<Void> hardDeleteCategory(@PathVariable("id") String categoryId) {
+    public ResponseEntity<Object> deleteSkillCategory(@PathVariable("id") String categoryId) {
         try {
             UUID id = UUID.fromString(categoryId);
             
-            if (skillCategoryDAO.existsById(id)) {
-                skillCategoryDAO.deleteById(id);
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.notFound().build();
+            if (!skillCategoryDAO.existsById(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("Không tìm thấy danh mục kỹ năng để xóa.", 
+                        HttpStatus.NOT_FOUND.value()));
             }
+            
+            skillCategoryDAO.deleteById(id);
+            logger.info("Đã xóa danh mục kỹ năng với ID: {}", categoryId);
+            return ResponseEntity.ok(new SuccessResponse<>("Xóa danh mục kỹ năng thành công.", null, HttpStatus.OK.value()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            logger.warn("ID danh mục kỹ năng không hợp lệ khi xóa: {}", categoryId);
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse("ID danh mục không hợp lệ.", HttpStatus.BAD_REQUEST.value()));
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Lỗi khi xóa danh mục kỹ năng với ID {}: {}", categoryId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Không thể xóa danh mục kỹ năng. Vui lòng thử lại sau.", 
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()));
         }
     }
 }

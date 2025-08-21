@@ -1,8 +1,13 @@
 import React, { useState, useCallback, useMemo } from "react";
+
+import { useNotificationContext } from "components/Notification";
 import "./Sections.scss";
+import userContactMessageApi from "api/user/contact/ContactMessageApi";
 
 
-function Contact({ email = "nhdinh.dev03@gmail.com", info = {}, actionUrl = "" }) {
+function Contact({ email = "nhdinh.dev03@gmail.com", info = {} }) {
+  const notification = useNotificationContext();
+  
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -30,42 +35,22 @@ function Contact({ email = "nhdinh.dev03@gmail.com", info = {}, actionUrl = "" }
 
   const errors = useMemo(() => {
     const errs = {};
-    if (!form.name.trim()) errs.name = "Bắt buộc";
-    if (!form.email.trim()) errs.email = "Bắt buộc";
+    if (!form.name.trim()) errs.name = "Họ tên là bắt buộc";
+    else if (form.name.trim().length < 2) errs.name = "Họ tên phải có ít nhất 2 ký tự";
+    else if (form.name.trim().length > 100) errs.name = "Họ tên không được quá 100 ký tự";
+    
+    if (!form.email.trim()) errs.email = "Email là bắt buộc";
     else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
       errs.email = "Email không hợp lệ";
-    if (!form.message.trim()) errs.message = "Bắt buộc";
+    else if (form.email.length > 256) errs.email = "Email không được quá 256 ký tự";
+    
+    if (form.subject && form.subject.length > 200) errs.subject = "Tiêu đề không được quá 200 ký tự";
+    
+    if (!form.message.trim()) errs.message = "Nội dung tin nhắn là bắt buộc";
+    else if (form.message.trim().length < 10) errs.message = "Tin nhắn phải có ít nhất 10 ký tự";
+    
     return errs;
   }, [form]);
-
-  const submitViaAPI = useCallback(async () => {
-    if (!actionUrl) return false;
-    try {
-      setStatus((s) => ({
-        ...s,
-        sending: true,
-        ok: false,
-        error: "",
-        apiTried: true,
-      }));
-      const res = await fetch(actionUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setStatus({ sending: false, ok: true, error: "", apiTried: true });
-      return true;
-    } catch (_) {
-      setStatus({
-        sending: false,
-        ok: false,
-        error: "Không thể gửi qua server. Sẽ mở email.",
-        apiTried: true,
-      });
-      return false;
-    }
-  }, [actionUrl, form]);
 
   const submitViaMailto = useCallback(() => {
     const body = encodeURIComponent(
@@ -75,42 +60,208 @@ function Contact({ email = "nhdinh.dev03@gmail.com", info = {}, actionUrl = "" }
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
   }, [form, email]);
 
+  const submitViaAPI = useCallback(async () => {
+    try {
+      setStatus((s) => ({
+        ...s,
+        sending: true,
+        ok: false,
+        error: "",
+        apiTried: true,
+      }));
+      
+      await userContactMessageApi.submit(form);
+      
+      setStatus({ 
+        sending: false, 
+        ok: true, 
+        error: "", 
+        apiTried: true 
+      });
+      
+      // Show success notification
+      notification.success(
+        "🎉 Tin nhắn đã được gửi thành công! Tôi sẽ phản hồi sớm nhất !.",
+        6000,
+        {
+          title: "Gửi thành công",
+          actions: [
+            {
+              label: "Gửi tin nhắn khác",
+              onClick: () => {
+                // Form already reset below
+              }
+            }
+          ]
+        }
+      );
+      
+      // Reset form after successful submission
+      setForm({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+      setTouched({});
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to submit contact message:', error);
+      
+      let errorMessage = "Không thể gửi tin nhắn. Vui lòng thử lại sau.";
+      let errorTitle = "Gửi thất bại";
+      
+      // Handle specific error cases
+      if (error.response) {
+        const serverMessage = error.response.data?.message;
+        
+        switch (error.response.status) {
+          case 400:
+            // Check if it's a rate limiting error specifically
+            if (serverMessage && serverMessage.includes("phút nữa")) {
+              // Extract minutes from server message like "Vui lòng chờ 5 phút nữa"
+              const minutesMatch = serverMessage.match(/chờ (\d+) phút nữa/);
+              const minutes = minutesMatch ? minutesMatch[1] : "vài";
+              errorMessage = `⏰ Bạn đã gửi tin nhắn gần đây. Vui lòng chờ ${minutes} phút nữa trước khi gửi tin nhắn khác để tránh spam.`;
+              errorTitle = `Vui lòng chờ ${minutes} phút nữa`;
+            } else if (serverMessage && serverMessage.includes("15 phút")) {
+              errorMessage = "⏰ Bạn đã gửi tin nhắn gần đây. Vui lòng chờ 15 phút trước khi gửi tin nhắn khác để tránh spam.";
+              errorTitle = "Vui lòng chờ 15 phút";
+            } else if (serverMessage && serverMessage.includes("trùng lặp")) {
+              errorMessage = "📝 Tin nhắn tương tự đã được gửi gần đây. Vui lòng không gửi lại nội dung trùng lặp.";
+              errorTitle = "Nội dung trùng lặp";
+            } else {
+              errorMessage = serverMessage || "Thông tin không hợp lệ. Vui lòng kiểm tra lại các trường.";
+              errorTitle = "Dữ liệu không hợp lệ";
+            }
+            break;
+          case 429:
+            errorMessage = "⏰ Bạn đã gửi quá nhiều tin nhắn. Vui lòng chờ 15 phút trước khi gửi lại.";
+            errorTitle = "Vui lòng chờ 15 phút";
+            break;
+          case 500:
+            errorMessage = "Lỗi server. Vui lòng thử lại sau hoặc liên hệ trực tiếp qua email.";
+            errorTitle = "Lỗi hệ thống";
+            break;
+          default:
+            errorMessage = serverMessage || errorMessage;
+        }
+      } else if (error.request) {
+        errorMessage = "Không thể kết nối đến server. Kiểm tra kết nối mạng của bạn.";
+        errorTitle = "Lỗi kết nối";
+      }
+      
+      // Show error notification
+      const isRateLimited = errorTitle.includes("phút");
+      
+      notification.error(
+        errorMessage,
+        isRateLimited ? 10000 : 8000, // Longer duration for rate limit error
+        {
+          title: errorTitle,
+          actions: isRateLimited ? [
+            {
+              label: "Hiểu rồi",
+              onClick: () => {
+                // Maybe show a countdown timer in the future
+              }
+            },
+            {
+              label: "Gửi email trực tiếp",
+              onClick: () => {
+                submitViaMailto();
+              }
+            }
+          ] : [
+            {
+              label: "Thử lại",
+              onClick: () => {
+                // Will retry when user clicks submit again
+              }
+            },
+            {
+              label: "Gửi email trực tiếp",
+              onClick: () => {
+                submitViaMailto();
+              }
+            }
+          ]
+        }
+      );
+      
+      setStatus({
+        sending: false,
+        ok: false,
+        error: errorMessage,
+        apiTried: true,
+      });
+      return false;
+    }
+  }, [form, notification, submitViaMailto]);
+
   const copyEmail = useCallback(async () => {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(email);
         setCopied(true);
         setTimeout(() => setCopied(false), 1800);
+        
+        // Show success notification for copy
+        notification.success(
+          `Đã sao chép email: ${email}`,
+          3000,
+          {
+            title: "Sao chép thành công"
+          }
+        );
       } else {
         window.location.href = `mailto:${email}`; // fallback
       }
-    } catch (_) {
-      /* ignore */
+    } catch (error) {
+      console.error('Failed to copy email:', error);
+      notification.error(
+        "Không thể sao chép email. Đã mở ứng dụng email thay thế.",
+        4000,
+        {
+          title: "Sao chép thất bại"
+        }
+      );
+      window.location.href = `mailto:${email}`;
     }
-  }, [email]);
+  }, [email, notification]);
 
   const onSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      if (botField) return; // bot
+      if (botField) return; // bot protection
+      
       // mark all as touched to show errors if any
       setTouched({ name: true, email: true, subject: true, message: true });
+      
       if (Object.keys(errors).length) {
+        // Show validation error notification
+        notification.warning(
+          "Vui lòng kiểm tra và điền đầy đủ thông tin bắt buộc trước khi gửi.",
+          5000,
+          {
+            title: "Thông tin chưa đầy đủ",
+            actions: []
+          }
+        );
+        
         setStatus((s) => ({
           ...s,
           error: "Vui lòng kiểm tra các trường bắt buộc.",
         }));
         return;
       }
-      const done = await submitViaAPI();
-      if (!done) submitViaMailto();
+      
+      // Try API submission
+      await submitViaAPI();
     },
-    [botField, errors, submitViaAPI, submitViaMailto]
+    [botField, errors, submitViaAPI, notification]
   );
-
-  const globalMessage = status.ok
-    ? "Đã gửi thành công! Cảm ơn bạn 🙌"
-    : status.error;
 
   return (
     <section id="contact" aria-labelledby="contact-title" data-section>
@@ -134,16 +285,6 @@ function Contact({ email = "nhdinh.dev03@gmail.com", info = {}, actionUrl = "" }
             <h3 id="form-title" className="card-title">
               Gửi tin nhắn
             </h3>
-            {globalMessage && (
-              <div
-                className={`banner ${
-                  status.ok ? "success" : status.error ? "error" : ""
-                }`}
-                role={status.ok ? "status" : "alert"}
-              >
-                {globalMessage}
-              </div>
-            )}
           </div>
           <form
             onSubmit={onSubmit}
@@ -230,7 +371,9 @@ function Contact({ email = "nhdinh.dev03@gmail.com", info = {}, actionUrl = "" }
               </div>
             </div>
 
-            <div className="field">
+            <div className={`field ${
+              touched.subject && errors.subject ? "has-error" : ""
+            }`}>
               <label htmlFor="subject">
                 Tiêu đề <span className="muted">(tùy chọn)</span>
               </label>
@@ -244,6 +387,11 @@ function Contact({ email = "nhdinh.dev03@gmail.com", info = {}, actionUrl = "" }
                 autoComplete="off"
                 disabled={status.sending}
               />
+              {touched.subject && errors.subject && (
+                <p className="field-error" role="alert">
+                  {errors.subject}
+                </p>
+              )}
             </div>
 
             <div
@@ -276,25 +424,39 @@ function Contact({ email = "nhdinh.dev03@gmail.com", info = {}, actionUrl = "" }
               )}
             </div>
 
+    
+
+            {/* General error message */}
+            {status.error && !status.error.includes("15 phút") && !status.error.includes("phút nữa") && (
+              <div className="form-error" role="alert" style={{
+                padding: "12px 16px",
+                marginTop: "16px",
+                backgroundColor: "#f8d7da",
+                border: "1px solid #f5c6cb",
+                borderRadius: "6px",
+                color: "#721c24"
+              }}>
+                <strong>❌ Có lỗi xảy ra</strong>
+                <p style={{ margin: "4px 0 0 0", fontSize: "14px" }}>
+                  {status.error}
+                </p>
+              </div>
+            )}
+
             <div className="form-footer">
               <button
                 className="btn primary submit-btn"
                 type="submit"
-                disabled={status.sending}
+                disabled={status.sending || Object.keys(errors).length > 0}
               >
                 {status.sending && (
                   <span className="spinner" aria-hidden="true" />
                 )}
-                <span>{status.sending ? "Đang gửi..." : "Gửi"}</span>
+                <span>{status.sending ? "Đang gửi..." : "Gửi tin nhắn"}</span>
               </button>
-              {actionUrl && (
-                <p className="hint section-desc">
-                  Ưu tiên gửi qua server • fallback mailto
-                </p>
-              )}
-            </div>
-            <div className="sr-status" aria-live="polite">
-              {globalMessage}
+              <p className="hint section-desc">
+                Tin nhắn sẽ được gửi trực tiếp đến email của tôi
+              </p>
             </div>
           </form>
         </div>

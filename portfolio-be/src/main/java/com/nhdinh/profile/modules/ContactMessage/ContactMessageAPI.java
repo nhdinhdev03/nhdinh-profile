@@ -10,10 +10,13 @@ import com.nhdinh.profile.request.ContactMessage.ContactMessageRequest;
 import com.nhdinh.profile.response.ContactMessage.ContactMessageStatsResponse;
 import com.nhdinh.profile.response.ContactMessage.ContactMessageSummaryResponse;
 import com.nhdinh.profile.service.ContactMessage.ContactMessageService;
+import com.nhdinh.profile.utils.ErrorResponse;
+import com.nhdinh.profile.utils.SuccessResponse;
 
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,14 +30,21 @@ public class ContactMessageAPI {
     
     // Submit new contact message (public endpoint)
     @PostMapping("/submit")
-    public ResponseEntity<ContactMessage> submitContactMessage(@Valid @RequestBody ContactMessageRequest request) {
+    public ResponseEntity<Object> submitContactMessage(@Valid @RequestBody ContactMessageRequest request) {
         try {
             ContactMessage contactMessage = contactMessageService.createContactMessage(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(contactMessage);
+            SuccessResponse<ContactMessage> successResponse = new SuccessResponse<>(
+                "Gửi tin nhắn thành công! Chúng tôi sẽ phản hồi bạn sớm nhất có thể.", 
+                contactMessage, 
+                HttpStatus.CREATED.value()
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.badRequest().body(errorResponse);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            ErrorResponse errorResponse = new ErrorResponse("Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau.", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
     
@@ -88,6 +98,26 @@ public class ContactMessageAPI {
     public ResponseEntity<ContactMessage> markAsReplied(@PathVariable UUID id) {
         try {
             ContactMessage message = contactMessageService.markAsReplied(id);
+            return ResponseEntity.ok(message);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    // Reply to contact message and send email (admin)
+    @PostMapping("/{id}/reply")
+    public ResponseEntity<ContactMessage> replyToMessage(
+            @PathVariable UUID id, 
+            @RequestBody Map<String, String> replyData) {
+        try {
+            String replyMessage = replyData.get("message");
+            if (replyMessage == null || replyMessage.trim().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            ContactMessage message = contactMessageService.replyToContactMessage(id, replyMessage);
             return ResponseEntity.ok(message);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -224,38 +254,38 @@ public class ContactMessageAPI {
         }
     }
     
-    // Get message statistics (admin)
-    @GetMapping("/statistics")
-    public ResponseEntity<ContactMessageStatsResponse> getMessageStatistics() {
-        try {
-            ContactMessageStatsResponse stats = contactMessageService.getMessageStatistics();
-            return ResponseEntity.ok(stats);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+    // // Get message statistics (admin)
+    // @GetMapping("/statistics")
+    // public ResponseEntity<ContactMessageStatsResponse> getMessageStatistics() {
+    //     try {
+    //         ContactMessageStatsResponse stats = contactMessageService.getMessageStatistics();
+    //         return ResponseEntity.ok(stats);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    //     }
+    // }
     
-    // Get monthly statistics (admin)
-    @GetMapping("/statistics/monthly")
-    public ResponseEntity<List<ContactMessageMonthlyStats>> getMonthlyStatistics() {
-        try {
-            List<ContactMessageMonthlyStats> stats = contactMessageService.getMonthlyStatistics();
-            return ResponseEntity.ok(stats);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+    // // Get monthly statistics (admin)
+    // @GetMapping("/statistics/monthly")
+    // public ResponseEntity<List<ContactMessageMonthlyStats>> getMonthlyStatistics() {
+    //     try {
+    //         List<ContactMessageMonthlyStats> stats = contactMessageService.getMonthlyStatistics();
+    //         return ResponseEntity.ok(stats);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    //     }
+    // }
     
-    // Get top email domains (admin)
-    @GetMapping("/statistics/email-domains")
-    public ResponseEntity<List<EmailDomainStats>> getTopEmailDomains() {
-        try {
-            List<EmailDomainStats> stats = contactMessageService.getTopEmailDomains();
-            return ResponseEntity.ok(stats);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+    // // Get top email domains (admin)
+    // @GetMapping("/statistics/email-domains")
+    // public ResponseEntity<List<EmailDomainStats>> getTopEmailDomains() {
+    //     try {
+    //         List<EmailDomainStats> stats = contactMessageService.getTopEmailDomains();
+    //         return ResponseEntity.ok(stats);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    //     }
+    // }
     
     // Batch mark as replied (admin)
     @PutMapping("/batch/mark-replied")

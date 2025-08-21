@@ -1,5 +1,6 @@
+import adminUserApi from 'api/user/auth/AdminUserApi';
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import adminUserApi from '../api/admin/auth/AdminUserApi';
+
 
 const AuthContext = createContext();
 

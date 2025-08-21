@@ -8,7 +8,7 @@ import {
   ProtectedRoute,
 } from "components";
 import { AuthProvider } from "contexts/AuthContext";
-import { ROUTES, AUTH_LOGIN } from "router/routeConstants";
+import { AUTH_LOGIN } from "router/routeConstants";
 
 
 

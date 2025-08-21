@@ -3,6 +3,8 @@ import axiosClient from './axiosClient';
 class BaseApi {
     constructor(uri) {
         this.uri = uri;
+
+    this.axiosClient = axiosClient;
     }
 
     async getById(id) {

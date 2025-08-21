@@ -62,7 +62,7 @@ const ContactDetailModal = ({
       const y = scrollPositionRef.current;
       document.body.style.top = '';
       window.scrollTo(0, y);
-      previouslyFocusedRef.current && previouslyFocusedRef.current.focus?.();
+  previouslyFocusedRef.current?.focus?.();
     }
     return () => {
       document.body.classList.remove('modal-open');
@@ -93,11 +93,9 @@ const ContactDetailModal = ({
           e.preventDefault();
           last.focus();
         }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
       }
     }
   }, [onClose]);
@@ -530,10 +528,10 @@ const ContactManagement = () => {
 
   // Helper function to get display name
   const getDisplayName = (contact) => {
-    if (contact.fullName && contact.fullName.trim()) {
+  if (contact.fullName?.trim()) {
       return contact.fullName.trim();
     }
-    if (contact.name && contact.name.trim()) {
+  if (contact.name?.trim()) {
       return contact.name.trim();
     }
     // Fallback: tạo tên từ email
@@ -789,36 +787,88 @@ const ContactManagement = () => {
 
       {/* Filters */}
       <AdminCard title="Bộ lọc" className="shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-          <div className="relative">
-            <MagnifyingGlassIcon className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo tên, email, chủ đề..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors duration-200"
-            />
+        <div className="space-y-4">
+          {/* Row 1: Search */}
+          <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-3 md:space-y-0">
+            <div className="relative flex-1 max-w-xl">
+              <label htmlFor="contact-search" className="sr-only">Tìm kiếm</label>
+              <MagnifyingGlassIcon className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                id="contact-search"
+                type="text"
+                placeholder="Tìm kiếm theo tên, email, chủ đề, nội dung..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-10 w-full rounded-lg border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 transition-all"
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm("")}
+                  aria-label="Xóa tìm kiếm"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+            <div className="flex items-center justify-between md:justify-start space-x-2">
+              <span className="text-xs uppercase tracking-wide text-gray-400">Trạng thái:</span>
+              <div className="inline-flex bg-gray-100 rounded-lg p-0.5">
+                {([
+                  { key: 'all', label: 'Tất cả', count: stats.total },
+                  { key: 'unreplied', label: 'Chưa trả lời', count: stats.unreplied },
+                  { key: 'replied', label: 'Đã trả lời', count: stats.replied },
+                ]).map(s => (
+                  <button
+                    key={s.key}
+                    type="button"
+                    onClick={() => setStatusFilter(s.key)}
+                    className={`relative text-xs md:text-sm font-medium px-3 py-1.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors
+                      ${statusFilter === s.key
+                        ? 'bg-white shadow-sm text-indigo-600'
+                        : 'text-gray-600 hover:text-gray-900'}
+                    `}
+                  >
+                    {s.label}
+                    <span className={`ml-1 inline-block min-w-[1.5rem] text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${statusFilter === s.key ? 'bg-indigo-50 text-indigo-600' : 'bg-white/60 text-gray-500'}`}>{s.count}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-colors duration-200"
-          >
-            <option value="all">Tất cả trạng thái</option>
-            <option value="unreplied">Chưa trả lời</option>
-            <option value="replied">Đã trả lời</option>
-          </select>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setSearchTerm("");
-              setStatusFilter("all");
-            }}
-            className="transition-all duration-200 hover:bg-gray-100"
-          >
-            Đặt lại bộ lọc
-          </Button>
+
+          {/* Row 2: Meta & Reset */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="text-sm text-gray-500 flex items-center flex-wrap gap-x-4 gap-y-1">
+              <span>
+                Kết quả: <strong>{filteredContacts.length}</strong>{' '}
+                {filteredContacts.length !== contacts.length && (
+                  <span className="text-gray-400">/ {contacts.length}</span>
+                )}
+              </span>
+              <span className="hidden md:inline text-gray-300">|</span>
+              <span className="flex items-center space-x-2">
+                <span className="inline-flex items-center text-xs px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700 border border-yellow-100">Chưa TL: {stats.unreplied}</span>
+                <span className="inline-flex items-center text-xs px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-100">Đã TL: {stats.replied}</span>
+                <span className="inline-flex items-center text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Hôm nay: {stats.today}</span>
+              </span>
+            </div>
+            {(searchTerm || statusFilter !== 'all') && (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setStatusFilter("all");
+                  }}
+                  className="!text-sm bg-white border-gray-300 hover:bg-gray-50"
+                >
+                  Đặt lại bộ lọc
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </AdminCard>
 
@@ -828,6 +878,7 @@ const ContactManagement = () => {
           <AdminTable
             data={filteredContacts}
             columns={columns}
+            pageSize={5}
             emptyMessage="Không có tin nhắn liên hệ nào"
             className="table-fixed w-full"
           />

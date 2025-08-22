@@ -17,7 +17,7 @@ export { default as BlogTagMapApi } from './blog/BlogTagMapApi';
 export { default as ContactMessageApi } from './contact/ContactMessageApi';
 
 // Auth APIs
-export { default as AdminUserApi } from './auth/AdminUserApi';
+
 
 // Profile APIs
 export { default as ProfileInfoApi } from './profile/ProfileInfoApi';

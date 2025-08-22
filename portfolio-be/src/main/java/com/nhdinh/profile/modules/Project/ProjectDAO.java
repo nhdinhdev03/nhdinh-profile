@@ -98,4 +98,22 @@ public interface ProjectDAO extends JpaRepository<Project, UUID> {
            "(SELECT COUNT(t) FROM Project p2 JOIN p2.tags t WHERE p2 = p AND t.tagId IN :tagIds) = :tagCount " +
            "ORDER BY p.createdAt DESC")
     List<Project> findByAllTagIds(@Param("tagIds") List<UUID> tagIds, @Param("tagCount") int tagCount);
+    
+    /**
+     * Lấy Projects công khai (published và public)
+     */
+    @Query("SELECT p FROM Project p WHERE p.status = 'published' AND p.isPublic = true ORDER BY p.sortOrder, p.createdAt DESC")
+    List<Project> findPublicProjects();
+    
+    /**
+     * Lấy Featured Projects
+     */
+    @Query("SELECT p FROM Project p WHERE p.isFeatured = true AND p.status = 'published' AND p.isPublic = true ORDER BY p.sortOrder, p.createdAt DESC")
+    List<Project> findFeaturedProjects();
+    
+    /**
+     * Lấy Projects theo status
+     */
+    @Query("SELECT p FROM Project p WHERE p.status = :status ORDER BY p.createdAt DESC")
+    List<Project> findByStatus(@Param("status") String status);
 }

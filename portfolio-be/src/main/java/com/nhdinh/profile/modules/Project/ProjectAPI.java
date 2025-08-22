@@ -201,4 +201,53 @@ public class ProjectAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    
+    // ================== USER ENDPOINTS ==================
+    
+    /**
+     * Lấy Projects công khai cho user (published và public)
+     */
+    @GetMapping("/public")
+    public ResponseEntity<List<ProjectResponse>> getPublicProjects() {
+        try {
+            List<Project> projects = projectService.getPublicProjects();
+            List<ProjectResponse> responses = projects.stream()
+                    .map(ProjectResponse::fromEntity)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(responses);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
+     * Lấy Featured Projects cho user
+     */
+    @GetMapping("/featured")
+    public ResponseEntity<List<ProjectResponse>> getFeaturedProjects() {
+        try {
+            List<Project> projects = projectService.getFeaturedProjects();
+            List<ProjectResponse> responses = projects.stream()
+                    .map(ProjectResponse::fromEntity)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(responses);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
+     * Tăng view count cho project
+     */
+    @PostMapping("/{id}/view")
+    public ResponseEntity<Void> incrementViewCount(@PathVariable UUID id) {
+        try {
+            projectService.incrementViewCount(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

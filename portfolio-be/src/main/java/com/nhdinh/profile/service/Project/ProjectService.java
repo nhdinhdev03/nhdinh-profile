@@ -83,6 +83,10 @@ public class ProjectService {
         project.setDemoUrl(request.getDemoUrl());
         project.setSourceUrl(request.getSourceUrl());
         project.setCategory(category);
+        project.setIsFeatured(request.getIsFeatured() != null ? request.getIsFeatured() : false);
+        project.setStatus(request.getStatus() != null ? request.getStatus() : "draft");
+        project.setIsPublic(request.getIsPublic() != null ? request.getIsPublic() : true);
+        project.setSortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0);
         
         // Xử lý tags
         if (request.getTagNames() != null && !request.getTagNames().isEmpty()) {
@@ -115,6 +119,10 @@ public class ProjectService {
         existingProject.setDemoUrl(request.getDemoUrl());
         existingProject.setSourceUrl(request.getSourceUrl());
         existingProject.setCategory(category);
+        existingProject.setIsFeatured(request.getIsFeatured() != null ? request.getIsFeatured() : false);
+        existingProject.setStatus(request.getStatus() != null ? request.getStatus() : existingProject.getStatus());
+        existingProject.setIsPublic(request.getIsPublic() != null ? request.getIsPublic() : existingProject.getIsPublic());
+        existingProject.setSortOrder(request.getSortOrder() != null ? request.getSortOrder() : existingProject.getSortOrder());
         
         // Xử lý tags
         if (request.getTagNames() != null) {
@@ -179,5 +187,38 @@ public class ProjectService {
      */
     public List<Project> getProjectsByAllTags(List<UUID> tagIds) {
         return projectDAO.findByAllTagIds(tagIds, tagIds.size());
+    }
+    
+    /**
+     * Lấy Projects công khai cho user (published và public)
+     */
+    public List<Project> getPublicProjects() {
+        return projectDAO.findPublicProjects();
+    }
+    
+    /**
+     * Lấy Featured Projects
+     */
+    public List<Project> getFeaturedProjects() {
+        return projectDAO.findFeaturedProjects();
+    }
+    
+    /**
+     * Tăng view count
+     */
+    @Transactional
+    public void incrementViewCount(UUID projectId) {
+        Project project = projectDAO.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Project với ID: " + projectId));
+        
+        project.setViewCount(project.getViewCount() + 1);
+        projectDAO.save(project);
+    }
+    
+    /**
+     * Lấy Projects theo status
+     */
+    public List<Project> getProjectsByStatus(String status) {
+        return projectDAO.findByStatus(status);
     }
 }

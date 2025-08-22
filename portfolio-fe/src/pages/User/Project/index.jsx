@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import UserProjectApi from '../../../api/user/projects/UserProjectApi';
 import "./Sections.scss";
 
 const DEFAULT_PROJECTS = [

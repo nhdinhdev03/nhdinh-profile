@@ -20,10 +20,7 @@ import lombok.NoArgsConstructor;
 
 import com.nhdinh.profile.modules.SkillCategory.SkillCategory;
 
-/**
- * Skill Entity Class
- * Represents individual skills belonging to a skill category
- */
+
 @Entity
 @Table(name = "Skill", schema = "dbo")
 @Data

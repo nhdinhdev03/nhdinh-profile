@@ -31,6 +31,45 @@ class ProjectApi extends BaseApi {
       tagIds
     });
   }
+
+  // Search projects
+  async search(keyword) {
+    return axiosClient.get(`${this.uri}/search`, { params: { keyword } });
+  }
+
+  // Get projects by status
+  async getByStatus(status) {
+    return axiosClient.get(`${this.uri}/status/${status}`);
+  }
+
+  // Toggle featured status
+  async toggleFeatured(id, isFeatured) {
+    return axiosClient.patch(`${this.uri}/${id}/featured`, { isFeatured });
+  }
+
+  // Update project status
+  async updateStatus(id, status) {
+    return axiosClient.patch(`${this.uri}/${id}/status`, { status });
+  }
+
+  // Bulk operations
+  async bulkUpdateStatus(projectIds, status) {
+    return axiosClient.patch(`${this.uri}/bulk/status`, {
+      projectIds,
+      status
+    });
+  }
+
+  async bulkDelete(projectIds) {
+    return axiosClient.delete(`${this.uri}/bulk`, {
+      data: { projectIds }
+    });
+  }
+
+  // Get project statistics
+  async getStatistics() {
+    return axiosClient.get(`${this.uri}/statistics`);
+  }
 }
 
 const projectApi = new ProjectApi();

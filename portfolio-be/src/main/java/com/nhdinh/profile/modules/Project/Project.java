@@ -62,6 +62,21 @@ public class Project {
     @Column(name = "SourceUrl", length = 512)
     private String sourceUrl;
     
+    @Column(name = "IsFeatured", nullable = false)
+    private Boolean isFeatured = false;
+    
+    @Column(name = "Status", length = 20, nullable = false)
+    private String status = "draft"; // draft, published, archived
+    
+    @Column(name = "IsPublic", nullable = false)
+    private Boolean isPublic = true;
+    
+    @Column(name = "ViewCount", nullable = false)
+    private Long viewCount = 0L;
+    
+    @Column(name = "SortOrder")
+    private Integer sortOrder = 0;
+    
     @NotNull(message = "CategoryId không được để trống")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CategoryId", nullable = false)

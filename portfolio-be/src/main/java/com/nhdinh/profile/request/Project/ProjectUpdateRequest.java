@@ -35,4 +35,12 @@ public class ProjectUpdateRequest {
     private UUID categoryId;
     
     private List<String> tagNames;
+    
+    private Boolean isFeatured;
+    
+    private String status; // draft, published, archived
+    
+    private Boolean isPublic;
+    
+    private Integer sortOrder;
 }

@@ -35,4 +35,12 @@ public class ProjectCreateRequest {
     private UUID categoryId;
     
     private List<String> tagNames;
+    
+    private Boolean isFeatured = false;
+    
+    private String status = "draft"; // draft, published, archived
+    
+    private Boolean isPublic = true;
+    
+    private Integer sortOrder = 0;
 }

@@ -9,10 +9,9 @@ import {
   StarIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
-import PageHeader from '../../../components/Admin/PageHeader';
-import ApiDebugger from '../../../components/Debug/ApiDebugger';
-import SimpleApiTest from '../../../components/Debug/SimpleApiTest';
+
 import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from 'api/admin';
+import { PageHeader } from 'components/Admin';
 
 
 const ProjectsManagement = () => {
@@ -183,13 +182,7 @@ const ProjectsManagement = () => {
       
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-6">
-          {/* Debug Components - Only show in development */}
-          {process.env.NODE_ENV === 'development' && (
-            <>
-              <SimpleApiTest />
-              <ApiDebugger />
-            </>
-          )}
+          
           
           {/* Search and Filter */}
           <div className="flex flex-col sm:flex-row gap-4">

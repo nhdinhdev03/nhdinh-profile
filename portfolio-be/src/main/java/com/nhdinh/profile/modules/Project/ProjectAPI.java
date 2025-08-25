@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,21 +36,36 @@ public class ProjectAPI {
     private ProjectService projectService;
     
     /**
+     * Test endpoint đơn giản
+     */
+    @GetMapping("/test")
+    public ResponseEntity<String> testEndpoint() {
+        return ResponseEntity.ok("Project API is working!");
+    }
+    
+    /**
      * Lấy tất cả Projects
      */
     @GetMapping("/all")
-    public ResponseEntity<List<ProjectResponse>> getAllProjects() {
+    public ResponseEntity<?> getAllProjects() {
         try {
             List<Project> projects = projectService.getAllProjects();
+            if (projects == null) {
+                return ResponseEntity.ok("Projects list is null");
+            }
+            
             List<ProjectResponse> responses = projects.stream()
                     .map(ProjectResponse::fromEntity)
                     .collect(Collectors.toList());
             
             return ResponseEntity.ok(responses);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            e.printStackTrace(); // Log lỗi vào console
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error: " + e.getMessage());
         }
     }
+    
     
     /**
      * Lấy Project theo ID
@@ -248,6 +264,114 @@ public class ProjectAPI {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
+     * Thay đổi trạng thái featured của project
+     */
+    @PatchMapping("/{id}/featured")
+    public ResponseEntity<?> toggleFeatured(@PathVariable UUID id, @RequestBody java.util.Map<String, Boolean> body) {
+        try {
+            Boolean isFeatured = body.get("isFeatured");
+            if (isFeatured == null) {
+                return ResponseEntity.badRequest().body("isFeatured không được để trống");
+            }
+            
+            Project project = projectService.toggleFeatured(id, isFeatured);
+            ProjectResponse response = ProjectResponse.fromEntity(project);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra");
+        }
+    }
+    
+    /**
+     * Thay đổi trạng thái của project
+     */
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(@PathVariable UUID id, @RequestBody java.util.Map<String, String> body) {
+        try {
+            String status = body.get("status");
+            if (status == null || status.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Status không được để trống");
+            }
+            
+            Project project = projectService.updateStatus(id, status);
+            ProjectResponse response = ProjectResponse.fromEntity(project);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra");
+        }
+    }
+    
+    /**
+     * Lấy thống kê projects
+     */
+    @GetMapping("/statistics")
+    public ResponseEntity<java.util.Map<String, Object>> getStatistics() {
+        try {
+            java.util.Map<String, Object> stats = projectService.getStatistics();
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
+     * Bulk update status của nhiều projects
+     */
+    @PatchMapping("/bulk/status")
+    public ResponseEntity<?> bulkUpdateStatus(@RequestBody java.util.Map<String, Object> body) {
+        try {
+            @SuppressWarnings("unchecked")
+            List<String> projectIdStrings = (List<String>) body.get("projectIds");
+            String status = (String) body.get("status");
+            
+            if (projectIdStrings == null || projectIdStrings.isEmpty()) {
+                return ResponseEntity.badRequest().body("Danh sách projectIds không được để trống");
+            }
+            
+            if (status == null || status.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Status không được để trống");
+            }
+            
+            List<UUID> projectIds = projectIdStrings.stream()
+                    .map(UUID::fromString)
+                    .collect(Collectors.toList());
+            
+            int updatedCount = projectService.bulkUpdateStatus(projectIds, status);
+            return ResponseEntity.ok(java.util.Map.of("updatedCount", updatedCount));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra");
+        }
+    }
+    
+    /**
+     * Bulk delete nhiều projects
+     */
+    @DeleteMapping("/bulk")
+    public ResponseEntity<?> bulkDelete(@RequestBody java.util.Map<String, Object> body) {
+        try {
+            @SuppressWarnings("unchecked")
+            List<String> projectIdStrings = (List<String>) body.get("projectIds");
+            
+            if (projectIdStrings == null || projectIdStrings.isEmpty()) {
+                return ResponseEntity.badRequest().body("Danh sách projectIds không được để trống");
+            }
+            
+            List<UUID> projectIds = projectIdStrings.stream()
+                    .map(UUID::fromString)
+                    .collect(Collectors.toList());
+            
+            int deletedCount = projectService.bulkDelete(projectIds);
+            return ResponseEntity.ok(java.util.Map.of("deletedCount", deletedCount));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra");
         }
     }
 }

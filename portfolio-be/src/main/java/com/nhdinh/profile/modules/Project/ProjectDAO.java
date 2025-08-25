@@ -48,7 +48,7 @@ public interface ProjectDAO extends JpaRepository<Project, UUID> {
     /**
      * Lấy tất cả Project sắp xếp theo ngày tạo mới nhất
      */
-    @Query("SELECT p FROM Project p ORDER BY p.createdAt DESC")
+    @Query("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.tags LEFT JOIN FETCH p.category ORDER BY p.createdAt DESC")
     List<Project> findAllOrderByCreatedAtDesc();
     
     /**
@@ -157,4 +157,28 @@ public interface ProjectDAO extends JpaRepository<Project, UUID> {
     @Query("SELECT p FROM Project p WHERE p.status = 'published' AND p.isPublic = true " +
            "ORDER BY p.viewCount DESC, p.createdAt DESC")
     List<Project> findMostViewedProjects();
+    
+    /**
+     * Đếm số Projects theo status
+     */
+    @Query("SELECT COUNT(p) FROM Project p WHERE p.status = :status")
+    long countByStatus(@Param("status") String status);
+    
+    /**
+     * Đếm số Projects theo isFeatured
+     */
+    @Query("SELECT COUNT(p) FROM Project p WHERE p.isFeatured = :isFeatured")
+    long countByIsFeatured(@Param("isFeatured") boolean isFeatured);
+    
+    /**
+     * Lấy Projects với pagination
+     */
+    @Query("SELECT p FROM Project p ORDER BY p.sortOrder, p.createdAt DESC")
+    org.springframework.data.domain.Page<Project> findAllWithPagination(org.springframework.data.domain.Pageable pageable);
+    
+    /**
+     * Tìm Projects có viewCount >= minViews
+     */
+    @Query("SELECT p FROM Project p WHERE p.viewCount >= :minViews ORDER BY p.viewCount DESC")
+    List<Project> findByViewCountGreaterThanEqual(@Param("minViews") long minViews);
 }

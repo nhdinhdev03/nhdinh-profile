@@ -3,7 +3,6 @@ package com.nhdinh.profile.service.Project;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +34,7 @@ public class ProjectService {
     /**
      * Lấy tất cả Project
      */
+    @Transactional(readOnly = true)
     public List<Project> getAllProjects() {
         return projectDAO.findAllOrderByCreatedAtDesc();
     }
@@ -220,5 +220,111 @@ public class ProjectService {
      */
     public List<Project> getProjectsByStatus(String status) {
         return projectDAO.findByStatus(status);
+    }
+    
+    /**
+     * Toggle trạng thái featured của project
+     */
+    @Transactional
+    public Project toggleFeatured(UUID projectId, Boolean isFeatured) {
+        Project project = projectDAO.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Project với ID: " + projectId));
+        
+        project.setIsFeatured(isFeatured);
+        return projectDAO.save(project);
+    }
+    
+    /**
+     * Cập nhật status của project
+     */
+    @Transactional
+    public Project updateStatus(UUID projectId, String status) {
+        // Validate status
+        if (!isValidStatus(status)) {
+            throw new RuntimeException("Status không hợp lệ: " + status + ". Chỉ chấp nhận: draft, published, archived");
+        }
+        
+        Project project = projectDAO.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Project với ID: " + projectId));
+        
+        project.setStatus(status);
+        
+        // Nếu publish, set publishedAt
+        if ("published".equals(status) && project.getPublishedAt() == null) {
+            project.setPublishedAt(java.time.LocalDateTime.now());
+        }
+        
+        return projectDAO.save(project);
+    }
+    
+    /**
+     * Lấy thống kê projects
+     */
+    public java.util.Map<String, Object> getStatistics() {
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        
+        long totalProjects = projectDAO.count();
+        long publishedProjects = projectDAO.countByStatus("published");
+        long draftProjects = projectDAO.countByStatus("draft");
+        long featuredProjects = projectDAO.countByIsFeatured(true);
+        
+        stats.put("totalProjects", totalProjects);
+        stats.put("publishedProjects", publishedProjects);
+        stats.put("draftProjects", draftProjects);
+        stats.put("featuredProjects", featuredProjects);
+        stats.put("archivedProjects", totalProjects - publishedProjects - draftProjects);
+        
+        return stats;
+    }
+    
+    /**
+     * Bulk update status
+     */
+    @Transactional
+    public int bulkUpdateStatus(List<UUID> projectIds, String status) {
+        if (!isValidStatus(status)) {
+            throw new RuntimeException("Status không hợp lệ: " + status);
+        }
+        
+        int updatedCount = 0;
+        for (UUID projectId : projectIds) {
+            try {
+                updateStatus(projectId, status);
+                updatedCount++;
+            } catch (Exception e) {
+                // Log error và tiếp tục với project tiếp theo
+                System.err.println("Không thể cập nhật project " + projectId + ": " + e.getMessage());
+            }
+        }
+        
+        return updatedCount;
+    }
+    
+    /**
+     * Bulk delete
+     */
+    @Transactional
+    public int bulkDelete(List<UUID> projectIds) {
+        int deletedCount = 0;
+        for (UUID projectId : projectIds) {
+            try {
+                if (existsById(projectId)) {
+                    deleteProject(projectId);
+                    deletedCount++;
+                }
+            } catch (Exception e) {
+                // Log error và tiếp tục với project tiếp theo
+                System.err.println("Không thể xóa project " + projectId + ": " + e.getMessage());
+            }
+        }
+        
+        return deletedCount;
+    }
+    
+    /**
+     * Validate status
+     */
+    private boolean isValidStatus(String status) {
+        return status != null && (status.equals("draft") || status.equals("published") || status.equals("archived"));
     }
 }

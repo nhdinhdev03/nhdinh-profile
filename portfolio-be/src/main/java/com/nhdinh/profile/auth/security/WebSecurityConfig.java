@@ -66,9 +66,48 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        // Temporarily allow all requests to test
-                        .requestMatchers("/**").permitAll()
-                        .anyRequest().permitAll());
+                        // Public endpoints - no authentication required
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/hero/**").permitAll()
+                        .requestMatchers("/api/hero-sub-heading/**").permitAll()
+                        .requestMatchers("/api/profile-info/**").permitAll()
+                        .requestMatchers("/api/profile-tag/**").permitAll()
+                        .requestMatchers("/api/experience/**").permitAll()
+                        .requestMatchers("/api/skill/**").permitAll()
+                        .requestMatchers("/api/skill-category/**").permitAll()
+                        .requestMatchers("/api/project/**").permitAll()
+                        .requestMatchers("/api/project-category/**").permitAll()
+                        .requestMatchers("/api/project-tag/**").permitAll()
+                        .requestMatchers("/api/project-tag-map/**").permitAll()
+                        .requestMatchers("/api/blog-post/**").permitAll()
+                        .requestMatchers("/api/blog-tag/**").permitAll()
+                        .requestMatchers("/api/blog-tag-map/**").permitAll()
+                        .requestMatchers("/api/contact-message").permitAll()
+                        
+                        // Admin endpoints - authentication required
+                        .requestMatchers("/api/admin/**").authenticated()
+                        .requestMatchers("/api/admin-user/**").authenticated()
+                        .requestMatchers("/api/hero/admin/**").authenticated()
+                        .requestMatchers("/api/hero-sub-heading/admin/**").authenticated()
+                        .requestMatchers("/api/profile-info/admin/**").authenticated()
+                        .requestMatchers("/api/profile-tag/admin/**").authenticated()
+                        .requestMatchers("/api/experience/admin/**").authenticated()
+                        .requestMatchers("/api/skill/admin/**").authenticated()
+                        .requestMatchers("/api/skill-category/admin/**").authenticated()
+                        .requestMatchers("/api/project/admin/**").authenticated()
+                        .requestMatchers("/api/project-category/admin/**").authenticated()
+                        .requestMatchers("/api/project-tag/admin/**").authenticated()
+                        .requestMatchers("/api/project-tag-map/admin/**").authenticated()
+                        .requestMatchers("/api/blog-post/admin/**").authenticated()
+                        .requestMatchers("/api/blog-tag/admin/**").authenticated()
+                        .requestMatchers("/api/blog-tag-map/admin/**").authenticated()
+                        .requestMatchers("/api/contact-message/admin/**").authenticated()
+                        
+                        // Authentication endpoints
+                        .requestMatchers("/api/auth/**").permitAll()
+                        
+                        // Default - require authentication
+                        .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -26,8 +26,16 @@ public class ProjectResponse {
     private String sourceUrl;
     private ProjectCategoryResponse category;
     private List<ProjectTagResponse> tags;
+    private Boolean isFeatured;
+    private String status;
+    private Boolean isPublic;
+    private Long viewCount;
+    private Integer sortOrder;
+    private String metaTitle;
+    private String metaDescription;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime publishedAt;
     
     public static ProjectResponse fromEntity(Project project) {
         List<ProjectTagResponse> tagResponses = project.getTags().stream()
@@ -43,8 +51,16 @@ public class ProjectResponse {
                 project.getSourceUrl(),
                 ProjectCategoryResponse.fromEntity(project.getCategory()),
                 tagResponses,
+                project.getIsFeatured(),
+                project.getStatus(),
+                project.getIsPublic(),
+                project.getViewCount(),
+                project.getSortOrder(),
+                project.getMetaTitle(),
+                project.getMetaDescription(),
                 project.getCreatedAt(),
-                project.getUpdatedAt()
+                project.getUpdatedAt(),
+                project.getPublishedAt()
         );
     }
 }

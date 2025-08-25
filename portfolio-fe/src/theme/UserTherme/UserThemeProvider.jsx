@@ -8,6 +8,7 @@ import React, {
 import PropTypes from 'prop-types';
 import "./UserStyles.scss";
 import "../ThemeTransitions.scss";
+import { initBrowserOptimizations, handleBrowserThemeChange } from "../BrowserOptimizations";
 
 const UserThemeCtx = createContext({
   light: true,
@@ -27,15 +28,20 @@ function getInitialLight() {
       if (stored === "light") return { light: true, source: "user" };
       if (stored === "dark") return { light: false, source: "user" };
       
+      // Check system preference if no user preference
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
       // If no stored preference but DOM has dark class from preload, respect it
       if (isCurrentlyDark) {
-        window.localStorage.setItem("userTheme", "dark");
-        return { light: false, source: "user" };
+        const themeToStore = systemPrefersDark ? "dark" : "light";
+        window.localStorage.setItem("userTheme", themeToStore);
+        return { light: !systemPrefersDark, source: "system" };
       }
       
-      // Default to light and save it
-      window.localStorage.setItem("userTheme", "light");
-      return { light: true, source: "user" };
+      // Use system preference as default
+      const defaultLight = !systemPrefersDark;
+      window.localStorage.setItem("userTheme", defaultLight ? "light" : "dark");
+      return { light: defaultLight, source: "system" };
     } catch (e) {
       // If storage inaccessible (private mode), fall back to current DOM state
       if (process.env.NODE_ENV === 'development') {
@@ -50,6 +56,11 @@ function getInitialLight() {
 }
 
 export function UserThemeProvider({ children }) {
+  // Initialize browser optimizations
+  useEffect(() => {
+    initBrowserOptimizations();
+  }, []);
+
   // Apply initial theme immediately before React hydration
   const initialTheme = getInitialLight();
   if (typeof document !== 'undefined') {
@@ -65,6 +76,9 @@ export function UserThemeProvider({ children }) {
       root.classList.add("dark");
       root.style.colorScheme = "dark";
     }
+    
+    // Apply browser-specific optimizations for initial theme
+    handleBrowserThemeChange(!initialTheme.light);
   }
 
   const [{ light, source }, setState] = useState(initialTheme);
@@ -86,20 +100,24 @@ export function UserThemeProvider({ children }) {
     // Add temporary class to indicate theme is switching (for CSS optimizations)
     root.classList.add('theme-switching');
     
-    if (light) {
-      root.classList.remove("dark");
-      root.style.colorScheme = "light";
-    } else {
-      root.classList.add("dark");
-      root.style.colorScheme = "dark";
-    }
-    
-    // Remove switching class after transition
-    const timeoutId = setTimeout(() => {
-      root.classList.remove('theme-switching');
-    }, 250);
-    
-    return () => clearTimeout(timeoutId);
+    // Use requestAnimationFrame for smoother transitions
+    requestAnimationFrame(() => {
+      if (light) {
+        root.classList.remove("dark");
+        root.style.colorScheme = "light";
+      } else {
+        root.classList.add("dark");
+        root.style.colorScheme = "dark";
+      }
+      
+      // Apply browser-specific theme handling
+      handleBrowserThemeChange(!light);
+      
+      // Remove switching class after transition
+      setTimeout(() => {
+        root.classList.remove('theme-switching');
+      }, 250);
+    });
   }, [light]);
 
   // Cleanup on unmount: khi thoát khỏi layout User, Admin sẽ luôn quay về light

@@ -121,9 +121,9 @@ public class SkillAPI {
     }
 
     /**
-     * POST /api/skills - Create new skill
+     * POST /api/skills/create - Create new skill
      */
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Object> createSkill(@Valid @RequestBody Skill skill) {
         try {
             Skill savedSkill = skillDAO.save(skill);

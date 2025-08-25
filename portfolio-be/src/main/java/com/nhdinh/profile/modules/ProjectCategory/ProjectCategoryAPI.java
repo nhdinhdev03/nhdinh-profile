@@ -99,7 +99,7 @@ public class ProjectCategoryAPI {
     /**
      * Tạo ProjectCategory mới
      */
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createCategory(@Valid @RequestBody ProjectCategoryCreateRequest request) {
         try {
             ProjectCategory category = projectCategoryService.createCategory(request);

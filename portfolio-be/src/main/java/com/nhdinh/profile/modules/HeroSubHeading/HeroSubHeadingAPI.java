@@ -67,7 +67,7 @@ public class HeroSubHeadingAPI {
     /**
      * Tạo SubHeading mới
      */
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createSubHeading(@Valid @RequestBody HeroSubHeadingCreateRequest request) {
         try {
             HeroSubHeading subHeading = heroSubHeadingService.createSubHeading(request);

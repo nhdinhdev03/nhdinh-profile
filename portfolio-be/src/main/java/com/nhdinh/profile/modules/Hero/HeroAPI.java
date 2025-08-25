@@ -140,7 +140,7 @@ public class HeroAPI {
     /**
      * Tạo Hero mới
      */
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createHero(@Valid @RequestBody HeroCreateRequest request) {
         try {
             Hero hero = new Hero();

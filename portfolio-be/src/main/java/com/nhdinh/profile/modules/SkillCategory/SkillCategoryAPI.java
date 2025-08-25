@@ -100,9 +100,9 @@ public class SkillCategoryAPI {
     }
     
     /**
-     * POST /api/skill-categories - Create new skill category
+     * POST /api/skill-categories/create - Create new skill category
      */
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Object> createSkillCategory(@Valid @RequestBody SkillCategory skillCategory) {
         try {
             SkillCategory savedCategory = skillCategoryDAO.save(skillCategory);

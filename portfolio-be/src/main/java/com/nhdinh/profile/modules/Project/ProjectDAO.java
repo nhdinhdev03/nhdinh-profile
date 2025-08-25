@@ -5,9 +5,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface ProjectDAO extends JpaRepository<Project, UUID> {
@@ -116,4 +118,43 @@ public interface ProjectDAO extends JpaRepository<Project, UUID> {
      */
     @Query("SELECT p FROM Project p WHERE p.status = :status ORDER BY p.createdAt DESC")
     List<Project> findByStatus(@Param("status") String status);
+    
+    /**
+     * Tăng view count cho project
+     */
+    @Modifying
+    @Transactional
+    @Query("UPDATE Project p SET p.viewCount = p.viewCount + 1 WHERE p.projectId = :projectId")
+    void incrementViewCount(@Param("projectId") UUID projectId);
+    
+    /**
+     * Lấy Projects theo status và category
+     */
+    @Query("SELECT p FROM Project p WHERE p.status = :status AND p.category.categoryId = :categoryId ORDER BY p.sortOrder, p.createdAt DESC")
+    List<Project> findByStatusAndCategoryId(@Param("status") String status, @Param("categoryId") UUID categoryId);
+    
+    /**
+     * Tìm kiếm Projects công khai theo keyword
+     */
+    @Query("SELECT p FROM Project p WHERE p.status = 'published' AND p.isPublic = true AND " +
+           "(LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(p.metaTitle) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(p.metaDescription) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+           "ORDER BY p.sortOrder, p.createdAt DESC")
+    List<Project> searchPublicProjects(@Param("keyword") String keyword);
+    
+    /**
+     * Lấy Projects mới nhất (published)
+     */
+    @Query("SELECT p FROM Project p WHERE p.status = 'published' AND p.isPublic = true " +
+           "ORDER BY p.publishedAt DESC, p.createdAt DESC")
+    List<Project> findLatestPublishedProjects();
+    
+    /**
+     * Lấy Projects có view count cao nhất
+     */
+    @Query("SELECT p FROM Project p WHERE p.status = 'published' AND p.isPublic = true " +
+           "ORDER BY p.viewCount DESC, p.createdAt DESC")
+    List<Project> findMostViewedProjects();
 }

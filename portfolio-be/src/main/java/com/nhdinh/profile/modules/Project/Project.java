@@ -46,8 +46,8 @@ public class Project {
     @Column(name = "Title", length = 100, nullable = false)
     private String title;
     
-    @Size(max = 255, message = "Description không được vượt quá 255 ký tự")
-    @Column(name = "Description", length = 255)
+    @Size(max = 500, message = "Description không được vượt quá 500 ký tự")
+    @Column(name = "Description", length = 500)
     private String description;
     
     @Size(max = 512, message = "ImageUrl không được vượt quá 512 ký tự")
@@ -74,8 +74,16 @@ public class Project {
     @Column(name = "ViewCount", nullable = false)
     private Long viewCount = 0L;
     
-    @Column(name = "SortOrder")
+    @Column(name = "SortOrder", nullable = false)
     private Integer sortOrder = 0;
+    
+    @Size(max = 100, message = "MetaTitle không được vượt quá 100 ký tự")
+    @Column(name = "MetaTitle", length = 100)
+    private String metaTitle;
+    
+    @Size(max = 200, message = "MetaDescription không được vượt quá 200 ký tự")
+    @Column(name = "MetaDescription", length = 200)
+    private String metaDescription;
     
     @NotNull(message = "CategoryId không được để trống")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -96,6 +104,9 @@ public class Project {
     
     @Column(name = "UpdatedAt")
     private LocalDateTime updatedAt;
+    
+    @Column(name = "PublishedAt")
+    private LocalDateTime publishedAt;
     
     @Version
     @Column(name = "RowVer")

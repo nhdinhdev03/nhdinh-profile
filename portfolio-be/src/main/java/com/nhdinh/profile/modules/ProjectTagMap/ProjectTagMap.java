@@ -1,5 +1,6 @@
 package com.nhdinh.profile.modules.ProjectTagMap;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.nhdinh.profile.modules.Project.Project;
@@ -12,8 +13,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,6 +41,13 @@ public class ProjectTagMap {
     @Column(name = "SortOrder", nullable = false)
     private Integer sortOrder = 1;
     
+    @Column(name = "CreatedAt", nullable = false)
+    private LocalDateTime createdAt;
+    
+    @Size(max = 50, message = "CreatedBy không được vượt quá 50 ký tự")
+    @Column(name = "CreatedBy", length = 50)
+    private String createdBy;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ProjectId", insertable = false, updatable = false)
     private Project project;
@@ -60,5 +70,20 @@ public class ProjectTagMap {
         this.sortOrder = sortOrder != null ? sortOrder : 1;
         this.project = project;
         this.tag = tag;
+    }
+    
+    // Constructor with entities and created by
+    public ProjectTagMap(Project project, ProjectTag tag, Integer sortOrder, String createdBy) {
+        this.projectId = project.getProjectId();
+        this.tagId = tag.getTagId();
+        this.sortOrder = sortOrder != null ? sortOrder : 1;
+        this.createdBy = createdBy;
+        this.project = project;
+        this.tag = tag;
+    }
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
     }
 }

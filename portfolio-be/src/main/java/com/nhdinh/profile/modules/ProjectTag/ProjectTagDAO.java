@@ -5,9 +5,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface ProjectTagDAO extends JpaRepository<ProjectTag, UUID> {
@@ -60,4 +62,39 @@ public interface ProjectTagDAO extends JpaRepository<ProjectTag, UUID> {
     @Query("SELECT pt FROM ProjectTag pt WHERE pt.tagId IN " +
            "(SELECT pt2.tagId FROM Project p JOIN p.tags pt2 GROUP BY pt2.tagId ORDER BY COUNT(p) DESC)")
     List<ProjectTag> findMostUsedTags();
+    
+    /**
+     * Lấy tags theo category
+     */
+    @Query("SELECT pt FROM ProjectTag pt WHERE pt.category = :category AND pt.isActive = true ORDER BY pt.usageCount DESC, pt.name")
+    List<ProjectTag> findByCategoryAndActive(@Param("category") String category);
+    
+    /**
+     * Lấy tags active
+     */
+    @Query("SELECT pt FROM ProjectTag pt WHERE pt.isActive = true ORDER BY pt.usageCount DESC, pt.name")
+    List<ProjectTag> findActiveTagsOrderByUsage();
+    
+    /**
+     * Tìm kiếm tags theo tên hoặc description
+     */
+    @Query("SELECT pt FROM ProjectTag pt WHERE pt.isActive = true AND " +
+           "(LOWER(pt.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(pt.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+           "ORDER BY pt.usageCount DESC, pt.name")
+    List<ProjectTag> searchActiveTags(@Param("keyword") String keyword);
+    
+    /**
+     * Cập nhật usage count cho tag
+     */
+    @Modifying
+    @Transactional
+    @Query("UPDATE ProjectTag pt SET pt.usageCount = pt.usageCount + :increment WHERE pt.tagId = :tagId")
+    void updateUsageCount(@Param("tagId") UUID tagId, @Param("increment") int increment);
+    
+    /**
+     * Lấy các tag categories distinct
+     */
+    @Query("SELECT DISTINCT pt.category FROM ProjectTag pt WHERE pt.category IS NOT NULL AND pt.isActive = true ORDER BY pt.category")
+    List<String> findDistinctCategories();
 }

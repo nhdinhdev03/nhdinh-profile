@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface ProjectTagMapDAO extends JpaRepository<ProjectTagMap, ProjectTagMapId> {
@@ -59,6 +60,7 @@ public interface ProjectTagMapDAO extends JpaRepository<ProjectTagMap, ProjectTa
      * Xóa tất cả mapping của một project
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM ProjectTagMap ptm WHERE ptm.projectId = :projectId")
     void deleteByProjectId(@Param("projectId") UUID projectId);
     
@@ -66,6 +68,7 @@ public interface ProjectTagMapDAO extends JpaRepository<ProjectTagMap, ProjectTa
      * Xóa tất cả mapping của một tag
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM ProjectTagMap ptm WHERE ptm.tagId = :tagId")
     void deleteByTagId(@Param("tagId") UUID tagId);
     
@@ -73,6 +76,7 @@ public interface ProjectTagMapDAO extends JpaRepository<ProjectTagMap, ProjectTa
      * Xóa mapping cụ thể
      */
     @Modifying
+    @Transactional
     @Query("DELETE FROM ProjectTagMap ptm WHERE ptm.projectId = :projectId AND ptm.tagId = :tagId")
     void deleteByProjectIdAndTagId(@Param("projectId") UUID projectId, @Param("tagId") UUID tagId);
     
@@ -80,6 +84,7 @@ public interface ProjectTagMapDAO extends JpaRepository<ProjectTagMap, ProjectTa
      * Cập nhật SortOrder
      */
     @Modifying
+    @Transactional
     @Query("UPDATE ProjectTagMap ptm SET ptm.sortOrder = :sortOrder WHERE ptm.projectId = :projectId AND ptm.tagId = :tagId")
     void updateSortOrder(@Param("projectId") UUID projectId, @Param("tagId") UUID tagId, @Param("sortOrder") Integer sortOrder);
     
@@ -94,4 +99,16 @@ public interface ProjectTagMapDAO extends JpaRepository<ProjectTagMap, ProjectTa
      */
     @Query("SELECT ptm.tagId, COUNT(ptm) as usageCount FROM ProjectTagMap ptm GROUP BY ptm.tagId ORDER BY usageCount DESC")
     List<Object[]> findMostUsedTags();
+    
+    /**
+     * Tìm mappings theo CreatedBy
+     */
+    @Query("SELECT ptm FROM ProjectTagMap ptm WHERE ptm.createdBy = :createdBy ORDER BY ptm.createdAt DESC")
+    List<ProjectTagMap> findByCreatedBy(@Param("createdBy") String createdBy);
+    
+    /**
+     * Lấy thống kê số lượng tag được sử dụng theo từng project
+     */
+    @Query("SELECT ptm.projectId, COUNT(ptm) as tagCount FROM ProjectTagMap ptm GROUP BY ptm.projectId ORDER BY tagCount DESC")
+    List<Object[]> getProjectTagStats();
 }

@@ -187,28 +187,7 @@ function HeroHeader({ entranceComplete = false, isMobile = false }) {
               </motion.span>
             ))}
           </span>
-          <div className="name-decoration">
-            <motion.div
-              className="decoration-line decoration-line--1"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ 
-                delay: actualIsMobile ? 0.6 : 0.8, 
-                duration: actualIsMobile ? 0.6 : 0.8, 
-                ease: "easeOut" 
-              }}
-            ></motion.div>
-            <motion.div
-              className="decoration-line decoration-line--2"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ 
-                delay: actualIsMobile ? 0.7 : 0.9, 
-                duration: actualIsMobile ? 0.6 : 0.8, 
-                ease: "easeOut" 
-              }}
-            ></motion.div>
-          </div>
+        
         </div>
       </motion.h1>
 

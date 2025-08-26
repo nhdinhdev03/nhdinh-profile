@@ -1,77 +1,247 @@
-// Admin Sidebar Styles with Ant Design Menu Integration
-.sidebar-content {
-  .admin-sidebar-menu {
-    font-family: inherit;
+// Professional Admin Sidebar Styles
+.admin-sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
     
-    // Single menu item styling (no submenu)
-    .ant-menu-item {
-      height: 48px;
-      line-height: 48px;
-      padding: 0 16px;
-      margin: 4px 0;
+    &:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
+// Header section with logo and branding
+.admin-sidebar-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  .admin-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: rgba(255, 255, 255, 0.9);
+      transform: translateX(2px);
+    }
+    
+    .admin-logo {
+      width: 40px;
+      height: 40px;
       border-radius: 8px;
-      font-size: 16px;
+      margin-right: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .admin-brand-text {
+      display: flex;
+      flex-direction: column;
+      
+      .admin-brand-title {
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.2;
+        color: white;
+      }
+      
+      .admin-brand-subtitle {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 400;
+        margin-top: 2px;
+      }
+    }
+  }
+}
+
+// Navigation section
+.admin-sidebar-nav {
+  flex: 1;
+  padding: 16px 0;
+  
+  .admin-nav-section {
+    .admin-nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0 24px 8px;
+      margin-bottom: 8px;
+    }
+  }
+  
+  .admin-sidebar-menu {
+    background: transparent;
+    border: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    
+    // Custom expand icon
+    .admin-expand-icon {
+      transition: transform 0.2s ease;
+      
+      &.open {
+        transform: rotate(90deg);
+      }
+    }
+    
+    // Main menu items (no submenu)
+    .ant-menu-item {
+      height: 44px;
+      line-height: 44px;
+      margin: 4px 16px;
+      padding: 0 16px;
+      border-radius: 10px;
+      font-size: 15px;
       font-weight: 500;
-      color: #374151;
+      color: rgba(255, 255, 255, 0.9);
       display: flex;
       align-items: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+      position: relative;
+      overflow: hidden;
+      
+      // Hover effect background
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s ease;
+      }
       
       .anticon {
-        font-size: 20px;
-        color: #4f46e5;
-        margin-inline-end: 12px;
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.8);
+        margin-right: 12px;
+        transition: all 0.3s ease;
       }
       
       &:hover:not(.ant-menu-item-selected) {
-        background-color: #f8fafc;
-        color: #4f46e5;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        transform: translateX(4px);
+        border-color: rgba(255, 255, 255, 0.2);
+        
+        &::before {
+          left: 100%;
+        }
+        
+        .anticon {
+          color: white;
+          transform: scale(1.1);
+        }
       }
       
       &.ant-menu-item-selected {
-        background-color: #4f46e5;
+        background: rgba(255, 255, 255, 0.15);
         color: white;
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        
+        // Active indicator
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3px;
+          height: 20px;
+          background: white;
+          border-radius: 0 2px 2px 0;
+        }
         
         .anticon {
           color: white;
         }
-        
-        &::after {
-          display: none;
-        }
       }
     }
     
-    // SubMenu styling (main navigation items)
+    // SubMenu styling (main navigation groups)
     .ant-menu-submenu {
+      margin: 8px 16px;
+      
       .ant-menu-submenu-title {
         height: 48px;
         line-height: 48px;
         padding: 0 16px;
-        margin: 4px 0;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 500;
-        color: #374151;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.95);
         display: flex;
         align-items: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+        
+        // Hover effect background
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          transition: left 0.5s ease;
+        }
         
         .anticon {
-          font-size: 20px;
-          color: #4f46e5;
-          margin-inline-end: 12px;
+          font-size: 18px;
+          color: rgba(255, 255, 255, 0.8);
+          margin-right: 12px;
+          transition: all 0.3s ease;
         }
         
         .ant-menu-submenu-arrow {
-          color: #9ca3af;
-          transition: transform 0.3s ease;
+          color: rgba(255, 255, 255, 0.6);
+          transition: all 0.3s ease;
+          font-size: 12px;
         }
         
         &:hover {
-          background-color: #f8fafc;
-          color: #4f46e5;
+          background: rgba(255, 255, 255, 0.08);
+          color: white;
+          border-color: rgba(255, 255, 255, 0.2);
+          transform: translateX(2px);
+          
+          &::before {
+            left: 100%;
+          }
+          
+          .anticon {
+            color: white;
+            transform: scale(1.05);
+          }
           
           .ant-menu-submenu-arrow {
-            color: #4f46e5;
+            color: rgba(255, 255, 255, 0.9);
           }
         }
       }
@@ -79,12 +249,17 @@
       // When submenu is open
       &.ant-menu-submenu-open {
         .ant-menu-submenu-title {
-          color: #4f46e5;
-          background-color: #eff6ff;
+          background: rgba(255, 255, 255, 0.12);
+          color: white;
+          border-color: rgba(255, 255, 255, 0.25);
+          
+          .anticon {
+            color: white;
+          }
           
           .ant-menu-submenu-arrow {
             transform: rotate(180deg);
-            color: #4f46e5;
+            color: white;
           }
         }
       }
@@ -92,28 +267,74 @@
     
     // SubMenu items styling
     .ant-menu-sub {
-      background-color: transparent;
+      background: transparent;
+      margin-top: 4px;
       
       .ant-menu-item {
         height: 36px;
         line-height: 36px;
         margin: 2px 0;
-        padding: 0 16px 0 48px;
-        border-radius: 6px;
-        font-size: 14px;
-        color: #6b7280;
+        padding: 0 16px 0 52px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.75);
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+          transition: left 0.4s ease;
+        }
+        
+        .anticon {
+          font-size: 14px;
+          margin-right: 8px;
+          color: rgba(255, 255, 255, 0.6);
+        }
         
         &:hover:not(.ant-menu-item-selected) {
-          background-color: #f1f5f9;
-          color: #374151;
+          background: rgba(255, 255, 255, 0.08);
+          color: rgba(255, 255, 255, 0.95);
+          transform: translateX(2px);
+          border-color: rgba(255, 255, 255, 0.15);
+          
+          &::before {
+            left: 100%;
+          }
+          
+          .anticon {
+            color: rgba(255, 255, 255, 0.9);
+          }
         }
         
         &.ant-menu-item-selected {
-          background-color: #4f46e5;
+          background: rgba(255, 255, 255, 0.2);
           color: white;
+          border-color: rgba(255, 255, 255, 0.3);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
           
           &::after {
-            display: none;
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 16px;
+            background: white;
+            border-radius: 0 1px 1px 0;
+          }
+          
+          .anticon {
+            color: white;
           }
         }
       }
@@ -125,6 +346,48 @@
     }
   }
 }
+
+// Footer section
+.admin-sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  
+  .admin-footer-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    
+    .admin-footer-text {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 4px;
+    }
+    
+    .admin-footer-copyright {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+}
+
+// Smooth animations
+.admin-sidebar-container {
+  .admin-sidebar-menu {
+    .ant-menu-submenu-title,
+    .ant-menu-item {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .anticon {
+      transition: all 0.2s ease;
+    }
+  }
+}
+   
+    
+    // Remove default borders and backgrounds
+  
 
 // Animation for smooth transitions
 .sidebar-content .admin-sidebar-menu {

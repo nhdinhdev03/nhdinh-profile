@@ -4,12 +4,22 @@ import React, { useMemo, useCallback, memo } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { 
-  FileTextOutlined,
-  MessageOutlined,
-  SettingOutlined,
-  MailOutlined,
-  AppstoreOutlined,
   DashboardOutlined,
+  HomeOutlined,
+  FolderOutlined,
+  EditOutlined,
+  MessageOutlined,
+  UserOutlined,
+  ToolOutlined,
+  SettingOutlined,
+  BarChartOutlined,
+  FileImageOutlined,
+  TeamOutlined,
+  HistoryOutlined,
+  TagsOutlined,
+  LinkOutlined,
+  ProfileOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { ROUTES } from "router/routeConstants";
@@ -17,67 +27,76 @@ import img from "assets/Img";
 import { Link } from "react-router-dom";
 import "./Sidebar.scss";
 
-// Navigation items structured according to requirements
+// Navigation items structured with better organization and proper Vietnamese
 const NAVIGATION_ITEMS = [
   {
     key: ROUTES.ADMIN.DASHBOARD,
     icon: React.createElement(DashboardOutlined),
-    label: "Dashboard",
+    label: "Tổng quan",
   },
   {
-    key: "hero-management",
-    icon: React.createElement(MailOutlined),
-    label: "Quản lý Trang chủ",
+    key: "content-management",
+    icon: React.createElement(HomeOutlined),
+    label: "Quản lý Nội dung",
     children: [
       {
         key: ROUTES.ADMIN.HERO_MANAGEMENT,
-        label: "Hero Section",
+        icon: React.createElement(HomeOutlined),
+        label: "Trang chủ chính",
       },
       {
         key: ROUTES.ADMIN.HERO_SUBHEADING_MANAGEMENT,
-        label: "Hero SubHeading",
+        icon: React.createElement(EditOutlined),
+        label: "Tiêu đề phụ",
       },
     ],
   },
   {
     key: "projects-management",
-    icon: React.createElement(AppstoreOutlined),
+    icon: React.createElement(FolderOutlined),
     label: "Quản lý Dự án",
     children: [
       {
         key: ROUTES.ADMIN.PROJECTS_MANAGEMENT,
-        label: "Dự án",
+        icon: React.createElement(FolderOutlined),
+        label: "Danh sách dự án",
       },
       {
         key: ROUTES.ADMIN.PROJECT_CATEGORIES_MANAGEMENT,
-        label: "Danh mục Dự án",
+        icon: React.createElement(BookOutlined),
+        label: "Danh mục dự án",
       },
       {
         key: ROUTES.ADMIN.PROJECT_TAGS_MANAGEMENT,
-        label: "Tag Công nghệ",
+        icon: React.createElement(TagsOutlined),
+        label: "Thẻ công nghệ",
       },
       {
         key: ROUTES.ADMIN.PROJECT_TAG_MAP_MANAGEMENT,
-        label: "Mapping Tag-Project",
+        icon: React.createElement(LinkOutlined),
+        label: "Liên kết thẻ-dự án",
       },
     ],
   },
   {
     key: "blog-management",
-    icon: React.createElement(FileTextOutlined),
+    icon: React.createElement(EditOutlined),
     label: "Quản lý Blog",
     children: [
       {
         key: ROUTES.ADMIN.BLOG_POSTS_MANAGEMENT,
-        label: "Bài viết",
+        icon: React.createElement(EditOutlined),
+        label: "Bài viết blog",
       },
       {
         key: ROUTES.ADMIN.BLOG_TAGS_MANAGEMENT,
-        label: "Tag Blog",
+        icon: React.createElement(TagsOutlined),
+        label: "Thẻ bài viết",
       },
       {
         key: ROUTES.ADMIN.BLOG_TAG_MAP_MANAGEMENT,
-        label: "Mapping Tag-Blog",
+        icon: React.createElement(LinkOutlined),
+        label: "Liên kết thẻ-bài viết",
       },
     ],
   },
@@ -88,41 +107,47 @@ const NAVIGATION_ITEMS = [
     children: [
       {
         key: ROUTES.ADMIN.CONTACT_MESSAGES_MANAGEMENT,
-        label: "Tin nhắn Liên hệ",
+        icon: React.createElement(MessageOutlined),
+        label: "Tin nhắn liên hệ",
       },
     ],
   },
   {
     key: "profile-management", 
-    icon: React.createElement(AppstoreOutlined),
+    icon: React.createElement(UserOutlined),
     label: "Quản lý Hồ sơ",
     children: [
       {
         key: ROUTES.ADMIN.PROFILE_INFO_MANAGEMENT,
-        label: "Thông tin Hồ sơ",
+        icon: React.createElement(ProfileOutlined),
+        label: "Thông tin cá nhân",
       },
       {
         key: ROUTES.ADMIN.PROFILE_TAGS_MANAGEMENT,
-        label: "Profile Tags",
+        icon: React.createElement(TagsOutlined),
+        label: "Thẻ hồ sơ",
       },
       {
         key: ROUTES.ADMIN.EXPERIENCE_MANAGEMENT,
-        label: "Kinh nghiệm",
+        icon: React.createElement(BookOutlined),
+        label: "Kinh nghiệm làm việc",
       },
     ],
   },
   {
     key: "skills-management",
-    icon: React.createElement(SettingOutlined),
+    icon: React.createElement(ToolOutlined),
     label: "Quản lý Kỹ năng",
     children: [
       {
         key: ROUTES.ADMIN.SKILL_CATEGORIES_MANAGEMENT,
-        label: "Danh mục Kỹ năng",
+        icon: React.createElement(BookOutlined),
+        label: "Danh mục kỹ năng",
       },
       {
         key: ROUTES.ADMIN.SKILLS_MANAGEMENT,
-        label: "Kỹ năng",
+        icon: React.createElement(ToolOutlined),
+        label: "Danh sách kỹ năng",
       },
     ],
   },
@@ -133,33 +158,39 @@ const NAVIGATION_ITEMS = [
     children: [
       {
         key: ROUTES.ADMIN.ADMIN_USERS_MANAGEMENT,
-        label: "Tài khoản Admin",
+        icon: React.createElement(TeamOutlined),
+        label: "Tài khoản quản trị",
       },
       {
         key: ROUTES.ADMIN.ANALYTICS,
-        label: "Thống kê",
+        icon: React.createElement(BarChartOutlined),
+        label: "Thống kê & Báo cáo",
       },
       {
         key: ROUTES.ADMIN.HISTORY_LOGS,
-        label: "Lịch sử thay đổi",
+        icon: React.createElement(HistoryOutlined),
+        label: "Nhật ký hệ thống",
       },
       {
         key: ROUTES.ADMIN.MEDIA_LIBRARY,
-        label: "Thư viện Media",
+        icon: React.createElement(FileImageOutlined),
+        label: "Thư viện phương tiện",
       },
       {
         key: ROUTES.ADMIN.SETTINGS,
-        label: "Cài đặt",
+        icon: React.createElement(SettingOutlined),
+        label: "Cài đặt hệ thống",
       },
       {
         key: ROUTES.ADMIN.PROFILE,
-        label: "Hồ sơ Admin",
+        icon: React.createElement(UserOutlined),
+        label: "Hồ sơ quản trị viên",
       },
     ],
   },
 ];
 
-// Memoized SidebarContent using Ant Design Menu with SubMenu structure
+// Memoized SidebarContent component with better organization
 const SidebarContent = memo(({
   currentPath,
   handleNavigation,
@@ -167,7 +198,7 @@ const SidebarContent = memo(({
   // Get selected keys for current path
   const selectedKeys = useMemo(() => [currentPath], [currentPath]);
   
-  // Get default open keys based on current path
+  // Get default open keys based on current path with better logic
   const defaultOpenKeys = useMemo(() => {
     const openKeys = [];
     NAVIGATION_ITEMS.forEach(item => {
@@ -178,37 +209,49 @@ const SidebarContent = memo(({
     return openKeys;
   }, [currentPath]);
 
-  // Handle menu click
+  // Handle menu click with improved navigation
   const handleMenuClick = useCallback((e) => {
     handleNavigation(e.key);
   }, [handleNavigation]);
 
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 ring-1 ring-white/10 sidebar-content">
-      <div className="flex h-16 shrink-0 items-center">
-        <div className="flex h-16 shrink-0 items-center">
-          <Link to={ROUTES.ADMIN.DASHBOARD}>
-            <img className="h-14 w-auto" src={img.Logo} alt="Admin Portal" />
-          </Link>
-          <Link
-            to={ROUTES.ADMIN.DASHBOARD}
-            className="ml-3 text-lg font-semibold text-gray-900"
-          >
-            Admin Portal
-          </Link>
+    <div className="admin-sidebar-container">
+      <div className="admin-sidebar-header">
+        <Link to={ROUTES.ADMIN.DASHBOARD} className="admin-brand">
+          <img className="admin-logo" src={img.Logo} alt="Quản trị hệ thống" />
+          <div className="admin-brand-text">
+            <span className="admin-brand-title">Bảng điều khiển</span>
+            <span className="admin-brand-subtitle">Quản trị website</span>
+          </div>
+        </Link>
+      </div>
+      <nav className="admin-sidebar-nav">
+        <div className="admin-nav-section">
+          <div className="admin-nav-label">Điều hướng chính</div>
+          <Menu
+            mode="inline"
+            selectedKeys={selectedKeys}
+            defaultOpenKeys={defaultOpenKeys}
+            onClick={handleMenuClick}
+            items={NAVIGATION_ITEMS}
+            className="admin-sidebar-menu"
+            inlineIndent={20}
+            expandIcon={({ isOpen }) => (
+              <span className={`admin-expand-icon ${isOpen ? 'open' : ''}`}>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                  <path d="M4.5 3L7.5 6L4.5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                </svg>
+              </span>
+            )}
+          />
+        </div>
+      </nav>
+      <div className="admin-sidebar-footer">
+        <div className="admin-footer-info">
+          <span className="admin-footer-text">Phiên bản 1.0.0</span>
+          <span className="admin-footer-copyright">© 2024 Nguyễn Hoàng Dinh</span>
         </div>
       </div>
-      <nav className="flex flex-1 flex-col">
-        <Menu
-          mode="inline"
-          selectedKeys={selectedKeys}
-          defaultOpenKeys={defaultOpenKeys}
-          onClick={handleMenuClick}
-          items={NAVIGATION_ITEMS}
-          className="border-none bg-transparent admin-sidebar-menu"
-          inlineIndent={16}
-        />
-      </nav>
     </div>
   );
 });

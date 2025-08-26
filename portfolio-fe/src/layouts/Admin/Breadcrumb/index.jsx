@@ -72,7 +72,7 @@ const  AdminBreadcrumb = ({
     // If we're not on dashboard, add current page
     if (pathname !== ROUTES.ADMIN.DASHBOARD) {
       const currentLabel = adminLabels[pathname];
-      const currentIcon = iconMap[pathname];
+      const currentIcon = iconMap[pathname] || DocumentTextIcon; // Default icon
       
       if (currentLabel) {
         items.push({
@@ -97,7 +97,7 @@ const  AdminBreadcrumb = ({
           <nav aria-label="Breadcrumb" className="flex items-center space-x-1">
             {crumbs.map((item, idx) => {
               const isLast = idx === crumbs.length - 1;
-              const IconComponent = showIcons ? item.icon : null;
+              const IconComponent = showIcons && item.icon ? item.icon : null;
               
               return (
                 <React.Fragment key={item.path}>

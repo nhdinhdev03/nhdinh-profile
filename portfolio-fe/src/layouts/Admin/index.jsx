@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import AdminBreadcrumb from "./Breadcrumb";import { AdminThemeProvider } from "theme";
+import AdminBreadcrumb from "./Breadcrumb";
+import { AdminThemeProvider } from "theme";
 import { ToastProvider } from "components/Admin";
-;
 
 function AdminLayout({ children, usePageHeader = false }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);

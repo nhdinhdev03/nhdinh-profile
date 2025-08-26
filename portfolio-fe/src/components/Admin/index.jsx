@@ -17,7 +17,7 @@ export { default as Select } from './Form/Select';
 export { default as Modal, ConfirmModal } from './Modal';
 
 // Toast Components
-export { default as ToastProvider, useToast } from './Toast';
+export { ToastProvider, useToast } from './Toast';
 
 
 

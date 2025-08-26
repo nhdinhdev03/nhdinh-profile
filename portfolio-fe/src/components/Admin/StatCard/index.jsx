@@ -44,7 +44,9 @@ const StatCard = ({
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <div className={`${iconBgColor} rounded-lg p-3`}>
-              <Icon className={`h-6 w-6 ${iconColor}`} />
+              {Icon && typeof Icon === 'function' && (
+                <Icon className={`h-6 w-6 ${iconColor}`} />
+              )}
             </div>
           </div>
           <div className="ml-5 w-0 flex-1">

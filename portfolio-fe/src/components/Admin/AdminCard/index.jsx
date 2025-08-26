@@ -42,7 +42,7 @@ const AdminCard = ({
         <div className={`px-6 py-4 border-b border-gray-100 ${headerClassName}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              {Icon && (
+              {Icon && typeof Icon === 'function' && (
                 <div className="flex-shrink-0">
                   <Icon className="h-5 w-5 text-gray-600" />
                 </div>

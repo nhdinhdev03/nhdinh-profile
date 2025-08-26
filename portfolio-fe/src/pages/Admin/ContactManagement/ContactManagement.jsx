@@ -20,7 +20,7 @@ import { AdminCard, AdminTable, PageHeader, Button } from "components/Admin";
 import './contact-management.scss'
 
 // Modal Component chi tiết liên hệ (đã tối ưu responsive + accessibility)
-const ContactDetailModal = ({
+const ContactMessagesManagement = ({
   contact,
   isOpen,
   onClose,
@@ -887,7 +887,7 @@ const ContactManagement = () => {
 
       {/* Contact Detail Modal */}
       {showDetailModal && selectedContact && (
-        <ContactDetailModal
+        <ContactMessagesManagement
           contact={selectedContact}
           isOpen={showDetailModal}
           onClose={handleCloseModal}

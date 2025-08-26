@@ -15,7 +15,7 @@ export { default as AdminHeader } from "layouts/Admin/Header";
 export { default as AdminBreadcrumb } from "layouts/Admin/Breadcrumb";
 
 // Content Management Components
-export { default as HomeManagement } from "pages/Admin/HomeManagement/HomeManagement";
+
 export { default as ProjectsManagement } from "pages/Admin/ProjectsManagement/Project";
 export { default as AccountsManagement } from "pages/Admin/AccountsManagement/AccountsManagement";
 export { default as HistoryLogs } from "pages/Admin/HistoryLogs/HistoryLogs";

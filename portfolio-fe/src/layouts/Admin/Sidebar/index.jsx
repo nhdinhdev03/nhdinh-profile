@@ -17,7 +17,7 @@ import img from "assets/Img";
 import { Link } from "react-router-dom";
 import "./Sidebar.scss";
 
-// Navigation items structured for submenu display like in the image
+// Navigation items structured according to requirements
 const NAVIGATION_ITEMS = [
   {
     key: ROUTES.ADMIN.DASHBOARD,
@@ -25,14 +25,10 @@ const NAVIGATION_ITEMS = [
     label: "Dashboard",
   },
   {
-    key: "home-management",
+    key: "hero-management",
     icon: React.createElement(MailOutlined),
     label: "Quản lý Trang chủ",
     children: [
-      {
-        key: ROUTES.ADMIN.HOME_MANAGEMENT,
-        label: "Tổng quan Trang chủ",
-      },
       {
         key: ROUTES.ADMIN.HERO_MANAGEMENT,
         label: "Hero Section",
@@ -44,44 +40,13 @@ const NAVIGATION_ITEMS = [
     ],
   },
   {
-    key: "about-management", 
-    icon: React.createElement(AppstoreOutlined),
-    label: "Quản lý Giới thiệu",
-    children: [
-      {
-        key: ROUTES.ADMIN.ABOUT_MANAGEMENT,
-        label: "Tổng quan Giới thiệu",
-      },
-      {
-        key: ROUTES.ADMIN.PROFILE_INFO_MANAGEMENT,
-        label: "Thông tin Hồ sơ",
-      },
-      {
-        key: ROUTES.ADMIN.PROFILE_TAGS_MANAGEMENT,
-        label: "Profile Tags",
-      },
-      {
-        key: ROUTES.ADMIN.EXPERIENCE_MANAGEMENT,
-        label: "Kinh nghiệm",
-      },
-      {
-        key: ROUTES.ADMIN.SKILLS_MANAGEMENT,
-        label: "Kỹ năng",
-      },
-      {
-        key: ROUTES.ADMIN.SKILL_CATEGORIES_MANAGEMENT,
-        label: "Danh mục Kỹ năng",
-      },
-    ],
-  },
-  {
     key: "projects-management",
-    icon: React.createElement(SettingOutlined),
+    icon: React.createElement(AppstoreOutlined),
     label: "Quản lý Dự án",
     children: [
       {
         key: ROUTES.ADMIN.PROJECTS_MANAGEMENT,
-        label: "Tổng quan Dự án",
+        label: "Dự án",
       },
       {
         key: ROUTES.ADMIN.PROJECT_CATEGORIES_MANAGEMENT,
@@ -103,10 +68,6 @@ const NAVIGATION_ITEMS = [
     label: "Quản lý Blog",
     children: [
       {
-        key: ROUTES.ADMIN.BLOG_MANAGEMENT,
-        label: "Tổng quan Blog",
-      },
-      {
         key: ROUTES.ADMIN.BLOG_POSTS_MANAGEMENT,
         label: "Bài viết",
       },
@@ -126,12 +87,42 @@ const NAVIGATION_ITEMS = [
     label: "Quản lý Liên hệ",
     children: [
       {
-        key: ROUTES.ADMIN.CONTACT_MANAGEMENT,
-        label: "Tổng quan Liên hệ",
-      },
-      {
         key: ROUTES.ADMIN.CONTACT_MESSAGES_MANAGEMENT,
         label: "Tin nhắn Liên hệ",
+      },
+    ],
+  },
+  {
+    key: "profile-management", 
+    icon: React.createElement(AppstoreOutlined),
+    label: "Quản lý Hồ sơ",
+    children: [
+      {
+        key: ROUTES.ADMIN.PROFILE_INFO_MANAGEMENT,
+        label: "Thông tin Hồ sơ",
+      },
+      {
+        key: ROUTES.ADMIN.PROFILE_TAGS_MANAGEMENT,
+        label: "Profile Tags",
+      },
+      {
+        key: ROUTES.ADMIN.EXPERIENCE_MANAGEMENT,
+        label: "Kinh nghiệm",
+      },
+    ],
+  },
+  {
+    key: "skills-management",
+    icon: React.createElement(SettingOutlined),
+    label: "Quản lý Kỹ năng",
+    children: [
+      {
+        key: ROUTES.ADMIN.SKILL_CATEGORIES_MANAGEMENT,
+        label: "Danh mục Kỹ năng",
+      },
+      {
+        key: ROUTES.ADMIN.SKILLS_MANAGEMENT,
+        label: "Kỹ năng",
       },
     ],
   },
@@ -145,16 +136,16 @@ const NAVIGATION_ITEMS = [
         label: "Tài khoản Admin",
       },
       {
+        key: ROUTES.ADMIN.ANALYTICS,
+        label: "Thống kê",
+      },
+      {
         key: ROUTES.ADMIN.HISTORY_LOGS,
         label: "Lịch sử thay đổi",
       },
       {
         key: ROUTES.ADMIN.MEDIA_LIBRARY,
         label: "Thư viện Media",
-      },
-      {
-        key: ROUTES.ADMIN.ANALYTICS,
-        label: "Thống kê",
       },
       {
         key: ROUTES.ADMIN.SETTINGS,

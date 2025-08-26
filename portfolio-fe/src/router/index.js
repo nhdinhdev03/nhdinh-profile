@@ -33,12 +33,7 @@ export const privateRoutes = [
     layout: AdminLayout,
   },
 
-  // Home Module Management
-  {
-    path: ROUTES.ADMIN.HOME_MANAGEMENT,
-    component: PageAdmin.HomeManagement,
-    layout: AdminLayout,
-  },
+  // 1. Quản lý Trang chủ / Hero
   {
     path: ROUTES.ADMIN.HERO_MANAGEMENT,
     component: PageAdmin.HeroManagement,
@@ -50,39 +45,7 @@ export const privateRoutes = [
     layout: AdminLayout,
   },
 
-  // About/Profile Module Management
-  {
-    path: ROUTES.ADMIN.ABOUT_MANAGEMENT,
-    component: PageAdmin.AboutManagement,
-    layout: AdminLayout,
-  },
-  {
-    path: ROUTES.ADMIN.PROFILE_INFO_MANAGEMENT,
-    component: PageAdmin.ProfileInfoManagement,
-    layout: AdminLayout,
-  },
-  {
-    path: ROUTES.ADMIN.PROFILE_TAGS_MANAGEMENT,
-    component: PageAdmin.ProfileTagsManagement,
-    layout: AdminLayout,
-  },
-  {
-    path: ROUTES.ADMIN.EXPERIENCE_MANAGEMENT,
-    component: PageAdmin.ExperienceManagement,
-    layout: AdminLayout,
-  },
-  {
-    path: ROUTES.ADMIN.SKILLS_MANAGEMENT,
-    component: PageAdmin.SkillsManagement,
-    layout: AdminLayout,
-  },
-  {
-    path: ROUTES.ADMIN.SKILL_CATEGORIES_MANAGEMENT,
-    component: PageAdmin.SkillCategoriesManagement,
-    layout: AdminLayout,
-  },
-
-  // Projects Module Management
+  // 2. Quản lý Dự án (Projects)
   {
     path: ROUTES.ADMIN.PROJECTS_MANAGEMENT,
     component: PageAdmin.ProjectsManagement,
@@ -104,12 +67,7 @@ export const privateRoutes = [
     layout: AdminLayout,
   },
 
-  // Blog Module Management
-  {
-    path: ROUTES.ADMIN.BLOG_MANAGEMENT,
-    component: PageAdmin.BlogManagement,
-    layout: AdminLayout,
-  },
+  // 3. Quản lý Blog
   {
     path: ROUTES.ADMIN.BLOG_POSTS_MANAGEMENT,
     component: PageAdmin.BlogPostsManagement,
@@ -126,22 +84,53 @@ export const privateRoutes = [
     layout: AdminLayout,
   },
 
-  // Contact Module Management
-  {
-    path: ROUTES.ADMIN.CONTACT_MANAGEMENT,
-    component: PageAdmin.ContactManagement,
-    layout: AdminLayout,
-  },
+  // 4. Quản lý Liên hệ
   {
     path: ROUTES.ADMIN.CONTACT_MESSAGES_MANAGEMENT,
     component: PageAdmin.ContactMessagesManagement,
     layout: AdminLayout,
   },
 
-  // System Management
+  // 5. Quản lý Hồ sơ cá nhân (Profile)
+  {
+    path: ROUTES.ADMIN.PROFILE_INFO_MANAGEMENT,
+    component: PageAdmin.ProfileInfoManagement,
+    layout: AdminLayout,
+  },
+  {
+    path: ROUTES.ADMIN.PROFILE_TAGS_MANAGEMENT,
+    component: PageAdmin.ProfileTagsManagement,
+    layout: AdminLayout,
+  },
+  {
+    path: ROUTES.ADMIN.EXPERIENCE_MANAGEMENT,
+    component: PageAdmin.ExperienceManagement,
+    layout: AdminLayout,
+  },
+
+  // 6. Quản lý Kỹ năng (Skills)
+  {
+    path: ROUTES.ADMIN.SKILL_CATEGORIES_MANAGEMENT,
+    component: PageAdmin.SkillCategoriesManagement,
+    layout: AdminLayout,
+  },
+  {
+    path: ROUTES.ADMIN.SKILLS_MANAGEMENT,
+    component: PageAdmin.SkillsManagement,
+    layout: AdminLayout,
+  },
+
+  // 7. Quản lý Tài khoản Admin
   {
     path: ROUTES.ADMIN.ADMIN_USERS_MANAGEMENT,
     component: PageAdmin.AdminUsersManagement,
+    layout: AdminLayout,
+  },
+
+  // 8. Các chức năng bổ sung cho Admin
+  {
+    path: ROUTES.ADMIN.ANALYTICS,
+    component: PageAdmin.Analytics,
     layout: AdminLayout,
   },
   {
@@ -155,11 +144,6 @@ export const privateRoutes = [
     layout: AdminLayout,
   },
   {
-    path: ROUTES.ADMIN.ANALYTICS,
-    component: PageAdmin.Analytics,
-    layout: AdminLayout,
-  },
-  {
     path: ROUTES.ADMIN.SETTINGS,
     component: PageAdmin.Settings,
     layout: AdminLayout,
@@ -169,6 +153,4 @@ export const privateRoutes = [
     component: PageAdmin.Profile,
     layout: AdminLayout,
   },
-
- 
 ];

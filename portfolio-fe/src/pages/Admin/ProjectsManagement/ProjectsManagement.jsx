@@ -8,12 +8,198 @@ import {
   EyeIcon,
   MagnifyingGlassIcon,
   StarIcon,
-  XMarkIcon
+  XMarkIcon,
+  ChevronDownIcon,
+  CheckIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 
 import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from 'api/admin';
 import { PageHeader, Button } from 'components/Admin';
+import './ProjectsManagement.css';
+
+// Fallback image as data URL to avoid network errors
+const FALLBACK_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6cmdiKDI0MiwyNDUsMjQ3KTtzdG9wLW9wYWNpdHk6MSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOnJnYigyMjksMjMxLDIzNSk7c3RvcC1vcGFjaXR5OjEiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjZ3JhZCkiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIxMDAiIHI9IjI0IiBmaWxsPSIjOWNhM2FmIi8+PC9zdmc+';
+
+// Component Multi-Select cho Tags
+const TagsMultiSelect = ({ 
+  availableTags, 
+  selectedTagIds, 
+  onChange, 
+  disabled = false,
+  onCreateTag = null
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const dropdownRef = useRef(null);
+
+  // Filter tags based on search term
+  const filteredTags = availableTags.filter(tag =>
+    tag.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Get selected tags for display
+  const selectedTags = availableTags.filter(tag => 
+    selectedTagIds.includes(tag.id)
+  );
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+        setSearchTerm('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Handle tag selection
+  const handleTagToggle = (tagId) => {
+    const newSelectedIds = selectedTagIds.includes(tagId)
+      ? selectedTagIds.filter(id => id !== tagId)
+      : [...selectedTagIds, tagId];
+    onChange(newSelectedIds);
+  };
+
+  // Remove tag
+  const handleRemoveTag = (tagId) => {
+    const newSelectedIds = selectedTagIds.filter(id => id !== tagId);
+    onChange(newSelectedIds);
+  };
+
+  // Handle creating new tag within this component
+  const handleCreateNewTagLocal = async () => {
+    if (onCreateTag && searchTerm.trim()) {
+      try {
+        // Show loading state (you can add a loading state to the component)
+        const newTag = await onCreateTag(searchTerm.trim());
+        if (newTag && newTag.id) {
+          // Add new tag to selection
+          onChange([...selectedTagIds, newTag.id]);
+        }
+        setSearchTerm('');
+        setIsOpen(false);
+      } catch (error) {
+        console.error('Error creating new tag:', error);
+        // Keep dropdown open if there was an error so user can try again
+        // setSearchTerm(''); // Don't clear search term on error
+      }
+    }
+  };
+
+  return (
+    <div className="tags-multiselect" ref={dropdownRef}>
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        Công nghệ sử dụng
+      </label>
+      
+      {/* Selected tags display */}
+      <div className="selected-tags">
+        {selectedTags.map((tag) => (
+          <span
+            key={tag.id}
+            className="selected-tag"
+          >
+            {tag.name}
+            <button
+              type="button"
+              onClick={() => handleRemoveTag(tag.id)}
+              className="ml-1.5 text-blue-400 hover:text-blue-600 focus:outline-none"
+            >
+              <XMarkIcon className="h-3 w-3" />
+            </button>
+          </span>
+        ))}
+        {selectedTags.length === 0 && (
+          <span className="text-sm text-gray-500">Chưa chọn công nghệ nào</span>
+        )}
+      </div>
+
+      {/* Dropdown trigger */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        disabled={disabled}
+        className="tags-trigger"
+      >
+        <span className="text-sm text-gray-500">
+          {isOpen ? 'Đóng danh sách...' : 'Chọn công nghệ...'}
+        </span>
+        <ChevronDownIcon
+          className={`tags-trigger-icon ${isOpen ? 'open' : ''}`}
+        />
+      </button>
+
+      {/* Dropdown panel */}
+      {isOpen && (
+        <div className="tags-dropdown">
+          {/* Search input */}
+          <div className="tags-dropdown-search">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Tìm kiếm công nghệ..."
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              autoFocus
+            />
+          </div>
+
+          {/* Tags list */}
+          <div className="tags-dropdown-list">
+            {filteredTags.length > 0 ? (
+              filteredTags.map((tag) => {
+                const isSelected = selectedTagIds.includes(tag.id);
+                return (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    onClick={() => handleTagToggle(tag.id)}
+                    className={`tags-dropdown-item ${isSelected ? 'selected' : ''}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>{tag.name}</span>
+                      {isSelected && (
+                        <CheckIcon className="h-4 w-4 text-indigo-600" />
+                      )}
+                    </div>
+                  </button>
+                );
+              })
+            ) : (
+              <div className="tags-dropdown-empty">
+                {searchTerm ? 'Không tìm thấy công nghệ nào' : 'Chưa có công nghệ nào'}
+              </div>
+            )}
+          </div>
+
+          {/* Add new tag option */}
+          {searchTerm && 
+           !filteredTags.some(tag => tag.name.toLowerCase() === searchTerm.toLowerCase()) && 
+           onCreateTag && (
+            <div className="tags-dropdown-create">
+              <button
+                type="button"
+                onClick={() => handleCreateNewTagLocal()}
+                className="w-full text-left text-sm text-indigo-600 hover:text-indigo-700 focus:outline-none"
+              >
+                <PlusIcon className="h-4 w-4 inline mr-2" />
+                Thêm "{searchTerm}" làm công nghệ mới
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      <p className="mt-1 text-xs text-gray-500">
+        Chọn các công nghệ, framework, thư viện sử dụng trong dự án
+      </p>
+    </div>
+  );
+};
 
 // Modal Component chi tiết dự án (đã tối ưu responsive + accessibility)
 const ProjectDetailModal = ({
@@ -146,7 +332,7 @@ const ProjectDetailModal = ({
                   {/* Project Image */}
                   <div>
                     <img
-                      src={project.imageUrl || 'https://via.placeholder.com/400x200'}
+                      src={project.imageUrl || FALLBACK_IMAGE}
                       alt={project.title}
                       className="w-full h-64 object-cover rounded-lg border"
                     />
@@ -336,6 +522,7 @@ const ProjectFormModal = ({
   formData,
   setFormData,
   categories,
+  handleCreateNewTag,
   tags,
 }) => {
   const modalRef = useRef(null);
@@ -472,10 +659,11 @@ const ProjectFormModal = ({
                         type="text"
                         value={formData.title}
                         onChange={(e) => setFormData({...formData, title: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder="Nhập tên dự án"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                        placeholder="Ví dụ: Portfolio Website"
                         required
                       />
+                      <p className="mt-1 text-xs text-gray-500">Tên hiển thị của dự án</p>
                     </div>
                     
                     <div>
@@ -486,14 +674,15 @@ const ProjectFormModal = ({
                         id="project-category"
                         value={formData.categoryId}
                         onChange={(e) => setFormData({...formData, categoryId: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                         required
                       >
-                        <option value="">Chọn danh mục</option>
+                        <option value="">Chọn danh mục dự án</option>
                         {categories.map(category => (
                           <option key={category.id} value={category.id}>{category.name}</option>
                         ))}
                       </select>
+                      <p className="mt-1 text-xs text-gray-500">Phân loại dự án theo chủ đề</p>
                     </div>
 
                     <div>
@@ -505,9 +694,10 @@ const ProjectFormModal = ({
                         type="url"
                         value={formData.imageUrl}
                         onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder="https://example.com/image.jpg"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                        placeholder="https://example.com/image.jpg hoặc /img/projects/project.png"
                       />
+                      <p className="mt-1 text-xs text-gray-500">Link hình ảnh đại diện cho dự án</p>
                     </div>
 
                     <div>
@@ -519,9 +709,10 @@ const ProjectFormModal = ({
                         type="url"
                         value={formData.demoUrl}
                         onChange={(e) => setFormData({...formData, demoUrl: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                         placeholder="https://demo.example.com"
                       />
+                      <p className="mt-1 text-xs text-gray-500">Link xem thử dự án hoạt động</p>
                     </div>
 
                     <div>
@@ -533,10 +724,19 @@ const ProjectFormModal = ({
                         type="url"
                         value={formData.sourceUrl}
                         onChange={(e) => setFormData({...formData, sourceUrl: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                         placeholder="https://github.com/user/repo"
                       />
+                      <p className="mt-1 text-xs text-gray-500">Link repository mã nguồn</p>
                     </div>
+
+                    {/* Tags Multi-Select */}
+                    <TagsMultiSelect
+                      availableTags={tags}
+                      selectedTagIds={formData.tagIds}
+                      onChange={(tagIds) => setFormData({...formData, tagIds})}
+                      onCreateTag={handleCreateNewTag}
+                    />
                   </div>
 
                   {/* Right Column */}
@@ -547,13 +747,14 @@ const ProjectFormModal = ({
                       </label>
                       <textarea
                         id="project-description"
-                        rows={6}
+                        rows={8}
                         value={formData.description}
                         onChange={(e) => setFormData({...formData, description: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder="Mô tả chi tiết về dự án..."
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none"
+                        placeholder="Mô tả chi tiết về dự án, tính năng chính, mục tiêu..."
                         required
                       />
+                      <p className="mt-1 text-xs text-gray-500">Mô tả chi tiết về dự án và tính năng</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -565,7 +766,7 @@ const ProjectFormModal = ({
                           id="project-status"
                           value={formData.status}
                           onChange={(e) => setFormData({...formData, status: e.target.value})}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                         >
                           <option value="draft">Bản nháp</option>
                           <option value="published">Đã xuất bản</option>
@@ -582,14 +783,17 @@ const ProjectFormModal = ({
                           type="number"
                           value={formData.sortOrder}
                           onChange={(e) => setFormData({...formData, sortOrder: parseInt(e.target.value) || 0})}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                           min="0"
+                          placeholder="0"
                         />
                       </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <div className="flex items-center">
+                    <div className="space-y-3 bg-gray-50 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">Tùy chọn hiển thị</h4>
+                      
+                      <div className="flex items-center p-3 bg-white rounded-lg border border-gray-200">
                         <input
                           id="project-featured"
                           type="checkbox"
@@ -597,12 +801,15 @@ const ProjectFormModal = ({
                           onChange={(e) => setFormData({...formData, isFeatured: e.target.checked})}
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                         />
-                        <label htmlFor="project-featured" className="ml-2 block text-sm text-gray-900">
-                          Dự án nổi bật
-                        </label>
+                        <div className="ml-3">
+                          <label htmlFor="project-featured" className="block text-sm font-medium text-gray-900">
+                            Dự án nổi bật
+                          </label>
+                          <p className="text-xs text-gray-500">Hiển thị ở vị trí ưu tiên</p>
+                        </div>
                       </div>
 
-                      <div className="flex items-center">
+                      <div className="flex items-center p-3 bg-white rounded-lg border border-gray-200">
                         <input
                           id="project-public"
                           type="checkbox"
@@ -610,9 +817,12 @@ const ProjectFormModal = ({
                           onChange={(e) => setFormData({...formData, isPublic: e.target.checked})}
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                         />
-                        <label htmlFor="project-public" className="ml-2 block text-sm text-gray-900">
-                          Hiển thị công khai
-                        </label>
+                        <div className="ml-3">
+                          <label htmlFor="project-public" className="block text-sm font-medium text-gray-900">
+                            Hiển thị công khai
+                          </label>
+                          <p className="text-xs text-gray-500">Cho phép khách truy cập xem</p>
+                        </div>
                       </div>
                     </div>
 
@@ -622,14 +832,17 @@ const ProjectFormModal = ({
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Xem trước hình ảnh
                         </label>
-                        <img
-                          src={formData.imageUrl}
-                          alt="Preview"
-                          className="w-full h-32 object-cover rounded-md border"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
-                        />
+                        <div className="relative group">
+                          <img
+                            src={formData.imageUrl}
+                            alt="Preview"
+                            className="w-full h-40 object-cover rounded-lg border border-gray-200"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg"></div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -684,12 +897,96 @@ const ProjectsManagement = () => {
     demoUrl: '',
     sourceUrl: '',
     categoryId: '',
-    tagNames: [],
+    tagIds: [], // Thay đổi từ tagNames thành tagIds
     isFeatured: false,
     status: 'draft',
     isPublic: true,
     sortOrder: 0
   });
+
+  // Handle creating new tag with enhanced validation and feedback
+  const handleCreateNewTag = useCallback(async (tagName) => {
+    try {
+      const trimmedName = tagName.trim();
+      
+      // Validation
+      if (!trimmedName) {
+        throw new Error('Tên tag không được để trống');
+      }
+      
+      if (trimmedName.length < 2) {
+        throw new Error('Tên tag phải có ít nhất 2 ký tự');
+      }
+      
+      if (trimmedName.length > 50) {
+        throw new Error('Tên tag không được vượt quá 50 ký tự');
+      }
+      
+      // Check if tag already exists
+      const existingTag = tags.find(tag => 
+        tag.name.toLowerCase() === trimmedName.toLowerCase()
+      );
+      
+      if (existingTag) {
+        console.log('Tag already exists, returning existing:', existingTag);
+        return existingTag;
+      }
+      
+      console.log('Creating new tag:', trimmedName);
+      
+      // Call API để tạo tag mới
+      const response = await ProjectTagApi.create({ 
+        name: trimmedName,
+        description: `Công nghệ: ${trimmedName}`,
+        isActive: true
+      });
+      
+      if (response && response.data) {
+        const newTag = response.data;
+        
+        // Thêm vào danh sách tags hiện tại
+        setTags(prevTags => [...prevTags, newTag]);
+        
+        // Log success
+        console.log('✅ New tag created successfully:', newTag);
+        
+        // TODO: Show success notification to user
+        // showNotification('success', `Tag "${newTag.name}" đã được tạo thành công`);
+        
+        return newTag;
+      } else {
+        throw new Error('No data returned from API');
+      }
+    } catch (error) {
+      console.error('❌ Error creating tag:', error);
+      
+      // Check if it's a validation error
+      if (error.message.includes('không được')) {
+        // TODO: Show validation error to user
+        // showNotification('error', error.message);
+        throw error;
+      }
+      
+      // Fallback: tạo tag tạm thời nếu API fail
+      const fallbackTag = {
+        id: `temp-${Date.now()}`,
+        name: tagName.trim(),
+        description: `Công nghệ: ${tagName.trim()}`,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        isTemporary: true // Flag để biết đây là tag tạm thời
+      };
+      
+      // Thêm vào danh sách với warning
+      setTags(prevTags => [...prevTags, fallbackTag]);
+      console.warn('⚠️ Using fallback tag due to API error:', fallbackTag);
+      
+      // TODO: Show warning to user
+      // showNotification('warning', 'Không thể kết nối server. Tag tạm thời đã được tạo.');
+      
+      return fallbackTag;
+    }
+  }, [tags]);
 
   // Load data on component mount
   useEffect(() => {
@@ -738,7 +1035,7 @@ const ProjectsManagement = () => {
       demoUrl: project.demoUrl,
       sourceUrl: project.sourceUrl,
       categoryId: project.category?.id || '',
-      tagNames: project.tags?.map(tag => tag.name) || [],
+      tagIds: project.tags?.map(tag => tag.id) || [], // Thay đổi từ tagNames thành tagIds
       isFeatured: project.isFeatured,
       status: project.status,
       isPublic: project.isPublic,
@@ -773,10 +1070,20 @@ const ProjectsManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Chuyển đổi tagIds thành tagNames để gửi API
+      const selectedTags = tags.filter(tag => formData.tagIds.includes(tag.id));
+      const tagNames = selectedTags.map(tag => tag.name);
+      
+      const submitData = {
+        ...formData,
+        tagNames: tagNames, // Gửi tagNames cho backend
+        tagIds: undefined   // Xóa tagIds khỏi request
+      };
+      
       if (editingProject) {
-        await ProjectApi.update(editingProject.id, formData);
+        await ProjectApi.update(editingProject.id, submitData);
       } else {
-        await ProjectApi.create(formData);
+        await ProjectApi.create(submitData);
       }
       await loadData();
       resetForm();
@@ -795,7 +1102,7 @@ const ProjectsManagement = () => {
       demoUrl: '',
       sourceUrl: '',
       categoryId: '',
-      tagNames: [],
+      tagIds: [], // Thay đổi từ tagNames thành tagIds
       isFeatured: false,
       status: 'draft',
       isPublic: true,
@@ -831,7 +1138,7 @@ const ProjectsManagement = () => {
         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
         <PlusIcon className="h-4 w-4 mr-2" />
-        Thêm dự án
+        Thêm dự án mới
       </button>
     </>
   );
@@ -850,29 +1157,72 @@ const ProjectsManagement = () => {
           
           
           {/* Search and Filter */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search input */}
+              <div className="relative flex-1">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="block w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+                  placeholder="Tìm kiếm theo tên hoặc mô tả dự án..."
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </button>
+                )}
               </div>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                placeholder="Tìm kiếm dự án..."
-              />
+              
+              {/* Filter options */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="block rounded-lg border border-gray-300 bg-white py-2.5 pl-3 pr-10 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors min-w-[140px]"
+                >
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="published">Đã xuất bản ({projects.filter(p => p.status === 'published').length})</option>
+                  <option value="draft">Bản nháp ({projects.filter(p => p.status === 'draft').length})</option>
+                  <option value="archived">Đã lưu trữ ({projects.filter(p => p.status === 'archived').length})</option>
+                </select>
+                
+                <button
+                  onClick={() => {
+                    setSearchTerm('');
+                    setFilter('all');
+                  }}
+                  className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+                >
+                  Xóa bộ lọc
+                </button>
+              </div>
             </div>
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="block rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            >
-              <option value="all">Tất cả</option>
-              <option value="published">Đã xuất bản</option>
-              <option value="draft">Bản nháp</option>
-              <option value="archived">Đã lưu trữ</option>
-            </select>
+            
+            {/* Search results info */}
+            {(searchTerm || filter !== 'all') && (
+              <div className="mt-3 pt-3 border-t border-gray-200">
+                <p className="text-sm text-gray-600">
+                  Tìm thấy <span className="font-medium text-gray-900">{filteredProjects.length}</span> dự án
+                  {searchTerm && (
+                    <> khớp với "<span className="font-medium text-indigo-600">{searchTerm}</span>"</>
+                  )}
+                  {filter !== 'all' && (
+                    <> có trạng thái <span className="font-medium text-indigo-600">
+                      {filter === 'published' ? 'đã xuất bản' : 
+                       filter === 'draft' ? 'bản nháp' : 'đã lưu trữ'}
+                    </span></>
+                  )}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Stats */}
@@ -920,81 +1270,151 @@ const ProjectsManagement = () => {
             {filteredProjects.length > 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProjects.map((project) => (
-                  <div key={project.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                  <div key={project.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 group">
                     <div className="relative">
                       <img
-                        src={project.imageUrl || 'https://via.placeholder.com/400x200'}
+                        src={project.imageUrl || FALLBACK_IMAGE}
                         alt={project.title}
-                        className="w-full h-48 object-cover"
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          e.target.src = FALLBACK_IMAGE;
+                        }}
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+                      
+                      {/* Featured badge */}
                       {project.isFeatured && (
-                        <div className="absolute top-2 right-2">
-                          <StarIconSolid className="h-6 w-6 text-yellow-400" />
+                        <div className="absolute top-3 right-3">
+                          <div className="flex items-center bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-xs font-medium shadow-sm">
+                            <StarIconSolid className="h-3 w-3 mr-1" />
+                            Nổi bật
+                          </div>
                         </div>
                       )}
-                      <div className="absolute top-2 left-2">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      
+                      {/* Status badge */}
+                      <div className="absolute top-3 left-3">
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium shadow-sm ${
                           project.status === 'published' 
-                            ? 'bg-green-100 text-green-800' 
+                            ? 'bg-green-500 text-white' 
                             : project.status === 'draft'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-gray-100 text-gray-800'
+                            ? 'bg-yellow-500 text-white'
+                            : 'bg-gray-500 text-white'
                         }`}>
                           {project.status === 'published' ? 'Đã xuất bản' : 
                            project.status === 'draft' ? 'Bản nháp' : 'Đã lưu trữ'}
                         </span>
                       </div>
+
+                      {/* Quick action overlay */}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center space-x-2">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          icon={EyeIcon}
+                          onClick={() => handleViewProject(project)}
+                          className="!bg-white !text-gray-700 hover:!bg-gray-50"
+                        >
+                          Xem chi tiết
+                        </Button>
+                      </div>
                     </div>
                     
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{project.title}</h3>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{project.description}</p>
-                      
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.tags?.slice(0, 3).map((tag) => (
-                          <span key={tag.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {tag.name}
-                          </span>
-                        ))}
-                        {project.tags?.length > 3 && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            +{project.tags.length - 3}
+                    <div className="p-5">
+                      {/* Title with better typography */}
+                      <div className="mb-3">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight" title={project.title}>
+                          {project.title}
+                        </h3>
+                        {project.category && (
+                          <span className="text-sm text-indigo-600 font-medium">
+                            {project.category.name}
                           </span>
                         )}
                       </div>
+
+                      {/* Description with better line clamping */}
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed" title={project.description}>
+                        {project.description}
+                      </p>
                       
-                      <div className="flex items-center justify-between">
+                      {/* Tags with improved layout */}
+                      <div className="mb-4">
+                        <div className="flex flex-wrap gap-1.5">
+                          {project.tags?.slice(0, 4).map((tag) => (
+                            <span key={tag.id} className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                              {tag.name}
+                            </span>
+                          ))}
+                          {project.tags?.length > 4 && (
+                            <span key="more-tags" className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200">
+                              +{project.tags.length - 4} khác
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Links preview */}
+                      {(project.demoUrl || project.sourceUrl) && (
+                        <div className="mb-4 flex items-center space-x-3 text-xs">
+                          {project.demoUrl && (
+                            <a 
+                              href={project.demoUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-green-600 hover:text-green-700 flex items-center"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <EyeIcon className="h-3 w-3 mr-1" />
+                              Demo
+                            </a>
+                          )}
+                          {project.sourceUrl && (
+                            <a 
+                              href={project.sourceUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-gray-600 hover:text-gray-700 flex items-center"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FolderIcon className="h-3 w-3 mr-1" />
+                              Source
+                            </a>
+                          )}
+                        </div>
+                      )}
+                      
+                      {/* Actions and metadata */}
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                         <div className="flex items-center space-x-2">
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            icon={EyeIcon}
-                            onClick={() => handleViewProject(project)}
-                            className="!px-2 !py-1"
-                          >
-                            Xem
-                          </Button>
                           <button
                             onClick={() => handleEdit(project)}
-                            className="text-indigo-600 hover:text-indigo-900 text-sm"
+                            className="p-1.5 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-md transition-colors"
+                            title="Chỉnh sửa"
                           >
                             <PencilIcon className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(project.id)}
-                            className="text-red-600 hover:text-red-900 text-sm"
+                            className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+                            title="Xóa"
                           >
                             <TrashIcon className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleToggleFeatured(project.id, project.isFeatured)}
-                            className={`text-sm ${project.isFeatured ? 'text-yellow-600' : 'text-gray-400'}`}
+                            className={`p-1.5 rounded-md transition-colors ${
+                              project.isFeatured 
+                                ? 'text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50' 
+                                : 'text-gray-400 hover:text-yellow-600 hover:bg-yellow-50'
+                            }`}
+                            title={project.isFeatured ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}
                           >
-                            <StarIcon className="h-4 w-4" />
+                            {project.isFeatured ? <StarIconSolid className="h-4 w-4" /> : <StarIcon className="h-4 w-4" />}
                           </button>
                         </div>
                         <div className="text-xs text-gray-500">
-                          {new Date(project.updatedAt || project.createdAt).toLocaleDateString()}
+                          {new Date(project.updatedAt || project.createdAt).toLocaleDateString('vi-VN')}
                         </div>
                       </div>
                     </div>
@@ -1002,23 +1422,54 @@ const ProjectsManagement = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <FolderIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-semibold text-gray-900">Chưa có dự án nào</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  {projects.length === 0 
-                    ? 'Bắt đầu bằng cách tạo dự án đầu tiên của bạn.' 
-                    : 'Không tìm thấy dự án nào khớp với bộ lọc hiện tại.'
-                  }
-                </p>
-                <div className="mt-6">
-                  <button
-                    onClick={() => setShowForm(true)}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    Tạo dự án đầu tiên
-                  </button>
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+                <div className="text-center py-16">
+                  <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <FolderIcon className="h-12 w-12 text-gray-400" />
+                  </div>
+                  
+                  {projects.length === 0 ? (
+                    <>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Chưa có dự án nào</h3>
+                      <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                        Bắt đầu xây dựng portfolio của bạn bằng cách tạo dự án đầu tiên. 
+                        Hiển thị những công việc tuyệt vời bạn đã thực hiện!
+                      </p>
+                      <button
+                        onClick={() => setShowForm(true)}
+                        className="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                      >
+                        <PlusIcon className="h-5 w-5 mr-2" />
+                        Tạo dự án đầu tiên
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Không tìm thấy dự án</h3>
+                      <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                        Không có dự án nào khớp với bộ lọc hiện tại. 
+                        Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc trạng thái.
+                      </p>
+                      <div className="flex justify-center space-x-3">
+                        <button
+                          onClick={() => {
+                            setSearchTerm('');
+                            setFilter('all');
+                          }}
+                          className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                        >
+                          Xóa bộ lọc
+                        </button>
+                        <button
+                          onClick={() => setShowForm(true)}
+                          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                        >
+                          <PlusIcon className="h-4 w-4 mr-2" />
+                          Thêm dự án mới
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -1036,6 +1487,7 @@ const ProjectsManagement = () => {
             setFormData={setFormData}
             categories={categories}
             tags={tags}
+            handleCreateNewTag={handleCreateNewTag}
           />
         )}
 

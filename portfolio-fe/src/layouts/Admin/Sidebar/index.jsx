@@ -1,4 +1,17 @@
-import React, { useState } from "react";
+/**
+ * Optimized Admin Sidebar Component
+ * 
+ * Optimizations applied:
+ * 1. React.memo for both SidebarContent and Sidebar to prevent unnecessary re-renders
+ * 2. useMemo for static navigation groups to prevent re-creation on each render
+ * 3. useCallback for event handlers to maintain stable references
+ * 4. Improved accessibility with proper ARIA attributes and button types
+ * 5. Better key props using unique identifiers instead of names
+ * 6. Moved static data outside component scope
+ * 7. Stable references to prevent QuillBot-like focus issues
+ */
+
+import React, { useMemo, useCallback, memo } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   XMarkIcon,
@@ -18,11 +31,117 @@ import { ROUTES } from "router/routeConstants";
 import img from "assets/Img";
 import { Link } from "react-router-dom";
 
-const SidebarContent = ({
+// Move navigation groups outside component to prevent re-creation on each render
+const NAVIGATION_GROUPS = [
+  {
+    name: "Tổng quan",
+    id: "overview",
+    items: [
+      {
+        name: "Dashboard",
+        href: ROUTES.ADMIN.DASHBOARD,
+        icon: HomeIcon,
+        description: "Tổng quan hệ thống",
+      },
+    ],
+  },
+  {
+    name: "Quản lý Nội dung",
+    id: "content",
+    items: [
+      {
+        name: "Trang chủ",
+        href: ROUTES.ADMIN.HOME_MANAGEMENT,
+        icon: HomeIcon,
+        description: "Cập nhật nội dung trang chủ",
+      },
+      {
+        name: "Giới thiệu",
+        href: ROUTES.ADMIN.ABOUT_MANAGEMENT,
+        icon: InformationCircleIcon,
+        description: "Thông tin cá nhân & kinh nghiệm",
+      },
+      {
+        name: "Dự án",
+        href: ROUTES.ADMIN.PROJECTS_MANAGEMENT,
+        icon: FolderIcon,
+        description: "Portfolio & dự án cá nhân",
+      },
+      {
+        name: "Blog",
+        href: ROUTES.ADMIN.BLOG_MANAGEMENT,
+        icon: DocumentTextIcon,
+        description: "Bài viết & nội dung",
+      },
+    ],
+  },
+  {
+    name: "Tương tác",
+    id: "interaction",
+    items: [
+      {
+        name: "Liên hệ",
+        href: ROUTES.ADMIN.CONTACT_MANAGEMENT,
+        icon: ChatBubbleLeftRightIcon,
+        description: "Tin nhắn & phản hồi",
+      },
+    ],
+  },
+  {
+    name: "Quản trị Hệ thống",
+    id: "system",
+    items: [
+      {
+        name: "Tài khoản",
+        href: ROUTES.ADMIN.ACCOUNTS_MANAGEMENT,
+        icon: UserGroupIcon,
+        description: "Users & permissions",
+      },
+      {
+        name: "Lịch sử thay đổi",
+        href: ROUTES.ADMIN.HISTORY_LOGS,
+        icon: ClockIcon,
+        description: "Activity logs & audit trail",
+      },
+      {
+        name: "Thư viện Media",
+        href: ROUTES.ADMIN.MEDIA_LIBRARY,
+        icon: PhotoIcon,
+        description: "Hình ảnh & tài liệu",
+      },
+      {
+        name: "Thống kê",
+        href: ROUTES.ADMIN.ANALYTICS,
+        icon: ChartBarIcon,
+        description: "Analytics & báo cáo",
+      },
+    ],
+  },
+  {
+    name: "Cài đặt & Hồ sơ",
+    id: "settings",
+    items: [
+      {
+        name: "Cài đặt",
+        href: ROUTES.ADMIN.SETTINGS,
+        icon: CogIcon,
+        description: "Cấu hình hệ thống",
+      },
+      {
+        name: "Hồ sơ",
+        href: ROUTES.ADMIN.PROFILE,
+        icon: UserIcon,
+        description: "Thông tin cá nhân admin",
+      },
+    ],
+  },
+];
+
+// Memoized SidebarContent to prevent unnecessary re-renders
+const SidebarContent = memo(({
   navigationGroups,
   currentPath,
   handleNavigation,
-
 }) => (
   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 ring-1 ring-white/10 sidebar-content">
     <div className="flex h-16 shrink-0 items-center">
@@ -41,7 +160,7 @@ const SidebarContent = ({
     <nav className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col space-y-8">
         {navigationGroups.map((group, groupIndex) => (
-          <div key={group.name} className="sidebar-group">
+          <div key={group.id} className="sidebar-group">
             {/* Group Header */}
             <div className="text-xs font-semibold leading-6 text-gray-400 uppercase tracking-wide mb-3 sidebar-group-header">
               {group.name}
@@ -49,7 +168,7 @@ const SidebarContent = ({
             <ul className="-mx-2 space-y-1">
               {group.items.map((item, itemIndex) => (
                 <li
-                  key={item.name}
+                  key={`${group.id}-${item.href}`}
                   style={{
                     animationDelay: `${
                       (groupIndex * group.items.length + itemIndex) * 50
@@ -57,12 +176,15 @@ const SidebarContent = ({
                   }}
                 >
                   <button
+                    type="button"
                     onClick={() => handleNavigation(item.href)}
                     className={`group flex w-full gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors sidebar-menu-item sidebar-menu-item-animated ${
                       currentPath === item.href
                         ? "bg-indigo-600 text-white active"
                         : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
                     }`}
+                    aria-current={currentPath === item.href ? "page" : undefined}
+                    tabIndex={0}
                   >
                     <item.icon
                       className={`h-6 w-6 shrink-0 menu-icon ${
@@ -93,134 +215,29 @@ const SidebarContent = ({
       </div>
     </nav>
   </div>
-);
+));
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen, currentPath, navigate }) => {
-  const [expandedGroups, setExpandedGroups] = useState(
-    new Set(["overview", "content", "interaction", "system", "settings"])
-  );
+SidebarContent.displayName = "SidebarContent";
 
-  const navigationGroups = [
-    {
-      name: "Tổng quan",
-      id: "overview",
-      items: [
-        {
-          name: "Dashboard",
-          href: ROUTES.ADMIN.DASHBOARD,
-          icon: HomeIcon,
-          description: "Tổng quan hệ thống",
-        },
-      ],
-    },
-    {
-      name: "Quản lý Nội dung",
-      id: "content",
-      items: [
-        {
-          name: "Trang chủ",
-          href: ROUTES.ADMIN.HOME_MANAGEMENT,
-          icon: HomeIcon,
-          description: "Cập nhật nội dung trang chủ",
-        },
-        {
-          name: "Giới thiệu",
-          href: ROUTES.ADMIN.ABOUT_MANAGEMENT,
-          icon: InformationCircleIcon,
-          description: "Thông tin cá nhân & kinh nghiệm",
-        },
-        {
-          name: "Dự án",
-          href: ROUTES.ADMIN.PROJECTS_MANAGEMENT,
-          icon: FolderIcon,
-          description: "Portfolio & dự án cá nhân",
-        },
-        {
-          name: "Blog",
-          href: ROUTES.ADMIN.BLOG_MANAGEMENT,
-          icon: DocumentTextIcon,
-          description: "Bài viết & nội dung",
-        },
-      ],
-    },
-    {
-      name: "Tương tác",
-      id: "interaction",
-      items: [
-        {
-          name: "Liên hệ",
-          href: ROUTES.ADMIN.CONTACT_MANAGEMENT,
-          icon: ChatBubbleLeftRightIcon,
-          description: "Tin nhắn & phản hồi",
-        },
-      ],
-    },
-    {
-      name: "Quản trị Hệ thống",
-      id: "system",
-      items: [
-        {
-          name: "Tài khoản",
-          href: ROUTES.ADMIN.ACCOUNTS_MANAGEMENT,
-          icon: UserGroupIcon,
-          description: "Users & permissions",
-        },
-        {
-          name: "Lịch sử thay đổi",
-          href: ROUTES.ADMIN.HISTORY_LOGS,
-          icon: ClockIcon,
-          description: "Activity logs & audit trail",
-        },
-        {
-          name: "Thư viện Media",
-          href: ROUTES.ADMIN.MEDIA_LIBRARY,
-          icon: PhotoIcon,
-          description: "Hình ảnh & tài liệu",
-        },
-        {
-          name: "Thống kê",
-          href: ROUTES.ADMIN.ANALYTICS,
-          icon: ChartBarIcon,
-          description: "Analytics & báo cáo",
-        },
-      ],
-    },
-    {
-      name: "Cài đặt & Hồ sơ",
-      id: "settings",
-      items: [
-        {
-          name: "Cài đặt",
-          href: ROUTES.ADMIN.SETTINGS,
-          icon: CogIcon,
-          description: "Cấu hình hệ thống",
-        },
-        {
-          name: "Hồ sơ",
-          href: ROUTES.ADMIN.PROFILE,
-          icon: UserIcon,
-          description: "Thông tin cá nhân admin",
-        },
-      ],
-    },
-  ];
+// Performance monitoring for debugging (can be removed in production)
+if (process.env.NODE_ENV === 'development') {
+  SidebarContent.whyDidYouRender = true;
+}
 
-  const toggleGroup = (groupId) => {
-    setExpandedGroups((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(groupId)) {
-        newSet.delete(groupId);
-      } else {
-        newSet.add(groupId);
-      }
-      return newSet;
-    });
-  };
+const Sidebar = memo(({ sidebarOpen, setSidebarOpen, currentPath, navigate }) => {
+  // Memoize navigation groups to prevent re-creation
+  const navigationGroups = useMemo(() => NAVIGATION_GROUPS, []);
 
-  const handleNavigation = (href) => {
+  // Memoize navigation handler to prevent re-creation
+  const handleNavigation = useCallback((href) => {
     navigate(href);
     setSidebarOpen(false);
-  };
+  }, [navigate, setSidebarOpen]);
+
+  // Memoize sidebar close handler
+  const closeSidebar = useCallback(() => {
+    setSidebarOpen(false);
+  }, [setSidebarOpen]);
 
   return (
     <>
@@ -229,7 +246,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, currentPath, navigate }) => {
         <Dialog
           as="div"
           className="relative z-50 lg:hidden"
-          onClose={setSidebarOpen}
+          onClose={closeSidebar}
         >
           <Transition
             enter="transition-opacity ease-linear duration-300"
@@ -264,7 +281,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, currentPath, navigate }) => {
                     <button
                       type="button"
                       className="-m-2.5 p-2.5"
-                      onClick={() => setSidebarOpen(false)}
+                      onClick={closeSidebar}
+                      aria-label="Close sidebar"
                     >
                       <span className="sr-only">Close sidebar</span>
                       <XMarkIcon
@@ -278,8 +296,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, currentPath, navigate }) => {
                   navigationGroups={navigationGroups}
                   currentPath={currentPath}
                   handleNavigation={handleNavigation}
-                  expandedGroups={expandedGroups}
-                  toggleGroup={toggleGroup}
                 />
               </Dialog.Panel>
             </Transition>
@@ -293,12 +309,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, currentPath, navigate }) => {
           navigationGroups={navigationGroups}
           currentPath={currentPath}
           handleNavigation={handleNavigation}
-          expandedGroups={expandedGroups}
-          toggleGroup={toggleGroup}
         />
       </div>
     </>
   );
-};
+});
+
+Sidebar.displayName = "Sidebar";
+
+// Performance monitoring for debugging (can be removed in production)
+if (process.env.NODE_ENV === 'development') {
+  Sidebar.whyDidYouRender = true;
+}
 
 export default Sidebar;

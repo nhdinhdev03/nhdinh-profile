@@ -7,6 +7,7 @@ import Header from "./Header";
 import AdminBreadcrumb from "./Breadcrumb";
 import { AdminThemeProvider } from "theme";
 import { ToastProvider } from "components/Admin";
+import "./AdminLayout.scss";
 
 function AdminLayout({ children, usePageHeader = false }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,7 +17,7 @@ function AdminLayout({ children, usePageHeader = false }) {
   return (
     <AdminThemeProvider>
       <ToastProvider>
-        <div className="min-h-screen bg-gray-50/50">
+        <div className="admin-layout">
           {/* Sidebar */}
           <Sidebar 
             sidebarOpen={sidebarOpen} 
@@ -26,7 +27,7 @@ function AdminLayout({ children, usePageHeader = false }) {
           />
           
           {/* Main content */}
-          <div className="lg:pl-72 transition-all duration-300 ease-in-out">
+          <div className="admin-main-content">
             <Header 
               setSidebarOpen={setSidebarOpen}
               currentPath={location.pathname}
@@ -36,18 +37,14 @@ function AdminLayout({ children, usePageHeader = false }) {
             {!usePageHeader && (
               <AdminBreadcrumb 
                 showIcons={true}
-                className="sticky top-16 z-30 bg-white/80 backdrop-blur-sm border-b border-gray-100"
+                className="admin-sticky-breadcrumb"
               />
             )}
             
             {/* Page content */}
-            <main className={usePageHeader ? "pb-6" : "py-6"}>
-              <div className={
-                usePageHeader 
-                  ? "mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16" 
-                  : "mx-auto max-w-[1680px] px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12"
-              }>
-                <div className="w-full">
+            <main className={`admin-page-content ${usePageHeader ? "with-page-header" : ""}`}>
+              <div className="admin-content-container">
+                <div className="admin-content-wrapper">
                   {children}
                 </div>
               </div>

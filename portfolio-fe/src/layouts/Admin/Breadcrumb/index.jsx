@@ -14,10 +14,15 @@ import {
   ClockIcon,
   PhotoIcon,
   UsersIcon,
-  InformationCircleIcon
+  TagIcon,
+  LinkIcon,
+  BookOpenIcon,
+  WrenchScrewdriverIcon,
+  PencilIcon,
 } from '@heroicons/react/24/outline';
+import "./Breadcrumb.scss";
 
-const  AdminBreadcrumb = ({ 
+const AdminBreadcrumb = ({ 
   className = "", 
   showIcons = true,
   actions = null,
@@ -25,47 +30,67 @@ const  AdminBreadcrumb = ({
 }) => {
   const location = useLocation();
 
-  // Admin route labels with Vietnamese
+  // Optimized admin route labels with proper Vietnamese
   const adminLabels = useMemo(() => ({
-    [ROUTES.ADMIN.DASHBOARD]: "Dashboard",
-    [ROUTES.ADMIN.HOME_MANAGEMENT]: "Quản lý Trang chủ",
-    [ROUTES.ADMIN.ABOUT_MANAGEMENT]: "Quản lý Giới thiệu", 
-    [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: "Quản lý Dự án",
-    [ROUTES.ADMIN.BLOG_MANAGEMENT]: "Quản lý Blog",
-    [ROUTES.ADMIN.CONTACT_MANAGEMENT]: "Quản lý Liên hệ",
-    [ROUTES.ADMIN.ACCOUNTS_MANAGEMENT]: "Quản lý Tài khoản",
-    [ROUTES.ADMIN.HISTORY_LOGS]: "Lịch sử thay đổi",
-    [ROUTES.ADMIN.MEDIA_LIBRARY]: "Thư viện Media",
-    [ROUTES.ADMIN.ANALYTICS]: "Thống kê & Phân tích",
+    [ROUTES.ADMIN.DASHBOARD]: "Tổng quan",
+    [ROUTES.ADMIN.HERO_MANAGEMENT]: "Trang chủ chính",
+    [ROUTES.ADMIN.HERO_SUBHEADING_MANAGEMENT]: "Tiêu đề phụ",
+    [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: "Danh sách dự án",
+    [ROUTES.ADMIN.PROJECT_CATEGORIES_MANAGEMENT]: "Danh mục dự án",
+    [ROUTES.ADMIN.PROJECT_TAGS_MANAGEMENT]: "Thẻ công nghệ",
+    [ROUTES.ADMIN.PROJECT_TAG_MAP_MANAGEMENT]: "Liên kết thẻ-dự án",
+    [ROUTES.ADMIN.BLOG_POSTS_MANAGEMENT]: "Bài viết blog",
+    [ROUTES.ADMIN.BLOG_TAGS_MANAGEMENT]: "Thẻ bài viết",
+    [ROUTES.ADMIN.BLOG_TAG_MAP_MANAGEMENT]: "Liên kết thẻ-bài viết",
+    [ROUTES.ADMIN.CONTACT_MESSAGES_MANAGEMENT]: "Tin nhắn liên hệ",
+    [ROUTES.ADMIN.PROFILE_INFO_MANAGEMENT]: "Thông tin cá nhân",
+    [ROUTES.ADMIN.PROFILE_TAGS_MANAGEMENT]: "Thẻ hồ sơ",
+    [ROUTES.ADMIN.EXPERIENCE_MANAGEMENT]: "Kinh nghiệm làm việc",
+    [ROUTES.ADMIN.SKILL_CATEGORIES_MANAGEMENT]: "Danh mục kỹ năng",
+    [ROUTES.ADMIN.SKILLS_MANAGEMENT]: "Danh sách kỹ năng",
+    [ROUTES.ADMIN.ADMIN_USERS_MANAGEMENT]: "Tài khoản quản trị",
+    [ROUTES.ADMIN.ANALYTICS]: "Thống kê & Báo cáo",
+    [ROUTES.ADMIN.HISTORY_LOGS]: "Nhật ký hệ thống",
+    [ROUTES.ADMIN.MEDIA_LIBRARY]: "Thư viện phương tiện",
     [ROUTES.ADMIN.SETTINGS]: "Cài đặt hệ thống",
-    [ROUTES.ADMIN.PROFILE]: "Hồ sơ cá nhân",
+    [ROUTES.ADMIN.PROFILE]: "Hồ sơ quản trị viên",
     ...customLabels
   }), [customLabels]);
 
-  // Icon mapping for admin routes
+  // Enhanced icon mapping for admin routes
   const iconMap = useMemo(() => ({
     [ROUTES.ADMIN.DASHBOARD]: ChartBarIcon,
-    [ROUTES.ADMIN.HOME_MANAGEMENT]: HomeIcon,
-    [ROUTES.ADMIN.ABOUT_MANAGEMENT]: InformationCircleIcon,
+    [ROUTES.ADMIN.HERO_MANAGEMENT]: HomeIcon,
+    [ROUTES.ADMIN.HERO_SUBHEADING_MANAGEMENT]: PencilIcon,
     [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: FolderIcon,
-    [ROUTES.ADMIN.BLOG_MANAGEMENT]: DocumentTextIcon,
-    [ROUTES.ADMIN.CONTACT_MANAGEMENT]: ChatBubbleLeftRightIcon,
-    [ROUTES.ADMIN.ACCOUNTS_MANAGEMENT]: UsersIcon,
+    [ROUTES.ADMIN.PROJECT_CATEGORIES_MANAGEMENT]: BookOpenIcon,
+    [ROUTES.ADMIN.PROJECT_TAGS_MANAGEMENT]: TagIcon,
+    [ROUTES.ADMIN.PROJECT_TAG_MAP_MANAGEMENT]: LinkIcon,
+    [ROUTES.ADMIN.BLOG_POSTS_MANAGEMENT]: DocumentTextIcon,
+    [ROUTES.ADMIN.BLOG_TAGS_MANAGEMENT]: TagIcon,
+    [ROUTES.ADMIN.BLOG_TAG_MAP_MANAGEMENT]: LinkIcon,
+    [ROUTES.ADMIN.CONTACT_MESSAGES_MANAGEMENT]: ChatBubbleLeftRightIcon,
+    [ROUTES.ADMIN.PROFILE_INFO_MANAGEMENT]: UserCircleIcon,
+    [ROUTES.ADMIN.PROFILE_TAGS_MANAGEMENT]: TagIcon,
+    [ROUTES.ADMIN.EXPERIENCE_MANAGEMENT]: BookOpenIcon,
+    [ROUTES.ADMIN.SKILL_CATEGORIES_MANAGEMENT]: BookOpenIcon,
+    [ROUTES.ADMIN.SKILLS_MANAGEMENT]: WrenchScrewdriverIcon,
+    [ROUTES.ADMIN.ADMIN_USERS_MANAGEMENT]: UsersIcon,
+    [ROUTES.ADMIN.ANALYTICS]: ChartBarIcon,
     [ROUTES.ADMIN.HISTORY_LOGS]: ClockIcon,
     [ROUTES.ADMIN.MEDIA_LIBRARY]: PhotoIcon,
-    [ROUTES.ADMIN.ANALYTICS]: ChartBarIcon,
     [ROUTES.ADMIN.SETTINGS]: CogIcon,
     [ROUTES.ADMIN.PROFILE]: UserCircleIcon,
   }), []);
 
-  // Build breadcrumb items
+  // Build breadcrumb items with better logic
   const crumbs = useMemo(() => {
     const { pathname } = location;
     
     // Always start with Dashboard
     const items = [{
       path: ROUTES.ADMIN.DASHBOARD,
-      label: "Dashboard",
+      label: "Tổng quan",
       icon: ChartBarIcon
     }];
 
@@ -90,11 +115,11 @@ const  AdminBreadcrumb = ({
   if (crumbs.length === 1) return null;
 
   return (
-    <div className={`bg-white border-b border-gray-200 ${className}`}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between py-3">
+    <div className={`admin-breadcrumb ${className}`}>
+      <div className="admin-breadcrumb-container">
+        <div className="admin-breadcrumb-content">
           {/* Breadcrumb Navigation */}
-          <nav aria-label="Breadcrumb" className="flex items-center space-x-1">
+          <nav aria-label="Breadcrumb" className="admin-breadcrumb-nav">
             {crumbs.map((item, idx) => {
               const isLast = idx === crumbs.length - 1;
               const IconComponent = showIcons && item.icon ? item.icon : null;
@@ -102,27 +127,27 @@ const  AdminBreadcrumb = ({
               return (
                 <React.Fragment key={item.path}>
                   {idx > 0 && (
-                    <ChevronRightIcon className="h-4 w-4 text-gray-400" />
+                    <ChevronRightIcon className="admin-breadcrumb-separator" />
                   )}
                   
-                  <div className="flex items-center">
+                  <div className="admin-breadcrumb-item">
                     {isLast ? (
                       <span 
-                        className="flex items-center gap-1.5 text-sm font-medium text-blue-600"
+                        className="admin-breadcrumb-current"
                         aria-current="page"
                       >
                         {IconComponent && (
-                          <IconComponent className="h-4 w-4" />
+                          <IconComponent className="admin-breadcrumb-icon" />
                         )}
                         {item.label}
                       </span>
                     ) : (
                       <Link
                         to={item.path}
-                        className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200 px-2 py-1 rounded-md hover:bg-gray-50"
+                        className="admin-breadcrumb-link"
                       >
                         {IconComponent && (
-                          <IconComponent className="h-4 w-4" />
+                          <IconComponent className="admin-breadcrumb-icon" />
                         )}
                         {item.label}
                       </Link>
@@ -135,7 +160,7 @@ const  AdminBreadcrumb = ({
 
           {/* Action Buttons */}
           {actions && (
-            <div className="flex items-center gap-2">
+            <div className="admin-breadcrumb-actions">
               {actions}
             </div>
           )}
@@ -144,7 +169,8 @@ const  AdminBreadcrumb = ({
     </div>
   );
 };
-
+              
+          
 AdminBreadcrumb.propTypes = {
   className: PropTypes.string,
   showIcons: PropTypes.bool,

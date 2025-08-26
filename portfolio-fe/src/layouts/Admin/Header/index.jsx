@@ -11,10 +11,10 @@ import {
   ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { AUTH_LOGIN, ROUTES } from "router/routeConstants";
-
 import { useNavigate } from "react-router-dom";
 import { useNotificationContext } from "components/Notification";
 import { useAuth } from "contexts/AuthContext";
+import "./Header.scss";
 
 const Header = ({ setSidebarOpen, currentPath }) => {
   const [searchValue, setSearchValue] = useState("");
@@ -22,22 +22,33 @@ const Header = ({ setSidebarOpen, currentPath }) => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
+  // Optimized page titles with proper Vietnamese
   const getPageTitle = () => {
     const pathTitles = {
-      [ROUTES.ADMIN.DASHBOARD]: "Dashboard",
-      [ROUTES.ADMIN.HOME_MANAGEMENT]: "Trang chủ",
-      [ROUTES.ADMIN.ABOUT_MANAGEMENT]: "Giới thiệu",
-      [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: "Dự án",
-      [ROUTES.ADMIN.BLOG_MANAGEMENT]: "Blog",
-      [ROUTES.ADMIN.CONTACT_MANAGEMENT]: "Liên hệ",
-      [ROUTES.ADMIN.ACCOUNTS_MANAGEMENT]: "Tài khoản",
-      [ROUTES.ADMIN.HISTORY_LOGS]: "Lịch sử thay đổi",
-      [ROUTES.ADMIN.MEDIA_LIBRARY]: "Thư viện Media",
-      [ROUTES.ADMIN.ANALYTICS]: "Thống kê",
-      [ROUTES.ADMIN.SETTINGS]: "Cài đặt",
-      [ROUTES.ADMIN.PROFILE]: "Hồ sơ",
+      [ROUTES.ADMIN.DASHBOARD]: "Tổng quan",
+      [ROUTES.ADMIN.HERO_MANAGEMENT]: "Quản lý Trang chủ chính",
+      [ROUTES.ADMIN.HERO_SUBHEADING_MANAGEMENT]: "Quản lý Tiêu đề phụ",
+      [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: "Quản lý Danh sách dự án",
+      [ROUTES.ADMIN.PROJECT_CATEGORIES_MANAGEMENT]: "Quản lý Danh mục dự án",
+      [ROUTES.ADMIN.PROJECT_TAGS_MANAGEMENT]: "Quản lý Thẻ công nghệ",
+      [ROUTES.ADMIN.PROJECT_TAG_MAP_MANAGEMENT]: "Quản lý Liên kết thẻ-dự án",
+      [ROUTES.ADMIN.BLOG_POSTS_MANAGEMENT]: "Quản lý Bài viết blog",
+      [ROUTES.ADMIN.BLOG_TAGS_MANAGEMENT]: "Quản lý Thẻ bài viết",
+      [ROUTES.ADMIN.BLOG_TAG_MAP_MANAGEMENT]: "Quản lý Liên kết thẻ-bài viết",
+      [ROUTES.ADMIN.CONTACT_MESSAGES_MANAGEMENT]: "Quản lý Tin nhắn liên hệ",
+      [ROUTES.ADMIN.PROFILE_INFO_MANAGEMENT]: "Quản lý Thông tin cá nhân",
+      [ROUTES.ADMIN.PROFILE_TAGS_MANAGEMENT]: "Quản lý Thẻ hồ sơ",
+      [ROUTES.ADMIN.EXPERIENCE_MANAGEMENT]: "Quản lý Kinh nghiệm làm việc",
+      [ROUTES.ADMIN.SKILL_CATEGORIES_MANAGEMENT]: "Quản lý Danh mục kỹ năng",
+      [ROUTES.ADMIN.SKILLS_MANAGEMENT]: "Quản lý Danh sách kỹ năng",
+      [ROUTES.ADMIN.ADMIN_USERS_MANAGEMENT]: "Quản lý Tài khoản quản trị",
+      [ROUTES.ADMIN.ANALYTICS]: "Thống kê & Báo cáo",
+      [ROUTES.ADMIN.HISTORY_LOGS]: "Nhật ký hệ thống",
+      [ROUTES.ADMIN.MEDIA_LIBRARY]: "Thư viện phương tiện",
+      [ROUTES.ADMIN.SETTINGS]: "Cài đặt hệ thống",
+      [ROUTES.ADMIN.PROFILE]: "Hồ sơ quản trị viên",
     };
-    return pathTitles[currentPath] || "Admin Portal";
+    return pathTitles[currentPath] || "Bảng điều khiển";
   };
 
   const handleLogout = async () => {
@@ -59,18 +70,18 @@ const Header = ({ setSidebarOpen, currentPath }) => {
     }
   };
 
-  // Optimized user menu items with useMemo for performance
+  // Optimized user menu items with proper Vietnamese
   const userMenuItems = React.useMemo(() => [
     {
       id: 'profile',
-      name: "Hồ sơ cá nhân",
+      name: "Hồ sơ quản trị viên",
       href: ROUTES.ADMIN.PROFILE,
       icon: UserCircleIcon,
       description: "Xem và chỉnh sửa thông tin cá nhân"
     },
     {
       id: 'settings',
-      name: "Cài đặt",
+      name: "Cài đặt hệ thống",
       href: ROUTES.ADMIN.SETTINGS,
       icon: CogIcon,
       description: "Cấu hình hệ thống và tùy chọn"
@@ -82,30 +93,30 @@ const Header = ({ setSidebarOpen, currentPath }) => {
   };
 
   return (
-    <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+    <div className="admin-header">
       <button
         type="button"
-        className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+        className="admin-mobile-menu-btn"
         onClick={() => setSidebarOpen(true)}
+        aria-label="Mở menu bên"
       >
-        <span className="sr-only">Open sidebar</span>
         <Bars3Icon className="h-6 w-6" aria-hidden="true" />
       </button>
 
       {/* Separator */}
-      <div className="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true" />
+      <div className="admin-header-separator lg:hidden" aria-hidden="true" />
 
-      <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-        <div className="relative flex flex-1 items-center">
-          <h1 className="text-xl font-semibold text-gray-900">
+      <div className="admin-header-content">
+        <div className="admin-header-title">
+          <h1 className="admin-page-title">
             {getPageTitle()}
           </h1>
         </div>
 
-        <div className="flex items-center gap-x-4 lg:gap-x-6">
+        <div className="admin-header-actions">
           {/* Search */}
-          <form onSubmit={handleSearch} className="relative hidden sm:block">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <form onSubmit={handleSearch} className="admin-search-form">
+            <div className="admin-search-icon">
               <MagnifyingGlassIcon
                 className="h-5 w-5 text-gray-400"
                 aria-hidden="true"
@@ -113,8 +124,8 @@ const Header = ({ setSidebarOpen, currentPath }) => {
             </div>
             <input
               id="search-field"
-              className="block h-full w-full border border-gray-300 rounded-lg py-2 pl-10 pr-3 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Tìm kiếm..."
+              className="admin-search-input"
+              placeholder="Tìm kiếm trong hệ thống..."
               type="search"
               name="search"
               value={searchValue}
@@ -125,35 +136,31 @@ const Header = ({ setSidebarOpen, currentPath }) => {
           {/* Notifications */}
           <button
             type="button"
-            className="relative -m-2.5 p-2.5 text-gray-400 hover:text-gray-500 transition-colors"
+            className="admin-notification-btn"
             onClick={() => notification.info("Hiện tại không có thông báo mới")}
+            aria-label="Xem thông báo"
           >
-            <span className="sr-only">View notifications</span>
             <BellIcon className="h-6 w-6" aria-hidden="true" />
-            <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-white"></span>
+            <span className="admin-notification-badge"></span>
           </button>
 
           {/* Separator */}
-          <div
-            className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
-            aria-hidden="true"
-          />
+          <div className="admin-header-separator hidden lg:block" aria-hidden="true" />
 
           {/* Profile dropdown */}
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-          <Menu as="div" className="relative">
-            <Menu.Button className="flex items-center gap-x-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50 rounded-lg p-2 transition-colors">
+          <Menu as="div" className="admin-profile-menu">
+            <Menu.Button className="admin-profile-btn">
               <img
-                className="h-8 w-8 rounded-full bg-gray-50"
-                src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff"
-                alt="Admin"
+                className="admin-profile-avatar"
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || 'Admin')}&background=667eea&color=fff&bold=true`}
+                alt="Avatar quản trị viên"
               />
-              <span className="hidden lg:flex lg:items-center">
-                <span className="ml-2 text-sm font-semibold leading-6 text-gray-900">
-                  {user?.fullName || "Admin"}
+              <span className="admin-profile-info">
+                <span className="admin-profile-name">
+                  {user?.fullName || "Quản trị viên"}
                 </span>
                 <ChevronDownIcon
-                  className="ml-2 h-5 w-5 text-gray-400"
+                  className="admin-profile-chevron"
                   aria-hidden="true"
                 />
               </span>
@@ -161,19 +168,19 @@ const Header = ({ setSidebarOpen, currentPath }) => {
 
             <Transition
               as={Fragment}
-              enter="transition ease-out duration-100"
+              enter="transition ease-out duration-200"
               enterFrom="transform opacity-0 scale-95"
               enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
+              leave="transition ease-in duration-150"
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items className="absolute right-0 z-10 mt-2.5 w-64 origin-top-right rounded-lg bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900">
-                    Đăng nhập với
+              <Menu.Items className="admin-profile-dropdown">
+                <div className="admin-profile-dropdown-header">
+                  <p className="admin-profile-dropdown-title">
+                    Đăng nhập với tư cách
                   </p>
-                  <p className="text-sm text-gray-500 truncate">
+                  <p className="admin-profile-dropdown-email">
                     {user?.username || user?.phoneNumber || "admin@nhdinh.dev"}
                   </p>
                 </div>
@@ -183,13 +190,13 @@ const Header = ({ setSidebarOpen, currentPath }) => {
                     {({ active }) => (
                       <button
                         onClick={() => handleMenuItemClick(item.href)}
-                        className={`group flex w-full items-center px-4 py-2 text-sm text-left transition-colors ${
-                          active ? "bg-gray-100 text-gray-900" : "text-gray-700"
+                        className={`admin-profile-menu-item ${
+                          active ? "active" : ""
                         }`}
                         title={item.description}
                       >
                         <item.icon 
-                          className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 transition-colors" 
+                          className="admin-profile-menu-icon" 
                           aria-hidden="true"
                         />
                         <span>{item.name}</span>
@@ -198,17 +205,17 @@ const Header = ({ setSidebarOpen, currentPath }) => {
                   </Menu.Item>
                 ))}
 
-                <div className="border-t border-gray-100 pt-2">
+                <div className="admin-profile-dropdown-divider">
                   <Menu.Item>
                     {({ active }) => (
                       <button
                         onClick={handleLogout}
-                        className={`group flex w-full items-center px-4 py-2 text-sm ${
-                          active ? "bg-gray-100 text-gray-900" : "text-gray-700"
+                        className={`admin-profile-menu-item logout ${
+                          active ? "active" : ""
                         }`}
                       >
-                        <ArrowRightStartOnRectangleIcon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                        Đăng xuất
+                        <ArrowRightStartOnRectangleIcon className="admin-profile-menu-icon" />
+                        Đăng xuất khỏi hệ thống
                       </button>
                     )}
                   </Menu.Item>

@@ -1,0 +1,209 @@
+// Professional Admin Breadcrumb Styles
+.admin-breadcrumb {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+// Breadcrumb container
+.admin-breadcrumb-container {
+  max-width: 120rem; // 1920px
+  margin: 0 auto;
+  padding: 0 1rem;
+  
+  @media (min-width: 640px) {
+    padding: 0 1.5rem;
+  }
+  
+  @media (min-width: 1024px) {
+    padding: 0 2rem;
+  }
+}
+
+// Breadcrumb content wrapper
+.admin-breadcrumb-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 0;
+}
+
+// Breadcrumb navigation
+.admin-breadcrumb-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+// Breadcrumb separator
+.admin-breadcrumb-separator {
+  height: 1rem;
+  width: 1rem;
+  color: #9ca3af;
+  flex-shrink: 0;
+  margin: 0 0.5rem;
+}
+
+// Breadcrumb item container
+.admin-breadcrumb-item {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+// Breadcrumb icon
+.admin-breadcrumb-icon {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 0.375rem;
+  flex-shrink: 0;
+}
+
+// Current page (last breadcrumb)
+.admin-breadcrumb-current {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #667eea;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(102, 126, 234, 0.08);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  
+  .admin-breadcrumb-icon {
+    color: #667eea;
+  }
+}
+
+// Breadcrumb link
+.admin-breadcrumb-link {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-decoration: none;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  .admin-breadcrumb-icon {
+    color: #9ca3af;
+    transition: all 0.2s ease;
+  }
+  
+  &:hover {
+    color: #667eea;
+    background-color: rgba(102, 126, 234, 0.05);
+    border-color: rgba(102, 126, 234, 0.15);
+    transform: translateY(-1px);
+    
+    .admin-breadcrumb-icon {
+      color: #667eea;
+      transform: scale(1.1);
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Breadcrumb actions
+.admin-breadcrumb-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .admin-breadcrumb-content {
+    padding: 0.75rem 0;
+  }
+  
+  .admin-breadcrumb-nav {
+    gap: 0.125rem;
+  }
+  
+  .admin-breadcrumb-separator {
+    height: 0.875rem;
+    width: 0.875rem;
+    margin: 0 0.25rem;
+  }
+  
+  .admin-breadcrumb-icon {
+    height: 0.875rem;
+    width: 0.875rem;
+  }
+  
+  .admin-breadcrumb-current,
+  .admin-breadcrumb-link {
+    font-size: 0.8125rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .admin-breadcrumb-actions {
+    gap: 0.375rem;
+  }
+}
+
+// Animation for breadcrumb items
+.admin-breadcrumb-item {
+  animation: fadeInSlide 0.3s ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Dark mode support (future enhancement)
+@media (prefers-color-scheme: dark) {
+  .admin-breadcrumb {
+    background: rgba(17, 24, 39, 0.95);
+    border-bottom-color: rgba(75, 85, 99, 0.8);
+  }
+  
+  .admin-breadcrumb-separator {
+    color: #6b7280;
+  }
+  
+  .admin-breadcrumb-current {
+    color: #818cf8;
+    background: rgba(129, 140, 248, 0.1);
+    border-color: rgba(129, 140, 248, 0.3);
+    
+    .admin-breadcrumb-icon {
+      color: #818cf8;
+    }
+  }
+  
+  .admin-breadcrumb-link {
+    color: #9ca3af;
+    
+    .admin-breadcrumb-icon {
+      color: #6b7280;
+    }
+    
+    &:hover {
+      color: #818cf8;
+      background-color: rgba(129, 140, 248, 0.1);
+      border-color: rgba(129, 140, 248, 0.2);
+      
+      .admin-breadcrumb-icon {
+        color: #818cf8;
+      }
+    }
+  }
+}

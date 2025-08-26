@@ -64,7 +64,7 @@ public class ProjectTag {
     private LocalDateTime updatedAt;
     
     @Version
-    @Column(name = "RowVer")
+    @Column(name = "RowVer", insertable = false, updatable = false)
     private byte[] rowVer;
     
     @PrePersist

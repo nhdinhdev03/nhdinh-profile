@@ -109,7 +109,7 @@ public class Project {
     private LocalDateTime publishedAt;
     
     @Version
-    @Column(name = "RowVer")
+    @Column(name = "RowVer", insertable = false, updatable = false)
     private byte[] rowVer;
     
     @PrePersist

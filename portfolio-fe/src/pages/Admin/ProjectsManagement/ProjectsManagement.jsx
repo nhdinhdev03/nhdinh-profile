@@ -1373,6 +1373,7 @@ const ProjectsManagement = () => {
                         <div className="mb-4 flex items-center space-x-3 text-xs">
                           {project.demoUrl && (
                             <a 
+                              key={`demo-${project.id}`}
                               href={project.demoUrl} 
                               target="_blank" 
                               rel="noopener noreferrer"
@@ -1385,6 +1386,7 @@ const ProjectsManagement = () => {
                           )}
                           {project.sourceUrl && (
                             <a 
+                              key={`source-${project.id}`}
                               href={project.sourceUrl} 
                               target="_blank" 
                               rel="noopener noreferrer"
@@ -1402,6 +1404,7 @@ const ProjectsManagement = () => {
                       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                         <div className="flex items-center space-x-2">
                           <button
+                            key={`edit-${project.id}`}
                             onClick={() => handleEdit(project)}
                             className="p-1.5 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-md transition-colors"
                             title="Chỉnh sửa"
@@ -1409,6 +1412,7 @@ const ProjectsManagement = () => {
                             <PencilIcon className="h-4 w-4" />
                           </button>
                           <button
+                            key={`delete-${project.id}`}
                             onClick={() => handleDelete(project.id)}
                             className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
                             title="Xóa"
@@ -1416,6 +1420,7 @@ const ProjectsManagement = () => {
                             <TrashIcon className="h-4 w-4" />
                           </button>
                           <button
+                            key={`featured-${project.id}`}
                             onClick={() => handleToggleFeatured(project.id, project.isFeatured)}
                             className={`p-1.5 rounded-md transition-colors ${
                               project.isFeatured 
@@ -1466,6 +1471,7 @@ const ProjectsManagement = () => {
                       </p>
                       <div className="flex justify-center space-x-3">
                         <button
+                          key="clear-filters"
                           onClick={() => {
                             setSearchTerm('');
                             setFilter('all');
@@ -1475,6 +1481,7 @@ const ProjectsManagement = () => {
                           Xóa bộ lọc
                         </button>
                         <button
+                          key="add-new-project"
                           onClick={() => setShowForm(true)}
                           className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
                         >

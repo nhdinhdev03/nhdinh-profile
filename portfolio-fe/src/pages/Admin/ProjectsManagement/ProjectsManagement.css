@@ -1,5 +1,14 @@
     /* Additional styles for ProjectsManagement component */
 
+/* Performance optimizations */
+.project-grid {
+  contain: layout;
+}
+
+.project-card {
+  contain: layout style;
+}
+
 /* Line clamp utilities */
 .line-clamp-2 {
   display: -webkit-box;

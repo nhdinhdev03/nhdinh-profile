@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { createPortal } from "react-dom";
 import { 
   PlusIcon, 
@@ -21,8 +21,8 @@ import './ProjectsManagement.css';
 // Fallback image as data URL to avoid network errors
 const FALLBACK_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6cmdiKDI0MiwyNDUsMjQ3KTtzdG9wLW9wYWNpdHk6MSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOnJnYigyMjksMjMxLDIzNSk7c3RvcC1vcGFjaXR5OjEiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjZ3JhZCkiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIxMDAiIHI9IjI0IiBmaWxsPSIjOWNhM2FmIi8+PC9zdmc+';
 
-// Component Multi-Select cho Tags
-const TagsMultiSelect = ({ 
+// Component Multi-Select cho Tags - Memoized for performance
+const TagsMultiSelect = React.memo(({ 
   availableTags, 
   selectedTagIds, 
   onChange, 
@@ -199,10 +199,10 @@ const TagsMultiSelect = ({
       </p>
     </div>
   );
-};
+});
 
 // Modal Component chi tiết dự án (đã tối ưu responsive + accessibility)
-const ProjectDetailModal = ({
+const ProjectDetailModal = React.memo(({
   project,
   isOpen,
   onClose,
@@ -388,8 +388,8 @@ const ProjectDetailModal = ({
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-3">Công nghệ sử dụng</h4>
                       <div className="flex flex-wrap gap-2">
-                        {project.tags.map((tag) => (
-                          <span key={tag.id} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                        {project.tags.map((tag, index) => (
+                          <span key={`detail-${project.id}-tag-${tag.id || index}`} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                             {tag.name}
                           </span>
                         ))}
@@ -511,10 +511,10 @@ const ProjectDetailModal = ({
     </div>,
     document.body
   );
-};
+});
 
 // Modal Component form thêm/chỉnh sửa dự án (đã tối ưu responsive + accessibility)
-const ProjectFormModal = ({
+const ProjectFormModal = React.memo(({
   isOpen,
   onClose,
   onSubmit,
@@ -875,7 +875,7 @@ const ProjectFormModal = ({
     </div>,
     document.body
   );
-};
+});
 
 
 const ProjectsManagement = () => {
@@ -1008,9 +1008,14 @@ const ProjectsManagement = () => {
       console.log('📁 Categories response:', categoriesRes);
       console.log('🏷️ Tags response:', tagsRes);
       
-      setProjects(projectsRes.data || []);
-      setCategories(categoriesRes.data || []);
-      setTags(tagsRes.data || []);
+      // Ensure data is properly formatted with safe fallbacks
+      const projectsData = Array.isArray(projectsRes.data) ? projectsRes.data : [];
+      const categoriesData = Array.isArray(categoriesRes.data) ? categoriesRes.data : [];
+      const tagsData = Array.isArray(tagsRes.data) ? tagsRes.data : [];
+      
+      setProjects(projectsData);
+      setCategories(categoriesData);
+      setTags(tagsData);
       
       console.log('✅ Data loaded successfully');
     } catch (error) {
@@ -1045,16 +1050,16 @@ const ProjectsManagement = () => {
   };
 
   // View project detail
-  const handleViewProject = (project) => {
+  const handleViewProject = useCallback((project) => {
     setSelectedProject(project);
     setShowDetailModal(true);
-  };
+  }, []);
 
   // Close detail modal
-  const handleCloseDetailModal = () => {
+  const handleCloseDetailModal = useCallback(() => {
     setShowDetailModal(false);
     setSelectedProject(null);
-  };
+  }, []);
 
   const handleDelete = async (projectId) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa dự án này?')) {
@@ -1119,16 +1124,25 @@ const ProjectsManagement = () => {
     }
   };
 
-  // Filter projects
-  const filteredProjects = projects.filter(project => {
-    const matchesFilter = filter === 'all' || project.status === filter;
-    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  // Filter projects with memoization for performance
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      const matchesFilter = filter === 'all' || project.status === filter;
+      const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           project.description?.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesFilter && matchesSearch;
+    });
+  }, [projects, filter, searchTerm]);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-500">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
   }
 
   const pageActions = (
@@ -1334,20 +1348,20 @@ const ProjectsManagement = () => {
                       </div>
 
                       {/* Description with better line clamping */}
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed" title={project.description}>
-                        {project.description}
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed" title={project.description || ''}>
+                        {project.description || 'Chưa có mô tả'}
                       </p>
                       
                       {/* Tags with improved layout */}
                       <div className="mb-4">
                         <div className="flex flex-wrap gap-1.5">
-                          {project.tags?.slice(0, 4).map((tag) => (
-                            <span key={tag.id} className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                          {project.tags?.slice(0, 4).map((tag, index) => (
+                            <span key={`${project.id}-tag-${tag.id || index}`} className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
                               {tag.name}
                             </span>
                           ))}
                           {project.tags?.length > 4 && (
-                            <span key="more-tags" className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200">
+                            <span key={`more-tags-${project.id}`} className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200">
                               +{project.tags.length - 4} khác
                             </span>
                           )}

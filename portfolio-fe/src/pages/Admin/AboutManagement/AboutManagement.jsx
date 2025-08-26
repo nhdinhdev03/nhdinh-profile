@@ -13,7 +13,7 @@ import { AdminCard, Button, Input, Textarea, PageHeader } from '../../../compone
 
 const AboutManagement = () => {
   const [personalInfo, setPersonalInfo] = useState({
-    name: 'Nguyễn Hữu Định',
+    name: 'Nguyễn Hoàng Dinh',
     title: 'Full Stack Developer',
     bio: 'Tôi là một lập trình viên full-stack với 3+ năm kinh nghiệm...',
     email: 'nhdinh.dev@gmail.com',

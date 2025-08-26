@@ -8,7 +8,9 @@ import {
   HeartIcon,
   ChatBubbleLeftIcon
 } from '@heroicons/react/24/outline';
-import { AdminCard, Button, Input, AdminTable, PageHeader } from '../../../components/Admin';
+import { AdminCard, AdminTable, Button, PageHeader } from 'components/Admin';
+import { Input } from 'antd';
+
 
 const BlogManagement = () => {
   const [posts, setPosts] = useState([

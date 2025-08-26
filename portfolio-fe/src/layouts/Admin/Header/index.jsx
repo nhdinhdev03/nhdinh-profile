@@ -22,35 +22,6 @@ const Header = ({ setSidebarOpen, currentPath }) => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
-  // Optimized page titles with proper Vietnamese
-  const getPageTitle = () => {
-    const pathTitles = {
-      [ROUTES.ADMIN.DASHBOARD]: "Tổng quan",
-      [ROUTES.ADMIN.HERO_MANAGEMENT]: "Quản lý Trang chủ chính",
-      [ROUTES.ADMIN.HERO_SUBHEADING_MANAGEMENT]: "Quản lý Tiêu đề phụ",
-      [ROUTES.ADMIN.PROJECTS_MANAGEMENT]: "Quản lý Danh sách dự án",
-      [ROUTES.ADMIN.PROJECT_CATEGORIES_MANAGEMENT]: "Quản lý Danh mục dự án",
-      [ROUTES.ADMIN.PROJECT_TAGS_MANAGEMENT]: "Quản lý Thẻ công nghệ",
-      [ROUTES.ADMIN.PROJECT_TAG_MAP_MANAGEMENT]: "Quản lý Liên kết thẻ-dự án",
-      [ROUTES.ADMIN.BLOG_POSTS_MANAGEMENT]: "Quản lý Bài viết blog",
-      [ROUTES.ADMIN.BLOG_TAGS_MANAGEMENT]: "Quản lý Thẻ bài viết",
-      [ROUTES.ADMIN.BLOG_TAG_MAP_MANAGEMENT]: "Quản lý Liên kết thẻ-bài viết",
-      [ROUTES.ADMIN.CONTACT_MESSAGES_MANAGEMENT]: "Quản lý Tin nhắn liên hệ",
-      [ROUTES.ADMIN.PROFILE_INFO_MANAGEMENT]: "Quản lý Thông tin cá nhân",
-      [ROUTES.ADMIN.PROFILE_TAGS_MANAGEMENT]: "Quản lý Thẻ hồ sơ",
-      [ROUTES.ADMIN.EXPERIENCE_MANAGEMENT]: "Quản lý Kinh nghiệm làm việc",
-      [ROUTES.ADMIN.SKILL_CATEGORIES_MANAGEMENT]: "Quản lý Danh mục kỹ năng",
-      [ROUTES.ADMIN.SKILLS_MANAGEMENT]: "Quản lý Danh sách kỹ năng",
-      [ROUTES.ADMIN.ADMIN_USERS_MANAGEMENT]: "Quản lý Tài khoản quản trị",
-      [ROUTES.ADMIN.ANALYTICS]: "Thống kê & Báo cáo",
-      [ROUTES.ADMIN.HISTORY_LOGS]: "Nhật ký hệ thống",
-      [ROUTES.ADMIN.MEDIA_LIBRARY]: "Thư viện phương tiện",
-      [ROUTES.ADMIN.SETTINGS]: "Cài đặt hệ thống",
-      [ROUTES.ADMIN.PROFILE]: "Hồ sơ quản trị viên",
-    };
-    return pathTitles[currentPath] || "Bảng điều khiển";
-  };
-
   const handleLogout = async () => {
     try {
       await logout();
@@ -107,12 +78,6 @@ const Header = ({ setSidebarOpen, currentPath }) => {
       <div className="admin-header-separator lg:hidden" aria-hidden="true" />
 
       <div className="admin-header-content">
-        <div className="admin-header-title">
-          <h1 className="admin-page-title">
-            {getPageTitle()}
-          </h1>
-        </div>
-
         <div className="admin-header-actions">
           {/* Search */}
           <form onSubmit={handleSearch} className="admin-search-form">

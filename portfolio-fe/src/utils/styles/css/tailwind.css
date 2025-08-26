@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide browser extension overlays and elements */
+div[id*="quillbot"], 
+div[class*="quillbot"],
+div[data-quillbot],
+iframe[src*="quillbot"],
+.quillbot-extension,
+.grammarly-desktop-integration,
+grammarly-extension,
+[data-grammarly-part] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 0 !important;
+  height: 0 !important;
+  z-index: -1 !important;
+}
+
 /*
 	App theme tokens: light defaults with dark overrides
 	- Exposed on :root for scripts/components that read from documentElement

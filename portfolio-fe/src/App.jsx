@@ -9,15 +9,21 @@ import {
 } from "components";
 import { AuthProvider } from "contexts/AuthContext";
 import { AUTH_LOGIN } from "router/routeConstants";
+import ErrorBoundary from "components/ErrorBoundary";
+import { useExtensionProtection } from "utils/extensionProtection";
 
 
 
 function App() {
+  // Protect the entire app from browser extensions
+  useExtensionProtection();
+  
   return (
-    <AuthProvider>
-      <NotificationContextProvider>
-        <BrowserRouter>
-          <ScrollToTop />
+    <ErrorBoundary>
+      <AuthProvider>
+        <NotificationContextProvider>
+          <BrowserRouter>
+            <ScrollToTop />
           <Routes>
             {publicRoutes.map(
               ({ path, component: Component, layout: Layout }) => (
@@ -90,6 +96,7 @@ function App() {
         </BrowserRouter>
       </NotificationContextProvider>
     </AuthProvider>
+    </ErrorBoundary>
   );
 }
 export default App;

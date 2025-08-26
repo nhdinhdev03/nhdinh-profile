@@ -1,9 +1,13 @@
 import React, { Suspense } from "react";
 import "./HomeIndex.scss";
-import { HeroSection, ProjectShowcase, StatsStrip, TechMarquee } from "components"; // keep hero eager (above the fold)
+import {
+  HeroSection,
+  ProjectShowcase,
+  StatsStrip,
+  TechMarquee,
+} from "components"; // keep hero eager (above the fold)
 import useIsMobile from "hooks/Mobile/useIsMobile";
 import useVisibility from "hooks/Visibility/useVisibility";
-
 
 function HomeIndex() {
   const { isMobile } = useIsMobile();

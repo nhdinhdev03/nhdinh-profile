@@ -1,0 +1,90 @@
+/* Sidebar collapse/expand animations */
+.sidebar-group-header {
+  transition: color 0.2s ease-in-out;
+}
+
+.sidebar-group-header:hover {
+  color: rgb(75 85 99) !important; /* gray-600 */
+}
+
+/* Smooth animation for collapsible content */
+.sidebar-group .transition-all {
+  transition-property: max-height, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Enhanced hover effects for menu items */
+.sidebar-menu-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-menu-item:hover {
+  transform: translateX(2px);
+}
+
+.sidebar-menu-item.active {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Icon animations */
+.menu-icon {
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-menu-item:hover .menu-icon {
+  transform: scale(1.05);
+}
+
+/* Chevron rotation animation */
+.sidebar-group-header svg {
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Staggered animation for menu items */
+.sidebar-menu-item-animated {
+  animation: slideInFromLeft 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+@keyframes slideInFromLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Focus states for accessibility */
+.sidebar-group-header:focus {
+  outline: 2px solid rgb(99 102 241); /* indigo-500 */
+  outline-offset: 2px;
+}
+
+.sidebar-menu-item:focus {
+  outline: 2px solid rgb(99 102 241); /* indigo-500 */
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .sidebar-content {
+    width: 100%;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .sidebar-content {
+    background-color: rgb(31 41 55); /* gray-800 */
+    color: rgb(243 244 246); /* gray-100 */
+  }
+  
+  .sidebar-group-header {
+    color: rgb(156 163 175) !important; /* gray-400 */
+  }
+  
+  .sidebar-group-header:hover {
+    color: rgb(209 213 219) !important; /* gray-300 */
+  }
+}

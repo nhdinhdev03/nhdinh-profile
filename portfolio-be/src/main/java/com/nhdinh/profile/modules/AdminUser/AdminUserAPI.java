@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,10 +34,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin-users")
 @CrossOrigin(origins = "*")
 public class AdminUserAPI {
-    
+
     @Autowired
     private AdminUserService adminUserService;
-    
+
+    // Get all admin users
+    @GetMapping("/all")
+    public ResponseEntity<List<AdminUser>> getAllAdminUsers() {
+        try {
+            List<AdminUser> users = adminUserService.getAllAdminUsers();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     // Create new admin user
     @PostMapping("/create")
     public ResponseEntity<AdminUser> createAdminUser(@Valid @RequestBody AdminUserRequest request) {
@@ -51,11 +61,11 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Update admin user
     @PutMapping("/{id}")
-    public ResponseEntity<AdminUser> updateAdminUser(@PathVariable UUID id, 
-                                                    @Valid @RequestBody AdminUserUpdateRequest request) {
+    public ResponseEntity<AdminUser> updateAdminUser(@PathVariable UUID id,
+            @Valid @RequestBody AdminUserUpdateRequest request) {
         try {
             AdminUser adminUser = adminUserService.updateAdminUser(id, request);
             return ResponseEntity.ok(adminUser);
@@ -65,11 +75,11 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Change password
     @PutMapping("/{id}/change-password")
-    public ResponseEntity<AdminUser> changePassword(@PathVariable UUID id, 
-                                                   @Valid @RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<AdminUser> changePassword(@PathVariable UUID id,
+            @Valid @RequestBody ChangePasswordRequest request) {
         try {
             AdminUser adminUser = adminUserService.changePassword(id, request);
             return ResponseEntity.ok(adminUser);
@@ -79,11 +89,11 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Reset password (admin function)
     @PutMapping("/{id}/reset-password")
-    public ResponseEntity<AdminUser> resetPassword(@PathVariable UUID id, 
-                                                  @RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<AdminUser> resetPassword(@PathVariable UUID id,
+            @RequestBody ResetPasswordRequest request) {
         try {
             AdminUser adminUser = adminUserService.resetPassword(id, request.getNewPassword());
             return ResponseEntity.ok(adminUser);
@@ -93,66 +103,55 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Authenticate user
     @PostMapping("/authenticate")
     public ResponseEntity<AdminUser> authenticate(@RequestBody LoginRequest request) {
         try {
             Optional<AdminUser> user = adminUserService.authenticate(request.getIdentifier(), request.getPassword());
             return user.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+                    .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
-    // Get all admin users
-    @GetMapping("/all")
-    public ResponseEntity<List<AdminUser>> getAllAdminUsers() {
-        try {
-            List<AdminUser> users = adminUserService.getAllAdminUsers();
-            return ResponseEntity.ok(users);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-    
+
     // Get admin user by ID
     @GetMapping("/{id}")
     public ResponseEntity<AdminUser> getAdminUserById(@PathVariable UUID id) {
         try {
             Optional<AdminUser> user = adminUserService.getAdminUserById(id);
             return user.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+                    .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get admin user by phone number
     @GetMapping("/phone/{phoneNumber}")
     public ResponseEntity<AdminUser> getAdminUserByPhoneNumber(@PathVariable String phoneNumber) {
         try {
             Optional<AdminUser> user = adminUserService.getAdminUserByPhoneNumber(phoneNumber);
             return user.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+                    .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get admin user by username
     @GetMapping("/username/{username}")
     public ResponseEntity<AdminUser> getAdminUserByUsername(@PathVariable String username) {
         try {
             Optional<AdminUser> user = adminUserService.getAdminUserByUsername(username);
             return user.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+                    .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get active admin users
     @GetMapping("/active")
     public ResponseEntity<List<AdminUser>> getActiveAdminUsers() {
@@ -163,7 +162,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get inactive admin users
     @GetMapping("/inactive")
     public ResponseEntity<List<AdminUser>> getInactiveAdminUsers() {
@@ -174,7 +173,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Activate admin user
     @PutMapping("/{id}/activate")
     public ResponseEntity<AdminUser> activateAdminUser(@PathVariable UUID id) {
@@ -187,7 +186,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Deactivate admin user
     @PutMapping("/{id}/deactivate")
     public ResponseEntity<AdminUser> deactivateAdminUser(@PathVariable UUID id) {
@@ -200,7 +199,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Delete admin user
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAdminUser(@PathVariable UUID id) {
@@ -213,7 +212,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Search admin users
     @GetMapping("/search")
     public ResponseEntity<List<AdminUser>> searchAdminUsers(@RequestParam String keyword) {
@@ -224,7 +223,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get users by date range
     @GetMapping("/date-range")
     public ResponseEntity<List<AdminUser>> getUsersByDateRange(
@@ -237,7 +236,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get recent users
     @GetMapping("/recent")
     public ResponseEntity<List<AdminUser>> getRecentUsers(@RequestParam(defaultValue = "7") int days) {
@@ -248,7 +247,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Check if phone number exists
     @GetMapping("/check-phone/{phoneNumber}")
     public ResponseEntity<Boolean> phoneNumberExists(@PathVariable String phoneNumber) {
@@ -259,7 +258,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Check if username exists
     @GetMapping("/check-username/{username}")
     public ResponseEntity<Boolean> usernameExists(@PathVariable String username) {
@@ -270,7 +269,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Count total users
     @GetMapping("/count/total")
     public ResponseEntity<Long> countTotalUsers() {
@@ -281,7 +280,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Count active users
     @GetMapping("/count/active")
     public ResponseEntity<Long> countActiveUsers() {
@@ -292,7 +291,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Count inactive users
     @GetMapping("/count/inactive")
     public ResponseEntity<Long> countInactiveUsers() {
@@ -303,7 +302,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get user statistics
     @GetMapping("/statistics")
     public ResponseEntity<AdminUserStatsResponse> getUserStatistics() {
@@ -314,7 +313,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get monthly statistics
     @GetMapping("/statistics/monthly")
     public ResponseEntity<List<AdminUserMonthlyStats>> getMonthlyStatistics() {
@@ -325,7 +324,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get users without username
     @GetMapping("/without-username")
     public ResponseEntity<List<AdminUser>> getUsersWithoutUsername() {
@@ -336,7 +335,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get users without full name
     @GetMapping("/without-fullname")
     public ResponseEntity<List<AdminUser>> getUsersWithoutFullName() {
@@ -347,7 +346,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Batch activate users
     @PutMapping("/batch/activate")
     public ResponseEntity<List<AdminUser>> batchActivateUsers(@RequestBody List<UUID> userIds) {
@@ -358,7 +357,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Batch deactivate users
     @PutMapping("/batch/deactivate")
     public ResponseEntity<List<AdminUser>> batchDeactivateUsers(@RequestBody List<UUID> userIds) {
@@ -369,7 +368,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Batch delete users
     @DeleteMapping("/batch")
     public ResponseEntity<Void> batchDeleteUsers(@RequestBody List<UUID> userIds) {
@@ -380,7 +379,7 @@ public class AdminUserAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     // Get admin user summary for dashboard
     @GetMapping("/admin/summary")
     public ResponseEntity<AdminUserSummaryResponse> getAdminUserSummary() {

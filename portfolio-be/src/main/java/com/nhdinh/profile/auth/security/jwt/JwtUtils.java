@@ -16,7 +16,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -58,7 +57,8 @@ public class JwtUtils {
 
     // Get signing key
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        // Convert string to bytes directly instead of Base64 decoding
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     // Get user ID from JWT token

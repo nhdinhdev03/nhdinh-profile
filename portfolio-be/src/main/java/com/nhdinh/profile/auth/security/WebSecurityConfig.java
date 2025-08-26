@@ -83,11 +83,13 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/blog-tag/**").permitAll()
                         .requestMatchers("/api/blog-tag-map/**").permitAll()
                         .requestMatchers("/api/contact-message").permitAll()
-                        
+
+                        // authenticated
                         // Admin endpoints - authentication required
                         .requestMatchers("/api/admin/**").authenticated()
-                        .requestMatchers("/api/admin-user/**").authenticated()
+                        .requestMatchers("/api/admin-users/**").authenticated()
                         .requestMatchers("/api/hero/admin/**").authenticated()
+                        .requestMatchers("/api/admin-users/authenticate").permitAll()
                         .requestMatchers("/api/hero-sub-heading/admin/**").authenticated()
                         .requestMatchers("/api/profile-info/admin/**").authenticated()
                         .requestMatchers("/api/profile-tag/admin/**").authenticated()
@@ -102,10 +104,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/blog-tag/admin/**").authenticated()
                         .requestMatchers("/api/blog-tag-map/admin/**").authenticated()
                         .requestMatchers("/api/contact-message/admin/**").authenticated()
-                        
+
                         // Authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
-                        
+
                         // Default - require authentication
                         .anyRequest().authenticated());
 

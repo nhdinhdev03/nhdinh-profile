@@ -33,7 +33,6 @@ import './AdminDashboard.scss';
 import { PageHeader } from 'components/Admin';
 
 const { Text } = Typography;
-const { TabPane } = Tabs;
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -143,16 +142,12 @@ const AdminDashboard = () => {
     </Button>
   ];
 
-  return (
-    <div className="admin-dashboard">
-      <PageHeader
-        title="Dashboard"
-        subtitle="Tổng quan về hoạt động và thống kê"
-        actions={headerActions}
-      />
-
-      <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <TabPane tab="Tổng quan" key="overview">
+  const tabItems = [
+    {
+      key: 'overview',
+      label: 'Tổng quan',
+      children: (
+        <>
           {/* Statistics Cards */}
           <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
             <Col xs={24} sm={12} lg={6}>
@@ -270,31 +265,35 @@ const AdminDashboard = () => {
             {/* Activity Timeline */}
             <Col xs={24} lg={8}>
               <Card title="Hoạt động gần đây">
-                <Timeline>
-                  {activities.map((activity, index) => (
-                    <Timeline.Item
-                      key={index}
-                      dot={
-                        activity.type === 'project' ? <TrophyOutlined style={{ color: '#52c41a' }} /> :
-                        activity.type === 'view' ? <EyeOutlined style={{ color: '#1890ff' }} /> :
-                        activity.type === 'upload' ? <DownloadOutlined style={{ color: '#fa8c16' }} /> :
-                        <UserOutlined style={{ color: '#722ed1' }} />
-                      }
-                    >
-                      <Text strong>{activity.title}</Text>
-                      <br />
-                      <Text type="secondary" style={{ fontSize: 12 }}>
-                        {activity.time}
-                      </Text>
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
+                <Timeline
+                  items={activities.map((activity, index) => ({
+                    key: index,
+                    dot: activity.type === 'project' ? <TrophyOutlined style={{ color: '#52c41a' }} /> :
+                         activity.type === 'view' ? <EyeOutlined style={{ color: '#1890ff' }} /> :
+                         activity.type === 'upload' ? <DownloadOutlined style={{ color: '#fa8c16' }} /> :
+                         <UserOutlined style={{ color: '#722ed1' }} />,
+                    children: (
+                      <>
+                        <Text strong>{activity.title}</Text>
+                        <br />
+                        <Text type="secondary" style={{ fontSize: 12 }}>
+                          {activity.time}
+                        </Text>
+                      </>
+                    )
+                  }))}
+                />
               </Card>
             </Col>
           </Row>
-        </TabPane>
-
-        <TabPane tab="Thống kê chi tiết" key="analytics">
+        </>
+      )
+    },
+    {
+      key: 'analytics',
+      label: 'Thống kê chi tiết',
+      children: (
+        <>
           <Alert
             message="Thống kê chi tiết"
             description="Trang này sẽ hiển thị các biểu đồ và báo cáo chi tiết về hiệu suất dự án, lượt truy cập, và các chỉ số quan trọng khác."
@@ -312,46 +311,61 @@ const AdminDashboard = () => {
               </Card>
             </Col>
           </Row>
-        </TabPane>
+        </>
+      )
+    },
+    {
+      key: 'settings',
+      label: 'Cài đặt hệ thống',
+      children: (
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={16}>
+            <Card title="Thông tin hệ thống">
+              <Descriptions column={1} bordered>
+                <Descriptions.Item label="Phiên bản">1.2.0</Descriptions.Item>
+                <Descriptions.Item label="Cơ sở dữ liệu">MongoDB 6.0</Descriptions.Item>
+                <Descriptions.Item label="Server">Node.js 18.x</Descriptions.Item>
+                <Descriptions.Item label="Framework">React 18.3.1</Descriptions.Item>
+                <Descriptions.Item label="UI Library">Ant Design 5.10.1</Descriptions.Item>
+                <Descriptions.Item label="Thời gian uptime">
+                  <Badge status="processing" text="15 ngày 4 giờ 32 phút" />
+                </Descriptions.Item>
+              </Descriptions>
+            </Card>
+          </Col>
+          
+          <Col xs={24} lg={8}>
+            <Card title="Thao tác hệ thống">
+              <Space direction="vertical" style={{ width: '100%' }}>
+                <Button type="primary" block>
+                  Sao lưu dữ liệu
+                </Button>
+                <Button block>
+                  Xóa cache
+                </Button>
+                <Button block>
+                  Cập nhật hệ thống
+                </Button>
+                <Button danger block>
+                  Khởi động lại server
+                </Button>
+              </Space>
+            </Card>
+          </Col>
+        </Row>
+      )
+    }
+  ];
 
-        <TabPane tab="Cài đặt hệ thống" key="settings">
-          <Row gutter={[16, 16]}>
-            <Col xs={24} lg={16}>
-              <Card title="Thông tin hệ thống">
-                <Descriptions column={1} bordered>
-                  <Descriptions.Item label="Phiên bản">1.2.0</Descriptions.Item>
-                  <Descriptions.Item label="Cơ sở dữ liệu">MongoDB 6.0</Descriptions.Item>
-                  <Descriptions.Item label="Server">Node.js 18.x</Descriptions.Item>
-                  <Descriptions.Item label="Framework">React 18.3.1</Descriptions.Item>
-                  <Descriptions.Item label="UI Library">Ant Design 5.10.1</Descriptions.Item>
-                  <Descriptions.Item label="Thời gian uptime">
-                    <Badge status="processing" text="15 ngày 4 giờ 32 phút" />
-                  </Descriptions.Item>
-                </Descriptions>
-              </Card>
-            </Col>
-            
-            <Col xs={24} lg={8}>
-              <Card title="Thao tác hệ thống">
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <Button type="primary" block>
-                    Sao lưu dữ liệu
-                  </Button>
-                  <Button block>
-                    Xóa cache
-                  </Button>
-                  <Button block>
-                    Cập nhật hệ thống
-                  </Button>
-                  <Button danger block>
-                    Khởi động lại server
-                  </Button>
-                </Space>
-              </Card>
-            </Col>
-          </Row>
-        </TabPane>
-      </Tabs>
+  return (
+    <div className="admin-dashboard">
+      <PageHeader
+        title="Dashboard"
+        subtitle="Tổng quan về hoạt động và thống kê"
+        actions={headerActions}
+      />
+
+      <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
     </div>
   );
 };

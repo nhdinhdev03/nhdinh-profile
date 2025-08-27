@@ -44,7 +44,7 @@ import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from "api/admin";
 
 import "./Projects.scss";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
 
 // Fallback image as data URL to avoid network errors
@@ -377,13 +377,13 @@ const ProjectCard = React.memo(
           }
           description={
             <div>
-              <Text
+              <Paragraph
                 type="secondary"
                 ellipsis={{ rows: 3, tooltip: project.description }}
                 style={{ display: "block", marginBottom: "12px" }}
               >
                 {project.description || "Chưa có mô tả"}
-              </Text>
+              </Paragraph>
 
               {/* Tags */}
               <div style={{ marginBottom: "12px" }}>
@@ -476,7 +476,7 @@ const ProjectDetailModal = React.memo(
         ]}
         width={800}
         style={{ top: 20 }}
-        bodyStyle={{ maxHeight: "70vh", overflowY: "auto" }}
+        styles={{ body: { maxHeight: "70vh", overflowY: "auto" } }}
       >
         <Row gutter={[24, 24]}>
           {/* Image Section */}
@@ -718,7 +718,7 @@ const ProjectFormModal = React.memo(
         ]}
         width={900}
         style={{ top: 20 }}
-        bodyStyle={{ maxHeight: "70vh", overflowY: "auto" }}
+        styles={{ body: { maxHeight: "70vh", overflowY: "auto" } }}
       >
         <Form
           form={form}

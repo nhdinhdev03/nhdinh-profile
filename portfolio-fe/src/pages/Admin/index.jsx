@@ -3,7 +3,7 @@ export { default as AdminDashboard } from "./Dashboard/AdminDashboard";
 
 // 1. Quản lý Trang chủ / Hero
 export { default as HeroManagement } from "./HomeManagement/HeroManagement";
-export { default as HeroSubHeadingManagement } from "./HomeManagement/HeroSubHeadingManagement";
+
 
 // 2. Quản lý Dự án (Projects)
 export { default as ProjectsManagement } from "./ProjectsManagement/Project";

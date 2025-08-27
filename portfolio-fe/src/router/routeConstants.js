@@ -18,7 +18,7 @@ export const ROUTES = {
 
     // 1. Quản lý Trang chủ / Hero
     HERO_MANAGEMENT: `${ADMIN_PREFIX}/hero`,
-    HERO_SUBHEADING_MANAGEMENT: `${ADMIN_PREFIX}/hero/subheading`,
+
 
     // 2. Quản lý Dự án (Projects)
     PROJECTS_MANAGEMENT: `${ADMIN_PREFIX}/projects`,

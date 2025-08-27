@@ -44,11 +44,7 @@ const NAVIGATION_ITEMS = [
         icon: React.createElement(HomeOutlined),
         label: "Trang chủ chính",
       },
-      {
-        key: ROUTES.ADMIN.HERO_SUBHEADING_MANAGEMENT,
-        icon: React.createElement(EditOutlined),
-        label: "Tiêu đề phụ",
-      },
+    
     ],
   },
   {

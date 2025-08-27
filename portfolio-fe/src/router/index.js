@@ -39,11 +39,7 @@ export const privateRoutes = [
     component: PageAdmin.HeroManagement,
     layout: AdminLayout,
   },
-  {
-    path: ROUTES.ADMIN.HERO_SUBHEADING_MANAGEMENT,
-    component: PageAdmin.HeroSubHeadingManagement,
-    layout: AdminLayout,
-  },
+ 
 
   // 2. Quản lý Dự án (Projects)
   {

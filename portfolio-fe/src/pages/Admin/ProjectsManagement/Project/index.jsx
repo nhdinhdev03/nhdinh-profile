@@ -1,28 +1,49 @@
 import React, {
   useState,
   useEffect,
-  useRef,
   useCallback,
   useMemo,
 } from "react";
-import { createPortal } from "react-dom";
 import {
-  PlusIcon,
-  PencilIcon,
-  TrashIcon,
-  FolderIcon,
-  EyeIcon,
-  MagnifyingGlassIcon,
-  StarIcon,
-  XMarkIcon,
-  ChevronDownIcon,
-  CheckIcon,
-} from "@heroicons/react/24/outline";
-import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
+  Modal,
+  Form,
+  Input,
+  Select,
+  Button,
+  Card,
+  Tag,
+  Space,
+  Row,
+  Col,
+  Image,
+  Typography,
+  Divider,
+  Switch,
+  notification,
+  Popconfirm,
+  Tooltip,
+  Badge,
+  Empty,
+  Spin,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  SearchOutlined,
+  StarOutlined,
+  StarFilled,
+  FolderOutlined,
+  LinkOutlined,
+} from "@ant-design/icons";
 
 import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from "api/admin";
-import { PageHeader, Button } from "components/Admin";
+import { PageHeader } from "components/Admin";
 import "./Projects.scss";
+
+const { Title, Text } = Typography;
+const { Option } = Select;
 
 // Fallback image as data URL to avoid network errors
 const FALLBACK_IMAGE =
@@ -35,10 +56,10 @@ const normalizeProject = (p) => ({
   ...p,
   id: p.id || p.projectId,
   category: p.category ? normalizeCategory(p.category) : null,
-  tags: Array.isArray(p.tags) ? p.tags.map(normalizeTag) : []
+  tags: Array.isArray(p.tags) ? p.tags.map(normalizeTag) : [],
 });
 
-// Component Multi-Select cho Tags - Memoized for performance
+// Component Multi-Select cho Tags sử dụng Ant Design (Tối ưu)
 const TagsMultiSelect = React.memo(
   ({
     availableTags,
@@ -47,1872 +68,1263 @@ const TagsMultiSelect = React.memo(
     disabled = false,
     onCreateTag = null,
   }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const dropdownRef = useRef(null);
+    const [inputValue, setInputValue] = useState("");
+    const [isCreatingTag, setIsCreatingTag] = useState(false);
 
-    // Filter tags based on search term
-    const filteredTags = availableTags.filter((tag) =>
-      tag.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Memoized validation cho tag name
+    const isValidTagName = useMemo(() => {
+      const trimmedValue = inputValue.trim();
+      return (
+        trimmedValue.length >= 2 &&
+        trimmedValue.length <= 50 &&
+        !availableTags.some(
+          (tag) => tag.name.toLowerCase() === trimmedValue.toLowerCase()
+        )
+      );
+    }, [inputValue, availableTags]);
 
-    // Get selected tags for display
-    const selectedTags = availableTags.filter((tag) =>
-      selectedTagIds.includes(tag.id)
-    );
+    // Optimized create tag handler với loading state
+    const handleCreateNewTag = useCallback(async () => {
+      if (!onCreateTag || !isValidTagName || isCreatingTag) return;
 
-    // Close dropdown when clicking outside
-    useEffect(() => {
-      const handleClickOutside = (event) => {
-        if (
-          dropdownRef.current &&
-          !dropdownRef.current.contains(event.target)
-        ) {
-          setIsOpen(false);
-          setSearchTerm("");
+      const tagName = inputValue.trim();
+      setIsCreatingTag(true);
+
+      try {
+        const newTag = await onCreateTag(tagName);
+        if (newTag && newTag.id) {
+          // Auto-select the newly created tag
+          const updatedSelection = [...selectedTagIds, newTag.id];
+          onChange(updatedSelection);
+          
+          // Clear input
+          setInputValue("");
+          
+          // Show success notification
+          notification.success({
+            message: 'Thành công',
+            description: `Đã thêm công nghệ "${tagName}" và chọn vào dự án`,
+            duration: 3,
+          });
         }
-      };
+      } catch (error) {
+        console.error("Error creating tag:", error);
+        notification.error({
+          message: 'Lỗi',
+          description: `Không thể tạo công nghệ "${tagName}". Vui lòng thử lại.`,
+          duration: 4,
+        });
+      } finally {
+        setIsCreatingTag(false);
+      }
+    }, [onCreateTag, isValidTagName, isCreatingTag, inputValue, selectedTagIds, onChange]);
 
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
+    // Improved filter function với diacritics support
+    const filterOption = useCallback((input, option) => {
+      const searchTerm = input.toLowerCase().trim();
+      const tagName = option.children.toLowerCase();
+      
+      // Support both exact match and partial match
+      return tagName.includes(searchTerm) || 
+             tagName.replace(/[àáạảãâầấậẩẫăằắặẳẵ]/g, 'a')
+                    .replace(/[èéẹẻẽêềếệểễ]/g, 'e')
+                    .replace(/[ìíịỉĩ]/g, 'i')
+                    .replace(/[òóọỏõôồốộổỗơờớợởỡ]/g, 'o')
+                    .replace(/[ùúụủũưừứựửữ]/g, 'u')
+                    .replace(/[ỳýỵỷỹ]/g, 'y')
+                    .replace(/đ/g, 'd')
+                    .includes(searchTerm);
     }, []);
 
-    // Handle tag selection
-    const handleTagToggle = (tagId) => {
-      const newSelectedIds = selectedTagIds.includes(tagId)
-        ? selectedTagIds.filter((id) => id !== tagId)
-        : [...selectedTagIds, tagId];
-      onChange(newSelectedIds);
+    // Handle Enter key để tạo tag nhanh
+    const handleKeyDown = useCallback((e) => {
+      if (e.key === 'Enter' && isValidTagName && !isCreatingTag) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleCreateNewTag();
+      }
+    }, [isValidTagName, isCreatingTag, handleCreateNewTag]);
+
+    // Optimized dropdown render
+    const dropdownRender = useCallback((menu) => (
+      <div>
+        {menu}
+        {inputValue.trim() && onCreateTag && (
+          <div style={{ 
+            padding: "8px 12px", 
+            borderTop: "1px solid #f0f0f0",
+            backgroundColor: isValidTagName ? '#f6ffed' : '#fff2f0'
+          }}>
+            {isValidTagName ? (
+              <Button
+                type="link"
+                icon={isCreatingTag ? <Spin size="small" /> : <PlusOutlined />}
+                onClick={handleCreateNewTag}
+                loading={isCreatingTag}
+                disabled={isCreatingTag}
+                style={{ 
+                  padding: 0, 
+                  color: '#52c41a',
+                  fontWeight: 500
+                }}
+              >
+                {isCreatingTag 
+                  ? `Đang tạo "${inputValue.trim()}"...`
+                  : `Tạo công nghệ "${inputValue.trim()}" (Enter)`
+                }
+              </Button>
+            ) : (
+              <Text type="secondary" style={{ fontSize: '12px' }}>
+                {inputValue.trim().length < 2 
+                  ? "Tên công nghệ phải có ít nhất 2 ký tự"
+                  : inputValue.trim().length > 50
+                  ? "Tên công nghệ không được quá 50 ký tự"
+                  : "Công nghệ này đã tồn tại"
+                }
+              </Text>
+            )}
+          </div>
+        )}
+      </div>
+    ), [inputValue, onCreateTag, isValidTagName, isCreatingTag, handleCreateNewTag]);
+
+    return (
+      <div className="tags-select-container">
+        <Select
+          mode="multiple"
+          placeholder="Chọn hoặc tạo công nghệ sử dụng trong dự án"
+          value={selectedTagIds}
+          onChange={onChange}
+          disabled={disabled || isCreatingTag}
+          showSearch
+          filterOption={filterOption}
+          onSearch={setInputValue}
+          onInputKeyDown={handleKeyDown}
+          dropdownRender={dropdownRender}
+          maxTagCount="responsive"
+          style={{ width: "100%" }}
+          size="large"
+          allowClear
+        >
+          {availableTags.map((tag) => (
+            <Option key={tag.id} value={tag.id}>
+              {tag.name}
+            </Option>
+          ))}
+        </Select>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginTop: '4px'
+        }}>
+          <Text type="secondary" style={{ fontSize: "12px" }}>
+            Chọn các công nghệ, framework, thư viện sử dụng trong dự án
+          </Text>
+          <Text type="secondary" style={{ fontSize: "11px" }}>
+            {selectedTagIds.length > 0 && `Đã chọn: ${selectedTagIds.length}`}
+          </Text>
+        </div>
+      </div>
+    );
+  }
+);
+
+// Project Card Component sử dụng Ant Design
+const ProjectCard = React.memo(
+  ({ project, onEdit, onDelete, onViewProject, onToggleFeatured }) => {
+    const getStatusColor = (status) => {
+      switch (status) {
+        case "published":
+          return "success";
+        case "draft":
+          return "warning";
+        default:
+          return "default";
+      }
     };
 
-    // Remove tag
-    const handleRemoveTag = (tagId) => {
-      const newSelectedIds = selectedTagIds.filter((id) => id !== tagId);
-      onChange(newSelectedIds);
-    };
-
-    // Handle creating new tag within this component
-    const handleCreateNewTagLocal = async () => {
-      if (onCreateTag && searchTerm.trim()) {
-        try {
-          // Show loading state (you can add a loading state to the component)
-          const newTag = await onCreateTag(searchTerm.trim());
-          if (newTag && newTag.id) {
-            // Add new tag to selection
-            onChange([...selectedTagIds, newTag.id]);
-          }
-          setSearchTerm("");
-          setIsOpen(false);
-        } catch (error) {
-          console.error("Error creating new tag:", error);
-          // Keep dropdown open if there was an error so user can try again
-          // setSearchTerm(''); // Don't clear search term on error
-        }
+    const getStatusText = (status) => {
+      switch (status) {
+        case "published":
+          return "Đã xuất bản";
+        case "draft":
+          return "Bản nháp";
+        default:
+          return "Đã lưu trữ";
       }
     };
 
     return (
-      <div className="tags-multiselect" ref={dropdownRef}>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Công nghệ sử dụng
-        </label>
+      <Card
+        hoverable
+        cover={
+          <div
+            style={{
+              position: "relative",
+              height: "192px",
+              overflow: "hidden",
+            }}
+          >
+            <Image
+              alt={project.title}
+              src={project.imageUrl || FALLBACK_IMAGE}
+              fallback={FALLBACK_IMAGE}
+              style={{
+                width: "100%",
+                height: "192px",
+                objectFit: "cover",
+                transition: "transform 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.05)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)";
+              }}
+              preview={{
+                mask: (
+                  <Space>
+                    <Button
+                      size="small"
+                      icon={<EyeOutlined />}
+                      onClick={() => onViewProject(project)}
+                    >
+                      Xem chi tiết
+                    </Button>
+                  </Space>
+                ),
+              }}
+            />
 
-        {/* Selected tags display */}
-        <div className="selected-tags">
-          {selectedTags.map((tag) => (
-            <span key={tag.id} className="selected-tag">
-              {tag.name}
-              <button
-                type="button"
-                onClick={() => handleRemoveTag(tag.id)}
-                className="ml-1.5 text-blue-400 hover:text-blue-600 focus:outline-none"
-              >
-                <XMarkIcon className="h-3 w-3" />
-              </button>
-            </span>
-          ))}
-          {selectedTags.length === 0 && (
-            <span className="text-sm text-gray-500">
-              Chưa chọn công nghệ nào
-            </span>
-          )}
-        </div>
-
-        {/* Dropdown trigger */}
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          disabled={disabled}
-          className="tags-trigger"
-        >
-          <span className="text-sm text-gray-500">
-            {isOpen ? "Đóng danh sách..." : "Chọn công nghệ..."}
-          </span>
-          <ChevronDownIcon
-            className={`tags-trigger-icon ${isOpen ? "open" : ""}`}
-          />
-        </button>
-
-        {/* Dropdown panel */}
-        {isOpen && (
-          <div className="tags-dropdown">
-            {/* Search input */}
-            <div className="tags-dropdown-search">
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Tìm kiếm công nghệ..."
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                autoFocus
+            {/* Status và Featured badges */}
+            <div style={{ position: "absolute", top: "8px", left: "8px" }}>
+              <Badge
+                status={getStatusColor(project.status)}
+                text={getStatusText(project.status)}
+                style={{
+                  backgroundColor: "rgba(255,255,255,0.9)",
+                  padding: "2px 8px",
+                  borderRadius: "12px",
+                  fontSize: "11px",
+                }}
               />
             </div>
 
-            {/* Tags list */}
-            <div className="tags-dropdown-list">
-              {filteredTags.length > 0 ? (
-                filteredTags.map((tag) => {
-                  const isSelected = selectedTagIds.includes(tag.id);
-                  return (
-                    <button
-                      key={tag.id}
-                      type="button"
-                      onClick={() => handleTagToggle(tag.id)}
-                      className={`tags-dropdown-item ${
-                        isSelected ? "selected" : ""
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{tag.name}</span>
-                        {isSelected && (
-                          <CheckIcon className="h-4 w-4 text-indigo-600" />
-                        )}
-                      </div>
-                    </button>
-                  );
-                })
-              ) : (
-                <div className="tags-dropdown-empty">
-                  {searchTerm
-                    ? "Không tìm thấy công nghệ nào"
-                    : "Chưa có công nghệ nào"}
-                </div>
-              )}
-            </div>
-
-            {/* Add new tag option */}
-            {searchTerm &&
-              !filteredTags.some(
-                (tag) => tag.name.toLowerCase() === searchTerm.toLowerCase()
-              ) &&
-              onCreateTag && (
-                <div className="tags-dropdown-create">
-                  <button
-                    type="button"
-                    onClick={() => handleCreateNewTagLocal()}
-                    className="w-full text-left text-sm text-indigo-600 hover:text-indigo-700 focus:outline-none"
-                  >
-                    <PlusIcon className="h-4 w-4 inline mr-2" />
-                    Thêm "{searchTerm}" làm công nghệ mới
-                  </button>
-                </div>
-              )}
-          </div>
-        )}
-
-        <p className="mt-1 text-xs text-gray-500">
-          Chọn các công nghệ, framework, thư viện sử dụng trong dự án
-        </p>
-      </div>
-    );
-  }
-);
-
-// Project Card Component - Memoized for performance
-const ProjectCard = React.memo(
-  ({ project, onEdit, onDelete, onViewProject, onToggleFeatured }) => {
-    return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 group">
-        <div className="relative">
-          <img
-            src={project.imageUrl || FALLBACK_IMAGE}
-            alt={project.title}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={(e) => {
-              e.target.src = FALLBACK_IMAGE;
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-
-          {/* Featured badge */}
-          {project.isFeatured && (
-            <div className="absolute top-3 right-3">
-              <div className="flex items-center bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-xs font-medium shadow-sm">
-                <StarIconSolid className="h-3 w-3 mr-1" />
-                Nổi bật
+            {project.isFeatured && (
+              <div style={{ position: "absolute", top: "8px", right: "8px" }}>
+                <Badge
+                  count={<StarFilled style={{ color: "#faad14" }} />}
+                  style={{
+                    backgroundColor: "rgba(255,255,255,0.9)",
+                    padding: "2px 8px",
+                    borderRadius: "12px",
+                  }}
+                />
               </div>
-            </div>
-          )}
-
-          {/* Status badge */}
-          <div className="absolute top-3 left-3">
-            <span
-              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium shadow-sm ${
-                project.status === "published"
-                  ? "bg-green-500 text-white"
-                  : project.status === "draft"
-                  ? "bg-yellow-500 text-white"
-                  : "bg-gray-500 text-white"
-              }`}
-            >
-              {project.status === "published"
-                ? "Đã xuất bản"
-                : project.status === "draft"
-                ? "Bản nháp"
-                : "Đã lưu trữ"}
-            </span>
-          </div>
-
-          {/* Quick action overlay */}
-          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center space-x-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              icon={EyeIcon}
-              onClick={() => onViewProject(project)}
-              className="!bg-white !text-gray-700 hover:!bg-gray-50"
-            >
-              Xem chi tiết
-            </Button>
-          </div>
-        </div>
-
-        <div className="p-5">
-          {/* Title with better typography */}
-          <div className="mb-3">
-            <h3
-              className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight"
-              title={project.title}
-            >
-              {project.title}
-            </h3>
-            {project.category && (
-              <span className="text-sm text-indigo-600 font-medium">
-                {project.category.name}
-              </span>
             )}
           </div>
-
-          {/* Description with better line clamping */}
-          <p
-            className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed"
-            title={project.description || ""}
+        }
+        actions={[
+          <Tooltip title="Chỉnh sửa">
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() => onEdit(project)}
+            />
+          </Tooltip>,
+          <Tooltip title="Xóa">
+            <Popconfirm
+              title="Xác nhận xóa"
+              description="Bạn có chắc chắn muốn xóa dự án này?"
+              onConfirm={() => onDelete(project.id)}
+              okText="Xóa"
+              cancelText="Hủy"
+              okType="danger"
+            >
+              <Button type="text" icon={<DeleteOutlined />} danger />
+            </Popconfirm>
+          </Tooltip>,
+          <Tooltip
+            title={project.isFeatured ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}
           >
-            {project.description || "Chưa có mô tả"}
-          </p>
-
-          {/* Tags with improved layout */}
-          <div className="mb-4">
-            <div className="flex flex-wrap gap-1.5">
-              {project.tags?.slice(0, 4).map((tag, index) => (
-                <span
-                  key={`${project.id}-tag-${tag.id || index}`}
-                  className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200"
-                >
-                  {tag.name}
-                </span>
-              ))}
-              {project.tags?.length > 4 && (
-                <span
-                  key={`more-tags-${project.id}`}
-                  className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200"
-                >
-                  +{project.tags.length - 4} khác
-                </span>
+            <Button
+              type="text"
+              icon={project.isFeatured ? <StarFilled /> : <StarOutlined />}
+              onClick={() => onToggleFeatured(project.id, project.isFeatured)}
+              style={{ color: project.isFeatured ? "#faad14" : undefined }}
+            />
+          </Tooltip>,
+        ]}
+        style={{ marginBottom: "16px" }}
+      >
+        <Card.Meta
+          title={
+            <div>
+              <Tooltip title={project.title}>
+                <Title level={5} ellipsis={{ rows: 2 }} style={{ margin: 0 }}>
+                  {project.title}
+                </Title>
+              </Tooltip>
+              {project.category && (
+                <Text type="secondary" style={{ fontSize: "12px" }}>
+                  {project.category.name}
+                </Text>
               )}
             </div>
-          </div>
+          }
+          description={
+            <div>
+              <Text
+                type="secondary"
+                ellipsis={{ rows: 3, tooltip: project.description }}
+                style={{ display: "block", marginBottom: "12px" }}
+              >
+                {project.description || "Chưa có mô tả"}
+              </Text>
 
-          {/* Links preview */}
-          {(project.demoUrl || project.sourceUrl) && (
-            <div className="mb-4 flex items-center space-x-3 text-xs">
-              {project.demoUrl && (
-                <a
-                  href={project.demoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-green-600 hover:text-green-700 flex items-center"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <EyeIcon className="h-3 w-3 mr-1" />
-                  Demo
-                </a>
-              )}
-              {project.sourceUrl && (
-                <a
-                  href={project.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-700 flex items-center"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <FolderIcon className="h-3 w-3 mr-1" />
-                  Source
-                </a>
-              )}
-            </div>
-          )}
-
-          {/* Actions and metadata */}
-          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => onEdit(project)}
-                className="p-1.5 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-md transition-colors"
-                title="Chỉnh sửa"
-              >
-                <PencilIcon className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => onDelete(project.id)}
-                className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
-                title="Xóa"
-              >
-                <TrashIcon className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => onToggleFeatured(project.id, project.isFeatured)}
-                className={`p-1.5 rounded-md transition-colors ${
-                  project.isFeatured
-                    ? "text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50"
-                    : "text-gray-400 hover:text-yellow-600 hover:bg-yellow-50"
-                }`}
-                title={project.isFeatured ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}
-              >
-                {project.isFeatured ? (
-                  <StarIconSolid className="h-4 w-4" />
-                ) : (
-                  <StarIcon className="h-4 w-4" />
+              {/* Tags */}
+              <div style={{ marginBottom: "12px" }}>
+                {project.tags?.slice(0, 4).map((tag, index) => (
+                  <Tag
+                    key={`${project.id}-tag-${tag.id || index}`}
+                    color="blue"
+                    style={{ marginBottom: "4px", fontSize: "11px" }}
+                  >
+                    {tag.name}
+                  </Tag>
+                ))}
+                {project.tags?.length > 4 && (
+                  <Tag color="default" style={{ fontSize: "11px" }}>
+                    +{project.tags.length - 4} khác
+                  </Tag>
                 )}
-              </button>
+              </div>
+
+              {/* Links */}
+              {(project.demoUrl || project.sourceUrl) && (
+                <Space size="middle" style={{ marginBottom: "8px" }}>
+                  {project.demoUrl && (
+                    <Button
+                      type="link"
+                      size="small"
+                      icon={<LinkOutlined />}
+                      href={project.demoUrl}
+                      target="_blank"
+                      style={{ padding: 0, fontSize: "11px" }}
+                    >
+                      Demo
+                    </Button>
+                  )}
+                  {project.sourceUrl && (
+                    <Button
+                      type="link"
+                      size="small"
+                      icon={<FolderOutlined />}
+                      href={project.sourceUrl}
+                      target="_blank"
+                      style={{ padding: 0, fontSize: "11px" }}
+                    >
+                      Source
+                    </Button>
+                  )}
+                </Space>
+              )}
+
+              <Text type="secondary" style={{ fontSize: "11px" }}>
+                {new Date(
+                  project.updatedAt || project.createdAt
+                ).toLocaleDateString("vi-VN")}
+              </Text>
             </div>
-            <div className="text-xs text-gray-500">
-              {new Date(
-                project.updatedAt || project.createdAt
-              ).toLocaleDateString("vi-VN")}
-            </div>
-          </div>
-        </div>
-      </div>
+          }
+        />
+      </Card>
     );
   }
 );
 
-// Modal Component chi tiết dự án (đã tối ưu responsive + accessibility)
+// Modal Component chi tiết dự án sử dụng Ant Design
 const ProjectDetailModal = React.memo(
   ({ project, isOpen, onClose, onEdit, formatDate }) => {
-    const modalRef = useRef(null);
-    const previouslyFocusedRef = useRef(null);
-    const scrollPositionRef = useRef(0);
+    if (!project) return null;
 
-    // Lock body scroll (không làm nhảy layout) & focus management
-    useEffect(() => {
-      if (isOpen) {
-        previouslyFocusedRef.current = document.activeElement;
-        scrollPositionRef.current = window.scrollY;
-        document.body.style.top = `-${scrollPositionRef.current}px`;
-        document.body.classList.add("modal-open");
-        document.body.style.position = "fixed";
-        document.body.style.width = "100%";
-        // Focus vào modal
-        setTimeout(() => {
-          modalRef.current?.focus();
-        }, 30);
-      } else {
-        // Restore
-        document.body.classList.remove("modal-open");
-        document.body.style.position = "";
-        document.body.style.width = "";
-        const y = scrollPositionRef.current;
-        document.body.style.top = "";
-        window.scrollTo(0, y);
-        previouslyFocusedRef.current?.focus?.();
-      }
-      return () => {
-        document.body.classList.remove("modal-open");
-        document.body.style.position = "";
-        document.body.style.width = "";
-        const y = scrollPositionRef.current;
-        document.body.style.top = "";
-        window.scrollTo(0, y);
-      };
-    }, [isOpen]);
-
-    // Keyboard handlers (ESC + focus trap)
-    const handleKeyDown = useCallback(
-      (e) => {
-        if (e.key === "Escape") {
-          e.stopPropagation();
-          onClose();
-          return;
+    return (
+      <Modal
+        title={
+          <Space>
+            <FolderOutlined style={{ color: "#1890ff" }} />
+            Chi tiết dự án
+          </Space>
         }
-        if (e.key === "Tab" && modalRef.current) {
-          const focusable = modalRef.current.querySelectorAll(
-            'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          );
-          if (focusable.length === 0) return;
-          const first = focusable[0];
-          const last = focusable[focusable.length - 1];
-          if (e.shiftKey) {
-            if (document.activeElement === first) {
-              e.preventDefault();
-              last.focus();
-            }
-          } else if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      },
-      [onClose]
-    );
+        open={isOpen}
+        onCancel={onClose}
+        footer={[
+          <Button key="close" onClick={onClose}>
+            Đóng
+          </Button>,
+          <Button
+            key="edit"
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => onEdit(project)}
+          >
+            Chỉnh sửa
+          </Button>,
+        ]}
+        width={800}
+        style={{ top: 20 }}
+        bodyStyle={{ maxHeight: "70vh", overflowY: "auto" }}
+      >
+        <Row gutter={[24, 24]}>
+          {/* Image Section */}
+          <Col xs={24} md={12}>
+            <Image
+              src={project.imageUrl || FALLBACK_IMAGE}
+              alt={project.title}
+              fallback={FALLBACK_IMAGE}
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                maxHeight: "240px",
+                objectFit: "cover",
+              }}
+            />
+          </Col>
 
-    useEffect(() => {
-      if (!isOpen) return;
-      document.addEventListener("keydown", handleKeyDown, { capture: true });
-      return () =>
-        document.removeEventListener("keydown", handleKeyDown, {
-          capture: true,
-        });
-    }, [isOpen, handleKeyDown]);
+          {/* Info Section */}
+          <Col xs={24} md={12}>
+            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+              {/* Title & Category */}
+              <div>
+                <Title level={3} style={{ margin: 0, marginBottom: "8px" }}>
+                  {project.title}
+                </Title>
+                {project.category && (
+                  <Tag color="blue" style={{ marginBottom: "8px" }}>
+                    {project.category.name}
+                  </Tag>
+                )}
+                {project.isFeatured && (
+                  <Tag color="gold" icon={<StarFilled />}>
+                    Dự án nổi bật
+                  </Tag>
+                )}
+              </div>
 
-    if (!isOpen || !project) return null;
+              {/* Status */}
+              <div>
+                <Text strong>Trạng thái: </Text>
+                <Badge
+                  status={
+                    project.status === "published"
+                      ? "success"
+                      : project.status === "draft"
+                      ? "warning"
+                      : "default"
+                  }
+                  text={
+                    project.status === "published"
+                      ? "Đã xuất bản"
+                      : project.status === "draft"
+                      ? "Bản nháp"
+                      : "Đã lưu trữ"
+                  }
+                />
+              </div>
 
-    return createPortal(
-      <div className="modal-root" aria-hidden={!isOpen}>
-        {/* Backdrop */}
-        <button
-          aria-label="Đóng chi tiết dự án"
-          className="modal-backdrop fixed inset-0 bg-gray-600 bg-opacity-50 z-50"
-          onClick={onClose}
-        />
-        {/* Panel */}
-        <div
-          ref={modalRef}
-          className="project-detail-modal fixed inset-0 z-50 overflow-y-auto"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="project-detail-title"
-          tabIndex={-1}
-        >
-          <div className="flex items-start justify-center min-h-screen px-4 pt-10 pb-20">
-            <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-              {/* Header */}
-              <div className="modal-header bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-indigo-100 rounded-lg">
-                      <FolderIcon className="h-6 w-6 text-indigo-600" />
-                    </div>
-                    <div>
-                      <h3
-                        id="project-detail-title"
-                        className="text-lg font-semibold text-gray-900"
+              {/* Links */}
+              {(project.demoUrl || project.sourceUrl) && (
+                <div>
+                  <Text strong>Liên kết: </Text>
+                  <Space>
+                    {project.demoUrl && (
+                      <Button
+                        type="link"
+                        icon={<LinkOutlined />}
+                        href={project.demoUrl}
+                        target="_blank"
+                        size="small"
                       >
-                        Chi tiết dự án
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        ID: #{project.id || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={onClose}
-                    className="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
-                  >
-                    <XMarkIcon className="h-6 w-6" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="modal-body px-6 py-6 overflow-y-auto max-h-[calc(90vh-200px)]">
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                  {/* Left Column - Project Image & Basic Info */}
-                  <div className="space-y-6">
-                    {/* Project Image */}
-                    <div>
-                      <img
-                        src={project.imageUrl || FALLBACK_IMAGE}
-                        alt={project.title}
-                        className="w-full h-64 object-cover rounded-lg border"
-                      />
-                    </div>
-
-                    {/* Basic Info */}
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                        <FolderIcon className="h-5 w-5 mr-2 text-gray-500" />
-                        Thông tin cơ bản
-                      </h4>
-                      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                        <div>
-                          <span className="text-sm font-medium text-gray-500">
-                            Tên dự án:
-                          </span>
-                          <p className="text-gray-900 font-medium">
-                            {project.title}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium text-gray-500">
-                            Danh mục:
-                          </span>
-                          <p className="text-gray-900">
-                            {project.category?.name || "Chưa phân loại"}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium text-gray-500">
-                            Trạng thái:
-                          </span>
-                          <span
-                            className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              project.status === "published"
-                                ? "bg-green-100 text-green-800"
-                                : project.status === "draft"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-gray-100 text-gray-800"
-                            }`}
-                          >
-                            {project.status === "published"
-                              ? "Đã xuất bản"
-                              : project.status === "draft"
-                              ? "Bản nháp"
-                              : "Đã lưu trữ"}
-                          </span>
-                          {project.isFeatured && (
-                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                              <StarIcon className="h-3 w-3 mr-1" />
-                              Nổi bật
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium text-gray-500">
-                            Ngày tạo:
-                          </span>
-                          <p className="text-gray-900">
-                            {new Date(project.createdAt).toLocaleDateString(
-                              "vi-VN"
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium text-gray-500">
-                            Cập nhật cuối:
-                          </span>
-                          <p className="text-gray-900">
-                            {new Date(
-                              project.updatedAt || project.createdAt
-                            ).toLocaleDateString("vi-VN")}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    {project.tags && project.tags.length > 0 && (
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-3">
-                          Công nghệ sử dụng
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {project.tags.map((tag, index) => (
-                            <span
-                              key={`detail-${project.id}-tag-${
-                                tag.id || index
-                              }`}
-                              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
-                            >
-                              {tag.name}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
+                        Demo
+                      </Button>
                     )}
-                  </div>
-
-                  {/* Right Column - Description & Links */}
-                  <div className="space-y-6">
-                    {/* Description */}
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-3">
-                        Mô tả dự án
-                      </h4>
-                      <div className="bg-gray-50 rounded-lg p-4 border">
-                        <div className="max-h-64 overflow-y-auto">
-                          <p className="text-gray-700 whitespace-pre-wrap leading-relaxed break-words">
-                            {project.description || "Chưa có mô tả"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Project Links */}
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-3">
-                        Liên kết dự án
-                      </h4>
-                      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                        {project.demoUrl && (
-                          <div>
-                            <span className="text-sm font-medium text-gray-500">
-                              Demo URL:
-                            </span>
-                            <a
-                              href={project.demoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-blue-600 hover:text-blue-800 truncate"
-                            >
-                              {project.demoUrl}
-                            </a>
-                          </div>
-                        )}
-                        {project.sourceUrl && (
-                          <div>
-                            <span className="text-sm font-medium text-gray-500">
-                              Source URL:
-                            </span>
-                            <a
-                              href={project.sourceUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-blue-600 hover:text-blue-800 truncate"
-                            >
-                              {project.sourceUrl}
-                            </a>
-                          </div>
-                        )}
-                        {!project.demoUrl && !project.sourceUrl && (
-                          <p className="text-gray-500 text-sm">
-                            Chưa có liên kết nào
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-3">
-                        Thao tác
-                      </h4>
-                      <div className="space-y-3">
-                        <Button
-                          variant="primary"
-                          fullWidth
-                          icon={PencilIcon}
-                          onClick={() => {
-                            onClose();
-                            onEdit(project);
-                          }}
-                        >
-                          Chỉnh sửa dự án
-                        </Button>
-                        <div className="grid grid-cols-2 gap-3">
-                          {project.demoUrl && (
-                            <Button
-                              variant="secondary"
-                              icon={EyeIcon}
-                              onClick={() =>
-                                window.open(project.demoUrl, "_blank")
-                              }
-                              className="justify-center"
-                            >
-                              Xem Demo
-                            </Button>
-                          )}
-                          {project.sourceUrl && (
-                            <Button
-                              variant="secondary"
-                              onClick={() =>
-                                window.open(project.sourceUrl, "_blank")
-                              }
-                              className="justify-center"
-                            >
-                              Xem Code
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    {project.sourceUrl && (
+                      <Button
+                        type="link"
+                        icon={<FolderOutlined />}
+                        href={project.sourceUrl}
+                        target="_blank"
+                        size="small"
+                      >
+                        Source Code
+                      </Button>
+                    )}
+                  </Space>
                 </div>
-              </div>
+              )}
 
-              {/* Footer */}
-              <div className="modal-footer bg-gray-50/80 px-6 py-4 border-t border-gray-200 backdrop-blur-sm">
-                <div className="flex justify-between items-center">
-                  <div className="text-sm text-gray-500">
-                    Dự án {project.title} •{" "}
-                    {new Date(project.createdAt).toLocaleDateString("vi-VN")}
-                  </div>
-                  <Button
-                    variant="secondary"
-                    onClick={onClose}
-                    className="px-6 py-2 bg-white border-gray-300 hover:bg-gray-50 transition-colors duration-200"
+              {/* Dates */}
+              <div>
+                <Text type="secondary" style={{ fontSize: "12px" }}>
+                  Tạo:{" "}
+                  {formatDate
+                    ? formatDate(project.createdAt)
+                    : new Date(project.createdAt).toLocaleDateString("vi-VN")}
+                  {project.updatedAt && (
+                    <>
+                      {" "}
+                      • Cập nhật:{" "}
+                      {formatDate
+                        ? formatDate(project.updatedAt)
+                        : new Date(project.updatedAt).toLocaleDateString(
+                            "vi-VN"
+                          )}
+                    </>
+                  )}
+                </Text>
+              </div>
+            </Space>
+          </Col>
+
+          {/* Description */}
+          <Col span={24}>
+            <Divider orientation="left">Mô tả dự án</Divider>
+            <Text style={{ whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
+              {project.description || "Chưa có mô tả cho dự án này."}
+            </Text>
+          </Col>
+
+          {/* Technologies */}
+          {project.tags && project.tags.length > 0 && (
+            <Col span={24}>
+              <Divider orientation="left">Công nghệ sử dụng</Divider>
+              <Space wrap>
+                {project.tags.map((tag, index) => (
+                  <Tag
+                    key={tag.id || index}
+                    color="processing"
+                    style={{ marginBottom: "4px" }}
                   >
-                    Đóng
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>,
-      document.body
+                    {tag.name}
+                  </Tag>
+                ))}
+              </Space>
+            </Col>
+          )}
+        </Row>
+      </Modal>
     );
   }
 );
 
-// Modal Component form thêm/chỉnh sửa dự án (đã tối ưu responsive + accessibility)
+// Create/Edit Modal component cho Projects sử dụng Ant Design
 const ProjectFormModal = React.memo(
   ({
     isOpen,
+    isEdit,
+    project,
     onClose,
     onSubmit,
-    editingProject,
-    formData,
-    setFormData,
     categories,
-    handleCreateNewTag,
     tags,
+    onCreateTag,
   }) => {
-    const modalRef = useRef(null);
-    const previouslyFocusedRef = useRef(null);
-    const scrollPositionRef = useRef(0);
+    const [form] = Form.useForm();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Lock body scroll (không làm nhảy layout) & focus management
+    // Reset form when modal opens/closes or project changes
     useEffect(() => {
       if (isOpen) {
-        previouslyFocusedRef.current = document.activeElement;
-        scrollPositionRef.current = window.scrollY;
-        document.body.style.top = `-${scrollPositionRef.current}px`;
-        document.body.classList.add("modal-open");
-        document.body.style.position = "fixed";
-        document.body.style.width = "100%";
-        // Focus vào modal
-        setTimeout(() => {
-          modalRef.current?.focus();
-        }, 30);
-      } else {
-        // Restore
-        document.body.classList.remove("modal-open");
-        document.body.style.position = "";
-        document.body.style.width = "";
-        const y = scrollPositionRef.current;
-        document.body.style.top = "";
-        window.scrollTo(0, y);
-        previouslyFocusedRef.current?.focus?.();
-      }
-      return () => {
-        document.body.classList.remove("modal-open");
-        document.body.style.position = "";
-        document.body.style.width = "";
-        const y = scrollPositionRef.current;
-        document.body.style.top = "";
-        window.scrollTo(0, y);
-      };
-    }, [isOpen]);
-
-    // Keyboard handlers (ESC + focus trap)
-    const handleKeyDown = useCallback(
-      (e) => {
-        if (e.key === "Escape") {
-          e.stopPropagation();
-          onClose();
-          return;
+        if (isEdit && project) {
+          form.setFieldsValue({
+            title: project.title || "",
+            description: project.description || "",
+            imageUrl: project.imageUrl || "",
+            demoUrl: project.demoUrl || "",
+            sourceUrl: project.sourceUrl || "",
+            categoryId: project.category?.id || "",
+            tagIds: project.tags ? project.tags.map((tag) => tag.id) : [],
+            status: project.status || "draft",
+            isFeatured: Boolean(project.isFeatured),
+          });
+        } else {
+          form.resetFields();
         }
-        if (e.key === "Tab" && modalRef.current) {
-          const focusable = modalRef.current.querySelectorAll(
-            'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          );
-          if (focusable.length === 0) return;
-          const first = focusable[0];
-          const last = focusable[focusable.length - 1];
-          if (e.shiftKey) {
-            if (document.activeElement === first) {
-              e.preventDefault();
-              last.focus();
-            }
-          } else if (document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
+      }
+    }, [isOpen, isEdit, project, form]);
+
+    const handleSubmit = async (values) => {
+      setIsSubmitting(true);
+      try {
+        await onSubmit(values);
+        onClose();
+        form.resetFields();
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
+    const handleCreateNewTag = useCallback(
+      async (tagName) => {
+        try {
+          const newTag = await onCreateTag(tagName);
+          // TagsMultiSelect sẽ tự động xử lý việc thêm tag vào selection
+          // Chỉ cần return newTag để TagsMultiSelect biết việc tạo tag thành công
+          return newTag;
+        } catch (error) {
+          console.error("Error creating tag in form:", error);
+          throw error;
         }
       },
-      [onClose]
+      [onCreateTag]
     );
 
-    useEffect(() => {
-      if (!isOpen) return;
-      document.addEventListener("keydown", handleKeyDown, { capture: true });
-      return () =>
-        document.removeEventListener("keydown", handleKeyDown, {
-          capture: true,
-        });
-    }, [isOpen, handleKeyDown]);
+    const validateUrl = (_, value) => {
+      if (!value) return Promise.resolve();
+      const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+      if (!urlRegex.test(value)) {
+        return Promise.reject(new Error("URL không hợp lệ"));
+      }
+      return Promise.resolve();
+    };
 
-    if (!isOpen) return null;
-
-    return createPortal(
-      <div className="modal-root" aria-hidden={!isOpen}>
-        {/* Backdrop */}
-        <button
-          aria-label={
-            editingProject
-              ? "Đóng form chỉnh sửa dự án"
-              : "Đóng form thêm dự án"
-          }
-          className="modal-backdrop fixed inset-0 bg-gray-600 bg-opacity-50 z-50"
-          onClick={onClose}
-        />
-        {/* Panel */}
-        <div
-          ref={modalRef}
-          className="project-form-modal fixed inset-0 z-50 overflow-y-auto"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="project-form-title"
-          tabIndex={-1}
+    return (
+      <Modal
+        title={
+          <Space>
+            <EditOutlined style={{ color: "#1890ff" }} />
+            {isEdit ? "Chỉnh sửa dự án" : "Thêm dự án mới"}
+          </Space>
+        }
+        open={isOpen}
+        onCancel={onClose}
+        footer={[
+          <Button key="cancel" onClick={onClose}>
+            Hủy
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={isSubmitting}
+            onClick={() => form.submit()}
+          >
+            {isEdit ? "Cập nhật" : "Tạo mới"}
+          </Button>,
+        ]}
+        width={900}
+        style={{ top: 20 }}
+        bodyStyle={{ maxHeight: "70vh", overflowY: "auto" }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={{
+            status: "draft",
+            isFeatured: false,
+            tagIds: [],
+          }}
         >
-          <div className="flex items-start justify-center min-h-screen px-4 pt-10 pb-20">
-            <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-              {/* Header */}
-              <div className="modal-header bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-indigo-100 rounded-lg">
-                      {editingProject ? (
-                        <PencilIcon className="h-6 w-6 text-indigo-600" />
-                      ) : (
-                        <PlusIcon className="h-6 w-6 text-indigo-600" />
-                      )}
-                    </div>
-                    <div>
-                      <h3
-                        id="project-form-title"
-                        className="text-lg font-semibold text-gray-900"
-                      >
-                        {editingProject ? "Chỉnh sửa dự án" : "Thêm dự án mới"}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {editingProject
-                          ? "Cập nhật thông tin dự án"
-                          : "Tạo dự án mới"}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={onClose}
-                    className="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
+          <Row gutter={24}>
+            {/* Left Column */}
+            <Col xs={24} md={12}>
+              <Form.Item
+                name="title"
+                label="Tên dự án"
+                rules={[
+                  { required: true, message: "Tên dự án là bắt buộc" },
+                  { min: 3, message: "Tên dự án phải có ít nhất 3 ký tự" },
+                ]}
+              >
+                <Input placeholder="Nhập tên dự án..." />
+              </Form.Item>
+
+              <Form.Item
+                name="description"
+                label="Mô tả dự án"
+                rules={[
+                  { required: true, message: "Mô tả dự án là bắt buộc" },
+                  { min: 10, message: "Mô tả phải có ít nhất 10 ký tự" },
+                ]}
+              >
+                <Input.TextArea
+                  rows={4}
+                  placeholder="Mô tả chi tiết về dự án..."
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="imageUrl"
+                label="URL hình ảnh"
+                rules={[{ validator: validateUrl }]}
+              >
+                <Input placeholder="https://example.com/image.jpg" />
+              </Form.Item>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="demoUrl"
+                    label="URL Demo"
+                    rules={[{ validator: validateUrl }]}
                   >
-                    <XMarkIcon className="h-6 w-6" />
-                  </button>
-                </div>
-              </div>
+                    <Input placeholder="https://demo.example.com" />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="sourceUrl"
+                    label="URL Source Code"
+                    rules={[{ validator: validateUrl }]}
+                  >
+                    <Input placeholder="https://github.com/username/repo" />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Col>
 
-              {/* Content */}
-              <div className="modal-body px-6 py-6 overflow-y-auto max-h-[calc(90vh-200px)]">
-                <form onSubmit={onSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Left Column */}
-                    <div className="space-y-4">
-                      <div>
-                        <label
-                          htmlFor="project-title"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Tên dự án <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          id="project-title"
-                          type="text"
-                          value={formData.title}
-                          onChange={(e) =>
-                            setFormData({ ...formData, title: e.target.value })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                          placeholder="Ví dụ: Portfolio Website"
-                          required
-                        />
-                        <p className="mt-1 text-xs text-gray-500">
-                          Tên hiển thị của dự án
-                        </p>
-                      </div>
+            {/* Right Column */}
+            <Col xs={24} md={12}>
+              <Form.Item
+                name="categoryId"
+                label="Danh mục"
+                rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
+              >
+                <Select placeholder="Chọn danh mục">
+                  {categories.map((category) => (
+                    <Option key={category.id} value={category.id}>
+                      {category.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
 
-                      <div>
-                        <label
-                          htmlFor="project-category"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Danh mục <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                          id="project-category"
-                          value={formData.categoryId}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              categoryId: e.target.value,
-                            })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                          required
-                        >
-                          <option value="">Chọn danh mục dự án</option>
-                          {categories.map((category) => (
-                            <option key={category.id} value={category.id}>
-                              {category.name}
-                            </option>
-                          ))}
-                        </select>
-                        <p className="mt-1 text-xs text-gray-500">
-                          Phân loại dự án theo chủ đề
-                        </p>
-                      </div>
+              <Form.Item
+                name="tagIds"
+                label="Công nghệ sử dụng"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn ít nhất một công nghệ",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value || value.length === 0) {
+                        return Promise.reject(new Error("Vui lòng chọn ít nhất một công nghệ"));
+                      }
+                      if (value.length > 20) {
+                        return Promise.reject(new Error("Không thể chọn quá 20 công nghệ"));
+                      }
+                      return Promise.resolve();
+                    }
+                  }
+                ]}
+              >
+                <Form.Item 
+                  noStyle 
+                  shouldUpdate={(prevValues, currentValues) => 
+                    prevValues.tagIds !== currentValues.tagIds
+                  }
+                >
+                  {({ getFieldValue }) => (
+                    <TagsMultiSelect
+                      availableTags={tags}
+                      selectedTagIds={getFieldValue("tagIds") || []}
+                      onChange={(tagIds) => form.setFieldsValue({ tagIds })}
+                      onCreateTag={handleCreateNewTag}
+                    />
+                  )}
+                </Form.Item>
+              </Form.Item>
 
-                      <div>
-                        <label
-                          htmlFor="project-imageUrl"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          URL hình ảnh
-                        </label>
-                        <input
-                          id="project-imageUrl"
-                          type="url"
-                          value={formData.imageUrl}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              imageUrl: e.target.value,
-                            })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                          placeholder="https://example.com/image.jpg hoặc /img/projects/project.png"
-                        />
-                        <p className="mt-1 text-xs text-gray-500">
-                          Link hình ảnh đại diện cho dự án
-                        </p>
-                      </div>
+              <Form.Item name="status" label="Trạng thái">
+                <Select>
+                  <Option value="draft">Bản nháp</Option>
+                  <Option value="published">Đã xuất bản</Option>
+                  <Option value="archived">Đã lưu trữ</Option>
+                </Select>
+              </Form.Item>
 
-                      <div>
-                        <label
-                          htmlFor="project-demoUrl"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          URL demo
-                        </label>
-                        <input
-                          id="project-demoUrl"
-                          type="url"
-                          value={formData.demoUrl}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              demoUrl: e.target.value,
-                            })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                          placeholder="https://demo.example.com"
-                        />
-                        <p className="mt-1 text-xs text-gray-500">
-                          Link xem thử dự án hoạt động
-                        </p>
-                      </div>
+              <Form.Item name="isFeatured" valuePropName="checked">
+                <Switch checkedChildren="Nổi bật" unCheckedChildren="Thường" />
+                <Text type="secondary" style={{ marginLeft: "8px" }}>
+                  Đánh dấu là dự án nổi bật
+                </Text>
+              </Form.Item>
 
-                      <div>
-                        <label
-                          htmlFor="project-sourceUrl"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          URL source code
-                        </label>
-                        <input
-                          id="project-sourceUrl"
-                          type="url"
-                          value={formData.sourceUrl}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              sourceUrl: e.target.value,
-                            })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                          placeholder="https://github.com/user/repo"
-                        />
-                        <p className="mt-1 text-xs text-gray-500">
-                          Link repository mã nguồn
-                        </p>
-                      </div>
-
-                      {/* Tags Multi-Select */}
-                      <TagsMultiSelect
-                        availableTags={tags}
-                        selectedTagIds={formData.tagIds}
-                        onChange={(tagIds) =>
-                          setFormData({ ...formData, tagIds })
-                        }
-                        onCreateTag={handleCreateNewTag}
+              {/* Preview */}
+              <Form.Item
+                shouldUpdate={(prevValues, currentValues) =>
+                  prevValues.imageUrl !== currentValues.imageUrl
+                }
+              >
+                {({ getFieldValue }) => {
+                  const imageUrl = getFieldValue("imageUrl");
+                  return imageUrl ? (
+                    <div>
+                      <Text
+                        strong
+                        style={{ display: "block", marginBottom: "8px" }}
+                      >
+                        Xem trước hình ảnh:
+                      </Text>
+                      <Image
+                        src={imageUrl}
+                        alt="Preview"
+                        fallback={FALLBACK_IMAGE}
+                        style={{
+                          width: "100%",
+                          maxHeight: "120px",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                        }}
                       />
                     </div>
-
-                    {/* Right Column */}
-                    <div className="space-y-4">
-                      <div>
-                        <label
-                          htmlFor="project-description"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Mô tả <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                          id="project-description"
-                          rows={8}
-                          value={formData.description}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              description: e.target.value,
-                            })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none"
-                          placeholder="Mô tả chi tiết về dự án, tính năng chính, mục tiêu..."
-                          required
-                        />
-                        <p className="mt-1 text-xs text-gray-500">
-                          Mô tả chi tiết về dự án và tính năng
-                        </p>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label
-                            htmlFor="project-status"
-                            className="block text-sm font-medium text-gray-700 mb-2"
-                          >
-                            Trạng thái
-                          </label>
-                          <select
-                            id="project-status"
-                            value={formData.status}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                status: e.target.value,
-                              })
-                            }
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                          >
-                            <option value="draft">Bản nháp</option>
-                            <option value="published">Đã xuất bản</option>
-                            <option value="archived">Đã lưu trữ</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label
-                            htmlFor="project-sortOrder"
-                            className="block text-sm font-medium text-gray-700 mb-2"
-                          >
-                            Thứ tự sắp xếp
-                          </label>
-                          <input
-                            id="project-sortOrder"
-                            type="number"
-                            value={formData.sortOrder}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                sortOrder: parseInt(e.target.value) || 0,
-                              })
-                            }
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                            min="0"
-                            placeholder="0"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-3 bg-gray-50 rounded-lg p-4">
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">
-                          Tùy chọn hiển thị
-                        </h4>
-
-                        <div className="flex items-center p-3 bg-white rounded-lg border border-gray-200">
-                          <input
-                            id="project-featured"
-                            type="checkbox"
-                            checked={formData.isFeatured}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                isFeatured: e.target.checked,
-                              })
-                            }
-                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                          />
-                          <div className="ml-3">
-                            <label
-                              htmlFor="project-featured"
-                              className="block text-sm font-medium text-gray-900"
-                            >
-                              Dự án nổi bật
-                            </label>
-                            <p className="text-xs text-gray-500">
-                              Hiển thị ở vị trí ưu tiên
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center p-3 bg-white rounded-lg border border-gray-200">
-                          <input
-                            id="project-public"
-                            type="checkbox"
-                            checked={formData.isPublic}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                isPublic: e.target.checked,
-                              })
-                            }
-                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                          />
-                          <div className="ml-3">
-                            <label
-                              htmlFor="project-public"
-                              className="block text-sm font-medium text-gray-900"
-                            >
-                              Hiển thị công khai
-                            </label>
-                            <p className="text-xs text-gray-500">
-                              Cho phép khách truy cập xem
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Preview image */}
-                      {formData.imageUrl && (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Xem trước hình ảnh
-                          </label>
-                          <div className="relative group">
-                            <img
-                              src={formData.imageUrl}
-                              alt="Preview"
-                              className="w-full h-40 object-cover rounded-lg border border-gray-200"
-                              onError={(e) => {
-                                e.target.style.display = "none";
-                              }}
-                            />
-                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg"></div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </form>
-              </div>
-
-              {/* Footer */}
-              <div className="modal-footer bg-gray-50/80 px-6 py-4 border-t border-gray-200 backdrop-blur-sm">
-                <div className="flex justify-end space-x-3">
-                  <Button
-                    variant="secondary"
-                    onClick={onClose}
-                    className="px-6 py-2 bg-white border-gray-300 hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    Hủy
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={onSubmit}
-                    className="px-6 py-2"
-                  >
-                    {editingProject ? "Cập nhật" : "Thêm mới"}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>,
-      document.body
+                  ) : null;
+                }}
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
     );
   }
 );
 
 function ProjectsManagement() {
+  // Replace useNotificationContext with antd notification
+  const [api, contextHolder] = notification.useNotification();
+
   // State management with better organization
-  const [projects, setProjects] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [tags, setTags] = useState([]);
+  const [state, setState] = useState({
+    projects: [],
+    categories: [],
+    tags: [],
+    isLoading: true,
+    searchTerm: "",
+    selectedCategory: "",
+    selectedStatus: "",
+    currentPage: 1,
+    itemsPerPage: 12,
+  });
 
-  // UI State
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [modals, setModals] = useState({
+    detail: { isOpen: false, project: null },
+    form: { isOpen: false, isEdit: false, project: null },
+  });
 
-  // Modal States
-  const [showForm, setShowForm] = useState(false);
-  const [editingProject, setEditingProject] = useState(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(null);
-
-  // Form State with initial values factory
-  const getInitialFormData = useCallback(
-    () => ({
-      title: "",
-      description: "",
-      imageUrl: "",
-      demoUrl: "",
-      sourceUrl: "",
-      categoryId: "",
-      tagIds: [],
-      isFeatured: false,
-      status: "draft",
-      isPublic: true,
-      sortOrder: 0,
-    }),
-    []
-  );
-
-  const [formData, setFormData] = useState(getInitialFormData);
-
-  // Handle creating new tag with enhanced validation and feedback
-  const handleCreateNewTag = useCallback(
-    async (tagName) => {
-      try {
-        const trimmedName = tagName.trim();
-
-        // Validation
-        if (!trimmedName) {
-          throw new Error("Tên tag không được để trống");
-        }
-
-        if (trimmedName.length < 2) {
-          throw new Error("Tên tag phải có ít nhất 2 ký tự");
-        }
-
-        if (trimmedName.length > 50) {
-          throw new Error("Tên tag không được vượt quá 50 ký tự");
-        }
-
-        // Check if tag already exists
-        const existingTag = tags.find(
-          (tag) => tag.name.toLowerCase() === trimmedName.toLowerCase()
+  // Memoized filtered projects
+  const filteredProjects = useMemo(() => {
+    return state.projects.filter((project) => {
+      const matchesSearch =
+        project.title.toLowerCase().includes(state.searchTerm.toLowerCase()) ||
+        project.description
+          ?.toLowerCase()
+          .includes(state.searchTerm.toLowerCase()) ||
+        project.tags?.some((tag) =>
+          tag.name.toLowerCase().includes(state.searchTerm.toLowerCase())
         );
 
-        if (existingTag) {
-          console.log("Tag already exists, returning existing:", existingTag);
-          return existingTag;
-        }
+      const matchesCategory =
+        !state.selectedCategory ||
+        project.category?.id === state.selectedCategory;
 
-        console.log("Creating new tag:", trimmedName);
+      const matchesStatus =
+        !state.selectedStatus || project.status === state.selectedStatus;
 
-        // Call API để tạo tag mới
-        const response = await ProjectTagApi.create({
-          name: trimmedName,
-          description: `Công nghệ: ${trimmedName}`,
-          isActive: true,
-        });
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+  }, [
+    state.projects,
+    state.searchTerm,
+    state.selectedCategory,
+    state.selectedStatus,
+  ]);
 
-        if (response && response.data) {
-          const newTag = normalizeTag(response.data);
+  // Memoized pagination
+  const paginatedProjects = useMemo(() => {
+    const startIndex = (state.currentPage - 1) * state.itemsPerPage;
+    return filteredProjects.slice(startIndex, startIndex + state.itemsPerPage);
+  }, [filteredProjects, state.currentPage, state.itemsPerPage]);
 
-          // Thêm vào danh sách tags hiện tại (đảm bảo không duplicate theo id)
-          setTags((prevTags) => {
-            if (prevTags.some(t => t.id === newTag.id)) return prevTags;
-            return [...prevTags, newTag];
-          });
+  // Data fetching functions
+  const fetchData = useCallback(async () => {
+    setState((prev) => ({ ...prev, isLoading: true }));
 
-          // Log success
-          console.log("✅ New tag created successfully:", newTag);
-
-          // TODO: Show success notification to user
-          // showNotification('success', `Tag "${newTag.name}" đã được tạo thành công`);
-
-          return newTag;
-        } else {
-          throw new Error("No data returned from API");
-        }
-      } catch (error) {
-        console.error("❌ Error creating tag:", error);
-
-        // Check if it's a validation error
-        if (error.message.includes("không được")) {
-          // TODO: Show validation error to user
-          // showNotification('error', error.message);
-          throw error;
-        }
-
-        // Fallback: tạo tag tạm thời nếu API fail
-        const tempId = `temp-${Date.now()}`;
-        const fallbackTag = normalizeTag({
-          id: tempId,
-          tagId: tempId,
-          name: tagName.trim(),
-          description: `Công nghệ: ${tagName.trim()}`,
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          isTemporary: true,
-        });
-
-        // Thêm vào danh sách với warning
-        setTags((prevTags) => [...prevTags, fallbackTag]);
-        console.warn("⚠️ Using fallback tag due to API error:", fallbackTag);
-
-        // TODO: Show warning to user
-        // showNotification('warning', 'Không thể kết nối server. Tag tạm thời đã được tạo.');
-
-        return fallbackTag;
-      }
-    },
-    [tags]
-  );
-
-  // Load data with error handling and optimistic updates
-  const loadData = useCallback(async () => {
     try {
-      setLoading(true);
-      console.log("🔄 Loading projects data...");
-
-      const [projectsRes, categoriesRes, tagsRes] = await Promise.allSettled([
+      const [projectsRes, categoriesRes, tagsRes] = await Promise.all([
         ProjectApi.getAll(),
         ProjectCategoryApi.getAll(),
         ProjectTagApi.getAll(),
       ]);
 
-      // Handle projects data
-      if (projectsRes.status === "fulfilled") {
-        const projectsData = Array.isArray(projectsRes.value.data)
-          ? projectsRes.value.data.map(normalizeProject)
-          : [];
-        setProjects(projectsData);
-        console.log("✅ Projects loaded:", projectsData.length);
-      } else {
-        console.error("❌ Failed to load projects:", projectsRes.reason);
-        setProjects([]);
-      }
-
-      // Handle categories data
-      if (categoriesRes.status === "fulfilled") {
-        const categoriesData = Array.isArray(categoriesRes.value.data)
-          ? categoriesRes.value.data.map(normalizeCategory)
-          : [];
-        setCategories(categoriesData);
-        console.log("✅ Categories loaded:", categoriesData.length);
-      } else {
-        console.error("❌ Failed to load categories:", categoriesRes.reason);
-        setCategories([]);
-      }
-
-      // Handle tags data
-      if (tagsRes.status === "fulfilled") {
-        const tagsData = Array.isArray(tagsRes.value.data)
-          ? tagsRes.value.data.map(normalizeTag)
-          : [];
-        setTags(tagsData);
-        console.log("✅ Tags loaded:", tagsData.length);
-      } else {
-        console.error("❌ Failed to load tags:", tagsRes.reason);
-        setTags([]);
-      }
+      setState((prev) => ({
+        ...prev,
+        projects: projectsRes.data.map(normalizeProject),
+        categories: categoriesRes.data.map(normalizeCategory),
+        tags: tagsRes.data.map(normalizeTag),
+        isLoading: false,
+      }));
     } catch (error) {
-      console.error("❌ Error loading data:", error);
-      // Set fallback data
-      setProjects([]);
-      setCategories([]);
-      setTags([]);
-    } finally {
-      setLoading(false);
+      console.error("Error fetching data:", error);
+      api.error({
+        message: "Lỗi tải dữ liệu",
+        description: "Không thể tải danh sách dự án. Vui lòng thử lại.",
+      });
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
+  }, [api]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Modal handlers
+  const openDetailModal = useCallback((project) => {
+    setModals((prev) => ({
+      ...prev,
+      detail: { isOpen: true, project },
+    }));
   }, []);
 
-  // Enhanced form management with validation
-  const handleEdit = useCallback((project) => {
-    setEditingProject(project);
-    setFormData({
-      title: project.title || "",
-      description: project.description || "",
-      imageUrl: project.imageUrl || "",
-      demoUrl: project.demoUrl || "",
-      sourceUrl: project.sourceUrl || "",
-      categoryId: project.category?.id || "",
-      tagIds: project.tags?.map((tag) => tag.id) || [],
-      isFeatured: Boolean(project.isFeatured),
-      status: project.status || "draft",
-      isPublic: Boolean(project.isPublic),
-      sortOrder: project.sortOrder || 0,
-    });
-    setShowForm(true);
+  const closeDetailModal = useCallback(() => {
+    setModals((prev) => ({
+      ...prev,
+      detail: { isOpen: false, project: null },
+    }));
   }, []);
 
-  // Optimized project actions with loading states
-  const handleDelete = useCallback(
-    async (projectId) => {
-      if (!window.confirm("Bạn có chắc chắn muốn xóa dự án này?")) return;
+  const openFormModal = useCallback((isEdit = false, project = null) => {
+    setModals((prev) => ({
+      ...prev,
+      form: { isOpen: true, isEdit, project },
+    }));
+  }, []);
 
+  const closeFormModal = useCallback(() => {
+    setModals((prev) => ({
+      ...prev,
+      form: { isOpen: false, isEdit: false, project: null },
+    }));
+  }, []);
+
+  // CRUD operations
+  const handleCreateProject = useCallback(
+    async (formData) => {
       try {
-        // Optimistic update
-        setProjects((prev) => prev.filter((p) => p.id !== projectId));
+        const createData = {
+          ...formData,
+          tagNames: state.tags
+            .filter((tag) => formData.tagIds.includes(tag.id))
+            .map((tag) => tag.name),
+        };
+        delete createData.tagIds;
 
-        await ProjectApi.delete(projectId);
-        console.log("✅ Project deleted successfully");
+        const response = await ProjectApi.create(createData);
+        const newProject = normalizeProject(response.data);
 
-        // Reload to ensure consistency
-        await loadData();
+        setState((prev) => ({
+          ...prev,
+          projects: [newProject, ...prev.projects],
+        }));
+
+        api.success({
+          message: "Thành công",
+          description: "Dự án đã được tạo thành công!",
+        });
       } catch (error) {
-        console.error("❌ Error deleting project:", error);
-        // Revert optimistic update
-        await loadData();
+        console.error("Error creating project:", error);
+        api.error({
+          message: "Lỗi tạo dự án",
+          description: "Không thể tạo dự án. Vui lòng thử lại.",
+        });
+        throw error;
       }
     },
-    [loadData]
+    [state.tags, api]
+  );
+
+  const handleUpdateProject = useCallback(
+    async (formData) => {
+      try {
+        const updateData = {
+          ...formData,
+          tagNames: state.tags
+            .filter((tag) => formData.tagIds.includes(tag.id))
+            .map((tag) => tag.name),
+        };
+        delete updateData.tagIds;
+
+        const response = await ProjectApi.update(
+          modals.form.project.id,
+          updateData
+        );
+        const updatedProject = normalizeProject(response.data);
+
+        setState((prev) => ({
+          ...prev,
+          projects: prev.projects.map((p) =>
+            p.id === updatedProject.id ? updatedProject : p
+          ),
+        }));
+
+        api.success({
+          message: "Thành công",
+          description: "Dự án đã được cập nhật thành công!",
+        });
+      } catch (error) {
+        console.error("Error updating project:", error);
+        api.error({
+          message: "Lỗi cập nhật dự án",
+          description: "Không thể cập nhật dự án. Vui lòng thử lại.",
+        });
+        throw error;
+      }
+    },
+    [modals.form.project, state.tags, api]
+  );
+
+  const handleDeleteProject = useCallback(
+    async (projectId) => {
+      try {
+        await ProjectApi.delete(projectId);
+
+        setState((prev) => ({
+          ...prev,
+          projects: prev.projects.filter((p) => p.id !== projectId),
+        }));
+
+        api.success({
+          message: "Thành công",
+          description: "Dự án đã được xóa thành công!",
+        });
+      } catch (error) {
+        console.error("Error deleting project:", error);
+        api.error({
+          message: "Lỗi xóa dự án",
+          description: "Không thể xóa dự án. Vui lòng thử lại.",
+        });
+      }
+    },
+    [api]
   );
 
   const handleToggleFeatured = useCallback(
-    async (projectId, currentStatus) => {
+    async (projectId, currentFeatured) => {
       try {
-        // Optimistic update
-        setProjects((prev) =>
-          prev.map((p) =>
-            p.id === projectId ? { ...p, isFeatured: !currentStatus } : p
-          )
-        );
+        const response = await ProjectApi.update(projectId, {
+          isFeatured: !currentFeatured,
+        });
+        const updatedProject = normalizeProject(response.data);
 
-        await ProjectApi.toggleFeatured(projectId, !currentStatus);
-        console.log("✅ Featured status toggled successfully");
+        setState((prev) => ({
+          ...prev,
+          projects: prev.projects.map((p) =>
+            p.id === projectId ? updatedProject : p
+          ),
+        }));
 
-        // Reload to ensure consistency
-        await loadData();
+        api.success({
+          message: "Thành công",
+          description: `Dự án đã được ${
+            !currentFeatured ? "đánh dấu nổi bật" : "bỏ nổi bật"
+          }!`,
+        });
       } catch (error) {
-        console.error("❌ Error toggling featured status:", error);
-        // Revert optimistic update
-        await loadData();
+        console.error("Error toggling featured:", error);
+        api.error({
+          message: "Lỗi cập nhật",
+          description:
+            "Không thể cập nhật trạng thái nổi bật. Vui lòng thử lại.",
+        });
       }
     },
-    [loadData]
+    [api]
   );
 
-  // Enhanced form reset
-  const resetForm = useCallback(() => {
-    setShowForm(false);
-    setEditingProject(null);
-    setFormData(getInitialFormData());
-  }, [getInitialFormData]);
-
-  // Enhanced form submission with better validation
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-
-      // Validation
-      if (!formData.title.trim()) {
-        alert("Tên dự án không được để trống");
-        return;
-      }
-
-      if (!formData.description.trim()) {
-        alert("Mô tả dự án không được để trống");
-        return;
-      }
-
+  const handleCreateTag = useCallback(
+    async (tagName) => {
       try {
-        // Prepare data for API
-        const selectedTags = tags.filter((tag) =>
-          formData.tagIds.includes(tag.id)
-        );
-        const tagNames = selectedTags.map((tag) => tag.name);
+        const response = await ProjectTagApi.create({ name: tagName.trim() });
+        const newTag = normalizeTag(response.data);
 
-        const submitData = {
-          title: formData.title.trim(),
-            description: formData.description.trim(),
-            imageUrl: formData.imageUrl || undefined,
-            demoUrl: formData.demoUrl || undefined,
-            sourceUrl: formData.sourceUrl || undefined,
-            categoryId: formData.categoryId, // đã chọn từ select (UUID dạng categoryId)
-            tagNames,
-            isFeatured: formData.isFeatured,
-            status: formData.status,
-            isPublic: formData.isPublic,
-            sortOrder: formData.sortOrder,
-        }; // Không gửi tagIds
+        setState((prev) => ({
+          ...prev,
+          tags: [...prev.tags, newTag],
+        }));
 
-        if (editingProject) {
-          // Optimistic update for edit
-          setProjects((prev) =>
-            prev.map((p) =>
-              p.id === editingProject.id ? { ...p, ...submitData } : p
-            )
-          );
+        api.success({
+          message: "Thành công",
+          description: `Công nghệ "${tagName}" đã được thêm thành công!`,
+        });
 
-          await ProjectApi.update(editingProject.id, submitData);
-          console.log("✅ Project updated successfully");
-        } else {
-          await ProjectApi.create(submitData);
-          console.log("✅ Project created successfully");
-        }
-
-        await loadData();
-        resetForm();
+        return newTag;
       } catch (error) {
-        console.error("❌ Error saving project:", error);
-        // Revert optimistic update if edit failed
-        if (editingProject) {
-          await loadData();
-        }
+        console.error("Error creating tag:", error);
+        api.error({
+          message: "Lỗi tạo công nghệ",
+          description: "Không thể tạo công nghệ mới. Vui lòng thử lại.",
+        });
+        throw error;
       }
     },
-    [formData, tags, editingProject, loadData, resetForm]
+    [api]
   );
 
-  // Modal handlers for project detail
-  const handleViewProject = useCallback((project) => {
-    setSelectedProject(project);
-    setShowDetailModal(true);
+  // Submit handler for form modal
+  const handleFormSubmit = useCallback(
+    async (formData) => {
+      if (modals.form.isEdit) {
+        await handleUpdateProject(formData);
+      } else {
+        await handleCreateProject(formData);
+      }
+    },
+    [modals.form.isEdit, handleUpdateProject, handleCreateProject]
+  );
+
+  // Filter handlers
+  const handleSearch = useCallback((value) => {
+    setState((prev) => ({
+      ...prev,
+      searchTerm: value,
+      currentPage: 1,
+    }));
   }, []);
 
-  const handleCloseDetailModal = useCallback(() => {
-    setShowDetailModal(false);
-    setSelectedProject(null);
+  const handleCategoryFilter = useCallback((categoryId) => {
+    setState((prev) => ({
+      ...prev,
+      selectedCategory: categoryId,
+      currentPage: 1,
+    }));
   }, []);
 
-  // Enhanced stats calculation with memoization
-  const projectStats = useMemo(
-    () => ({
-      total: projects.length,
-      published: projects.filter((p) => p.status === "published").length,
-      draft: projects.filter((p) => p.status === "draft").length,
-      archived: projects.filter((p) => p.status === "archived").length,
-      featured: projects.filter((p) => p.isFeatured).length,
-    }),
-    [projects]
-  );
+  const handleStatusFilter = useCallback((status) => {
+    setState((prev) => ({
+      ...prev,
+      selectedStatus: status,
+      currentPage: 1,
+    }));
+  }, []);
 
-  // Filter projects with enhanced search and memoization
-  const filteredProjects = useMemo(() => {
-    const searchLower = searchTerm.toLowerCase().trim();
-
-    return projects.filter((project) => {
-      // Status filter
-      const matchesFilter = filter === "all" || project.status === filter;
-
-      // Search filter (enhanced to include tags and category)
-      const matchesSearch =
-        !searchLower ||
-        project.title?.toLowerCase().includes(searchLower) ||
-        project.description?.toLowerCase().includes(searchLower) ||
-        project.category?.name?.toLowerCase().includes(searchLower) ||
-        project.tags?.some((tag) =>
-          tag.name?.toLowerCase().includes(searchLower)
-        );
-
-      return matchesFilter && matchesSearch;
-    });
-  }, [projects, filter, searchTerm]);
-
-  // Load data on component mount
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  // Enhanced page actions with loading state
-  const pageActions = useMemo(
-    () => (
-      <button
-        onClick={() => setShowForm(true)}
-        disabled={loading}
-        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
-        <PlusIcon className="h-4 w-4 mr-2" />
-        Thêm dự án mới
-      </button>
-    ),
-    [loading]
-  );
-
-  // Enhanced loading component
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-500">Đang tải dữ liệu...</p>
-        </div>
-      </div>
-    );
-  }
+  // Format date helper
+  const formatDate = useCallback((dateString) => {
+    return new Date(dateString).toLocaleDateString("vi-VN");
+  }, []);
 
   return (
-    <>
+    <div className="projects-management">
+      {contextHolder}
       <PageHeader
         title="Quản lý Dự án"
-        description="Quản lý portfolio và các dự án cá nhân"
-        actions={pageActions}
-        className="sticky top-16 z-30"
+        subtitle="Quản lý danh sách dự án, công nghệ và thông tin chi tiết"
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-        <div className="space-y-6">
-          {/* Search and Filter */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div className="flex flex-col lg:flex-row gap-4">
-              {/* Search input */}
-              <div className="relative flex-1">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
-                  placeholder="Tìm kiếm theo tên hoặc mô tả dự án..."
-                />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-                  >
-                    <XMarkIcon className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
+      {/* Filters and Actions */}
+      <Card style={{ marginBottom: "24px" }}>
+        <Row gutter={16} align="middle">
+          <Col xs={24} sm={12} md={8}>
+            <Input
+              placeholder="Tìm kiếm dự án..."
+              value={state.searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+              prefix={<SearchOutlined />}
+              allowClear
+            />
+          </Col>
+          <Col xs={24} sm={6} md={4}>
+            <Select
+              placeholder="Danh mục"
+              value={state.selectedCategory}
+              onChange={handleCategoryFilter}
+              style={{ width: "100%" }}
+              allowClear
+            >
+              {state.categories.map((category) => (
+                <Option key={category.id} value={category.id}>
+                  {category.name}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+          <Col xs={24} sm={6} md={4}>
+            <Select
+              placeholder="Trạng thái"
+              value={state.selectedStatus}
+              onChange={handleStatusFilter}
+              style={{ width: "100%" }}
+              allowClear
+            >
+              <Option value="published">Đã xuất bản</Option>
+              <Option value="draft">Bản nháp</Option>
+              <Option value="archived">Đã lưu trữ</Option>
+            </Select>
+          </Col>
+          <Col xs={24} sm={24} md={8} style={{ textAlign: "right" }}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => openFormModal(false)}
+            >
+              Thêm dự án mới
+            </Button>
+          </Col>
+        </Row>
+      </Card>
 
-              {/* Filter options */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                <select
-                  value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
-                  className="block rounded-lg border border-gray-300 bg-white py-2.5 pl-3 pr-10 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors min-w-[140px]"
-                >
-                  <option value="all">Tất cả trạng thái</option>
-                  <option value="published">
-                    Đã xuất bản ({projectStats.published})
-                  </option>
-                  <option value="draft">Bản nháp ({projectStats.draft})</option>
-                  <option value="archived">
-                    Đã lưu trữ ({projectStats.archived})
-                  </option>
-                </select>
-
-                <button
-                  onClick={() => {
-                    setSearchTerm("");
-                    setFilter("all");
-                  }}
-                  className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-                >
-                  Xóa bộ lọc
-                </button>
-              </div>
-            </div>
-
-            {/* Search results info */}
-            {(searchTerm || filter !== "all") && (
-              <div className="mt-3 pt-3 border-t border-gray-200">
-                <p className="text-sm text-gray-600">
-                  Tìm thấy{" "}
-                  <span className="font-medium text-gray-900">
-                    {filteredProjects.length}
-                  </span>{" "}
-                  dự án
-                  {searchTerm && (
-                    <>
-                      {" "}
-                      khớp với "
-                      <span className="font-medium text-indigo-600">
-                        {searchTerm}
-                      </span>
-                      "
-                    </>
-                  )}
-                  {filter !== "all" && (
-                    <>
-                      {" "}
-                      có trạng thái{" "}
-                      <span className="font-medium text-indigo-600">
-                        {filter === "published"
-                          ? "đã xuất bản"
-                          : filter === "draft"
-                          ? "bản nháp"
-                          : "đã lưu trữ"}
-                      </span>
-                    </>
-                  )}
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-              <div className="flex items-center">
-                <FolderIcon className="h-8 w-8 text-indigo-600" />
-                <div className="ml-4">
-                  <p className="text-2xl font-bold text-gray-900">
-                    {projectStats.total}
-                  </p>
-                  <p className="text-sm text-gray-500">Tổng dự án</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-              <div className="flex items-center">
-                <EyeIcon className="h-8 w-8 text-green-600" />
-                <div className="ml-4">
-                  <p className="text-2xl font-bold text-gray-900">
-                    {projectStats.published}
-                  </p>
-                  <p className="text-sm text-gray-500">Đã xuất bản</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-              <div className="flex items-center">
-                <PencilIcon className="h-8 w-8 text-yellow-600" />
-                <div className="ml-4">
-                  <p className="text-2xl font-bold text-gray-900">
-                    {projectStats.draft}
-                  </p>
-                  <p className="text-sm text-gray-500">Bản nháp</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-              <div className="flex items-center">
-                <StarIcon className="h-8 w-8 text-purple-600" />
-                <div className="ml-4">
-                  <p className="text-2xl font-bold text-gray-900">
-                    {projectStats.featured}
-                  </p>
-                  <p className="text-sm text-gray-500">Nổi bật</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Projects Grid */}
-          <div className="min-h-96">
-            {filteredProjects.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    onViewProject={handleViewProject}
-                    onToggleFeatured={handleToggleFeatured}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-                <div className="text-center py-16">
-                  <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <FolderIcon className="h-12 w-12 text-gray-400" />
-                  </div>
-
-                  {projects.length === 0 ? (
-                    <>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Chưa có dự án nào
-                      </h3>
-                      <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                        Bắt đầu xây dựng portfolio của bạn bằng cách tạo dự án
-                        đầu tiên. Hiển thị những công việc tuyệt vời bạn đã thực
-                        hiện!
-                      </p>
-                      <button
-                        onClick={() => setShowForm(true)}
-                        className="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-                      >
-                        <PlusIcon className="h-5 w-5 mr-2" />
-                        Tạo dự án đầu tiên
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Không tìm thấy dự án
-                      </h3>
-                      <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                        Không có dự án nào khớp với bộ lọc hiện tại. Thử thay
-                        đổi từ khóa tìm kiếm hoặc bộ lọc trạng thái.
-                      </p>
-                      <div className="flex justify-center space-x-3">
-                        <button
-                          key="clear-filters"
-                          onClick={() => {
-                            setSearchTerm("");
-                            setFilter("all");
-                          }}
-                          className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-                        >
-                          Xóa bộ lọc
-                        </button>
-                        <button
-                          key="add-new-project"
-                          onClick={() => setShowForm(true)}
-                          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-                        >
-                          <PlusIcon className="h-4 w-4 mr-2" />
-                          Thêm dự án mới
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+      {/* Projects Grid */}
+      {state.isLoading ? (
+        <div style={{ textAlign: "center", padding: "60px 0" }}>
+          <Spin size="large" />
         </div>
+      ) : filteredProjects.length === 0 ? (
+        <Empty
+          description="Không tìm thấy dự án nào"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      ) : (
+        <Row gutter={[16, 16]}>
+          {paginatedProjects.map((project) => (
+            <Col xs={24} sm={12} lg={8} xl={6} key={project.id}>
+              <ProjectCard
+                project={project}
+                onEdit={(project) => openFormModal(true, project)}
+                onDelete={handleDeleteProject}
+                onViewProject={openDetailModal}
+                onToggleFeatured={handleToggleFeatured}
+              />
+            </Col>
+          ))}
+        </Row>
+      )}
 
-        {/* Project Form Modal */}
-        {showForm && (
-          <ProjectFormModal
-            isOpen={showForm}
-            onClose={resetForm}
-            onSubmit={handleSubmit}
-            editingProject={editingProject}
-            formData={formData}
-            setFormData={setFormData}
-            categories={categories}
-            tags={tags}
-            handleCreateNewTag={handleCreateNewTag}
-          />
-        )}
+      {/* Modals */}
+      <ProjectDetailModal
+        project={modals.detail.project}
+        isOpen={modals.detail.isOpen}
+        onClose={closeDetailModal}
+        onEdit={(project) => {
+          closeDetailModal();
+          openFormModal(true, project);
+        }}
+        formatDate={formatDate}
+      />
 
-        {/* Project Detail Modal */}
-        {showDetailModal && selectedProject && (
-          <ProjectDetailModal
-            project={selectedProject}
-            isOpen={showDetailModal}
-            onClose={handleCloseDetailModal}
-            onEdit={handleEdit}
-            formatDate={(date) => new Date(date).toLocaleDateString("vi-VN")}
-          />
-        )}
-      </div>
-    </>
+      <ProjectFormModal
+        isOpen={modals.form.isOpen}
+        isEdit={modals.form.isEdit}
+        project={modals.form.project}
+        onClose={closeFormModal}
+        onSubmit={handleFormSubmit}
+        categories={state.categories}
+        tags={state.tags}
+        onCreateTag={handleCreateTag}
+      />
+    </div>
   );
 }
 

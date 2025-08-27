@@ -82,7 +82,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/blog-post/**").permitAll()
                         .requestMatchers("/api/blog-tag/**").permitAll()
                         .requestMatchers("/api/blog-tag-map/**").permitAll()
-                        .requestMatchers("/api/contact-message").permitAll()
+                        .requestMatchers("/api/contact-messages/**").permitAll()
 
                         // authenticated
                         // Admin endpoints - authentication required

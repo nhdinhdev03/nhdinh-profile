@@ -1,13 +1,16 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ExclamationCircleIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button } from '../Button';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  ExclamationCircleIcon,
+  ArrowLeftIcon,
+} from "@heroicons/react/24/outline";
+import { Button } from "../Button";
 
-const ErrorPage = ({ 
-  error, 
-  resetError, 
-  title = "Đã xảy ra lỗi", 
-  message = "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau." 
+const ErrorPage = ({
+  error,
+  resetError,
+  title = "Đã xảy ra lỗi",
+  message = "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.",
 }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
@@ -64,15 +67,11 @@ const ErrorPage = ({
           className="space-y-3"
         >
           {resetError && (
-            <Button
-              onClick={resetError}
-              variant="primary"
-              className="w-full"
-            >
+            <Button onClick={resetError} variant="primary" className="w-full">
               Thử lại
             </Button>
           )}
-          
+
           <Button
             onClick={() => window.history.back()}
             variant="secondary"

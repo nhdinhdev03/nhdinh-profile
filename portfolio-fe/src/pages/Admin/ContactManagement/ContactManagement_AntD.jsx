@@ -68,7 +68,7 @@ const ContactMessagesManagement = ({
           <MailOutlined style={{ color: '#1890ff' }} />
           <span>Chi tiết tin nhắn</span>
           <Text type="secondary" style={{ fontSize: '12px' }}>
-            ID: #{contact.messageId?.toString().substring(0, 8) || "N/A"}
+            ID: #{contact.messageId?.substring(0, 8) || "N/A"}
           </Text>
         </Space>
       }
@@ -152,7 +152,7 @@ const ContactMessagesManagement = ({
               </Row>
               <Divider />
               <Text code style={{ fontSize: '11px' }}>
-                ID: #{contact.messageId?.toString().substring(0, 8) || "N/A"}
+                ID: #{contact.messageId?.substring(0, 8) || "N/A"}
               </Text>
             </Card>
           </Space>
@@ -289,8 +289,8 @@ const ContactManagement = () => {
   const fetchContacts = async () => {
     try {
       setLoading(true);
-      const response = await contactMessageApi.getAll();
-      if (response.data) {
+      const response = await contactMessageApi.getAllContactMessages();
+      if (response.success) {
         setContacts(response.data || []);
       } else {
         showNotification("error", "Lỗi", "Không thể tải danh sách liên hệ");
@@ -304,12 +304,12 @@ const ContactManagement = () => {
   };
 
   // Mark message as replied
-  const handleMarkAsReplied = async (messageId) => {
+  const handleMarkAsReplied = async (id) => {
     try {
-      const response = await contactMessageApi.markAsReplied(messageId);
-      if (response.data) {
+      const response = await contactMessageApi.markAsReplied(id);
+      if (response.success) {
         setContacts(contacts.map(c => 
-          c.messageId === messageId ? { ...c, isReplied: true } : c
+          c.messageId === id ? { ...c, isReplied: true } : c
         ));
         message.success("Đã đánh dấu tin nhắn là đã trả lời");
       } else {
@@ -322,12 +322,12 @@ const ContactManagement = () => {
   };
 
   // Mark message as unreplied
-  const handleMarkAsUnreplied = async (messageId) => {
+  const handleMarkAsUnreplied = async (id) => {
     try {
-      const response = await contactMessageApi.markAsUnreplied(messageId);
-      if (response.data) {
+      const response = await contactMessageApi.markAsUnreplied(id);
+      if (response.success) {
         setContacts(contacts.map(c => 
-          c.messageId === messageId ? { ...c, isReplied: false } : c
+          c.messageId === id ? { ...c, isReplied: false } : c
         ));
         message.success("Đã đánh dấu tin nhắn là chưa trả lời");
       } else {
@@ -340,11 +340,15 @@ const ContactManagement = () => {
   };
 
   // Delete contact message
-  const handleDeleteContact = async (messageId) => {
+  const handleDeleteContact = async (id) => {
     try {
-      await contactMessageApi.delete(messageId);
-      setContacts(contacts.filter(c => c.messageId !== messageId));
-      message.success("Đã xóa tin nhắn thành công");
+      const response = await contactMessageApi.deleteContactMessage(id);
+      if (response.success) {
+        setContacts(contacts.filter(c => c.messageId !== id));
+        message.success("Đã xóa tin nhắn thành công");
+      } else {
+        message.error("Không thể xóa tin nhắn");
+      }
     } catch (error) {
       console.error("Error deleting contact:", error);
       message.error("Không thể xóa tin nhắn");
@@ -364,7 +368,7 @@ const ContactManagement = () => {
         selectedContact.messageId, 
         replyMessage
       );
-      if (response.data) {
+      if (response.success) {
         message.success("Đã gửi email trả lời thành công");
         setReplyMode(false);
         setReplyMessage("");

@@ -2,7 +2,12 @@ import BaseApi from "api/global/baseApi";
 
 class ContactMessageApi extends BaseApi {
   constructor() {
-    super("contact-messages");
+    super("contact-messages"); // Thay đổi để phù hợp với backend endpoint
+  }
+
+  // Override getAll method to use /all endpoint
+  async getAll() {
+    return this.axiosClient.get(`${this.uri}/all`);
   }
 
   // Get unreplied messages
@@ -16,13 +21,13 @@ class ContactMessageApi extends BaseApi {
   }
 
   // Mark message as replied
-  async markAsReplied(id) {
-    return this.axiosClient.put(`${this.uri}/${id}/mark-replied`);
+  async markAsReplied(messageId) {
+    return this.axiosClient.put(`${this.uri}/${messageId}/mark-replied`);
   }
 
   // Mark message as unreplied
-  async markAsUnreplied(id) {
-    return this.axiosClient.put(`${this.uri}/${id}/mark-unreplied`);
+  async markAsUnreplied(messageId) {
+    return this.axiosClient.put(`${this.uri}/${messageId}/mark-unreplied`);
   }
 
   // Get messages by date range
@@ -30,6 +35,16 @@ class ContactMessageApi extends BaseApi {
     return this.axiosClient.get(`${this.uri}/date-range`, {
       params: { startDate, endDate }
     });
+  }
+
+  // Reply to contact message
+  async replyToContact(messageId, replyData) {
+    return this.axiosClient.post(`${this.uri}/${messageId}/reply`, replyData);
+  }
+
+  // Override delete method to use correct messageId
+  async delete(messageId) {
+    return this.axiosClient.delete(`${this.uri}/${messageId}`);
   }
 }
 

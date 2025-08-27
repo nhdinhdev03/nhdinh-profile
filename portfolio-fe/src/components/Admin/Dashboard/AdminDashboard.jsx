@@ -1,7 +1,7 @@
-import React from 'react';
-import { useAuth } from '../../../contexts/AuthContext';
-import { motion } from 'framer-motion';
-import { LogOut, User, Shield, Settings } from 'lucide-react';
+import React from "react";
+import { useAuth } from "../../../contexts/AuthContext";
+import { motion } from "framer-motion";
+import { LogOut, User, Shield, Settings } from "lucide-react";
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -20,7 +20,7 @@ const AdminDashboard = () => {
               <Shield size={32} className="text-white mr-3" />
               <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="text-white">
                 <p className="text-sm opacity-80">Xin chào,</p>
@@ -49,34 +49,54 @@ const AdminDashboard = () => {
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/20 mb-8">
             <div className="flex items-center mb-6">
               <User size={24} className="text-white mr-3" />
-              <h2 className="text-xl font-bold text-white">Thông tin tài khoản</h2>
+              <h2 className="text-xl font-bold text-white">
+                Thông tin tài khoản
+              </h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">ID</label>
-                <p className="text-white bg-white/10 p-3 rounded-lg">{user?.id}</p>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Số điện thoại</label>
-                <p className="text-white bg-white/10 p-3 rounded-lg">{user?.phoneNumber}</p>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Tên đăng nhập</label>
-                <p className="text-white bg-white/10 p-3 rounded-lg">{user?.username}</p>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Họ tên</label>
-                <p className="text-white bg-white/10 p-3 rounded-lg">{user?.fullName}</p>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Vai trò</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  ID
+                </label>
                 <p className="text-white bg-white/10 p-3 rounded-lg">
-                  {user?.roles?.join(', ') || 'ROLE_ADMIN'}
+                  {user?.id}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Số điện thoại
+                </label>
+                <p className="text-white bg-white/10 p-3 rounded-lg">
+                  {user?.phoneNumber}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Tên đăng nhập
+                </label>
+                <p className="text-white bg-white/10 p-3 rounded-lg">
+                  {user?.username}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Họ tên
+                </label>
+                <p className="text-white bg-white/10 p-3 rounded-lg">
+                  {user?.fullName}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Vai trò
+                </label>
+                <p className="text-white bg-white/10 p-3 rounded-lg">
+                  {user?.roles?.join(", ") || "ROLE_ADMIN"}
                 </p>
               </div>
             </div>
@@ -98,7 +118,9 @@ const AdminDashboard = () => {
               className="bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-xl border border-white/20 cursor-pointer"
             >
               <User size={32} className="text-green-400 mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">Người dùng</h3>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Người dùng
+              </h3>
               <p className="text-gray-300">Quản lý tài khoản người dùng</p>
             </motion.div>
 
@@ -116,7 +138,9 @@ const AdminDashboard = () => {
           <div className="mt-8 bg-green-500/20 border border-green-500/30 rounded-lg p-4">
             <div className="flex items-center">
               <div className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
-              <p className="text-green-400 font-medium">Đăng nhập thành công! Chào mừng bạn đến với Admin Dashboard.</p>
+              <p className="text-green-400 font-medium">
+                Đăng nhập thành công! Chào mừng bạn đến với Admin Dashboard.
+              </p>
             </div>
           </div>
         </motion.div>

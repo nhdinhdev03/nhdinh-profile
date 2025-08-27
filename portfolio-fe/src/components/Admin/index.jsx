@@ -10,8 +10,8 @@ export { default as Input } from './Form/Input';
 export { default as Textarea } from './Form/Textarea'; 
 export { default as Select } from './Form/Select';
 
-// Utility Components
-export { default as LoadingSpinner } from './LoadingSpinner';
+
+export { default as Loading } from './Loading';
 
 
 

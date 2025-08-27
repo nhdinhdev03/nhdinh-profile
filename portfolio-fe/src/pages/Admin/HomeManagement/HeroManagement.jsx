@@ -1,21 +1,50 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  PlusIcon,
-  PencilIcon,
-  TrashIcon,
-  EyeIcon,
-  ArrowPathIcon,
-} from "@heroicons/react/24/outline";
+  Card,
+  Table,
+  Button,
+  Input,
+  Form,
+  Space,
+  Typography,
+  Row,
+  Col,
+  Statistic,
+  Modal,
+  Popconfirm,
+  Tag,
+  Tooltip,
+  message,
+  Empty,
+  List,
+  Alert,
+  Badge,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  ReloadOutlined,
+  SearchOutlined,
+  SettingOutlined,
+  SaveOutlined,
+  UpOutlined,
+  DownOutlined,
+  BulbOutlined,
+} from "@ant-design/icons";
 
 import heroSubHeadingApi from "api/admin/home/HeroSubHeadingApi";
 import heroApi from "api/admin/home/HeroApi";
 import { useNotificationContext } from "components/Notification";
-import InlineConfirmation from "components/UI/InlineConfirmation";
 import {
   ErrorFormatter,
   useDebounce,
   ValidationUtils,
 } from "utils/Validation/validation";
+
+const { Title, Text } = Typography;
+const { TextArea } = Input;
 
 const HeroManagement = () => {
   const notification = useNotificationContext();
@@ -31,12 +60,13 @@ const HeroManagement = () => {
   });
 
   // ====== STATE: Sub-headings của hero được chọn ======
-  const [subHeadings, setSubHeadings] = useState([]); // Danh sách sub-heading hiện tại
-  const [newSubHeading, setNewSubHeading] = useState(""); // Input tạo mới
-  const [editingSubHeading, setEditingSubHeading] = useState(null); // subId đang edit inline
+  const [subHeadings, setSubHeadings] = useState([]);
+  const [newSubHeading, setNewSubHeading] = useState("");
+  const [editingSubHeading, setEditingSubHeading] = useState(null);
+  
   // ====== STATE: Danh sách heroes & hero đang select ======
-  const [heroes, setHeroes] = useState([]); // Danh sách heroes theo viewMode
-  const [selectedHero, setSelectedHero] = useState(null); // Hero đang chỉnh sửa
+  const [heroes, setHeroes] = useState([]);
+  const [selectedHero, setSelectedHero] = useState(null);
 
   // ====== STATE: Thống kê theo backend (active/archived/total) ======
   const [tabStats, setTabStats] = useState({
@@ -46,26 +76,17 @@ const HeroManagement = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
-  // eslint-disable-next-line no-unused-vars
-  const [error, setError] = useState(null); // Trạng thái lỗi (dự phòng cho hiển thị thông báo)
+  const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
 
   // Modal and edit states
-  // Hiển thị InlineConfirmation cho hero nào; lưu thêm anchorEl để position chính xác (portal)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null); // { heroId, anchorEl, data: hero }
-  const [isEditingHero, setIsEditingHero] = useState(false); // Bật form edit / create
-
-  // eslint-disable-next-line no-unused-vars
-  const [validationErrors, setValidationErrors] = useState({}); // Lỗi validation form (dự phòng cho hiển thị)
+  const [isEditingHero, setIsEditingHero] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
 
   // ====== STATE: UI / Filter / View mode ======
-  const [showDeleted, setShowDeleted] = useState(false); // (Legacy) checkbox cũ, UI đang ẩn
-  const [searchTerm, setSearchTerm] = useState(""); // Chuỗi nhập thô
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // Chuỗi sau debounce để filter
-  const [viewMode, setViewMode] = useState("active"); // active | archived | all
-  const [lastNotificationId, setLastNotificationId] = useState(null); // Tránh spam khi hero bị ẩn do filter
-  const [isTransitioning, setIsTransitioning] = useState(false); // Cooldown khi đổi tab/search
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [lastNotificationId, setLastNotificationId] = useState(null);
 
   // Debounce search term
   const { debouncedFunction: updateSearch } = useDebounce((term) => {
@@ -74,13 +95,10 @@ const HeroManagement = () => {
 
   // Helper: đảm bảo mỗi lần chỉ hiển thị 1 notification (dismissAll trước), tránh chồng chéo
   const showControlledNotification = useCallback(
-    (message, type = "info", duration = 4000) => {
-      // Always dismiss existing notifications first
+    (messageText, type = "info", duration = 4000) => {
       notification.dismissAll();
-
-      // Small delay to ensure previous notifications are dismissed
       setTimeout(() => {
-        notification[type](message, duration, { position: "top-right" });
+        notification[type](messageText, duration, { position: "top-right" });
       }, 100);
     },
     [notification]
@@ -95,7 +113,6 @@ const HeroManagement = () => {
   const filteredHeroes = React.useMemo(() => {
     if (!heroes) return [];
 
-    // Apply search filter only
     if (debouncedSearchTerm.trim()) {
       const searchLower = debouncedSearchTerm.toLowerCase();
       return heroes.filter(
@@ -110,459 +127,210 @@ const HeroManagement = () => {
   }, [heroes, debouncedSearchTerm]);
 
   // Statistics
-  // Memo: Thống kê nhanh từ danh sách (phục vụ hiển thị tại chỗ, khác với tabStats gọi API)
   const stats = React.useMemo(() => {
     const total = heroes.length;
     const active = heroes.filter((h) => !h.isDeleted).length;
     const deleted = heroes.filter((h) => h.isDeleted).length;
-    const archived = deleted; // archived = deleted
+    const archived = deleted;
 
     return { total, active, archived, deleted };
   }, [heroes]);
 
   // Check if selected hero is hidden by current filter
-  // Memo: Hero đang chọn có còn xuất hiện trong danh sách sau filter không
   const isSelectedHeroHidden = React.useMemo(() => {
     if (!selectedHero) return false;
     return !filteredHeroes.some((hero) => hero.heroId === selectedHero.heroId);
   }, [selectedHero, filteredHeroes]);
 
   // Validation functions
-  // Validate form Hero (preHeading / heading / introHtml) -> cập nhật validationErrors để highlight input
   const validateHeroSection = () => {
     const errors = ValidationUtils.validateHeroFields(heroSection);
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  // Validate 1 sub-heading (tránh rỗng / trùng / vi phạm rule)
   const validateSubHeading = (text) => {
     const errors = ValidationUtils.validateSubHeading(text, subHeadings);
 
     if (errors.length > 0) {
-      notification.warning(errors[0], 3000);
+      message.warning(errors[0]);
       return false;
     }
     return true;
   };
 
   // Fetch hero sub-headings
-  // Lấy danh sách sub-headings của hero theo heroId
   const fetchSubHeadings = useCallback(async (heroId) => {
-    if (!heroId) return;
-
     try {
       const response = await heroSubHeadingApi.getByHeroId(heroId);
-      // console.log("SubHeadings Response:", response); // Debug log - removed for production
-
       if (response.data) {
-        // Sort by sortOrder
-        const sortedSubHeadings = response.data.sort(
-          (a, b) => a.sortOrder - b.sortOrder
-        );
-        setSubHeadings(sortedSubHeadings);
+        setSubHeadings(response.data);
       }
-    } catch (err) {
-      console.error("SubHeadings Error:", err);
+    } catch (error) {
+      console.error("Error fetching sub-headings:", error);
+      message.error("Không thể tải sub-headings");
     }
   }, []);
 
   // Create new sub-heading
-  // Tạo mới sub-heading cho hero đang chọn
   const createSubHeading = async () => {
-    if (!newSubHeading.trim() || !selectedHero) {
-      notification.warning("Vui lòng nhập nội dung sub-heading", 3000);
+    if (!validateSubHeading(newSubHeading.trim())) {
       return;
     }
 
-    if (!validateSubHeading(newSubHeading)) return;
-
     try {
-      setSaving(true);
-      const payload = {
+      const response = await heroSubHeadingApi.create({
         heroId: selectedHero.heroId,
         text: newSubHeading.trim(),
-        sortOrder: subHeadings.length + 1,
-      };
-
-      await heroSubHeadingApi.create(payload);
-      setNewSubHeading("");
-      await fetchSubHeadings(selectedHero.heroId);
-
-      // Show success notification
-      notification.success(
-        `Sub-heading "${newSubHeading.trim()}" đã được thêm thành công!`,
-        3000,
-        { position: "top-right" }
-      );
-    } catch (err) {
-      console.error("Create SubHeading Error:", err);
-      const errorMessage = ErrorFormatter.formatApiError(err);
-      setError(errorMessage);
-      notification.error(`Lỗi thêm sub-heading: ${errorMessage}`, 5000, {
-        position: "top-right",
+        sortOrder: subHeadings.length,
       });
-    } finally {
-      setSaving(false);
+
+      if (response.data) {
+        setSubHeadings([...subHeadings, response.data]);
+        setNewSubHeading("");
+        message.success("Đã thêm sub-heading mới");
+      }
+    } catch (error) {
+      console.error("Error creating sub-heading:", error);
+      message.error("Không thể tạo sub-heading");
     }
   };
 
   // Update sub-heading
-  // Cập nhật text sub-heading (khi blur hoặc Enter trong ô input inline)
   const updateSubHeading = async (subId, newText) => {
-    if (!validateSubHeading(newText)) return;
+    if (!validateSubHeading(newText.trim())) {
+      return;
+    }
 
     try {
-      await heroSubHeadingApi.update(subId, { text: newText.trim() });
-      await fetchSubHeadings(selectedHero.heroId);
-      setEditingSubHeading(null);
+      const response = await heroSubHeadingApi.update(subId, {
+        text: newText.trim(),
+      });
 
-      // Show success notification
-      notification.success(`Sub-heading đã được cập nhật thành công!`, 3000, {
-        position: "top-right",
-      });
-    } catch (err) {
-      console.error("Update SubHeading Error:", err);
-      const errorMessage = ErrorFormatter.formatApiError(err);
-      setError(errorMessage);
-      notification.error(`Lỗi cập nhật sub-heading: ${errorMessage}`, 5000, {
-        position: "top-right",
-      });
+      if (response.data) {
+        setSubHeadings(
+          subHeadings.map((sub) =>
+            sub.subId === subId ? { ...sub, text: newText.trim() } : sub
+          )
+        );
+        setEditingSubHeading(null);
+        message.success("Đã cập nhật sub-heading");
+      }
+    } catch (error) {
+      console.error("Error updating sub-heading:", error);
+      message.error("Không thể cập nhật sub-heading");
     }
   };
 
   // Delete sub-heading
-  // Xóa sub-heading theo subId
   const deleteSubHeading = async (subId) => {
     try {
-      const subHeading = subHeadings.find((sub) => sub.subId === subId);
-
       await heroSubHeadingApi.delete(subId);
-      await fetchSubHeadings(selectedHero.heroId);
-      notification.success(
-        `Sub-heading "${subHeading?.text || "N/A"}" đã được xóa thành công!`,
-        3000,
-        { position: "top-right" }
-      );
-    } catch (err) {
-      console.error("Delete SubHeading Error:", err);
-      const errorMessage = "Không thể xóa sub-heading";
-      setError(errorMessage);
-      notification.error(
-        `Lỗi xóa sub-heading: ${err.message || errorMessage}`,
-        5000,
-        { position: "top-right" }
-      );
+      setSubHeadings(subHeadings.filter((sub) => sub.subId !== subId));
+      message.success("Đã xóa sub-heading");
+    } catch (error) {
+      console.error("Error deleting sub-heading:", error);
+      message.error("Không thể xóa sub-heading");
     }
   };
 
   // Update sort order
-  // Thay đổi sortOrder (di chuyển lên / xuống)
   const updateSortOrder = async (subId, newSortOrder) => {
     try {
-      await heroSubHeadingApi.updateSortOrder(subId, newSortOrder);
-      await fetchSubHeadings(selectedHero.heroId);
-      notification.info(`Thứ tự sub-heading đã được cập nhật`, 2000, {
-        position: "top-right",
+      const response = await heroSubHeadingApi.update(subId, {
+        sortOrder: newSortOrder,
       });
-    } catch (err) {
-      console.error("Update Sort Order Error:", err);
-      const errorMessage = "Không thể cập nhật thứ tự";
-      setError(errorMessage);
-      notification.error(`Lỗi sắp xếp: ${err.message || errorMessage}`, 4000, {
-        position: "top-right",
-      });
+
+      if (response.data) {
+        fetchSubHeadings(selectedHero.heroId);
+        message.success("Đã cập nhật thứ tự");
+      }
+    } catch (error) {
+      console.error("Error updating sort order:", error);
+      message.error("Không thể cập nhật thứ tự");
     }
   };
 
   // Load tab statistics
-  // Gọi API /stats để lấy thống kê; nếu lỗi -> fallback 3 API đơn lẻ
   const loadTabStats = useCallback(async () => {
     try {
       const response = await heroApi.getStats();
-
-      setTabStats({
-        active: response.data?.active || 0,
-        archived: response.data?.archived || 0,
-        total: response.data?.total || 0,
-      });
-    } catch (err) {
-      console.error("❌ Error loading tab stats:", err);
+      if (response.data) {
+        setTabStats(response.data);
+      }
+    } catch (error) {
+      console.error("Error loading stats:", error);
+      // Fallback to individual API calls
       try {
-        const [activeRes, archivedRes, allRes] = await Promise.all([
+        const [activeRes, deletedRes, allRes] = await Promise.all([
           heroApi.getAllActive(),
           heroApi.getAllDeleted(),
           heroApi.getAllIncludeDeleted(),
         ]);
 
-        const fallbackStats = {
+        setTabStats({
           active: activeRes.data?.length || 0,
-          archived: archivedRes.data?.length || 0,
+          archived: deletedRes.data?.length || 0,
           total: allRes.data?.length || 0,
-        };
-
-        setTabStats(fallbackStats);
-      } catch (fallbackErr) {
-        console.error("❌ Error loading tab stats (fallback):", fallbackErr);
+        });
+      } catch (fallbackError) {
+        console.error("Error in fallback stats:", fallbackError);
       }
     }
   }, []);
 
-  // Lấy danh sách heroes tuỳ theo viewMode (active / archived / all)
+  // Lấy danh sách tất cả heroes
   const fetchHeroData = useCallback(
     async (showSuccessNotification = false) => {
       try {
         setLoading(true);
-        setError(null);
+        const response = await heroApi.getAllIncludeDeleted();
 
-        let response;
-        // Fetch different data based on view mode
-        switch (viewMode) {
-          case "active":
-            response = await heroApi.getAllActive();
-            break;
-          case "archived":
-            response = await heroApi.getAllDeleted();
-            break;
-          case "all":
-            response = await heroApi.getAllIncludeDeleted();
-            break;
-          default:
-            response = await heroApi.getAllActive();
-        }
-
-        if (response.data && response.data.length > 0) {
+        if (response.data) {
           setHeroes(response.data);
-
           if (showSuccessNotification) {
             showControlledNotification(
-              `Đã tải ${response.data.length} Heroes thành công!`,
-              "success",
-              3000
+              `Đã tải ${response.data.length} heroes`,
+              "success"
             );
-            loadTabStats();
           }
-        } else {
-          setHeroes([]);
         }
-      } catch (err) {
-        console.error("API Error:", err);
-        setError(err.message || "Failed to fetch hero data");
-        notification.error(
-          "Không thể tải dữ liệu: " +
-            (err.response?.data?.message || err.message)
-        );
+      } catch (error) {
+        console.error("Error fetching heroes:", error);
+        setError("Không thể tải dữ liệu heroes");
+        message.error("Không thể tải dữ liệu heroes");
       } finally {
         setLoading(false);
       }
+
+      // Load stats after fetching data
+      loadTabStats();
     },
-    [viewMode, notification, showControlledNotification, loadTabStats]
+    [showControlledNotification, loadTabStats]
   );
 
-  // Create new hero
-  // Create Hero mới (kiểm tra rule: chỉ cho phép 1 hero active cùng thời điểm)
-  const createHero = async () => {
-    if (!validateHeroSection()) {
-      notification.error("Vui lòng kiểm tra lại thông tin đã nhập", 4000);
-      return;
-    }
-
-    try {
-      setSaving(true);
-      setError(null);
-      const existingActiveHero = heroes.find((hero) => !hero.isDeleted);
-      if (existingActiveHero) {
-        const errorMsg =
-          "Đã tồn tại Hero đang hoạt động. Chỉ được phép có 1 Hero duy nhất.";
-        setError(errorMsg);
-        notification.warning(errorMsg, 5000, { position: "top-right" });
-        setSaving(false);
-        return;
-      }
-
-      const dataToSave = {
-        preHeading: heroSection.preHeading.trim(),
-        heading: heroSection.heading.trim(),
-        introHtml: heroSection.introHtml.trim(),
-      };
-
-      const response = await heroApi.create(dataToSave);
-      // console.log("Created hero:", response); // Debug log - removed for production
-
-      // Refresh data
-      await fetchHeroData();
-      await loadTabStats();
-
-      // Select the newly created hero
-      const newHero = response.data;
-      if (newHero) {
-        setSelectedHero(newHero);
-        setHeroSection({
-          heroId: newHero.heroId,
-          preHeading: newHero.preHeading || "",
-          heading: newHero.heading || "",
-          introHtml: newHero.introHtml || "",
-          createdAt: newHero.createdAt,
-          updatedAt: newHero.updatedAt,
-        });
-
-        // Load sub-headings for the new hero (should be empty initially)
-        fetchSubHeadings(newHero.heroId);
-
-        // Show success notification
-        notification.success(
-          `Hero "${newHero.heading}" đã được tạo thành công!`,
-          4000,
-          { position: "top-right" }
-        );
-        // console.log("✅ Hero created successfully! You can now add sub-headings."); // Debug log - removed for production
-      }
-    } catch (err) {
-      console.error("Create Error:", err);
-      let errorMessage = "Không thể tạo Hero mới";
-
-      if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-
-      setError(errorMessage);
-      notification.error(`Lỗi tạo Hero: ${errorMessage}`, 6000, {
-        position: "top-right",
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
-
   // Update existing hero
-  // Update Hero hiện có dựa theo heroSection.heroId
   const updateHero = async () => {
     if (!validateHeroSection()) {
-      notification.error("Vui lòng kiểm tra lại thông tin đã nhập", 4000);
       return;
     }
 
     try {
       setSaving(true);
-      setError(null);
+      const response = await heroApi.update(heroSection.heroId, heroSection);
 
-      const dataToSave = {
-        preHeading: heroSection.preHeading,
-        heading: heroSection.heading,
-        introHtml: heroSection.introHtml,
-      };
-
-      await heroApi.update(heroSection.heroId, dataToSave);
-      // console.log("Updated hero:", response); // Debug log - removed for production
-
-      // Refresh data
-      await fetchHeroData();
-      await loadTabStats();
-
-      // Show success notification
-      notification.success(
-        `Hero "${heroSection.heading}" đã được cập nhật thành công!`,
-        4000,
-        { position: "top-right" }
-      );
-    } catch (err) {
-      console.error("Update Error:", err);
-      let errorMessage = "Không thể cập nhật Hero";
-
-      if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err.message) {
-        errorMessage = err.message;
+      if (response.data) {
+        message.success("Đã cập nhật hero thành công");
+        setIsEditingHero(false);
+        closeHeroModal();
+        fetchHeroData();
       }
-
-      setError(errorMessage);
-      notification.error(`Lỗi cập nhật Hero: ${errorMessage}`, 6000, {
-        position: "top-right",
-      });
+    } catch (error) {
+      console.error("Error updating hero:", error);
+      const errorMessage = ErrorFormatter.formatApiError(error);
+      message.error(errorMessage);
     } finally {
       setSaving(false);
-    }
-  };
-
-  // Delete hero
-  // "Xóa" hero -> chuyển trạng thái isDeleted (lưu trữ) thay vì xoá cứng
-  const deleteHero = async (heroId) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      await heroApi.delete(heroId);
-      // console.log("Deleted hero:", heroId); // Debug log - removed for production
-
-      // Refresh data
-      await fetchHeroData();
-      await loadTabStats();
-
-      // If deleted hero was selected, clear selection
-      if (selectedHero?.heroId === heroId) {
-        setSelectedHero(null);
-        resetHeroForm();
-      }
-
-      setShowDeleteConfirm(null);
-
-      // Show success notification
-      const deletedHero = heroes.find((hero) => hero.heroId === heroId);
-      notification.success(
-        `Hero "${deletedHero?.heading || "N/A"}" đã được xóa thành công!`,
-        4000,
-        { position: "top-right" }
-      );
-    } catch (err) {
-      console.error("Delete Error:", err);
-      const errorMessage =
-        err.response?.data?.message || err.message || "Không thể xóa Hero";
-      setError(errorMessage);
-      notification.error(`Lỗi xóa Hero: ${errorMessage}`, 6000, {
-        position: "top-right",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Restore hero
-  // Khôi phục hero đã lưu trữ
-  const restoreHero = async (heroId) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      await heroApi.restore(heroId);
-      // console.log("Restored hero:", response); // Debug log - removed for production
-
-      // Refresh data
-      await fetchHeroData();
-      await loadTabStats();
-
-      // Show success notification
-      const restoredHero = heroes.find((hero) => hero.heroId === heroId);
-      notification.success(
-        `Hero "${
-          restoredHero?.heading || "N/A"
-        }" đã được khôi phục thành công!`,
-        4000,
-        { position: "top-right" }
-      );
-    } catch (err) {
-      console.error("Restore Error:", err);
-      const errorMessage =
-        err.response?.data?.message ||
-        err.message ||
-        "Không thể khôi phục Hero";
-      setError(errorMessage);
-      notification.error(`Lỗi khôi phục Hero: ${errorMessage}`, 6000, {
-        position: "top-right",
-      });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -570,130 +338,144 @@ const HeroManagement = () => {
   const selectHero = useCallback(
     (hero) => {
       setSelectedHero(hero);
+      setHeroSection(hero);
       setIsEditingHero(true);
-      setHeroSection({
-        heroId: hero.heroId,
-        preHeading: hero.preHeading || "",
-        heading: hero.heading || "",
-        introHtml: hero.introHtml || "",
-        createdAt: hero.createdAt,
-        updatedAt: hero.updatedAt,
-      });
-
-      // Load sub-headings for this hero
-      fetchSubHeadings(hero.heroId);
+      if (hero.heroId) {
+        fetchSubHeadings(hero.heroId);
+      }
     },
     [fetchSubHeadings]
   );
 
-  // Reset form for new hero
-  // Reset form về trạng thái tạo mới (clear heroId và các trường)
-  const resetHeroForm = () => {
-    setHeroSection({
-      heroId: "",
-      preHeading: "",
-      heading: "",
-      introHtml: "",
-      createdAt: null,
-      updatedAt: null,
-    });
-    setSelectedHero(null);
+  // Close modal and clear form
+  const closeHeroModal = () => {
     setIsEditingHero(false);
-    setSubHeadings([]); // Clear sub-headings
-    setNewSubHeading(""); // Clear new sub-heading input
-    setEditingSubHeading(null); // Clear editing state
-  }; // Handle save (create or update)
-  // Lưu form -> tự xác định create hay update tuỳ vào việc có heroId hay chưa
+    setSelectedHero(null);
+    setSubHeadings([]);
+    setValidationErrors({});
+  };
+
+  // Handle save (update only)
   const handleSave = () => {
     if (heroSection.heroId) {
       updateHero();
     } else {
-      createHero();
+      message.warning("Chỉ có thể sửa đổi hero hiện có");
     }
   };
 
   // Get button text for save action
-  // Text động hiển thị trên nút lưu
   const getSaveButtonText = () => {
-    if (saving) return "Đang lưu...";
-    if (heroSection.heroId) return "Cập nhật";
-    return "Tạo mới";
+    if (saving) {
+      return "Đang cập nhật...";
+    }
+    return "Cập nhật Hero";
   };
 
-  // Render sub-headings preview
-  // Phần hiển thị preview sub-headings (hero chưa lưu thì nhắc nhở)
-  const renderSubHeadingsPreview = () => {
-    if (heroSection.heroId && subHeadings.length > 0) {
+  // Render sub-headings management
+  const renderSubHeadingsManagement = () => {
+    if (!selectedHero?.heroId) {
       return (
-        <div className="mb-4 space-y-1">
-          {subHeadings.map((sub, index) => (
-            <div key={sub.subId} className="text-lg font-medium opacity-95">
-              {sub.text}
-              {index < subHeadings.length - 1 && (
-                <span className="text-cyan-300"> /</span>
-              )}
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    if (heroSection.heroId) {
-      return (
-        <div className="mb-4 text-sm opacity-75 italic">
-          Chưa có sub-headings. Thêm sub-headings để hiển thị.
-        </div>
+        <Alert
+          message="Lưu hero trước để quản lý sub-headings"
+          type="info"
+          showIcon
+        />
       );
     }
 
     return (
-      <div className="mb-4 text-sm opacity-75 italic">
-        Lưu Hero để thêm sub-headings
+      <div>
+        <Title level={5}>Sub-headings</Title>
+        
+        {/* Add new sub-heading */}
+        <Space.Compact style={{ width: '100%', marginBottom: '16px' }}>
+          <Input
+            placeholder="Nhập sub-heading mới..."
+            value={newSubHeading}
+            onChange={(e) => setNewSubHeading(e.target.value)}
+            onPressEnter={createSubHeading}
+          />
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={createSubHeading}
+            disabled={!newSubHeading.trim()}
+          >
+            Thêm
+          </Button>
+        </Space.Compact>
+
+        {/* Sub-headings list */}
+        <List
+          dataSource={subHeadings}
+          renderItem={(sub, index) => (
+            <List.Item
+              actions={[
+                <Button
+                  size="small"
+                  icon={<UpOutlined />}
+                  onClick={() => updateSortOrder(sub.subId, sub.sortOrder - 1)}
+                  disabled={index === 0}
+                />,
+                <Button
+                  size="small"
+                  icon={<DownOutlined />}
+                  onClick={() => updateSortOrder(sub.subId, sub.sortOrder + 1)}
+                  disabled={index === subHeadings.length - 1}
+                />,
+                <Popconfirm
+                  title="Xóa sub-heading này?"
+                  onConfirm={() => deleteSubHeading(sub.subId)}
+                  okText="Có"
+                  cancelText="Không"
+                >
+                  <Button
+                    size="small"
+                    danger
+                    icon={<DeleteOutlined />}
+                  />
+                </Popconfirm>,
+              ]}
+            >
+              {editingSubHeading === sub.subId ? (
+                <Input
+                  defaultValue={sub.text}
+                  onBlur={(e) => updateSubHeading(sub.subId, e.target.value)}
+                  onPressEnter={(e) => updateSubHeading(sub.subId, e.target.value)}
+                  autoFocus
+                />
+              ) : (
+                <Text
+                  onClick={() => setEditingSubHeading(sub.subId)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {sub.text}
+                </Text>
+              )}
+            </List.Item>
+          )}
+        />
       </div>
     );
   };
 
   // Fetch data on mount and when view mode changes
-  // Load dữ liệu + thống kê khi mount hoặc khi viewMode đổi
   useEffect(() => {
     fetchHeroData();
-    loadTabStats();
-  }, [fetchHeroData, loadTabStats]);
+  }, [fetchHeroData]);
 
   // Auto-select appropriate hero when filters change
-  // Kiểm tra hero đang chỉnh sửa có bị ẩn do bộ lọc / search hiện tại không -> nếu có thì thông báo
   useEffect(() => {
-    // Skip if no heroes loaded yet or during transitions
-    if (!heroes || heroes.length === 0 || isTransitioning) return;
-
-    // If we have a selected hero, check if it's visible in current filtered results
-    if (selectedHero) {
-      const isSelectedHeroVisible = filteredHeroes.some(
-        (hero) => hero.heroId === selectedHero.heroId
-      );
-
-      if (!isSelectedHeroVisible) {
-        // Không auto-select hero nữa - chỉ hiển thị thông báo nếu cần
-        const hasActiveSearch = debouncedSearchTerm.trim().length > 0;
-        const notificationKey = `${selectedHero.heroId}-${viewMode}`;
-
-        if (hasActiveSearch && lastNotificationId !== notificationKey) {
-          const heroStatus = selectedHero.isDeleted
-            ? "đã lưu trữ"
-            : "hoạt động";
-          const currentView =
-            viewMode === "active"
-              ? "Heroes hoạt động"
-              : viewMode === "archived"
-              ? "Kho lưu trữ"
-              : "view hiện tại";
-
-          showControlledNotification(
-            `Hero "${selectedHero.heading}" (${heroStatus}) không hiển thị trong ${currentView}. Bạn vẫn có thể chỉnh sửa hoặc chuyển tab để xem lại.`
-          );
-
-          setLastNotificationId(notificationKey);
-        }
+    if (selectedHero && isSelectedHeroHidden) {
+      const notificationId = `hero-hidden-${selectedHero.heroId}-search-${debouncedSearchTerm}`;
+      
+      if (lastNotificationId !== notificationId) {
+        showControlledNotification(
+          `Hero "${selectedHero.heading}" không hiển thị với bộ lọc hiện tại`,
+          "warning"
+        );
+        setLastNotificationId(notificationId);
       }
     }
   }, [
@@ -701,1188 +483,292 @@ const HeroManagement = () => {
     selectedHero,
     heroes,
     selectHero,
-    notification,
-    viewMode,
     lastNotificationId,
     showControlledNotification,
-    isTransitioning,
     debouncedSearchTerm,
+    isSelectedHeroHidden,
   ]);
-
-  // Reset notification tracking when user actively changes view or search
-  // Mỗi lần đổi tab hoặc thay đổi từ khoá search -> reset tracking tránh lặp notification
-  useEffect(() => {
-    setLastNotificationId(null);
-
-    // Set transitioning state to prevent notification spam
-    setIsTransitioning(true);
-    const timeout = setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500); // 500ms cooldown after view/search changes
-
-    return () => clearTimeout(timeout);
-  }, [viewMode, searchTerm]);
-
-  // Keyboard shortcuts
-  // Thiết lập phím tắt: Ctrl+1/2/3 (đổi tab), Ctrl+F (focus search), Ctrl+D (toggle archived), Escape (clear search)
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      // Ctrl/Cmd + D: Toggle archived heroes
-      if ((event.ctrlKey || event.metaKey) && event.key === "d") {
-        event.preventDefault();
-        setViewMode((prev) => (prev === "archived" ? "active" : "archived"));
-      }
-
-      // Ctrl/Cmd + A: Show all heroes
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key === "a" &&
-        !event.shiftKey
-      ) {
-        event.preventDefault();
-        setViewMode("all");
-      }
-
-      // Number keys for quick view switching
-      if (event.key === "1" && (event.ctrlKey || event.metaKey)) {
-        event.preventDefault();
-        setViewMode("active");
-      }
-      if (event.key === "2" && (event.ctrlKey || event.metaKey)) {
-        event.preventDefault();
-        setViewMode("archived");
-      }
-      if (event.key === "3" && (event.ctrlKey || event.metaKey)) {
-        event.preventDefault();
-        setViewMode("all");
-      }
-
-      // Ctrl/Cmd + F: Focus search
-      if ((event.ctrlKey || event.metaKey) && event.key === "f") {
-        event.preventDefault();
-        const searchInput = document.getElementById("hero-search");
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }
-
-      // Escape: Clear search
-      if (event.key === "Escape" && searchTerm) {
-        setSearchTerm("");
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [searchTerm]);
 
   // Mở một tab mới để xem trang chủ đã publish (không phải bản nháp local)
   const handlePreview = () => {
     window.open("/", "_blank");
   };
 
+  // Table columns for heroes list
+  const heroColumns = [
+    {
+      title: 'Thông tin Hero',
+      key: 'info',
+      render: (_, hero) => (
+        <Space direction="vertical" size="small">
+          <Text strong>{hero.heading || "Chưa có tiêu đề"}</Text>
+          <Text type="secondary">{hero.preHeading}</Text>
+          <Space>
+            {hero.isDeleted ? (
+              <Tag color="red">Đã xóa</Tag>
+            ) : (
+              <Tag color="green">Hoạt động</Tag>
+            )}
+            <Text type="secondary" style={{ fontSize: '12px' }}>
+              ID: {hero.heroId}
+            </Text>
+          </Space>
+        </Space>
+      ),
+    },
+    {
+      title: 'Nội dung',
+      dataIndex: 'introHtml',
+      key: 'content',
+      render: (text) => (
+        <div 
+          dangerouslySetInnerHTML={{ 
+            __html: text?.substring(0, 100) + (text?.length > 100 ? "..." : "") 
+          }}
+          style={{ maxWidth: 300 }}
+        />
+      ),
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'isDeleted',
+      key: 'status',
+      render: (isDeleted) => (
+        <Tag color={isDeleted ? 'red' : 'green'}>
+          {isDeleted ? 'Đã xóa' : 'Hoạt động'}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Ngày tạo',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (date) => date ? new Date(date).toLocaleDateString('vi-VN') : '-',
+    },
+    {
+      title: 'Hành động',
+      key: 'actions',
+      render: (_, hero) => (
+        <Space>
+          <Tooltip title="Chỉnh sửa">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => selectHero(hero)}
+            />
+          </Tooltip>
+        </Space>
+      ),
+    },
+  ];
+
   return (
-    <div className="space-y-6">
+    <div style={{ padding: '24px' }}>
       {/* Error Alert */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-red-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Lỗi</h3>
-              <div className="mt-2 text-sm text-red-700">
-                <p>{error}</p>
-              </div>
-              <div className="mt-4">
-                <button
-                  onClick={() => setError(null)}
-                  className="bg-red-50 px-3 py-1.5 rounded-md text-sm font-medium text-red-800 hover:bg-red-100"
-                >
-                  Đóng
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Alert
+          message="Lỗi"
+          description={error}
+          type="error"
+          closable
+          onClose={() => setError(null)}
+          style={{ marginBottom: '24px' }}
+        />
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Quản lý Trang chủ
-          </h1>
-          <p className="text-gray-500">
-            Quản lý nội dung và layout của trang chủ
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <button
-            onClick={() => fetchHeroData(true)}
-            disabled={loading}
-            className="inline-flex items-center px-4 py-2 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 disabled:opacity-50"
-          >
-            <ArrowPathIcon className="h-4 w-4 mr-2" />
-            {loading ? "Đang tải..." : "Làm mới"}
-          </button>
-          <button
-            onClick={handlePreview}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-          >
-            <EyeIcon className="h-4 w-4 mr-2" />
-            Xem trước
-          </button>
-          <button
-            onClick={() => {
-              resetHeroForm();
-              setIsEditingHero(true); // Hiển thị form để tạo hero mới
-            }}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-          >
-            <PlusIcon className="h-4 w-4 mr-2" />
-            Tạo Hero mới
-          </button>
-        </div>
-      </div>
-
-      {/* View Mode Tabs */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8 px-6" aria-label="Tabs">
-            <button
-              onClick={() => setViewMode("active")}
-              className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-                viewMode === "active"
-                  ? "border-indigo-500 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              Heroes Hoạt động
-              <span className="ml-2 bg-gray-100 text-gray-900 hidden sm:inline-block py-0.5 px-2.5 rounded-full text-xs font-medium">
-                {tabStats.active}
-              </span>
-            </button>
-            <button
-              onClick={() => setViewMode("archived")}
-              className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-                viewMode === "archived"
-                  ? "border-orange-500 text-orange-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              Kho lưu trữ
-              <span className="ml-2 bg-orange-100 text-orange-900 hidden sm:inline-block py-0.5 px-2.5 rounded-full text-xs font-medium">
-                {tabStats.archived}
-              </span>
-            </button>
-            <button
-              onClick={() => setViewMode("all")}
-              className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-                viewMode === "all"
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              Tất cả
-              <span className="ml-2 bg-blue-100 text-blue-900 hidden sm:inline-block py-0.5 px-2.5 rounded-full text-xs font-medium">
-                {tabStats.total}
-              </span>
-            </button>
-          </nav>
-        </div>
-
-        {/* Search and filters for current view */}
-        <div className="p-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 sm:space-x-4">
-            <div className="flex-1">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg
-                    className="h-5 w-5 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-                <input
-                  id="hero-search"
-                  type="text"
-                  placeholder={`Tìm kiếm trong ${
-                    viewMode === "archived"
-                      ? "heroes hoạt động"
-                      : viewMode === "archived"
-                      ? "kho lưu trữ"
-                      : "tất cả heroes"
-                  }... (Ctrl+F)`}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              {/* View-specific actions */}
-              {viewMode === "archived" && tabStats.archived > 0 && (
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => {
-                      // TODO: Implement bulk restore
-                      notification.info(
-                        "Tính năng khôi phục hàng loạt sẽ được thêm sau",
-                        3000
-                      );
-                    }}
-                    className="text-xs px-3 py-1.5 bg-green-100 text-green-700 rounded-md hover:bg-green-200 font-medium"
-                  >
-                    Khôi phục tất cả
-                  </button>
-                  <button
-                    onClick={() => {
-                      // TODO: Implement permanent delete
-                      notification.warning(
-                        "Tính năng xóa vĩnh viễn sẽ được thêm sau",
-                        3000
-                      );
-                    }}
-                    className="text-xs px-3 py-1.5 bg-red-100 text-red-700 rounded-md hover:bg-red-200 font-medium"
-                  >
-                    Xóa vĩnh viễn tất cả
-                  </button>
-                </div>
-              )}
-
-              <div className="text-sm text-gray-500">
-                <div className="flex items-center space-x-2">
-                  <span>
-                    {filteredHeroes.length}
-                    {viewMode === "active"
-                      ? " hoạt động"
-                      : viewMode === "archived"
-                      ? " đã lưu trữ"
-                      : " heroes"}
-                  </span>
-                  {viewMode === "all" && (
-                    <>
-                      <span className="text-green-600">
-                        ({tabStats.active} hoạt động)
-                      </span>
-                      <span className="text-orange-600">
-                        ({tabStats.archived} lưu trữ)
-                      </span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filter and Search Controls */}
-      <div
-        className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
-        style={{ display: "none" }}
-      >
-        {/* Legacy filter controls - hidden but kept for backward compatibility */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 sm:space-x-4">
-          <div className="flex-1">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg
-                  className="h-5 w-5 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
-              <input
-                id="hero-search"
-                type="text"
-                placeholder="Tìm kiếm theo heading, nội dung... (Ctrl+F)"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <input
-                id="show-deleted"
-                type="checkbox"
-                checked={showDeleted}
-                onChange={(e) => setShowDeleted(e.target.checked)}
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="show-deleted"
-                className="ml-2 text-sm text-gray-700"
-              >
-                Hiển thị đã xóa (Ctrl+D)
-              </label>
-            </div>
-
-            {/* Quick Actions */}
-            {heroes.length > 0 && (
-              <div className="flex items-center space-x-2 border-l pl-4">
-                <button
-                  onClick={() => setShowDeleted(false)}
-                  disabled={!showDeleted}
-                  className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Chỉ hoạt động
-                </button>
-                <button
-                  onClick={() => setShowDeleted(true)}
-                  disabled={showDeleted || stats.deleted === 0}
-                  className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Chỉ đã xóa ({stats.deleted})
-                </button>
-              </div>
-            )}
-
-            <div className="text-sm text-gray-500">
-              <div className="flex items-center space-x-4">
-                <span>
-                  {filteredHeroes.length} / {heroes.length} heroes
-                </span>
-                <span className="text-green-600">
-                  {tabStats.active} hoạt động
-                </span>
-                {stats.deleted > 0 && (
-                  <span className="text-red-600">{stats.deleted} đã xóa</span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Hero Section Editor - Only show when editing a hero */}
-      {viewMode === "active" && isEditingHero && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="preHeading"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Tiền tố (Pre-heading)
-                  </label>
-                  <input
-                    id="preHeading"
-                    type="text"
-                    value={heroSection.preHeading}
-                    onChange={(e) =>
-                      setHeroSection({
-                        ...heroSection,
-                        preHeading: e.target.value,
-                      })
-                    }
-                    placeholder="Ví dụ: Xin chào, tôi là"
-                    className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-1 ${
-                      validationErrors.preHeading
-                        ? "border-red-300 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-indigo-500"
-                    }`}
-                  />
-                  {validationErrors.preHeading && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {validationErrors.preHeading}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label
-                    htmlFor="heading"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Tiêu đề chính (Heading)
-                  </label>
-                  <input
-                    id="heading"
-                    type="text"
-                    value={heroSection.heading}
-                    onChange={(e) =>
-                      setHeroSection({
-                        ...heroSection,
-                        heading: e.target.value,
-                      })
-                    }
-                    placeholder="Ví dụ: Nhdinh"
-                    className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-1 ${
-                      validationErrors.heading
-                        ? "border-red-300 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-indigo-500"
-                    }`}
-                  />
-                  {validationErrors.heading && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {validationErrors.heading}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label
-                    htmlFor="introHtml"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Mô tả (HTML)
-                  </label>
-                  <textarea
-                    id="introHtml"
-                    rows={4}
-                    value={heroSection.introHtml.replace(/<[^>]*>/g, "")} // Remove HTML tags for editing
-                    onChange={(e) =>
-                      setHeroSection({
-                        ...heroSection,
-                        introHtml: `<p>${e.target.value}</p>`,
-                      })
-                    }
-                    placeholder="Lập trình viên full-stack với đam mê phát triển phần mềm hiện đại"
-                    className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-1 ${
-                      validationErrors.introHtml
-                        ? "border-red-300 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-indigo-500"
-                    }`}
-                  />
-                  {validationErrors.introHtml && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {validationErrors.introHtml}
-                    </p>
-                  )}
-                  <p className="text-xs text-gray-500 mt-1">
-                    Nội dung sẽ được bọc trong thẻ &lt;p&gt;
-                  </p>
-                </div>
-
-                {/* Sub-headings Management - Chỉ hiển thị khi edit hero */}
-                {isEditingHero && heroSection.heroId && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Sub-headings ({subHeadings.length})
-                    </label>
-                    <div className="space-y-2">
-                      {subHeadings.map((sub, index) => (
-                        <div
-                          key={sub.subId}
-                          className="flex items-center space-x-2 p-2 border border-gray-200 rounded-md"
-                        >
-                          <span className="text-xs text-gray-400 w-6">
-                            {sub.sortOrder}
-                          </span>
-                          {editingSubHeading === sub.subId ? (
-                            <input
-                              type="text"
-                              defaultValue={sub.text}
-                              onBlur={(e) =>
-                                updateSubHeading(sub.subId, e.target.value)
-                              }
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  updateSubHeading(sub.subId, e.target.value);
-                                }
-                              }}
-                              className="flex-1 text-sm border-none outline-none bg-white"
-                              autoFocus
-                            />
-                          ) : (
-                            <button
-                              className="flex-1 text-sm text-left cursor-pointer hover:bg-gray-50 p-1 rounded"
-                              onClick={() => setEditingSubHeading(sub.subId)}
-                            >
-                              {sub.text}
-                            </button>
-                          )}
-                          <div className="flex items-center space-x-1">
-                            {index > 0 && (
-                              <button
-                                onClick={() =>
-                                  updateSortOrder(sub.subId, sub.sortOrder - 1)
-                                }
-                                className="text-gray-400 hover:text-gray-600 text-xs"
-                                title="Di chuyển lên"
-                              >
-                                ↑
-                              </button>
-                            )}
-                            {index < subHeadings.length - 1 && (
-                              <button
-                                onClick={() =>
-                                  updateSortOrder(sub.subId, sub.sortOrder + 1)
-                                }
-                                className="text-gray-400 hover:text-gray-600 text-xs"
-                                title="Di chuyển xuống"
-                              >
-                                ↓
-                              </button>
-                            )}
-                            <button
-                              onClick={() => deleteSubHeading(sub.subId)}
-                              className="text-red-400 hover:text-red-600 text-xs"
-                              title="Xóa"
-                            >
-                              <TrashIcon className="h-3 w-3" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-
-                      {/* Add new sub-heading */}
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="text"
-                          value={newSubHeading}
-                          onChange={(e) => setNewSubHeading(e.target.value)}
-                          placeholder={
-                            heroSection.heroId
-                              ? "Thêm sub-heading mới..."
-                              : "Lưu Hero trước để thêm sub-headings"
-                          }
-                          disabled={!heroSection.heroId}
-                          className="flex-1 text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && heroSection.heroId) {
-                              createSubHeading();
-                            }
-                          }}
-                        />
-                        <button
-                          onClick={createSubHeading}
-                          disabled={
-                            !newSubHeading.trim() ||
-                            saving ||
-                            !heroSection.heroId
-                          }
-                          className="px-2 py-1 bg-indigo-600 text-white text-xs rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                          title={
-                            !heroSection.heroId
-                              ? "Lưu Hero trước để thêm sub-headings"
-                              : "Thêm sub-heading"
-                          }
-                        >
-                          <PlusIcon className="h-3 w-3" />
-                        </button>
-                      </div>
-
-                      {/* Thông báo khi chưa có Hero */}
-                      {!heroSection.heroId && (
-                        <div className="bg-amber-50 border border-amber-200 rounded-md p-3 mt-2">
-                          <div className="flex">
-                            <div className="flex-shrink-0">
-                              <svg
-                                className="h-5 w-5 text-amber-400"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </div>
-                            <div className="ml-3">
-                              <p className="text-sm text-amber-700">
-                                <strong>
-                                  Nhập thông tin Hero và lưu trước
-                                </strong>
-                              </p>
-                              <p className="text-xs text-amber-600 mt-1">
-                                Sau khi lưu Hero thành công, bạn có thể thêm các
-                                sub-headings như "Full-Stack Developer", "React
-                                Developer", v.v.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">
-                  Xem trước
-                </h3>
-                <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg p-6 text-white">
-                  {heroSection.preHeading && (
-                    <p className="text-sm opacity-90 mb-2">
-                      {heroSection.preHeading}
-                    </p>
-                  )}
-                  <h1 className="text-2xl font-bold mb-3">
-                    {heroSection.heading}
-                  </h1>
-
-                  {/* Sub-headings preview */}
-                  {renderSubHeadingsPreview()}
-
-                  <div
-                    className="text-sm opacity-90"
-                    dangerouslySetInnerHTML={{ __html: heroSection.introHtml }}
-                  />
-                </div>
-                {heroSection.createdAt && (
-                  <div className="mt-4 text-xs text-gray-500">
-                    <p>
-                      Tạo: {new Date(heroSection.createdAt).toLocaleString()}
-                    </p>
-                    {heroSection.updatedAt && (
-                      <p>
-                        Cập nhật:{" "}
-                        {new Date(heroSection.updatedAt).toLocaleString()}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                onClick={() => {
-                  setIsEditingHero(false);
-                  setSelectedHero(null);
-                  resetHeroForm();
-                }}
-                disabled={loading || saving}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50"
-              >
-                Hủy
-              </button>
-              <button
+      <Card style={{ marginBottom: '24px' }}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <Title level={2} style={{ margin: 0 }}>
+              Quản lý Trang chủ
+            </Title>
+            <Text type="secondary">
+              Quản lý nội dung và layout của trang chủ
+            </Text>
+          </Col>
+          <Col>
+            <Space>
+              <Button
+                icon={<ReloadOutlined />}
                 onClick={() => fetchHeroData(true)}
-                disabled={loading}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50"
+                loading={loading}
               >
                 {loading ? "Đang tải..." : "Làm mới"}
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving || loading}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+              </Button>
+              <Button
+                icon={<EyeOutlined />}
+                onClick={handlePreview}
               >
-                {getSaveButtonText()}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                Xem trước
+              </Button>
+            </Space>
+          </Col>
+        </Row>
+      </Card>
 
-      {/* Heroes Management */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">
-              {viewMode === "archived"
-                ? "� Kho lưu trữ"
-                : viewMode === "active"
-                ? "📋 Heroes hoạt động"
-                : "📁 Tất cả Heroes"}
-              ({filteredHeroes.length}
-              {heroes.length !== filteredHeroes.length
-                ? ` / ${heroes.length}`
-                : ""}
-              )
-            </h2>
-            <div className="flex items-center space-x-2">
-              {viewMode === "active" && selectedHero && (
-                <span className="text-sm text-gray-500">
-                  Đang chỉnh sửa: <strong>{selectedHero.heading}</strong>
-                  {isSelectedHeroHidden && (
-                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                      Đã ẩn
-                    </span>
-                  )}
-                  {isSelectedHeroHidden && (
-                    <button
-                      onClick={() => {
-                        if (selectedHero.isDeleted) {
-                          setViewMode("deleted");
-                        }
-                        setSearchTerm("");
-                      }}
-                      className="ml-2 text-xs text-indigo-600 hover:text-indigo-900 underline"
-                    >
-                      Hiển thị
-                    </button>
-                  )}
-                </span>
-              )}
+      {/* Hero Management */}
+      <Card style={{ marginBottom: '24px' }}>
+        <Row justify="space-between" align="middle" style={{ marginBottom: '16px' }}>
+          <Col>
+            <Title level={4} style={{ margin: 0 }}>
+              Quản lý Heroes
+              <Badge count={tabStats.total} color="green" style={{ marginLeft: '8px' }} />
+            </Title>
+          </Col>
+          <Col>
+            <Input
+              placeholder="Tìm kiếm heroes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              prefix={<SearchOutlined />}
+              style={{ width: 300 }}
+              allowClear
+            />
+          </Col>
+        </Row>
 
-              {viewMode === "archived" && (
-                <div className="text-sm text-gray-500">
-                  <span className="text-orange-600">
-                    � Chế độ xem kho lưu trữ
-                  </span>
-                  <span className="mx-2">•</span>
-                  <span>Khôi phục hoặc xóa vĩnh viễn</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="overflow-visible">
-          {filteredHeroes.length === 0 ? (
-            <div className="text-center py-12">
-              {heroes.length === 0 ? (
-                // No heroes at all
-                <>
-                  <div className="text-gray-400 mb-4">
-                    <PlusIcon className="h-12 w-12 mx-auto" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Chưa có Hero nào
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    Tạo Hero đầu tiên để bắt đầu
-                  </p>
-                </>
-              ) : viewMode === "archived" ? (
-                // No archived heroes
-                <>
-                  <div className="text-gray-400 mb-4">
-                    <svg
-                      className="h-12 w-12 mx-auto"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Kho lưu trữ trống
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    {searchTerm
-                      ? `Không tìm thấy hero đã lưu trữ nào cho "${searchTerm}"`
-                      : "Không có hero nào đã được lưu trữ"}
-                  </p>
-                  {searchTerm && (
-                    <button
-                      onClick={() => setSearchTerm("")}
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      Xóa tìm kiếm
-                    </button>
-                  )}
-                </>
-              ) : viewMode === "active" ? (
-                // No active heroes
-                <>
-                  <div className="text-gray-400 mb-4">
-                    <svg
-                      className="h-12 w-12 mx-auto"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Không tìm thấy hero hoạt động
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    {searchTerm
-                      ? `Không có kết quả cho "${searchTerm}"`
-                      : tabStats.archived > 0
-                      ? `Tất cả ${tabStats.total} heroes đã được lưu trữ`
-                      : "Tạo hero mới để bắt đầu"}
-                  </p>
-                  <div className="flex justify-center space-x-3">
-                    {searchTerm && (
-                      <button
-                        onClick={() => setSearchTerm("")}
-                        className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                      >
-                        Xóa tìm kiếm
-                      </button>
-                    )}
-                    {tabStats.archived > 0 && (
-                      <button
-                        onClick={() => setViewMode("archived")}
-                        className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                      >
-                        Xem kho lưu trữ ({tabStats.archived})
-                      </button>
-                    )}
-                    <button
-                      onClick={() => {
-                        resetHeroForm();
-                        setIsEditingHero(true); // Hiển thị form để tạo hero mới
-                      }}
-                      className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-                    >
-                      <PlusIcon className="h-4 w-4 mr-2" />
-                      Tạo Hero mới
-                    </button>
-                  </div>
-                </>
-              ) : (
-                // No results in "all" view (search didn't match)
-                <>
-                  <div className="text-gray-400 mb-4">
-                    <svg
-                      className="h-12 w-12 mx-auto"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Không tìm thấy Hero nào
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    {searchTerm
-                      ? `Không có kết quả cho "${searchTerm}"`
-                      : "Thay đổi bộ lọc để xem thêm"}
-                  </p>
-                  {searchTerm && (
-                    <button
-                      onClick={() => setSearchTerm("")}
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      Xóa tìm kiếm
-                    </button>
-                  )}
-                </>
-              )}
-            </div>
-          ) : (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Hero
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Trạng thái
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {viewMode === "archived" ? "Ngày lưu trữ" : "Cập nhật cuối"}
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {viewMode === "archived" ? "Thao tác" : "Thao tác"}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredHeroes.map((hero) => (
-                  <tr
-                    key={hero.heroId}
-                    className={`hover:bg-gray-50 cursor-pointer ${
-                      selectedHero?.heroId === hero.heroId
-                        ? "bg-blue-50 border-l-4 border-blue-500"
-                        : ""
-                    }`}
-                    onClick={() => selectHero(hero)}
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {hero.preHeading} <strong>{hero.heading}</strong>
-                          </div>
-                          <div
-                            className="text-sm text-gray-500 max-w-xs truncate"
-                            dangerouslySetInnerHTML={{ __html: hero.introHtml }}
-                          />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {viewMode === "archived" ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                          � Đã lưu trữ
-                        </span>
-                      ) : (
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            hero.isDeleted
-                              ? "bg-orange-100 text-orange-800"
-                              : "bg-green-100 text-green-800"
-                          }`}
-                        >
-                          {hero.isDeleted ? "Đã lưu trữ" : "Hoạt động"}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {viewMode === "archived" ? (
-                        <div className="flex flex-col">
-                          <span>
-                            {hero.updatedAt
-                              ? new Date(hero.updatedAt).toLocaleDateString(
-                                  "vi-VN"
-                                )
-                              : new Date(hero.createdAt).toLocaleDateString(
-                                  "vi-VN"
-                                )}
-                          </span>
-                          <span className="text-xs text-gray-400">
-                            {hero.updatedAt
-                              ? new Date(hero.updatedAt).toLocaleTimeString(
-                                  "vi-VN",
-                                  { hour: "2-digit", minute: "2-digit" }
-                                )
-                              : new Date(hero.createdAt).toLocaleTimeString(
-                                  "vi-VN",
-                                  { hour: "2-digit", minute: "2-digit" }
-                                )}
-                          </span>
-                        </div>
-                      ) : (
-                        <>
-                          {hero.updatedAt
-                            ? new Date(hero.updatedAt).toLocaleDateString(
-                                "vi-VN"
-                              )
-                            : new Date(hero.createdAt).toLocaleDateString(
-                                "vi-VN"
-                              )}
-                        </>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium relative">
-                      {viewMode === "archived" ? (
-                        // Interface for archived view with restore and permanent delete
-                        <div className="flex items-center justify-center space-x-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              restoreHero(hero.heroId);
-                            }}
-                            className="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 rounded-md hover:bg-green-200 font-medium transition-colors"
-                            title="Khôi phục hero này"
-                          >
-                            <ArrowPathIcon className="h-4 w-4 mr-1" />
-                            Khôi phục
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // TODO: Implement permanent delete
-                              notification.warning(
-                                "Tính năng xóa vĩnh viễn sẽ được thêm sau",
-                                3000
-                              );
-                            }}
-                            className="inline-flex items-center px-3 py-1.5 bg-red-100 text-red-700 rounded-md hover:bg-red-200 font-medium transition-colors"
-                            title="Xóa vĩnh viễn hero này"
-                          >
-                            <svg
-                              className="h-4 w-4 mr-1"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                            Xóa vĩnh viễn
-                          </button>
-                        </div>
-                      ) : (
-                        // Normal action buttons for active/all views
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              selectHero(hero);
-                            }}
-                            className="text-indigo-600 hover:text-indigo-900"
-                            title="Chỉnh sửa"
-                          >
-                            <PencilIcon className="h-4 w-4" />
-                          </button>
+        {/* Statistics */}
+        <Row gutter={16} style={{ marginTop: '16px' }}>
+          <Col span={8}>
+            <Statistic
+              title="Heroes Hoạt động"
+              value={stats.active}
+              valueStyle={{ color: '#3f8600' }}
+              prefix={<BulbOutlined />}
+            />
+          </Col>
+          <Col span={8}>
+            <Statistic
+              title="Kho lưu trữ"
+              value={stats.archived}
+              valueStyle={{ color: '#cf1322' }}
+              prefix={<DeleteOutlined />}
+            />
+          </Col>
+          <Col span={8}>
+            <Statistic
+              title="Tổng cộng"
+              value={stats.total}
+              valueStyle={{ color: '#1890ff' }}
+              prefix={<SettingOutlined />}
+            />
+          </Col>
+        </Row>
+      </Card>
 
-                          {/* Actions based on view mode and hero status */}
-                          {viewMode === "archived" || hero.isDeleted ? (
-                            <>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  restoreHero(hero.heroId);
-                                }}
-                                className="text-green-600 hover:text-green-900 flex items-center space-x-1"
-                                title="Khôi phục"
-                              >
-                                <ArrowPathIcon className="h-4 w-4" />
-                                {viewMode === "archived" && (
-                                  <span className="text-xs hidden sm:inline">
-                                    Khôi phục
-                                  </span>
-                                )}
-                              </button>
-                              {viewMode === "archived" && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // TODO: Implement permanent delete
-                                    notification.warning(
-                                      "Tính năng xóa vĩnh viễn sẽ được thêm sau",
-                                      3000
-                                    );
-                                  }}
-                                  className="text-red-800 hover:text-red-900 flex items-center space-x-1"
-                                  title="Xóa vĩnh viễn"
-                                >
-                                  <svg
-                                    className="h-4 w-4"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    />
-                                  </svg>
-                                  <span className="text-xs hidden sm:inline">
-                                    Xóa vĩnh viễn
-                                  </span>
-                                </button>
-                              )}
-                            </>
-                          ) : (
-                            <div className="relative">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const anchorEl = e.currentTarget;
-                                  if (
-                                    showDeleteConfirm &&
-                                    showDeleteConfirm.heroId !== hero.heroId
-                                  ) {
-                                    setShowDeleteConfirm(null);
-                                    setTimeout(() => {
-                                      setShowDeleteConfirm({
-                                        heroId: hero.heroId,
-                                        anchorEl,
-                                        data: hero,
-                                      });
-                                    }, 120);
-                                  } else if (
-                                    showDeleteConfirm?.heroId === hero.heroId
-                                  ) {
-                                    setShowDeleteConfirm(null);
-                                  } else {
-                                    setShowDeleteConfirm({
-                                      heroId: hero.heroId,
-                                      anchorEl,
-                                      data: hero,
-                                    });
-                                  }
-                                }}
-                                className="text-orange-600 hover:text-orange-900 flex items-center space-x-1"
-                                title="Lưu trữ"
-                              >
-                                <svg
-                                  className="h-4 w-4"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                                  />
-                                </svg>
-                                {viewMode === "active" && (
-                                  <span className="text-xs hidden sm:inline">
-                                    Lưu trữ
-                                  </span>
-                                )}
-                              </button>
+      {/* Heroes Table */}
+      <Card title={`Danh sách Heroes (${filteredHeroes.length})`}>
+        {filteredHeroes.length === 0 ? (
+          <Empty 
+            description={
+              loading ? "Đang tải dữ liệu..." : 
+              searchTerm ? "Không tìm thấy kết quả" : "Không có dữ liệu hero"
+            }
+          />
+        ) : (
+          <Table
+            columns={heroColumns}
+            dataSource={filteredHeroes}
+            rowKey="heroId"
+            loading={loading}
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) => 
+                `${range[0]}-${range[1]} của ${total} heroes`,
+            }}
+          />
+        )}
+      </Card>
 
-                              {/* Inline Confirmation */}
-                              <InlineConfirmation
-                                isOpen={
-                                  showDeleteConfirm?.heroId === hero.heroId
-                                }
-                                onClose={() => setShowDeleteConfirm(null)}
-                                onConfirm={() => {
-                                  if (showDeleteConfirm) {
-                                    deleteHero(showDeleteConfirm.heroId);
-                                  }
-                                }}
-                                loading={saving}
-                                confirmText="Lưu trữ"
-                                cancelText="Hủy"
-                                message={`Lưu trữ hero "${hero.heading}"?`}
-                                anchorEl={showDeleteConfirm?.anchorEl}
-                                placement="bottom"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </div>
+      {/* Hero Form Modal */}
+      <Modal
+        title="Chỉnh sửa Hero"
+        open={isEditingHero}
+        onCancel={() => {
+          closeHeroModal();
+        }}
+        footer={[
+          <Button key="cancel" onClick={closeHeroModal}>
+            Hủy
+          </Button>,
+          <Button 
+            key="submit" 
+            type="primary" 
+            loading={saving}
+            onClick={handleSave}
+            icon={<SaveOutlined />}
+          >
+            {getSaveButtonText()}
+          </Button>,
+        ]}
+        width={1200}
+        destroyOnClose
+      >
+        <Row gutter={24}>
+          <Col span={12}>
+            <Form layout="vertical">
+              <Form.Item 
+                label="Tiền tố (Pre-heading)"
+                validateStatus={validationErrors.preHeading ? 'error' : ''}
+                help={validationErrors.preHeading}
+              >
+                <Input
+                  value={heroSection.preHeading}
+                  onChange={(e) =>
+                    setHeroSection({
+                      ...heroSection,
+                      preHeading: e.target.value,
+                    })
+                  }
+                  placeholder="Ví dụ: Xin chào, tôi là"
+                />
+              </Form.Item>
+              
+              <Form.Item 
+                label="Tiêu đề chính (Heading)"
+                validateStatus={validationErrors.heading ? 'error' : ''}
+                help={validationErrors.heading}
+              >
+                <Input
+                  value={heroSection.heading}
+                  onChange={(e) =>
+                    setHeroSection({
+                      ...heroSection,
+                      heading: e.target.value,
+                    })
+                  }
+                  placeholder="Ví dụ: Nguyễn Văn A"
+                />
+              </Form.Item>
+              
+              <Form.Item 
+                label="Nội dung giới thiệu (HTML)"
+                validateStatus={validationErrors.introHtml ? 'error' : ''}
+                help={validationErrors.introHtml}
+              >
+                <TextArea
+                  rows={8}
+                  value={heroSection.introHtml}
+                  onChange={(e) =>
+                    setHeroSection({
+                      ...heroSection,
+                      introHtml: e.target.value,
+                    })
+                  }
+                  placeholder="Nhập nội dung HTML giới thiệu..."
+                />
+              </Form.Item>
+            </Form>
+          </Col>
+          
+          <Col span={12}>
+            {renderSubHeadingsManagement()}
+          </Col>
+        </Row>
+      </Modal>
     </div>
   );
 };

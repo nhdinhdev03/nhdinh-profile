@@ -9,7 +9,6 @@ import {
   Typography,
   Row,
   Col,
-  Statistic,
   Modal,
   Popconfirm,
   Tag,
@@ -18,7 +17,6 @@ import {
   Empty,
   List,
   Alert,
-  Badge,
 } from "antd";
 import {
   PlusOutlined,
@@ -27,11 +25,9 @@ import {
   EyeOutlined,
   ReloadOutlined,
   SearchOutlined,
-  SettingOutlined,
   SaveOutlined,
   UpOutlined,
   DownOutlined,
-  BulbOutlined,
 } from "@ant-design/icons";
 
 import heroSubHeadingApi from "api/admin/home/HeroSubHeadingApi";
@@ -67,13 +63,6 @@ const HeroManagement = () => {
   // ====== STATE: Danh sách heroes & hero đang select ======
   const [heroes, setHeroes] = useState([]);
   const [selectedHero, setSelectedHero] = useState(null);
-
-  // ====== STATE: Thống kê theo backend (active/archived/total) ======
-  const [tabStats, setTabStats] = useState({
-    active: 0,
-    archived: 0,
-    total: 0,
-  });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -125,16 +114,6 @@ const HeroManagement = () => {
 
     return heroes;
   }, [heroes, debouncedSearchTerm]);
-
-  // Statistics
-  const stats = React.useMemo(() => {
-    const total = heroes.length;
-    const active = heroes.filter((h) => !h.isDeleted).length;
-    const deleted = heroes.filter((h) => h.isDeleted).length;
-    const archived = deleted;
-
-    return { total, active, archived, deleted };
-  }, [heroes]);
 
   // Check if selected hero is hidden by current filter
   const isSelectedHeroHidden = React.useMemo(() => {
@@ -251,34 +230,6 @@ const HeroManagement = () => {
     }
   };
 
-  // Load tab statistics
-  const loadTabStats = useCallback(async () => {
-    try {
-      const response = await heroApi.getStats();
-      if (response.data) {
-        setTabStats(response.data);
-      }
-    } catch (error) {
-      console.error("Error loading stats:", error);
-      // Fallback to individual API calls
-      try {
-        const [activeRes, deletedRes, allRes] = await Promise.all([
-          heroApi.getAllActive(),
-          heroApi.getAllDeleted(),
-          heroApi.getAllIncludeDeleted(),
-        ]);
-
-        setTabStats({
-          active: activeRes.data?.length || 0,
-          archived: deletedRes.data?.length || 0,
-          total: allRes.data?.length || 0,
-        });
-      } catch (fallbackError) {
-        console.error("Error in fallback stats:", fallbackError);
-      }
-    }
-  }, []);
-
   // Lấy danh sách tất cả heroes
   const fetchHeroData = useCallback(
     async (showSuccessNotification = false) => {
@@ -302,11 +253,8 @@ const HeroManagement = () => {
       } finally {
         setLoading(false);
       }
-
-      // Load stats after fetching data
-      loadTabStats();
     },
-    [showControlledNotification, loadTabStats]
+    [showControlledNotification]
   );
 
   // Update existing hero
@@ -563,7 +511,7 @@ const HeroManagement = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: '16px 24px' }}>
       {/* Error Alert */}
       {error && (
         <Alert
@@ -607,58 +555,32 @@ const HeroManagement = () => {
         </Row>
       </Card>
 
-      {/* Hero Management */}
-      <Card style={{ marginBottom: '24px' }}>
-        <Row justify="space-between" align="middle" style={{ marginBottom: '16px' }}>
-          <Col>
-            <Title level={4} style={{ margin: 0 }}>
-              Quản lý Heroes
-              <Badge count={tabStats.total} color="green" style={{ marginLeft: '8px' }} />
-            </Title>
-          </Col>
-          <Col>
-            <Input
-              placeholder="Tìm kiếm heroes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              prefix={<SearchOutlined />}
-              style={{ width: 300 }}
-              allowClear
-            />
-          </Col>
-        </Row>
-
-        {/* Statistics */}
-        <Row gutter={16} style={{ marginTop: '16px' }}>
-          <Col span={8}>
-            <Statistic
-              title="Heroes Hoạt động"
-              value={stats.active}
-              valueStyle={{ color: '#3f8600' }}
-              prefix={<BulbOutlined />}
-            />
-          </Col>
-          <Col span={8}>
-            <Statistic
-              title="Kho lưu trữ"
-              value={stats.archived}
-              valueStyle={{ color: '#cf1322' }}
-              prefix={<DeleteOutlined />}
-            />
-          </Col>
-          <Col span={8}>
-            <Statistic
-              title="Tổng cộng"
-              value={stats.total}
-              valueStyle={{ color: '#1890ff' }}
-              prefix={<SettingOutlined />}
-            />
-          </Col>
-        </Row>
-      </Card>
-
-      {/* Heroes Table */}
-      <Card title={`Danh sách Heroes (${filteredHeroes.length})`}>
+      {/* Heroes Management */}
+      <Card 
+        title={
+          <Row justify="space-between" align="middle" gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
+              <Space>
+                <Title level={4} style={{ margin: 0 }}>
+                  Quản lý Heroes
+                </Title>
+                <Tag color="blue">{filteredHeroes.length} heroes</Tag>
+              </Space>
+            </Col>
+            <Col xs={24} sm={12} style={{ textAlign: 'right' }}>
+              <Input
+                placeholder="Tìm kiếm heroes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                prefix={<SearchOutlined />}
+                style={{ width: '100%', maxWidth: 300 }}
+                allowClear
+              />
+            </Col>
+          </Row>
+        }
+        style={{ marginBottom: '24px' }}
+      >
         {filteredHeroes.length === 0 ? (
           <Empty 
             description={
@@ -672,13 +594,9 @@ const HeroManagement = () => {
             dataSource={filteredHeroes}
             rowKey="heroId"
             loading={loading}
-            pagination={{
-              pageSize: 10,
-              showSizeChanger: true,
-              showQuickJumper: true,
-              showTotal: (total, range) => 
-                `${range[0]}-${range[1]} của ${total} heroes`,
-            }}
+            pagination={false}
+            scroll={{ x: 800 }}
+            size="middle"
           />
         )}
       </Card>
@@ -704,11 +622,12 @@ const HeroManagement = () => {
             {getSaveButtonText()}
           </Button>,
         ]}
-        width={1200}
+        width="90%"
+        style={{ maxWidth: 1200 }}
         destroyOnClose
       >
-        <Row gutter={24}>
-          <Col span={12}>
+        <Row gutter={[24, 16]}>
+          <Col xs={24} lg={12}>
             <Form layout="vertical">
               <Form.Item 
                 label="Tiền tố (Pre-heading)"
@@ -764,7 +683,7 @@ const HeroManagement = () => {
             </Form>
           </Col>
           
-          <Col span={12}>
+          <Col xs={24} lg={12}>
             {renderSubHeadingsManagement()}
           </Col>
         </Row>

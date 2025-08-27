@@ -38,8 +38,8 @@ class ContactMessageApi extends BaseApi {
   }
 
   // Reply to contact message
-  async replyToContact(messageId, replyData) {
-    return this.axiosClient.post(`${this.uri}/${messageId}/reply`, replyData);
+  async replyToContact(messageId, replyMessage) {
+    return this.axiosClient.post(`${this.uri}/${messageId}/reply`, { message: replyMessage });
   }
 
   // Override delete method to use correct messageId

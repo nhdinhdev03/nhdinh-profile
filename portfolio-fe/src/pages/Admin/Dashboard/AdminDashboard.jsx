@@ -622,7 +622,7 @@ const AdminDashboard = () => {
                                   Deadline: {new Date(project.dueDate).toLocaleDateString('vi-VN')}
                                 </Text>
                               </Space>
-                              <Avatar.Group size="small" maxCount={3}>
+                              <Avatar.Group size="small" max={{ count: 3 }}>
                                 {project.team.map((member, index) => (
                                   <Tooltip key={index} title={member}>
                                     <Avatar 

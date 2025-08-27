@@ -39,7 +39,7 @@ import {
 } from "@ant-design/icons";
 
 import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from "api/admin";
-import { PageHeader } from "components/Admin";
+
 import "./Projects.scss";
 
 const { Title, Text } = Typography;
@@ -1219,10 +1219,7 @@ function ProjectsManagement() {
   return (
     <div className="projects-management">
       {contextHolder}
-      <PageHeader
-        title="Quản lý Dự án"
-        subtitle="Quản lý danh sách dự án, công nghệ và thông tin chi tiết"
-      />
+     
 
       {/* Filters and Actions */}
       <Card style={{ marginBottom: "24px" }}>

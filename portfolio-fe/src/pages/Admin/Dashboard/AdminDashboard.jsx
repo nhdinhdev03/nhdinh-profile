@@ -28,8 +28,9 @@ import {
   ClockCircleOutlined,
   SyncOutlined
 } from '@ant-design/icons';
-import { PageHeader } from 'components/Admin';
+
 import './AdminDashboard.scss';
+import { PageHeader } from 'components/Admin';
 
 const { Text } = Typography;
 const { TabPane } = Tabs;

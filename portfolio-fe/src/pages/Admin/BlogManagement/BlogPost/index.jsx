@@ -29,7 +29,8 @@ import {
   SearchOutlined,
   StarOutlined,
   StarFilled,
-  UploadOutlined
+  UploadOutlined,
+  MailOutlined
 } from '@ant-design/icons';
 import { PageHeader } from 'components/Admin';
 import dayjs from 'dayjs';
@@ -306,11 +307,7 @@ const BlogManagement = () => {
 
   return (
     <div>
-      <PageHeader
-        title="Quản lý Blog"
-        subtitle="Tạo và quản lý các bài viết blog"
-        icon={EditOutlined}
-      />
+    
 
       <Card>
         {/* Filters */}

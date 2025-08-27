@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  Suspense,
 } from "react";
 import {
   Modal,
@@ -25,6 +26,14 @@ import {
   Badge,
   Empty,
   Spin,
+  Pagination,
+  Skeleton,
+  Result,
+  Flex,
+  Statistic,
+  Progress,
+  ConfigProvider,
+  theme,
 } from "antd";
 import {
   PlusOutlined,
@@ -36,6 +45,17 @@ import {
   StarFilled,
   FolderOutlined,
   LinkOutlined,
+  FilterOutlined,
+  ReloadOutlined,
+  AppstoreOutlined,
+  UnorderedListOutlined,
+  DownloadOutlined,
+  ShareAltOutlined,
+  HeartOutlined,
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import { FolderIcon } from '@heroicons/react/24/outline';
 import { PageHeader } from '../../../../components/Admin';
@@ -47,9 +67,55 @@ import "./Projects.scss";
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
 
-// Fallback image as data URL to avoid network errors
+// Enhanced fallback image with modern gradient design
 const FALLBACK_IMAGE =
-  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6cmdiKDI0MiwyNDUsMjQ3KTtzdG9wLW9wYWNpdHk6MSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOnJnYigyMjksMjMxLDIzNSk7c3RvcC1vcGFjaXR5OjEiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjZ3JhZCkiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIxMDAiIHI9IjI0IiBmaWxsPSIjOWNhM2FmIi8+PC9zdmc+";
+  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDQwMCAyNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZ0dyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM2MzY2ZjE7c3RvcC1vcGFjaXR5OjAuMSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4YjVjZjY7c3RvcC1vcGFjaXR5OjAuMTUiIC8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9Imljb25HcmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNjM2NmYxO3N0b3Atb3BhY2l0eTowLjYiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojOGI1Y2Y2O3N0b3Atb3BhY2l0eTowLjgiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyNDAiIGZpbGw9InVybCgjYmdHcmFkKSIvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjEyMCIgcj0iNDAiIGZpbGw9InVybCgjaWNvbkdyYWQpIi8+PHBhdGggZD0iTTE4MCA5MGgyMHYxMGgtMjB6bTAgMjBoMjB2MTBoLTIwem0wIDIwaDE1djEwaC0xNXoiIGZpbGw9InVybCgjaWNvbkdyYWQpIi8+PC9zdmc+";
+
+// Enhanced status configurations
+const PROJECT_STATUS_CONFIG = {
+  published: {
+    color: 'success',
+    text: 'Đã xuất bản',
+    icon: CheckCircleOutlined,
+    badge: 'success',
+  },
+  draft: {
+    color: 'warning', 
+    text: 'Bản nháp',
+    icon: ClockCircleOutlined,
+    badge: 'warning',
+  },
+  archived: {
+    color: 'default',
+    text: 'Đã lưu trữ', 
+    icon: StopOutlined,
+    badge: 'default',
+  },
+};
+
+// Enhanced theme configuration
+const ENHANCED_THEME = {
+  token: {
+    colorPrimary: '#6366f1',
+    colorSuccess: '#10b981',
+    colorWarning: '#f59e0b',
+    colorError: '#ef4444',
+    borderRadius: 8,
+    fontSize: 14,
+  },
+  components: {
+    Card: {
+      borderRadius: 12,
+      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+    },
+    Button: {
+      borderRadius: 8,
+    },
+    Modal: {
+      borderRadius: 16,
+    },
+  },
+};
 
 // ================== Chuẩn hóa dữ liệu từ BE -> FE (projectId/categoryId/tagId => id) ==================
 const normalizeTag = (t) => ({ ...t, id: t.id || t.tagId });
@@ -61,7 +127,7 @@ const normalizeProject = (p) => ({
   tags: Array.isArray(p.tags) ? p.tags.map(normalizeTag) : [],
 });
 
-// Component Multi-Select cho Tags sử dụng Ant Design (Tối ưu)
+// Enhanced Multi-Select cho Tags với UI chuyên nghiệp
 const TagsMultiSelect = React.memo(
   ({
     availableTags,
@@ -73,19 +139,19 @@ const TagsMultiSelect = React.memo(
     const [inputValue, setInputValue] = useState("");
     const [isCreatingTag, setIsCreatingTag] = useState(false);
 
-    // Memoized validation cho tag name
+    // Memoized validation cho tag name với enhanced rules
     const isValidTagName = useMemo(() => {
       const trimmedValue = inputValue.trim();
-      return (
-        trimmedValue.length >= 2 &&
-        trimmedValue.length <= 50 &&
-        !availableTags.some(
-          (tag) => tag.name.toLowerCase() === trimmedValue.toLowerCase()
-        )
+      const isValidLength = trimmedValue.length >= 2 && trimmedValue.length <= 50;
+      const isNotDuplicate = !availableTags.some(
+        (tag) => tag.name.toLowerCase() === trimmedValue.toLowerCase()
       );
+      const hasValidCharacters = /^[a-zA-Z0-9\s\-\.\+\#]+$/.test(trimmedValue);
+      
+      return isValidLength && isNotDuplicate && hasValidCharacters;
     }, [inputValue, availableTags]);
 
-    // Optimized create tag handler với loading state
+    // Enhanced create tag handler với loading state và animation
     const handleCreateNewTag = useCallback(async () => {
       if (!onCreateTag || !isValidTagName || isCreatingTag) return;
 
@@ -99,34 +165,40 @@ const TagsMultiSelect = React.memo(
           const updatedSelection = [...selectedTagIds, newTag.id];
           onChange(updatedSelection);
           
-          // Clear input
+          // Clear input with smooth animation
           setInputValue("");
           
-          // Show success notification
+          // Enhanced success notification
           notification.success({
-            message: 'Thành công',
-            description: `Đã thêm công nghệ "${tagName}" và chọn vào dự án`,
+            message: '🎉 Thành công!',
+            description: (
+              <div>
+                Đã thêm công nghệ <Tag color="blue">{tagName}</Tag> và chọn vào dự án
+              </div>
+            ),
             duration: 3,
+            placement: 'topRight',
           });
         }
       } catch (error) {
         console.error("Error creating tag:", error);
         notification.error({
-          message: 'Lỗi',
+          message: '❌ Lỗi tạo công nghệ',
           description: `Không thể tạo công nghệ "${tagName}". Vui lòng thử lại.`,
           duration: 4,
+          placement: 'topRight',
         });
       } finally {
         setIsCreatingTag(false);
       }
     }, [onCreateTag, isValidTagName, isCreatingTag, inputValue, selectedTagIds, onChange]);
 
-    // Improved filter function với diacritics support
+    // Enhanced filter function với advanced search
     const filterOption = useCallback((input, option) => {
       const searchTerm = input.toLowerCase().trim();
       const tagName = option.children.toLowerCase();
       
-      // Support both exact match and partial match
+      // Support fuzzy search và Vietnamese diacritics
       return tagName.includes(searchTerm) || 
              tagName.replace(/[àáạảãâầấậẩẫăằắặẳẵ]/g, 'a')
                     .replace(/[èéẹẻẽêềếệểễ]/g, 'e')
@@ -138,7 +210,7 @@ const TagsMultiSelect = React.memo(
                     .includes(searchTerm);
     }, []);
 
-    // Handle Enter key để tạo tag nhanh
+    // Handle Enter key với validation
     const handleKeyDown = useCallback((e) => {
       if (e.key === 'Enter' && isValidTagName && !isCreatingTag) {
         e.preventDefault();
@@ -147,43 +219,41 @@ const TagsMultiSelect = React.memo(
       }
     }, [isValidTagName, isCreatingTag, handleCreateNewTag]);
 
-    // Optimized dropdown render
+    // Enhanced dropdown render với modern design
     const dropdownRender = useCallback((menu) => (
-      <div>
+      <div className="enhanced-tags-dropdown">
         {menu}
         {inputValue.trim() && onCreateTag && (
-          <div style={{ 
-            padding: "8px 12px", 
-            borderTop: "1px solid #f0f0f0",
-            backgroundColor: isValidTagName ? '#f6ffed' : '#fff2f0'
-          }}>
+          <div className={`create-tag-section ${isValidTagName ? 'valid' : 'invalid'}`}>
             {isValidTagName ? (
               <Button
-                type="link"
+                type="text"
                 icon={isCreatingTag ? <Spin size="small" /> : <PlusOutlined />}
                 onClick={handleCreateNewTag}
                 loading={isCreatingTag}
                 disabled={isCreatingTag}
-                style={{ 
-                  padding: 0, 
-                  color: '#52c41a',
-                  fontWeight: 500
-                }}
+                className="create-tag-button success"
+                block
               >
                 {isCreatingTag 
                   ? `Đang tạo "${inputValue.trim()}"...`
-                  : `Tạo công nghệ "${inputValue.trim()}" (Enter)`
+                  : `✨ Tạo công nghệ "${inputValue.trim()}" (Enter)`
                 }
               </Button>
             ) : (
-              <Text type="secondary" style={{ fontSize: '12px' }}>
-                {inputValue.trim().length < 2 
-                  ? "Tên công nghệ phải có ít nhất 2 ký tự"
-                  : inputValue.trim().length > 50
-                  ? "Tên công nghệ không được quá 50 ký tự"
-                  : "Công nghệ này đã tồn tại"
-                }
-              </Text>
+              <div className="validation-message">
+                <ExclamationCircleOutlined style={{ marginRight: 8, color: '#ff4d4f' }} />
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  {inputValue.trim().length < 2 
+                    ? "Tên công nghệ phải có ít nhất 2 ký tự"
+                    : inputValue.trim().length > 50
+                    ? "Tên công nghệ không được quá 50 ký tự"
+                    : !/^[a-zA-Z0-9\s\-\.\+\#]+$/.test(inputValue.trim())
+                    ? "Chỉ được sử dụng chữ, số và các ký tự đặc biệt: - . + #"
+                    : "Công nghệ này đã tồn tại"
+                  }
+                </Text>
+              </div>
             )}
           </div>
         )}
@@ -191,10 +261,10 @@ const TagsMultiSelect = React.memo(
     ), [inputValue, onCreateTag, isValidTagName, isCreatingTag, handleCreateNewTag]);
 
     return (
-      <div className="tags-select-container">
+      <div className="enhanced-tags-container">
         <Select
           mode="multiple"
-          placeholder="Chọn hoặc tạo công nghệ sử dụng trong dự án"
+          placeholder="🔍 Tìm kiếm hoặc tạo công nghệ mới cho dự án..."
           value={selectedTagIds}
           onChange={onChange}
           disabled={disabled || isCreatingTag}
@@ -207,32 +277,68 @@ const TagsMultiSelect = React.memo(
           style={{ width: "100%" }}
           size="large"
           allowClear
+          tagRender={(props) => {
+            const { label, closable, onClose } = props;
+            const onPreventMouseDown = (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            };
+            return (
+              <Tag
+                color="processing"
+                onMouseDown={onPreventMouseDown}
+                closable={closable}
+                onClose={onClose}
+                style={{
+                  marginRight: 3,
+                  marginBottom: 3,
+                  borderRadius: 6,
+                  fontSize: '12px',
+                  fontWeight: 500,
+                }}
+              >
+                {label}
+              </Tag>
+            );
+          }}
         >
           {availableTags.map((tag) => (
             <Option key={tag.id} value={tag.id}>
-              {tag.name}
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Tag size="small" color="blue" style={{ margin: 0, marginRight: 8 }}>
+                  {tag.name}
+                </Tag>
+                <Text type="secondary" style={{ fontSize: '11px' }}>
+                  ID: {tag.id}
+                </Text>
+              </div>
             </Option>
           ))}
         </Select>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          marginTop: '4px'
-        }}>
-          <Text type="secondary" style={{ fontSize: "12px" }}>
-            Chọn các công nghệ, framework, thư viện sử dụng trong dự án
-          </Text>
-          <Text type="secondary" style={{ fontSize: "11px" }}>
-            {selectedTagIds.length > 0 && `Đã chọn: ${selectedTagIds.length}`}
-          </Text>
+        
+        {/* Enhanced info section */}
+        <div className="tags-info-section">
+          <div className="tags-help-text">
+            <Text type="secondary" style={{ fontSize: "12px" }}>
+              💡 Gõ để tìm kiếm hoặc nhấn Enter để tạo công nghệ mới
+            </Text>
+          </div>
+          <div className="tags-counter">
+            {selectedTagIds.length > 0 && (
+              <Badge 
+                count={selectedTagIds.length} 
+                style={{ backgroundColor: '#6366f1' }}
+                title={`Đã chọn ${selectedTagIds.length} công nghệ`}
+              />
+            )}
+          </div>
         </div>
       </div>
     );
   }
 );
 
-// Project Card Component sử dụng Ant Design
+// Enhanced Project Card Component với modern design
 const ProjectCard = React.memo(
   ({ project, onEdit, onDelete, onViewProject, onToggleFeatured }) => {
     const getStatusColor = (status) => {
@@ -284,19 +390,7 @@ const ProjectCard = React.memo(
               onMouseLeave={(e) => {
                 e.target.style.transform = "scale(1)";
               }}
-              preview={{
-                mask: (
-                  <Space>
-                    <Button
-                      size="small"
-                      icon={<EyeOutlined />}
-                      onClick={() => onViewProject(project)}
-                    >
-                      Xem chi tiết
-                    </Button>
-                  </Space>
-                ),
-              }}
+             
             />
 
             {/* Status và Featured badges */}
@@ -1212,6 +1306,16 @@ function ProjectsManagement() {
       currentPage: 1,
     }));
   }, []);
+
+  // Memoized statistics
+  const projectStats = useMemo(() => {
+    const total = state.projects.length;
+    const published = state.projects.filter(p => p.status === 'published').length;
+    const draft = state.projects.filter(p => p.status === 'draft').length;
+    const featured = state.projects.filter(p => p.isFeatured).length;
+    
+    return { total, published, draft, featured };
+  }, [state.projects]);
 
   // Format date helper
   const formatDate = useCallback((dateString) => {

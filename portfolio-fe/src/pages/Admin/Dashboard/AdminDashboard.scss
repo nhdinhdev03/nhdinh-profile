@@ -1,0 +1,318 @@
+/* Admin Dashboard Styles */
+.admin-dashboard {
+  /* Statistics Cards */
+  .ant-statistic {
+    .ant-statistic-title {
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .ant-statistic-content {
+      .ant-statistic-content-value {
+        font-weight: 600;
+      }
+      
+      .ant-statistic-content-prefix {
+        margin-right: 8px;
+      }
+    }
+  }
+  
+  /* Recent Projects List */
+  .ant-list {
+    .ant-list-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--ant-color-border);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+      
+      .ant-list-item-meta {
+        .ant-list-item-meta-avatar {
+          .ant-badge {
+            .ant-avatar {
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+          }
+        }
+        
+        .ant-list-item-meta-title {
+          margin-bottom: 8px;
+          
+          .ant-tag {
+            margin: 2px 4px 2px 0;
+            border-radius: 10px;
+            font-size: 11px;
+          }
+        }
+        
+        .ant-list-item-meta-description {
+          .ant-progress {
+            margin-top: 4px;
+            
+            .ant-progress-bg {
+              transition: all 0.3s ease;
+            }
+          }
+        }
+      }
+      
+      .ant-list-item-action {
+        .ant-btn-link {
+          color: var(--ant-color-primary);
+          
+          &:hover {
+            color: var(--ant-color-primary-hover);
+          }
+        }
+      }
+    }
+  }
+  
+  /* Activity Timeline */
+  .ant-timeline {
+    .ant-timeline-item {
+      padding-bottom: 16px;
+      
+      .ant-timeline-item-content {
+        margin-left: 32px;
+        min-height: 40px;
+        
+        .ant-typography {
+          margin: 0;
+          line-height: 1.4;
+        }
+      }
+      
+      .ant-timeline-item-head {
+        width: 24px;
+        height: 24px;
+        
+        .anticon {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  
+  /* Cards Enhancement */
+  .ant-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .ant-card-head {
+      border-bottom: 1px solid var(--ant-color-border);
+      
+      .ant-card-head-title {
+        font-weight: 600;
+        font-size: 16px;
+      }
+      
+      .ant-card-extra {
+        .ant-btn-link {
+          color: var(--ant-color-primary);
+          font-weight: 500;
+        }
+      }
+    }
+    
+    .ant-card-body {
+      padding: 20px;
+    }
+  }
+  
+  /* Tabs Enhancement */
+  .ant-tabs {
+    .ant-tabs-tab {
+      font-weight: 500;
+      padding: 12px 20px;
+      
+      &.ant-tabs-tab-active {
+        .ant-tabs-tab-btn {
+          color: var(--ant-color-primary);
+          font-weight: 600;
+        }
+      }
+    }
+    
+    .ant-tabs-content-holder {
+      padding-top: 16px;
+    }
+  }
+  
+  /* Alert Enhancement */
+  .ant-alert {
+    border-radius: 8px;
+    border: none;
+    
+    &.ant-alert-info {
+      background: linear-gradient(90deg, #e6f7ff 0%, #f0f9ff 100%);
+      
+      .ant-alert-icon {
+        color: var(--ant-color-primary);
+      }
+    }
+  }
+  
+  /* Descriptions Enhancement */
+  .ant-descriptions {
+    &.ant-descriptions-bordered {
+      .ant-descriptions-item-label {
+        background: var(--ant-color-fill-alter);
+        font-weight: 500;
+      }
+      
+      .ant-descriptions-item-content {
+        .ant-badge {
+          .ant-badge-status-dot {
+            animation: pulse 2s infinite;
+          }
+        }
+      }
+    }
+  }
+  
+  /* Progress Enhancement */
+  .ant-progress {
+    .ant-progress-line {
+      .ant-progress-inner {
+        border-radius: 6px;
+        overflow: hidden;
+        
+        .ant-progress-bg {
+          background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);
+          transition: all 0.6s ease;
+        }
+      }
+    }
+    
+    &.ant-progress-status-success {
+      .ant-progress-bg {
+        background: linear-gradient(90deg, #52c41a 0%, #73d13d 100%) !important;
+      }
+    }
+  }
+  
+  /* System Actions */
+  .system-actions {
+    .ant-btn {
+      margin-bottom: 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      
+      &.ant-btn-primary {
+        background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);
+        border: none;
+        
+        &:hover {
+          background: linear-gradient(90deg, #40a9ff 0%, #1890ff 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+      }
+      
+      &.ant-btn-dangerous {
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+        }
+      }
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .ant-col {
+      margin-bottom: 16px;
+    }
+    
+    .ant-card {
+      margin-bottom: 12px;
+      
+      .ant-card-body {
+        padding: 16px;
+      }
+    }
+    
+    .ant-statistic {
+      text-align: center;
+      
+      .ant-statistic-content-value {
+        font-size: 20px;
+      }
+    }
+    
+    .ant-list-item {
+      .ant-list-item-meta {
+        .ant-list-item-meta-title {
+          .ant-tag {
+            margin: 2px 2px;
+            font-size: 10px;
+          }
+        }
+      }
+    }
+  }
+  
+  /* Animation Keyframes */
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  /* Dark Theme Support */
+  .ant-theme-dark & {
+    .ant-card {
+      background: var(--ant-color-bg-container);
+      border-color: var(--ant-color-border);
+      
+      &:hover {
+        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+      }
+    }
+    
+    .ant-alert-info {
+      background: rgba(24, 144, 255, 0.1);
+      border-color: rgba(24, 144, 255, 0.2);
+    }
+    
+    .ant-descriptions-bordered {
+      .ant-descriptions-item-label {
+        background: var(--ant-color-fill-quaternary);
+      }
+    }
+  }
+}
+
+/* Chart Placeholder */
+.chart-placeholder {
+  height: 300px;
+  background: var(--ant-color-fill-alter);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--ant-color-border);
+  
+  .ant-typography {
+    color: var(--ant-color-text-tertiary);
+    font-size: 16px;
+  }
+}

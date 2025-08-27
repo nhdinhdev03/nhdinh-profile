@@ -6,7 +6,7 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 import AdminBreadcrumb from "./Breadcrumb";
 import { AdminThemeProvider } from "theme";
-import { ToastProvider } from "components/Admin";
+
 import "./AdminLayout.scss";
 
 function AdminLayout({ children, usePageHeader = false }) {
@@ -16,7 +16,7 @@ function AdminLayout({ children, usePageHeader = false }) {
 
   return (
     <AdminThemeProvider>
-      <ToastProvider>
+ 
         <div className="admin-layout">
           {/* Sidebar */}
           <Sidebar 
@@ -51,7 +51,7 @@ function AdminLayout({ children, usePageHeader = false }) {
             </main>
           </div>
         </div>
-      </ToastProvider>
+
     </AdminThemeProvider>
   );
 }

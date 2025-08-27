@@ -7,16 +7,10 @@ import {
   ShieldCheckIcon,
   ServerIcon
 } from '@heroicons/react/24/outline';
-import { 
-  AdminCard, 
-  Button, 
-  Input, 
-  Textarea, 
-  Select, 
-  useToast,
-  ConfirmModal,
-  PageHeader
-} from '../../../components/Admin';
+import { useToast } from 'react-toastify';
+import { Button, Input, Select } from 'antd';
+import { AdminCard, PageHeader, Textarea } from 'components/Admin';
+
 
 const Settings = () => {
   const { addToast } = useToast();
@@ -438,7 +432,7 @@ const Settings = () => {
       </div>
 
       {/* Reset Confirmation Modal */}
-      <ConfirmModal
+      {/* <ConfirmModal
         isOpen={showResetModal}
         onClose={() => setShowResetModal(false)}
         onConfirm={handleReset}
@@ -447,7 +441,7 @@ const Settings = () => {
         confirmText="Khôi phục"
         cancelText="Hủy"
         type="warning"
-      />
+      /> */}
     </motion.div>
   );
 };

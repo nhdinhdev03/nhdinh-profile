@@ -1,5 +1,5 @@
 // Admin Dashboard Components
-export { default as AdminDashboard } from "./Dashboard/Dashboard";
+export { default as AdminDashboard } from "./Dashboard/AdminDashboard";
 
 // 1. Quản lý Trang chủ / Hero
 export { default as HeroManagement } from "./HomeManagement/HeroManagement";

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { ToastContainer } from 'react-toastify';
 
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import AdminBreadcrumb from "./Breadcrumb";
 import { AdminThemeProvider } from "theme";
 
+import 'react-toastify/dist/ReactToastify.css';
 import "./AdminLayout.scss";
 
 function AdminLayout({ children, usePageHeader = false }) {
@@ -51,6 +53,20 @@ function AdminLayout({ children, usePageHeader = false }) {
             </main>
           </div>
         </div>
+        
+        {/* Toast Container */}
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
 
     </AdminThemeProvider>
   );

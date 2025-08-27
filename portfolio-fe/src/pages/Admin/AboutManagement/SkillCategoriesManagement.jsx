@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography } from "antd";
 import { Squares2X2Icon } from '@heroicons/react/24/outline';
-import { PageHeader } from '../../../components/Admin';
+import { PageHeader } from 'components/Admin';
 
 const { Title } = Typography;
 

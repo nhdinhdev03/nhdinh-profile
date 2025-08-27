@@ -10,7 +10,7 @@ import {
   DocumentDuplicateIcon,
   MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
-import { AdminCard, Button, PageHeader } from '../../../components/Admin';
+import { AdminCard, Button, PageHeader } from 'components/Admin';
 
 const MediaLibrary = () => {
   const [mediaFiles, setMediaFiles] = useState([

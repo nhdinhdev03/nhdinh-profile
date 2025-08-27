@@ -32,7 +32,7 @@ import {
   SearchOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
-import { PageHeader } from '../../../components/Admin';
+import { PageHeader } from 'components/Admin';
 import contactMessageApi from "api/admin/contact/ContactMessageApi";
 import { showNotification } from "components";
 import { formatDate } from "utils/dateUtils";

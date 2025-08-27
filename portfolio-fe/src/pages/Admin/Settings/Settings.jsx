@@ -7,13 +7,12 @@ import {
   ShieldCheckIcon,
   ServerIcon
 } from '@heroicons/react/24/outline';
-import { useToast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { Button, Input, Select } from 'antd';
 import { AdminCard, PageHeader, Textarea } from 'components/Admin';
 
 
 const Settings = () => {
-  const { addToast } = useToast();
   const [settings, setSettings] = useState({
     siteName: 'Portfolio Admin',
     siteDescription: 'Quản lý portfolio cá nhân',
@@ -73,11 +72,7 @@ const Settings = () => {
   const handleSave = () => {
     // Simulate API call
     setTimeout(() => {
-      addToast({
-        type: 'success',
-        title: 'Thành công',
-        message: 'Cài đặt đã được lưu thành công!'
-      });
+      toast.success('Cài đặt đã được lưu thành công!');
     }, 1000);
   };
 

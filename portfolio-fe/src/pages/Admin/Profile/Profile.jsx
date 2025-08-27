@@ -10,7 +10,7 @@ import {
   CheckCircleIcon,
   XCircleIcon
 } from '@heroicons/react/24/outline';
-import { AdminCard, Button, Input, Textarea, PageHeader } from '../../../components/Admin';
+import { AdminCard, Button, Input, Textarea, PageHeader } from 'components/Admin';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('profile'); // profile, security, notifications, preferences

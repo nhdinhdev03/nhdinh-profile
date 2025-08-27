@@ -30,7 +30,7 @@ import {
   DownOutlined,
   HomeOutlined,
 } from "@ant-design/icons";
-import { PageHeader } from '../../../components/Admin';
+import { PageHeader } from 'components/Admin';
 
 import heroSubHeadingApi from "api/admin/home/HeroSubHeadingApi";
 import heroApi from "api/admin/home/HeroApi";

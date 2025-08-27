@@ -8,7 +8,7 @@ import {
   EyeIcon,
   FunnelIcon
 } from '@heroicons/react/24/outline';
-import { PageHeader } from '../../../components/Admin';
+import { PageHeader } from 'components/Admin';
 
 const HistoryLogs = () => {
   const [logs] = useState([

@@ -69,7 +69,7 @@ public class WebSecurityConfig {
                         // Public endpoints - no authentication required
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/hero/**").permitAll()
-                        .requestMatchers("/api/hero-sub-heading/**").permitAll()
+                        .requestMatchers("/api/hero-subheadings/**").permitAll()
                         .requestMatchers("/api/profile-info/**").permitAll()
                         .requestMatchers("/api/profile-tag/**").permitAll()
                         .requestMatchers("/api/experience/**").permitAll()
@@ -90,7 +90,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/admin-users/**").authenticated()
                         .requestMatchers("/api/hero/admin/**").authenticated()
                         .requestMatchers("/api/admin-users/authenticate").permitAll()
-                        .requestMatchers("/api/hero-sub-heading/admin/**").authenticated()
+                        .requestMatchers("/api/hero-subheadings/admin/**").authenticated()
                         .requestMatchers("/api/profile-info/admin/**").authenticated()
                         .requestMatchers("/api/profile-tag/admin/**").authenticated()
                         .requestMatchers("/api/experience/admin/**").authenticated()

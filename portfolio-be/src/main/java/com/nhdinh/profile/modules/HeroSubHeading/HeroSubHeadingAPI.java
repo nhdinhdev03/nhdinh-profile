@@ -34,6 +34,23 @@ public class HeroSubHeadingAPI {
     private HeroSubHeadingService heroSubHeadingService;
     
     /**
+     * Lấy tất cả SubHeadings
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<HeroSubHeadingResponse>> getAllSubHeadings() {
+        try {
+            List<HeroSubHeading> subHeadings = heroSubHeadingService.getAllSubHeadings();
+            List<HeroSubHeadingResponse> responses = subHeadings.stream()
+                    .map(HeroSubHeadingResponse::fromEntity)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(responses);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
      * Lấy tất cả SubHeadings theo HeroId
      */
     @GetMapping("/hero/{heroId}")

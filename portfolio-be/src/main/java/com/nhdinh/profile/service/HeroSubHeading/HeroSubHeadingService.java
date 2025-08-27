@@ -27,6 +27,14 @@ public class HeroSubHeadingService {
     private HeroDAO heroDAO;
     
     /**
+     * Lấy tất cả SubHeadings
+     */
+    @Transactional(readOnly = true)
+    public List<HeroSubHeading> getAllSubHeadings() {
+        return heroSubHeadingDAO.findAllByOrderBySortOrder();
+    }
+    
+    /**
      * Lấy tất cả SubHeading theo HeroId
      */
     @Transactional(readOnly = true)

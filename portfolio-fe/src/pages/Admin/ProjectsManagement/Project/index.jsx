@@ -10,7 +10,6 @@ import {
   Card,
   Col,
   Divider,
-  Empty,
   Form,
   Image,
   Input,
@@ -25,6 +24,15 @@ import {
   Tag,
   Tooltip,
   Typography,
+  Statistic,
+  Avatar,
+  Progress,
+  Result,
+  Dropdown,
+  ConfigProvider,
+  theme,
+  FloatButton,
+  Skeleton,
 } from "antd";
 import {
   DeleteOutlined,
@@ -36,14 +44,27 @@ import {
   SearchOutlined,
   StarFilled,
   StarOutlined,
+  ProjectOutlined,
+  CopyOutlined,
+  CalendarOutlined,
+  CloudUploadOutlined,
+  CheckCircleOutlined,
+  QuestionCircleOutlined,
+  MoreOutlined,
+  SettingOutlined,
+  FilterOutlined,
+  ReloadOutlined,
+  EyeOutlined,
+  ClockCircleOutlined,
+  AppstoreOutlined,
+  CodeOutlined,
+  GlobalOutlined,
+  TagOutlined,
 } from "@ant-design/icons";
-import { FolderIcon } from '@heroicons/react/24/outline';
-
 
 import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from "api/admin";
 
 import "./Projects.scss";
-import { PageHeader } from "components/Admin";
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -269,208 +290,6 @@ const TagsMultiSelect = React.memo(
           </div>
         </div>
       </div>
-    );
-  }
-);
-
-// Enhanced Project Card Component với modern design
-const ProjectCard = React.memo(
-  ({ project, onEdit, onDelete, onViewProject, onToggleFeatured }) => {
-    const getStatusColor = (status) => {
-      switch (status) {
-        case "published":
-          return "success";
-        case "draft":
-          return "warning";
-        default:
-          return "default";
-      }
-    };
-
-    const getStatusText = (status) => {
-      switch (status) {
-        case "published":
-          return "Đã xuất bản";
-        case "draft":
-          return "Bản nháp";
-        default:
-          return "Đã lưu trữ";
-      }
-    };
-
-    return (
-      <Card
-        hoverable
-        cover={
-          <div
-            style={{
-              position: "relative",
-              height: "192px",
-              overflow: "hidden",
-            }}
-          >
-            <Image
-              alt={project.title}
-              src={project.imageUrl || FALLBACK_IMAGE}
-              fallback={FALLBACK_IMAGE}
-              style={{
-                width: "100%",
-                height: "192px",
-                objectFit: "cover",
-                transition: "transform 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = "scale(1.05)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "scale(1)";
-              }}
-             
-            />
-
-            {/* Status và Featured badges */}
-            <div style={{ position: "absolute", top: "8px", left: "8px" }}>
-              <Badge
-                status={getStatusColor(project.status)}
-                text={getStatusText(project.status)}
-                style={{
-                  backgroundColor: "rgba(255,255,255,0.9)",
-                  padding: "2px 8px",
-                  borderRadius: "12px",
-                  fontSize: "11px",
-                }}
-              />
-            </div>
-
-            {project.isFeatured && (
-              <div style={{ position: "absolute", top: "8px", right: "8px" }}>
-                <Badge
-                  count={<StarFilled style={{ color: "#faad14" }} />}
-                  style={{
-                    backgroundColor: "rgba(255,255,255,0.9)",
-                    padding: "2px 8px",
-                    borderRadius: "12px",
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        }
-        actions={[
-          <Tooltip title="Chỉnh sửa">
-            <Button
-              type="text"
-              icon={<EditOutlined />}
-              onClick={() => onEdit(project)}
-            />
-          </Tooltip>,
-          <Tooltip title="Xóa">
-            <Popconfirm
-              title="Xác nhận xóa"
-              description="Bạn có chắc chắn muốn xóa dự án này?"
-              onConfirm={() => onDelete(project.id)}
-              okText="Xóa"
-              cancelText="Hủy"
-              okType="danger"
-            >
-              <Button type="text" icon={<DeleteOutlined />} danger />
-            </Popconfirm>
-          </Tooltip>,
-          <Tooltip
-            title={project.isFeatured ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}
-          >
-            <Button
-              type="text"
-              icon={project.isFeatured ? <StarFilled /> : <StarOutlined />}
-              onClick={() => onToggleFeatured(project.id, project.isFeatured)}
-              style={{ color: project.isFeatured ? "#faad14" : undefined }}
-            />
-          </Tooltip>,
-        ]}
-        style={{ marginBottom: "16px" }}
-      >
-        <Card.Meta
-          title={
-            <div>
-              <Tooltip title={project.title}>
-                <Title level={5} ellipsis={{ rows: 2 }} style={{ margin: 0 }}>
-                  {project.title}
-                </Title>
-              </Tooltip>
-              {project.category && (
-                <Text type="secondary" style={{ fontSize: "12px" }}>
-                  {project.category.name}
-                </Text>
-              )}
-            </div>
-          }
-          description={
-            <div>
-              <Paragraph
-                type="secondary"
-                ellipsis={{ rows: 3, tooltip: project.description }}
-                style={{ display: "block", marginBottom: "12px" }}
-              >
-                {project.description || "Chưa có mô tả"}
-              </Paragraph>
-
-              {/* Tags */}
-              <div style={{ marginBottom: "12px" }}>
-                {project.tags?.slice(0, 4).map((tag, index) => (
-                  <Tag
-                    key={`${project.id}-tag-${tag.id || index}`}
-                    color="blue"
-                    style={{ marginBottom: "4px", fontSize: "11px" }}
-                  >
-                    {tag.name}
-                  </Tag>
-                ))}
-                {project.tags?.length > 4 && (
-                  <Tag color="default" style={{ fontSize: "11px" }}>
-                    +{project.tags.length - 4} khác
-                  </Tag>
-                )}
-              </div>
-
-              {/* Links */}
-              {(project.demoUrl || project.sourceUrl) && (
-                <Space size="middle" style={{ marginBottom: "8px" }}>
-                  {project.demoUrl && (
-                    <Button
-                      type="link"
-                      size="small"
-                      icon={<LinkOutlined />}
-                      href={project.demoUrl}
-                      target="_blank"
-                      style={{ padding: 0, fontSize: "11px" }}
-                    >
-                      Demo
-                    </Button>
-                  )}
-                  {project.sourceUrl && (
-                    <Button
-                      type="link"
-                      size="small"
-                      icon={<FolderOutlined />}
-                      href={project.sourceUrl}
-                      target="_blank"
-                      style={{ padding: 0, fontSize: "11px" }}
-                    >
-                      Source
-                    </Button>
-                  )}
-                </Space>
-              )}
-
-              <Text type="secondary" style={{ fontSize: "11px" }}>
-                {new Date(
-                  project.updatedAt || project.createdAt
-                ).toLocaleDateString("vi-VN")}
-              </Text>
-            </div>
-          }
-        />
-      </Card>
     );
   }
 );
@@ -1248,118 +1067,770 @@ function ProjectsManagement() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      {contextHolder}
-      
-      <PageHeader
-        title="Quản lý Dự án"
-        subtitle="Quản lý tất cả các dự án và portfolio"
-        icon={FolderIcon}
-        actions={
-          <div className="flex items-center space-x-3">
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => openFormModal(false)}
-            >
-              Thêm dự án mới
-            </Button>
-          </div>
-        }
-      />
+    <ConfigProvider
+      theme={{
+        algorithm: theme.compactAlgorithm,
+        token: {
+          colorPrimary: '#6366f1',
+          borderRadius: 8,
+          colorBgContainer: '#ffffff',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+        },
+      }}
+    >
+      <div className="projects-management-container" style={{ padding: '24px', minHeight: '100vh', backgroundColor: '#f5f7fa' }}>
+        {contextHolder}
+        
+        {/* Floating Action Button */}
+        <FloatButton.Group
+          trigger="hover"
+          type="primary"
+          style={{ right: 24 }}
+          icon={<SettingOutlined />}
+        >
+          <FloatButton 
+            icon={<PlusOutlined />} 
+            tooltip="Thêm dự án mới"
+            onClick={() => openFormModal(false)}
+          />
+          <FloatButton 
+            icon={<ReloadOutlined />} 
+            tooltip="Làm mới dữ liệu"
+            onClick={() => fetchData()}
+          />
+          <FloatButton 
+            icon={<EyeOutlined />} 
+            tooltip="Xem trước trang"
+            onClick={() => window.open("/projects", "_blank")}
+          />
+        </FloatButton.Group>
 
-      {/* Filters and Actions */}
-      <Card style={{ marginBottom: "24px" }}>
-        <Row gutter={16} align="middle">
-          <Col xs={24} sm={12} md={10}>
-            <Input
-              placeholder="Tìm kiếm dự án..."
-              value={state.searchTerm}
-              onChange={(e) => handleSearch(e.target.value)}
-              prefix={<SearchOutlined />}
-              allowClear
-            />
-          </Col>
-          <Col xs={24} sm={6} md={7}>
-            <Select
-              placeholder="Danh mục"
-              value={state.selectedCategory}
-              onChange={handleCategoryFilter}
-              style={{ width: "100%" }}
-              allowClear
-            >
-              {state.categories.map((category) => (
-                <Option key={category.id} value={category.id}>
-                  {category.name}
-                </Option>
-              ))}
-            </Select>
-          </Col>
-          <Col xs={24} sm={6} md={7}>
-            <Select
-              placeholder="Trạng thái"
-              value={state.selectedStatus}
-              onChange={handleStatusFilter}
-              style={{ width: "100%" }}
-              allowClear
-            >
-              <Option value="published">Đã xuất bản</Option>
-              <Option value="draft">Bản nháp</Option>
-              <Option value="archived">Đã lưu trữ</Option>
-            </Select>
-          </Col>
-        </Row>
-      </Card>
+        {/* Enhanced Page Header */}
+        <Card 
+          style={{ 
+            marginBottom: '24px',
+            borderRadius: '16px',
+            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            border: 'none',
+            overflow: 'hidden'
+          }}
+          styles={{ body: { padding: '32px' } }}
+        >
+          <Row justify="space-between" align="middle">
+            <Col xs={24} lg={16}>
+              <Space direction="vertical" size="small">
+                <Space align="center">
+                  <Avatar 
+                    size={48} 
+                    icon={<ProjectOutlined />} 
+                    style={{ 
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                      color: 'white',
+                      backdropFilter: 'blur(10px)'
+                    }}
+                  />
+                  <div>
+                    <Title level={2} style={{ color: 'white', margin: 0 }}>
+                      Quản lý Dự án
+                    </Title>
+                    <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: '16px' }}>
+                      Tạo và quản lý portfolio dự án một cách chuyên nghiệp
+                    </Text>
+                  </div>
+                </Space>
+                
+                {/* Statistics Cards */}
+                <Row gutter={16} style={{ marginTop: '16px' }}>
+                  <Col span={6}>
+                    <Statistic
+                      title={<span style={{ color: 'rgba(255,255,255,0.8)' }}>Tổng dự án</span>}
+                      value={state.projects.length}
+                      prefix={<AppstoreOutlined style={{ color: 'white' }} />}
+                      valueStyle={{ color: 'white', fontSize: '20px' }}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Statistic
+                      title={<span style={{ color: 'rgba(255,255,255,0.8)' }}>Đã xuất bản</span>}
+                      value={state.projects.filter(p => p.status === 'published').length}
+                      prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
+                      valueStyle={{ color: 'white', fontSize: '20px' }}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Statistic
+                      title={<span style={{ color: 'rgba(255,255,255,0.8)' }}>Nổi bật</span>}
+                      value={state.projects.filter(p => p.isFeatured).length}
+                      prefix={<StarFilled style={{ color: '#faad14' }} />}
+                      valueStyle={{ color: 'white', fontSize: '20px' }}
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <Statistic
+                      title={<span style={{ color: 'rgba(255,255,255,0.8)' }}>Công nghệ</span>}
+                      value={state.tags.length}
+                      prefix={<TagOutlined style={{ color: 'white' }} />}
+                      valueStyle={{ color: 'white', fontSize: '20px' }}
+                    />
+                  </Col>
+                </Row>
+              </Space>
+            </Col>
+            
+            <Col xs={24} lg={8} style={{ textAlign: 'right' }}>
+              <Space direction="vertical" align="end" size="middle">
+                <Button
+                  type="primary"
+                  size="large"
+                  ghost
+                  icon={<PlusOutlined />}
+                  onClick={() => openFormModal(false)}
+                  style={{ 
+                    borderColor: 'white',
+                    color: 'white',
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px',
+                    fontWeight: '500'
+                  }}
+                >
+                  Thêm dự án mới
+                </Button>
+                
+                <Progress
+                  percent={Math.round((state.projects.filter(p => p.status === 'published').length / Math.max(state.projects.length, 1)) * 100)}
+                  strokeColor="white"
+                  trailColor="rgba(255,255,255,0.2)"
+                  showInfo={false}
+                  size="small"
+                />
+              </Space>
+            </Col>
+          </Row>
+        </Card>
 
-      {/* Projects Grid */}
-      {state.isLoading ? (
-        <div style={{ textAlign: "center", padding: "60px 0" }}>
-          <Spin size="large" />
-        </div>
-      ) : filteredProjects.length === 0 ? (
-        <Empty
-          description="Không tìm thấy dự án nào"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
-      ) : (
-        <Row gutter={[16, 16]}>
-          {paginatedProjects.map((project) => (
-            <Col xs={24} sm={12} lg={8} xl={6} key={project.id}>
-              <ProjectCard
-                project={project}
-                onEdit={(project) => openFormModal(true, project)}
-                onDelete={handleDeleteProject}
-                onViewProject={openDetailModal}
-                onToggleFeatured={handleToggleFeatured}
+        {/* Enhanced Filters Section */}
+        <Card 
+          style={{ 
+            marginBottom: '24px',
+            borderRadius: '16px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            backdropFilter: 'blur(20px)'
+          }}
+          styles={{ body: { padding: '24px' } }}
+        >
+          <Row justify="space-between" align="middle" gutter={[16, 16]} style={{ marginBottom: '16px' }}>
+            <Col xs={24} sm={12}>
+              <Space align="center">
+                <Avatar 
+                  size={32} 
+                  icon={<FilterOutlined />}
+                  style={{ backgroundColor: '#6366f1' }}
+                />
+                <Title level={4} style={{ margin: 0 }}>
+                  Bộ lọc & Tìm kiếm
+                </Title>
+              </Space>
+            </Col>
+            
+            <Col xs={24} sm={12} style={{ textAlign: 'right' }}>
+              <Badge count={filteredProjects.length} showZero>
+                <Button 
+                  icon={<ReloadOutlined />}
+                  onClick={() => fetchData()}
+                  loading={state.isLoading}
+                  style={{ borderRadius: '8px' }}
+                >
+                  Làm mới
+                </Button>
+              </Badge>
+            </Col>
+          </Row>
+          
+          <Row gutter={[16, 16]} align="middle">
+            <Col xs={24} sm={12} md={8}>
+              <Input.Search
+                placeholder="🔍 Tìm kiếm dự án, mô tả, công nghệ..."
+                value={state.searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
+                size="large"
+                allowClear
+                style={{ borderRadius: '12px' }}
+                enterButton={
+                  <Button 
+                    type="primary" 
+                    icon={<SearchOutlined />}
+                    style={{ borderRadius: '0 12px 12px 0', background: 'linear-gradient(45deg, #6366f1, #8b5cf6)' }}
+                  >
+                    Tìm
+                  </Button>
+                }
               />
             </Col>
-          ))}
-        </Row>
-      )}
+            
+            <Col xs={24} sm={6} md={5}>
+              <Select
+                placeholder="📁 Danh mục"
+                value={state.selectedCategory}
+                onChange={handleCategoryFilter}
+                style={{ width: "100%" }}
+                size="large"
+                allowClear
+                suffixIcon={<FolderOutlined />}
+              >
+                {state.categories.map((category) => (
+                  <Option key={category.id} value={category.id}>
+                    <Space>
+                      <Tag color="blue" size="small">{category.name}</Tag>
+                    </Space>
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+            
+            <Col xs={24} sm={6} md={5}>
+              <Select
+                placeholder="📊 Trạng thái"
+                value={state.selectedStatus}
+                onChange={handleStatusFilter}
+                style={{ width: "100%" }}
+                size="large"
+                allowClear
+                suffixIcon={<CheckCircleOutlined />}
+              >
+                <Option value="published">
+                  <Space>
+                    <CheckCircleOutlined style={{ color: '#52c41a' }} />
+                    Đã xuất bản
+                  </Space>
+                </Option>
+                <Option value="draft">
+                  <Space>
+                    <ClockCircleOutlined style={{ color: '#faad14' }} />
+                    Bản nháp
+                  </Space>
+                </Option>
+                <Option value="archived">
+                  <Space>
+                    <ExclamationCircleOutlined style={{ color: '#8c8c8c' }} />
+                    Đã lưu trữ
+                  </Space>
+                </Option>
+              </Select>
+            </Col>
+            
+            <Col xs={24} sm={24} md={6}>
+              <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+                <Dropdown
+                  menu={{
+                    items: [
+                      {
+                        key: 'export',
+                        icon: <CloudUploadOutlined />,
+                        label: 'Xuất dữ liệu',
+                      },
+                      {
+                        key: 'import',
+                        icon: <GlobalOutlined />,
+                        label: 'Nhập dữ liệu',
+                      },
+                      {
+                        key: 'settings',
+                        icon: <SettingOutlined />,
+                        label: 'Cài đặt hiển thị',
+                      },
+                    ],
+                  }}
+                  trigger={['click']}
+                >
+                  <Button 
+                    icon={<MoreOutlined />} 
+                    style={{ borderRadius: '8px' }}
+                  >
+                    Thêm
+                  </Button>
+                </Dropdown>
+              </Space>
+            </Col>
+          </Row>
+        </Card>
 
-      {/* Modals */}
-      <ProjectDetailModal
-        project={modals.detail.project}
-        isOpen={modals.detail.isOpen}
-        onClose={closeDetailModal}
-        onEdit={(project) => {
-          closeDetailModal();
-          openFormModal(true, project);
-        }}
-        formatDate={formatDate}
-      />
+        {/* Enhanced Projects Grid */}
+        {state.isLoading ? (
+          <Card style={{ borderRadius: '16px', border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
+            <div style={{ padding: '60px 0', textAlign: 'center' }}>
+              <Spin size="large" />
+              <div style={{ marginTop: '16px' }}>
+                <Text style={{ color: '#6366f1', fontSize: '16px', fontWeight: '500' }}>
+                  Đang tải dự án...
+                </Text>
+              </div>
+              {/* Enhanced loading skeletons */}
+              <Row gutter={[24, 24]} style={{ marginTop: '32px' }}>
+                {[1, 2, 3, 4, 5, 6].map(index => (
+                  <Col xs={24} sm={12} lg={8} xl={6} key={index}>
+                    <Card style={{ borderRadius: '12px' }}>
+                      <Skeleton.Image style={{ width: '100%', height: '180px' }} />
+                      <div style={{ padding: '16px 0' }}>
+                        <Skeleton active paragraph={{ rows: 3 }} />
+                      </div>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          </Card>
+        ) : filteredProjects.length === 0 ? (
+          <Result
+            icon={state.searchTerm || state.selectedCategory || state.selectedStatus ? 
+              <SearchOutlined style={{ color: '#6366f1', fontSize: '64px' }} /> : 
+              <AppstoreOutlined style={{ color: '#6366f1', fontSize: '64px' }} />
+            }
+            title={state.searchTerm || state.selectedCategory || state.selectedStatus ? 
+              "Không tìm thấy dự án" : "Chưa có dự án nào"
+            }
+            subTitle={
+              state.searchTerm || state.selectedCategory || state.selectedStatus ?
+                "Không có dự án nào khớp với bộ lọc hiện tại. Thử điều chỉnh bộ lọc hoặc tạo dự án mới." :
+                "Bắt đầu tạo dự án đầu tiên cho portfolio của bạn"
+            }
+            extra={
+              <Space>
+                {(state.searchTerm || state.selectedCategory || state.selectedStatus) && (
+                  <Button 
+                    onClick={() => {
+                      setState(prev => ({
+                        ...prev,
+                        searchTerm: '',
+                        selectedCategory: '',
+                        selectedStatus: '',
+                        currentPage: 1
+                      }));
+                    }}
+                    style={{ borderRadius: '8px' }}
+                  >
+                    Xóa bộ lọc
+                  </Button>
+                )}
+                <Button 
+                  type="primary" 
+                  icon={<PlusOutlined />}
+                  onClick={() => openFormModal(false)}
+                  style={{ 
+                    borderRadius: '8px',
+                    background: 'linear-gradient(45deg, #6366f1, #8b5cf6)',
+                    border: 'none'
+                  }}
+                >
+                  Tạo dự án đầu tiên
+                </Button>
+              </Space>
+            }
+            style={{ 
+              padding: '80px 24px',
+              background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+              borderRadius: '16px',
+              border: '2px dashed #e2e8f0'
+            }}
+          />
+        ) : (
+          <div>
+            {/* Projects Grid with enhanced design */}
+            <Row gutter={[24, 24]} style={{ marginBottom: '32px' }}>
+              {paginatedProjects.map((project, index) => (
+                <Col xs={24} sm={12} lg={8} xl={6} key={project.id}>
+                  <Card
+                    hoverable
+                    cover={
+                      <div
+                        style={{
+                          position: "relative",
+                          height: "200px",
+                          overflow: "hidden",
+                          background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
+                        }}
+                      >
+                        <Image
+                          alt={project.title}
+                          src={project.imageUrl || FALLBACK_IMAGE}
+                          fallback={FALLBACK_IMAGE}
+                          style={{
+                            width: "100%",
+                            height: "200px",
+                            objectFit: "cover",
+                            transition: "transform 0.3s ease",
+                          }}
+                          preview={false}
+                        />
 
-      <ProjectFormModal
-        isOpen={modals.form.isOpen}
-        isEdit={modals.form.isEdit}
-        project={modals.form.project}
-        onClose={closeFormModal}
-        onSubmit={handleFormSubmit}
-        categories={state.categories}
-        tags={state.tags}
-        onCreateTag={handleCreateTag}
-      />
-    </div>
+                        {/* Status Badge */}
+                        <div style={{ position: "absolute", top: "12px", left: "12px" }}>
+                          <Badge
+                            status={project.status === "published" ? "success" : project.status === "draft" ? "warning" : "default"}
+                            text={
+                              <span style={{
+                                backgroundColor: "rgba(255,255,255,0.95)",
+                                padding: "4px 8px",
+                                borderRadius: "12px",
+                                fontSize: "11px",
+                                fontWeight: "600",
+                                color: project.status === "published" ? "#16a34a" : project.status === "draft" ? "#d97706" : "#6b7280",
+                                backdropFilter: "blur(8px)",
+                                border: "1px solid rgba(255,255,255,0.3)"
+                              }}>
+                                {project.status === "published" ? "Đã xuất bản" : project.status === "draft" ? "Bản nháp" : "Đã lưu trữ"}
+                              </span>
+                            }
+                          />
+                        </div>
+
+                        {/* Featured Badge */}
+                        {project.isFeatured && (
+                          <div style={{ position: "absolute", top: "12px", right: "12px" }}>
+                            <Badge
+                              count={<StarFilled style={{ color: "#f59e0b" }} />}
+                              style={{
+                                backgroundColor: "rgba(255,255,255,0.95)",
+                                padding: "4px 8px",
+                                borderRadius: "12px",
+                                backdropFilter: "blur(8px)",
+                                border: "1px solid rgba(255,255,255,0.3)"
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        {/* Overlay on hover */}
+                        <div 
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: "linear-gradient(45deg, rgba(99, 102, 241, 0.8), rgba(139, 92, 246, 0.8))",
+                            opacity: 0,
+                            transition: "opacity 0.3s ease",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                          }}
+                          className="project-overlay"
+                        >
+                          <Space>
+                            <Button 
+                              type="primary" 
+                              ghost 
+                              icon={<EyeOutlined />}
+                              onClick={() => openDetailModal(project)}
+                              style={{ borderColor: 'white', color: 'white' }}
+                            >
+                              Xem
+                            </Button>
+                            <Button 
+                              type="primary" 
+                              ghost 
+                              icon={<EditOutlined />}
+                              onClick={() => openFormModal(true, project)}
+                              style={{ borderColor: 'white', color: 'white' }}
+                            >
+                              Sửa
+                            </Button>
+                          </Space>
+                        </div>
+                      </div>
+                    }
+                    actions={[
+                      <Tooltip title="Chỉnh sửa">
+                        <Button
+                          type="text"
+                          icon={<EditOutlined />}
+                          onClick={() => openFormModal(true, project)}
+                          style={{ color: '#6366f1' }}
+                        />
+                      </Tooltip>,
+                      <Tooltip title="Xóa">
+                        <Popconfirm
+                          title="Xác nhận xóa"
+                          description="Bạn có chắc chắn muốn xóa dự án này?"
+                          onConfirm={() => handleDeleteProject(project.id)}
+                          okText="Xóa"
+                          cancelText="Hủy"
+                          okType="danger"
+                          icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                        >
+                          <Button type="text" icon={<DeleteOutlined />} danger />
+                        </Popconfirm>
+                      </Tooltip>,
+                      <Tooltip title={project.isFeatured ? "Bỏ nổi bật" : "Đánh dấu nổi bật"}>
+                        <Button
+                          type="text"
+                          icon={project.isFeatured ? <StarFilled /> : <StarOutlined />}
+                          onClick={() => handleToggleFeatured(project.id, project.isFeatured)}
+                          style={{ color: project.isFeatured ? "#f59e0b" : undefined }}
+                        />
+                      </Tooltip>,
+                      <Tooltip title="Sao chép link">
+                        <Button
+                          type="text"
+                          icon={<CopyOutlined />}
+                          onClick={() => {
+                            navigator.clipboard.writeText(`${window.location.origin}/projects/${project.id}`);
+                            api.success({ message: 'Đã sao chép link dự án' });
+                          }}
+                          style={{ color: '#10b981' }}
+                        />
+                      </Tooltip>,
+                    ]}
+                    style={{ 
+                      borderRadius: "16px",
+                      overflow: "hidden",
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      border: "1px solid #e5e7eb",
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+                      animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.15)';
+                      const overlay = e.currentTarget.querySelector('.project-overlay');
+                      if (overlay) overlay.style.opacity = '1';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)';
+                      const overlay = e.currentTarget.querySelector('.project-overlay');
+                      if (overlay) overlay.style.opacity = '0';
+                    }}
+                  >
+                    <Card.Meta
+                      title={
+                        <div>
+                          <Tooltip title={project.title}>
+                            <Title level={5} ellipsis={{ rows: 2 }} style={{ margin: 0, fontSize: '16px', fontWeight: '600' }}>
+                              {project.title}
+                            </Title>
+                          </Tooltip>
+                          {project.category && (
+                            <Tag color="blue" style={{ marginTop: '8px', borderRadius: '8px' }}>
+                              {project.category.name}
+                            </Tag>
+                          )}
+                        </div>
+                      }
+                      description={
+                        <div>
+                          {/* Description */}
+                          <Paragraph
+                            type="secondary"
+                            ellipsis={{ rows: 3, tooltip: project.description }}
+                            style={{ marginBottom: "16px", fontSize: '14px', lineHeight: '1.6' }}
+                          >
+                            {project.description || "Chưa có mô tả"}
+                          </Paragraph>
+
+                          {/* Tags */}
+                          <div style={{ marginBottom: "16px" }}>
+                            {project.tags?.slice(0, 3).map((tag, tagIndex) => (
+                              <Tag
+                                key={`${project.id}-tag-${tag.id || tagIndex}`}
+                                color="processing"
+                                style={{ 
+                                  marginBottom: "4px", 
+                                  fontSize: "11px",
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+                                  color: '#1e40af'
+                                }}
+                              >
+                                {tag.name}
+                              </Tag>
+                            ))}
+                            {project.tags?.length > 3 && (
+                              <Tag 
+                                color="default" 
+                                style={{ 
+                                  fontSize: "11px",
+                                  borderRadius: '6px'
+                                }}
+                              >
+                                +{project.tags.length - 3} khác
+                              </Tag>
+                            )}
+                          </div>
+
+                          {/* Action Links */}
+                          {(project.demoUrl || project.sourceUrl) && (
+                            <Space size="middle" style={{ marginBottom: "12px" }}>
+                              {project.demoUrl && (
+                                <Button
+                                  type="link"
+                                  size="small"
+                                  icon={<GlobalOutlined />}
+                                  href={project.demoUrl}
+                                  target="_blank"
+                                  style={{ 
+                                    padding: 0, 
+                                    fontSize: "12px",
+                                    color: '#10b981'
+                                  }}
+                                >
+                                  Demo
+                                </Button>
+                              )}
+                              {project.sourceUrl && (
+                                <Button
+                                  type="link"
+                                  size="small"
+                                  icon={<CodeOutlined />}
+                                  href={project.sourceUrl}
+                                  target="_blank"
+                                  style={{ 
+                                    padding: 0, 
+                                    fontSize: "12px",
+                                    color: '#6366f1'
+                                  }}
+                                >
+                                  Source
+                                </Button>
+                              )}
+                            </Space>
+                          )}
+
+                          {/* Metadata */}
+                          <div style={{ 
+                            paddingTop: '12px',
+                            borderTop: '1px solid #f1f5f9',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}>
+                            <Text type="secondary" style={{ fontSize: "11px" }}>
+                              <CalendarOutlined style={{ marginRight: '4px' }} />
+                              {new Date(project.updatedAt || project.createdAt).toLocaleDateString("vi-VN")}
+                            </Text>
+                            <Space size="small">
+                              {project.isFeatured && (
+                                <StarFilled style={{ color: '#f59e0b', fontSize: '12px' }} />
+                              )}
+                              <Text type="secondary" style={{ fontSize: "11px" }}>
+                                ID: {project.id}
+                              </Text>
+                            </Space>
+                          </div>
+                        </div>
+                      }
+                    />
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+
+            {/* Enhanced Pagination */}
+            {filteredProjects.length > state.itemsPerPage && (
+              <Card 
+                style={{ 
+                  borderRadius: '16px',
+                  textAlign: 'center',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%)'
+                }}
+                styles={{ body: { padding: '24px' } }}
+              >
+                <div style={{ marginBottom: '16px' }}>
+                  <Text type="secondary">
+                    Hiển thị {((state.currentPage - 1) * state.itemsPerPage) + 1} - {Math.min(state.currentPage * state.itemsPerPage, filteredProjects.length)} 
+                    {' '}trong tổng số {filteredProjects.length} dự án
+                  </Text>
+                </div>
+                <div>
+                  <Button.Group>
+                    <Button 
+                      disabled={state.currentPage === 1}
+                      onClick={() => setState(prev => ({ ...prev, currentPage: prev.currentPage - 1 }))}
+                      style={{ borderRadius: '8px 0 0 8px' }}
+                    >
+                      Trước
+                    </Button>
+                    {Array.from({ length: Math.ceil(filteredProjects.length / state.itemsPerPage) }, (_, i) => i + 1)
+                      .filter(page => 
+                        page === 1 || 
+                        page === Math.ceil(filteredProjects.length / state.itemsPerPage) ||
+                        Math.abs(page - state.currentPage) <= 1
+                      )
+                      .map((page, index, arr) => {
+                        if (index > 0 && arr[index - 1] !== page - 1) {
+                          return [
+                            <Button key={`ellipsis-${page}`} disabled style={{ border: 'none', background: 'transparent' }}>
+                              ...
+                            </Button>,
+                            <Button
+                              key={page}
+                              type={state.currentPage === page ? 'primary' : 'default'}
+                              onClick={() => setState(prev => ({ ...prev, currentPage: page }))}
+                              style={{
+                                background: state.currentPage === page ? 'linear-gradient(45deg, #6366f1, #8b5cf6)' : undefined,
+                                borderColor: state.currentPage === page ? 'transparent' : undefined
+                              }}
+                            >
+                              {page}
+                            </Button>
+                          ];
+                        }
+                        return (
+                          <Button
+                            key={page}
+                            type={state.currentPage === page ? 'primary' : 'default'}
+                            onClick={() => setState(prev => ({ ...prev, currentPage: page }))}
+                            style={{
+                              background: state.currentPage === page ? 'linear-gradient(45deg, #6366f1, #8b5cf6)' : undefined,
+                              borderColor: state.currentPage === page ? 'transparent' : undefined
+                            }}
+                          >
+                            {page}
+                          </Button>
+                        );
+                      })}
+                    <Button 
+                      disabled={state.currentPage === Math.ceil(filteredProjects.length / state.itemsPerPage)}
+                      onClick={() => setState(prev => ({ ...prev, currentPage: prev.currentPage + 1 }))}
+                      style={{ borderRadius: '0 8px 8px 0' }}
+                    >
+                      Sau
+                    </Button>
+                  </Button.Group>
+                </div>
+              </Card>
+            )}
+          </div>
+        )}
+
+        {/* Enhanced Modals */}
+        <ProjectDetailModal
+          project={modals.detail.project}
+          isOpen={modals.detail.isOpen}
+          onClose={closeDetailModal}
+          onEdit={(project) => {
+            closeDetailModal();
+            openFormModal(true, project);
+          }}
+          formatDate={formatDate}
+        />
+
+        <ProjectFormModal
+          isOpen={modals.form.isOpen}
+          isEdit={modals.form.isEdit}
+          project={modals.form.project}
+          onClose={closeFormModal}
+          onSubmit={handleFormSubmit}
+          categories={state.categories}
+          tags={state.tags}
+          onCreateTag={handleCreateTag}
+        />
+      </div>
+    </ConfigProvider>
   );
 }
 

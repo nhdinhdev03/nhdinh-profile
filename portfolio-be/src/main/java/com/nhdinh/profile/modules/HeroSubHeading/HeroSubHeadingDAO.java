@@ -12,6 +12,12 @@ import org.springframework.stereotype.Repository;
 public interface HeroSubHeadingDAO extends JpaRepository<HeroSubHeading, UUID> {
     
     /**
+     * Tìm tất cả SubHeading và sắp xếp theo SortOrder
+     */
+    @Query("SELECT hs FROM HeroSubHeading hs ORDER BY hs.hero.heroId, hs.sortOrder ASC")
+    List<HeroSubHeading> findAllByOrderBySortOrder();
+    
+    /**
      * Tìm tất cả SubHeading theo HeroId và sắp xếp theo SortOrder
      */
     @Query("SELECT hs FROM HeroSubHeading hs WHERE hs.hero.heroId = :heroId ORDER BY hs.sortOrder ASC")

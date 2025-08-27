@@ -23,6 +23,7 @@ import {
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { ROUTES } from "router/routeConstants";
+import { useNavigationLoading } from "hooks/usePageLoading";
 import img from "assets/Img";
 import { Link } from "react-router-dom";
 import "./Sidebar.scss";
@@ -191,6 +192,8 @@ const SidebarContent = memo(({
   currentPath,
   handleNavigation,
 }) => {
+  const { isLoading, startLoading, stopLoading } = useNavigationLoading();
+  
   // Get selected keys for current path
   const selectedKeys = useMemo(() => [currentPath], [currentPath]);
   
@@ -205,10 +208,17 @@ const SidebarContent = memo(({
     return openKeys;
   }, [currentPath]);
 
-  // Handle menu click with improved navigation
+  // Handle menu click with improved navigation and loading state
   const handleMenuClick = useCallback((e) => {
-    handleNavigation(e.key);
-  }, [handleNavigation]);
+    if (e.key !== currentPath) {
+      startLoading(e.key);
+      handleNavigation(e.key);
+      // Clear loading after navigation
+      setTimeout(() => {
+        stopLoading();
+      }, 300);
+    }
+  }, [handleNavigation, currentPath, startLoading, stopLoading]);
 
   return (
     <div className="admin-sidebar-container">
@@ -229,7 +239,14 @@ const SidebarContent = memo(({
             selectedKeys={selectedKeys}
             defaultOpenKeys={defaultOpenKeys}
             onClick={handleMenuClick}
-            items={NAVIGATION_ITEMS}
+            items={NAVIGATION_ITEMS.map(item => ({
+              ...item,
+              className: isLoading(item.key) ? 'menu-item-loading' : '',
+              children: item.children?.map(child => ({
+                ...child,
+                className: isLoading(child.key) ? 'menu-item-loading' : '',
+              }))
+            }))}
             className="admin-sidebar-menu"
             inlineIndent={20}
             expandIcon={({ isOpen }) => (

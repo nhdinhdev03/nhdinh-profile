@@ -6,6 +6,8 @@ import { ToastContainer } from 'react-toastify';
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import AdminBreadcrumb from "./Breadcrumb";
+import Loading from "components/loading/loading";
+import { usePageLoading } from "hooks/usePageLoading";
 import { AdminThemeProvider } from "theme";
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -15,6 +17,9 @@ function AdminLayout({ children, usePageHeader = false }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  
+  // Use custom hook for page loading
+  const isLoading = usePageLoading(300);
 
   return (
     <AdminThemeProvider>
@@ -47,7 +52,15 @@ function AdminLayout({ children, usePageHeader = false }) {
             <main className={`admin-page-content ${usePageHeader ? "with-page-header" : ""}`}>
               <div className="admin-content-container">
                 <div className="admin-content-wrapper">
-                  {children}
+                  {isLoading ? (
+                    <Loading 
+                      text="Đang tải trang..." 
+                      size="medium"
+                      overlay={false}
+                    />
+                  ) : (
+                    children
+                  )}
                 </div>
               </div>
             </main>

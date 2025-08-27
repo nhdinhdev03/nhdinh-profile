@@ -490,6 +490,51 @@
             background-color: #3b82f6;
             color: white;
           }
+          
+          // Loading state for menu items
+          &.menu-item-loading {
+            position: relative;
+            
+            &::after {
+              content: '';
+              position: absolute;
+              right: 12px;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 16px;
+              height: 16px;
+              border: 2px solid rgba(255, 255, 255, 0.3);
+              border-radius: 50%;
+              border-top-color: #60a5fa;
+              animation: menu-loading-spin 1s ease-in-out infinite;
+            }
+          }
+        }
+      }
+      
+      // Loading animation for menu items
+      @keyframes menu-loading-spin {
+        to {
+          transform: translateY(-50%) rotate(360deg);
+        }
+      }
+      
+      // Loading state for main menu items  
+      .ant-menu-item.menu-item-loading {
+        position: relative;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 16px;
+          height: 16px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+          border-top-color: #60a5fa;
+          animation: menu-loading-spin 1s ease-in-out infinite;
         }
       }
     }

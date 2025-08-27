@@ -28,6 +28,16 @@ import "./Projects.scss";
 const FALLBACK_IMAGE =
   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6cmdiKDI0MiwyNDUsMjQ3KTtzdG9wLW9wYWNpdHk6MSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOnJnYigyMjksMjMxLDIzNSk7c3RvcC1vcGFjaXR5OjEiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjZ3JhZCkiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIxMDAiIHI9IjI0IiBmaWxsPSIjOWNhM2FmIi8+PC9zdmc+";
 
+// ================== Chuẩn hóa dữ liệu từ BE -> FE (projectId/categoryId/tagId => id) ==================
+const normalizeTag = (t) => ({ ...t, id: t.id || t.tagId });
+const normalizeCategory = (c) => ({ ...c, id: c.id || c.categoryId });
+const normalizeProject = (p) => ({
+  ...p,
+  id: p.id || p.projectId,
+  category: p.category ? normalizeCategory(p.category) : null,
+  tags: Array.isArray(p.tags) ? p.tags.map(normalizeTag) : []
+});
+
 // Component Multi-Select cho Tags - Memoized for performance
 const TagsMultiSelect = React.memo(
   ({
@@ -1323,10 +1333,13 @@ function ProjectsManagement() {
         });
 
         if (response && response.data) {
-          const newTag = response.data;
+          const newTag = normalizeTag(response.data);
 
-          // Thêm vào danh sách tags hiện tại
-          setTags((prevTags) => [...prevTags, newTag]);
+          // Thêm vào danh sách tags hiện tại (đảm bảo không duplicate theo id)
+          setTags((prevTags) => {
+            if (prevTags.some(t => t.id === newTag.id)) return prevTags;
+            return [...prevTags, newTag];
+          });
 
           // Log success
           console.log("✅ New tag created successfully:", newTag);
@@ -1349,14 +1362,16 @@ function ProjectsManagement() {
         }
 
         // Fallback: tạo tag tạm thời nếu API fail
-        const fallbackTag = {
-          id: `temp-${Date.now()}`,
+        const tempId = `temp-${Date.now()}`;
+        const fallbackTag = normalizeTag({
+          id: tempId,
+          tagId: tempId,
           name: tagName.trim(),
           description: `Công nghệ: ${tagName.trim()}`,
           isActive: true,
           createdAt: new Date().toISOString(),
-          isTemporary: true, // Flag để biết đây là tag tạm thời
-        };
+          isTemporary: true,
+        });
 
         // Thêm vào danh sách với warning
         setTags((prevTags) => [...prevTags, fallbackTag]);
@@ -1386,7 +1401,7 @@ function ProjectsManagement() {
       // Handle projects data
       if (projectsRes.status === "fulfilled") {
         const projectsData = Array.isArray(projectsRes.value.data)
-          ? projectsRes.value.data
+          ? projectsRes.value.data.map(normalizeProject)
           : [];
         setProjects(projectsData);
         console.log("✅ Projects loaded:", projectsData.length);
@@ -1398,7 +1413,7 @@ function ProjectsManagement() {
       // Handle categories data
       if (categoriesRes.status === "fulfilled") {
         const categoriesData = Array.isArray(categoriesRes.value.data)
-          ? categoriesRes.value.data
+          ? categoriesRes.value.data.map(normalizeCategory)
           : [];
         setCategories(categoriesData);
         console.log("✅ Categories loaded:", categoriesData.length);
@@ -1410,7 +1425,7 @@ function ProjectsManagement() {
       // Handle tags data
       if (tagsRes.status === "fulfilled") {
         const tagsData = Array.isArray(tagsRes.value.data)
-          ? tagsRes.value.data
+          ? tagsRes.value.data.map(normalizeTag)
           : [];
         setTags(tagsData);
         console.log("✅ Tags loaded:", tagsData.length);
@@ -1526,12 +1541,18 @@ function ProjectsManagement() {
         const tagNames = selectedTags.map((tag) => tag.name);
 
         const submitData = {
-          ...formData,
           title: formData.title.trim(),
-          description: formData.description.trim(),
-          tagNames: tagNames, // Backend expects tagNames
-          tagIds: undefined, // Remove tagIds from request
-        };
+            description: formData.description.trim(),
+            imageUrl: formData.imageUrl || undefined,
+            demoUrl: formData.demoUrl || undefined,
+            sourceUrl: formData.sourceUrl || undefined,
+            categoryId: formData.categoryId, // đã chọn từ select (UUID dạng categoryId)
+            tagNames,
+            isFeatured: formData.isFeatured,
+            status: formData.status,
+            isPublic: formData.isPublic,
+            sortOrder: formData.sortOrder,
+        }; // Không gửi tagIds
 
         if (editingProject) {
           // Optimistic update for edit

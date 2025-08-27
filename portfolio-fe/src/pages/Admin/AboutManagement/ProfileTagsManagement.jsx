@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography, Divider } from "antd";
+import { HashtagIcon } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../components/Admin';
 
 const { Title } = Typography;
 
@@ -14,13 +16,12 @@ const ProfileTagsManagement = () => {
   }, []);
 
   return (
-    <div className="profile-tags-management">
-      <div className="page-header">
-        <Title level={2}>Quản lý Profile Tags</Title>
-        <p>Quản lý các nhãn mô tả hồ sơ</p>
-      </div>
-      
-      <Divider />
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Profile Tags"
+        subtitle="Quản lý các nhãn mô tả hồ sơ"
+        icon={HashtagIcon}
+      />
 
       <Card loading={loading}>
         <Title level={4}>Profile Tags</Title>

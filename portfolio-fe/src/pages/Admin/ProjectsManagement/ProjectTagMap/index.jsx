@@ -1,20 +1,18 @@
 import React from "react";
 import { Card, Typography, Divider, Alert } from "antd";
+import { LinkIcon } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../../components/Admin';
 
 const { Title, Paragraph } = Typography;
 
 const ProjectTagMapManagement = () => {
   return (
-    <div className="project-tag-map-management">
-      <div className="page-header">
-        <Title level={2}>🎯 Quản lý Mapping Project-Tag</Title>
-        <Paragraph>
-          Quản lý liên kết giữa dự án và các tag công nghệ. Sidebar đã được tối ưu hóa 
-          để giữ trạng thái khi reload trang.
-        </Paragraph>
-      </div>
-      
-      <Divider />
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Mapping Project-Tag"
+        subtitle="Quản lý liên kết giữa dự án và các tag công nghệ"
+        icon={LinkIcon}
+      />
 
       <Alert
         message="✅ Sidebar State Persistence Active"

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography, Divider } from "antd";
+import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../components/Admin';
 
 const { Title } = Typography;
 
@@ -14,13 +16,12 @@ const AdminUsersManagement = () => {
   }, []);
 
   return (
-    <div className="admin-users-management">
-      <div className="page-header">
-        <Title level={2}>Quản lý Tài khoản Admin</Title>
-        <p>Quản lý tài khoản quản trị viên hệ thống</p>
-      </div>
-      
-      <Divider />
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Tài khoản Admin"
+        subtitle="Quản lý tài khoản quản trị viên hệ thống"
+        icon={ShieldCheckIcon}
+      />
 
       <Card loading={loading}>
         <Title level={4}>Admin Users</Title>

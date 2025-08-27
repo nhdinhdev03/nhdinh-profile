@@ -30,7 +30,8 @@ import {
   StarOutlined,
   StarFilled,
   UploadOutlined,
-  MailOutlined
+  MailOutlined,
+  BookOutlined
 } from '@ant-design/icons';
 import { PageHeader } from 'components/Admin';
 import dayjs from 'dayjs';
@@ -306,8 +307,23 @@ const BlogManagement = () => {
   ];
 
   return (
-    <div>
-    
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Blog"
+        subtitle="Tạo và quản lý các bài viết blog"
+        icon={BookOutlined}
+        actions={
+          <div className="flex items-center space-x-3">
+            <Button 
+              type="primary" 
+              icon={<PlusOutlined />}
+              onClick={() => handleOpenModal()}
+            >
+              Tạo bài viết mới
+            </Button>
+          </div>
+        }
+      />
 
       <Card>
         {/* Filters */}
@@ -321,7 +337,7 @@ const BlogManagement = () => {
               allowClear
             />
           </Col>
-          <Col span={4}>
+          <Col span={8}>
             <Select
               style={{ width: '100%' }}
               placeholder="Trạng thái"
@@ -335,7 +351,7 @@ const BlogManagement = () => {
               <Option value="archived">Lưu trữ</Option>
             </Select>
           </Col>
-          <Col span={4}>
+          <Col span={8}>
             <Select
               style={{ width: '100%' }}
               placeholder="Danh mục"
@@ -348,15 +364,6 @@ const BlogManagement = () => {
               <Option value="Backend">Backend</Option>
               <Option value="Performance">Performance</Option>
             </Select>
-          </Col>
-          <Col span={8} style={{ textAlign: 'right' }}>
-            <Button 
-              type="primary" 
-              icon={<PlusOutlined />}
-              onClick={() => handleOpenModal()}
-            >
-              Tạo bài viết mới
-            </Button>
           </Col>
         </Row>
 

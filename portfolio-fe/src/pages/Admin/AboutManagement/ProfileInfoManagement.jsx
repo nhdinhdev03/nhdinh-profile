@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography, Divider } from "antd";
+import { UserIcon } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../components/Admin';
 
 const { Title } = Typography;
 
@@ -14,13 +16,12 @@ const ProfileInfoManagement = () => {
   }, []);
 
   return (
-    <div className="profile-info-management">
-      <div className="page-header">
-        <Title level={2}>Quản lý Thông tin Hồ sơ</Title>
-        <p>Quản lý thông tin cá nhân chi tiết</p>
-      </div>
-      
-      <Divider />
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Thông tin Hồ sơ"
+        subtitle="Quản lý thông tin cá nhân chi tiết"
+        icon={UserIcon}
+      />
 
       <Card loading={loading}>
         <Title level={4}>Profile Information</Title>

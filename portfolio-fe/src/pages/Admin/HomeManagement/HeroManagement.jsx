@@ -28,7 +28,9 @@ import {
   SaveOutlined,
   UpOutlined,
   DownOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
+import { PageHeader } from '../../../components/Admin';
 
 import heroSubHeadingApi from "api/admin/home/HeroSubHeadingApi";
 import heroApi from "api/admin/home/HeroApi";
@@ -511,7 +513,7 @@ const HeroManagement = () => {
   ];
 
   return (
-    <div style={{ padding: '16px 24px' }}>
+    <div className="space-y-6">
       {/* Error Alert */}
       {error && (
         <Alert
@@ -524,17 +526,15 @@ const HeroManagement = () => {
         />
       )}
 
-      {/* Header */}
-      <Card style={{ marginBottom: '24px' }}>
+      <PageHeader
+        title="Quản lý Trang chủ"
+        subtitle="Quản lý nội dung và layout của trang chủ"
+        icon={HomeOutlined}
+        actions={
+          <div className="flex items-center space-x-3">
+              {/* Header Actions */}
+   
         <Row justify="space-between" align="middle">
-          <Col>
-            <Title level={2} style={{ margin: 0 }}>
-              Quản lý Trang chủ
-            </Title>
-            <Text type="secondary">
-              Quản lý nội dung và layout của trang chủ
-            </Text>
-          </Col>
           <Col>
             <Space>
               <Button
@@ -553,7 +553,12 @@ const HeroManagement = () => {
             </Space>
           </Col>
         </Row>
-      </Card>
+   
+          </div>
+        }
+      />
+
+   
 
       {/* Heroes Management */}
       <Card 

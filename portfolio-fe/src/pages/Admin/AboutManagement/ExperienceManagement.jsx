@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography, Divider } from "antd";
+import { BriefcaseIcon } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../components/Admin';
 
 const { Title } = Typography;
 
@@ -14,13 +16,12 @@ const ExperienceManagement = () => {
   }, []);
 
   return (
-    <div className="experience-management">
-      <div className="page-header">
-        <Title level={2}>Quản lý Kinh nghiệm</Title>
-        <p>Quản lý lịch sử làm việc và kinh nghiệm</p>
-      </div>
-      
-      <Divider />
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Kinh nghiệm"
+        subtitle="Quản lý lịch sử làm việc và kinh nghiệm"
+        icon={BriefcaseIcon}
+      />
 
       <Card loading={loading}>
         <Title level={4}>Work Experience</Title>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography, Divider } from "antd";
+import { Squares2X2Icon } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../components/Admin';
 
 const { Title } = Typography;
 
@@ -14,13 +16,12 @@ const SkillCategoriesManagement = () => {
   }, []);
 
   return (
-    <div className="skill-categories-management">
-      <div className="page-header">
-        <Title level={2}>Quản lý Danh mục Kỹ năng</Title>
-        <p>Quản lý phân loại kỹ năng</p>
-      </div>
-      
-      <Divider />
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Danh mục Kỹ năng"
+        subtitle="Quản lý phân loại kỹ năng"
+        icon={Squares2X2Icon}
+      />
 
       <Card loading={loading}>
         <Title level={4}>Skill Categories</Title>

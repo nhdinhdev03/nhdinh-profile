@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography, Divider } from "antd";
+import { LinkIcon } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../../components/Admin';
 
 const { Title } = Typography;
 
@@ -14,13 +16,12 @@ const BlogTagMapManagement = () => {
   }, []);
 
   return (
-    <div className="blog-tag-map-management">
-      <div className="page-header">
-        <Title level={2}>Quản lý Mapping Blog-Tag</Title>
-        <p>Quản lý liên kết giữa bài viết và các tag</p>
-      </div>
-      
-      <Divider />
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Mapping Blog-Tag"
+        subtitle="Quản lý liên kết giữa bài viết và các tag"
+        icon={LinkIcon}
+      />
 
       <Card loading={loading}>
         <Title level={4}>Blog-Tag Mappings</Title>

@@ -37,6 +37,8 @@ import {
   FolderOutlined,
   LinkOutlined,
 } from "@ant-design/icons";
+import { FolderIcon } from '@heroicons/react/24/outline';
+import { PageHeader } from '../../../../components/Admin';
 
 import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from "api/admin";
 
@@ -1217,14 +1219,30 @@ function ProjectsManagement() {
   }, []);
 
   return (
-    <div className="projects-management">
+    <div className="space-y-6">
       {contextHolder}
-     
+      
+      <PageHeader
+        title="Quản lý Dự án"
+        subtitle="Quản lý tất cả các dự án và portfolio"
+        icon={FolderIcon}
+        actions={
+          <div className="flex items-center space-x-3">
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => openFormModal(false)}
+            >
+              Thêm dự án mới
+            </Button>
+          </div>
+        }
+      />
 
       {/* Filters and Actions */}
       <Card style={{ marginBottom: "24px" }}>
         <Row gutter={16} align="middle">
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={10}>
             <Input
               placeholder="Tìm kiếm dự án..."
               value={state.searchTerm}
@@ -1233,7 +1251,7 @@ function ProjectsManagement() {
               allowClear
             />
           </Col>
-          <Col xs={24} sm={6} md={4}>
+          <Col xs={24} sm={6} md={7}>
             <Select
               placeholder="Danh mục"
               value={state.selectedCategory}
@@ -1248,7 +1266,7 @@ function ProjectsManagement() {
               ))}
             </Select>
           </Col>
-          <Col xs={24} sm={6} md={4}>
+          <Col xs={24} sm={6} md={7}>
             <Select
               placeholder="Trạng thái"
               value={state.selectedStatus}
@@ -1260,15 +1278,6 @@ function ProjectsManagement() {
               <Option value="draft">Bản nháp</Option>
               <Option value="archived">Đã lưu trữ</Option>
             </Select>
-          </Col>
-          <Col xs={24} sm={24} md={8} style={{ textAlign: "right" }}>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => openFormModal(false)}
-            >
-              Thêm dự án mới
-            </Button>
           </Col>
         </Row>
       </Card>

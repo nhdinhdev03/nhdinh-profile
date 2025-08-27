@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography, Divider } from "antd";
+import { ChatBubbleBottomCenterTextIcon } from '@heroicons/react/24/outline';
+import { PageHeader } from "components/Admin";
+
 
 const { Title } = Typography;
 
@@ -14,13 +17,12 @@ const HeroSubHeadingManagement = () => {
   }, []);
 
   return (
-    <div className="hero-subheading-management">
-      <div className="page-header">
-        <Title level={2}>Quản lý Hero SubHeading</Title>
-        <p>Quản lý các dòng mô tả vai trò nghề nghiệp</p>
-      </div>
-      
-      <Divider />
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Hero SubHeading"
+        subtitle="Quản lý các dòng mô tả vai trò nghề nghiệp"
+        icon={ChatBubbleBottomCenterTextIcon}
+      />
 
       <Card loading={loading}>
         <Title level={4}>Hero SubHeading Settings</Title>

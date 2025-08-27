@@ -32,6 +32,7 @@ import {
   SearchOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
+import { PageHeader } from '../../../components/Admin';
 import contactMessageApi from "api/admin/contact/ContactMessageApi";
 import { showNotification } from "components";
 import { formatDate } from "utils/dateUtils";
@@ -590,15 +591,23 @@ const ContactManagement = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      {/* Page Header */}
-      <div style={{ marginBottom: '24px' }}>
-        <Space align="center" style={{ marginBottom: '8px' }}>
-          <MailOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
-          <Title level={2} style={{ margin: 0 }}>Quản lý Liên hệ</Title>
-        </Space>
-        <Text type="secondary">Quản lý tin nhắn và phản hồi từ khách hàng</Text>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Quản lý Liên hệ"
+        subtitle="Quản lý tin nhắn và phản hồi từ khách hàng"
+        icon={MailOutlined}
+        actions={
+          <div className="flex items-center space-x-3">
+            <Button
+              icon={<ReloadOutlined />}
+              onClick={fetchContacts}
+              loading={loading}
+            >
+              Làm mới
+            </Button>
+          </div>
+        }
+      />
 
       {/* Statistics Cards */}
       <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>

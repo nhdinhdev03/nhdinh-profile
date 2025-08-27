@@ -3,66 +3,47 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
-  Suspense,
 } from "react";
 import {
-  Modal,
-  Form,
-  Input,
-  Select,
+  Badge,
   Button,
   Card,
-  Tag,
-  Space,
-  Row,
   Col,
-  Image,
-  Typography,
   Divider,
-  Switch,
+  Empty,
+  Form,
+  Image,
+  Input,
+  Modal,
   notification,
   Popconfirm,
-  Tooltip,
-  Badge,
-  Empty,
+  Row,
+  Select,
+  Space,
   Spin,
-  Pagination,
-  Skeleton,
-  Result,
-  Flex,
-  Statistic,
-  Progress,
-  ConfigProvider,
-  theme,
+  Switch,
+  Tag,
+  Tooltip,
+  Typography,
 } from "antd";
 import {
-  PlusOutlined,
-  EditOutlined,
   DeleteOutlined,
-  EyeOutlined,
-  SearchOutlined,
-  StarOutlined,
-  StarFilled,
+  EditOutlined,
+  ExclamationCircleOutlined,
   FolderOutlined,
   LinkOutlined,
-  FilterOutlined,
-  ReloadOutlined,
-  AppstoreOutlined,
-  UnorderedListOutlined,
-  DownloadOutlined,
-  ShareAltOutlined,
-  HeartOutlined,
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-  StopOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  StarFilled,
+  StarOutlined,
 } from "@ant-design/icons";
 import { FolderIcon } from '@heroicons/react/24/outline';
-import { PageHeader } from '../../../../components/Admin';
+
 
 import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from "api/admin";
 
 import "./Projects.scss";
+import { PageHeader } from "components/Admin";
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -70,52 +51,6 @@ const { Option } = Select;
 // Enhanced fallback image with modern gradient design
 const FALLBACK_IMAGE =
   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDQwMCAyNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZ0dyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM2MzY2ZjE7c3RvcC1vcGFjaXR5OjAuMSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4YjVjZjY7c3RvcC1vcGFjaXR5OjAuMTUiIC8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9Imljb25HcmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNjM2NmYxO3N0b3Atb3BhY2l0eTowLjYiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojOGI1Y2Y2O3N0b3Atb3BhY2l0eTowLjgiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyNDAiIGZpbGw9InVybCgjYmdHcmFkKSIvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjEyMCIgcj0iNDAiIGZpbGw9InVybCgjaWNvbkdyYWQpIi8+PHBhdGggZD0iTTE4MCA5MGgyMHYxMGgtMjB6bTAgMjBoMjB2MTBoLTIwem0wIDIwaDE1djEwaC0xNXoiIGZpbGw9InVybCgjaWNvbkdyYWQpIi8+PC9zdmc+";
-
-// Enhanced status configurations
-const PROJECT_STATUS_CONFIG = {
-  published: {
-    color: 'success',
-    text: 'Đã xuất bản',
-    icon: CheckCircleOutlined,
-    badge: 'success',
-  },
-  draft: {
-    color: 'warning', 
-    text: 'Bản nháp',
-    icon: ClockCircleOutlined,
-    badge: 'warning',
-  },
-  archived: {
-    color: 'default',
-    text: 'Đã lưu trữ', 
-    icon: StopOutlined,
-    badge: 'default',
-  },
-};
-
-// Enhanced theme configuration
-const ENHANCED_THEME = {
-  token: {
-    colorPrimary: '#6366f1',
-    colorSuccess: '#10b981',
-    colorWarning: '#f59e0b',
-    colorError: '#ef4444',
-    borderRadius: 8,
-    fontSize: 14,
-  },
-  components: {
-    Card: {
-      borderRadius: 12,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-    },
-    Button: {
-      borderRadius: 8,
-    },
-    Modal: {
-      borderRadius: 16,
-    },
-  },
-};
 
 // ================== Chuẩn hóa dữ liệu từ BE -> FE (projectId/categoryId/tagId => id) ==================
 const normalizeTag = (t) => ({ ...t, id: t.id || t.tagId });
@@ -146,7 +81,7 @@ const TagsMultiSelect = React.memo(
       const isNotDuplicate = !availableTags.some(
         (tag) => tag.name.toLowerCase() === trimmedValue.toLowerCase()
       );
-      const hasValidCharacters = /^[a-zA-Z0-9\s\-\.\+\#]+$/.test(trimmedValue);
+      const hasValidCharacters = /^[a-zA-Z0-9\s\-.+#]+$/.test(trimmedValue);
       
       return isValidLength && isNotDuplicate && hasValidCharacters;
     }, [inputValue, availableTags]);
@@ -248,7 +183,7 @@ const TagsMultiSelect = React.memo(
                     ? "Tên công nghệ phải có ít nhất 2 ký tự"
                     : inputValue.trim().length > 50
                     ? "Tên công nghệ không được quá 50 ký tự"
-                    : !/^[a-zA-Z0-9\s\-\.\+\#]+$/.test(inputValue.trim())
+                    : !/^[a-zA-Z0-9\s\-.+#]+$/.test(inputValue.trim())
                     ? "Chỉ được sử dụng chữ, số và các ký tự đặc biệt: - . + #"
                     : "Công nghệ này đã tồn tại"
                   }
@@ -1306,16 +1241,6 @@ function ProjectsManagement() {
       currentPage: 1,
     }));
   }, []);
-
-  // Memoized statistics
-  const projectStats = useMemo(() => {
-    const total = state.projects.length;
-    const published = state.projects.filter(p => p.status === 'published').length;
-    const draft = state.projects.filter(p => p.status === 'draft').length;
-    const featured = state.projects.filter(p => p.isFeatured).length;
-    
-    return { total, published, draft, featured };
-  }, [state.projects]);
 
   // Format date helper
   const formatDate = useCallback((dateString) => {

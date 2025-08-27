@@ -30,7 +30,6 @@ import {
   StarOutlined,
   StarFilled,
   UploadOutlined,
-  MailOutlined,
   BookOutlined
 } from '@ant-design/icons';
 import { PageHeader } from 'components/Admin';

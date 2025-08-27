@@ -14,7 +14,6 @@ import { AdminCard, PageHeader, Textarea } from 'components/Admin';
 
 const Settings = () => {
   const { addToast } = useToast();
-  const [showResetModal, setShowResetModal] = useState(false);
   const [settings, setSettings] = useState({
     siteName: 'Portfolio Admin',
     siteDescription: 'Quản lý portfolio cá nhân',
@@ -80,28 +79,6 @@ const Settings = () => {
         message: 'Cài đặt đã được lưu thành công!'
       });
     }, 1000);
-  };
-
-  const handleReset = () => {
-    setSettings({
-      siteName: 'Portfolio Admin',
-      siteDescription: 'Quản lý portfolio cá nhân',
-      adminEmail: 'admin@nhdinh.com',
-      timezone: 'Asia/Ho_Chi_Minh',
-      language: 'vi',
-      theme: 'light',
-      notificationsEnabled: true,
-      emailNotifications: true,
-      twoFactorAuth: false,
-      backupFrequency: 'daily',
-      maintenanceMode: false
-    });
-    setShowResetModal(false);
-    addToast({
-      type: 'success',
-      title: 'Đã reset',
-      message: 'Tất cả cài đặt đã được khôi phục về mặc định'
-    });
   };
 
   const renderGeneralSettings = () => (
@@ -359,12 +336,6 @@ const Settings = () => {
         icon={CogIcon}
         actions={
           <div className="flex space-x-3">
-            <Button
-              variant="secondary"
-              onClick={() => setShowResetModal(true)}
-            >
-              Khôi phục mặc định
-            </Button>
             <Button
               variant="primary"
               onClick={handleSave}

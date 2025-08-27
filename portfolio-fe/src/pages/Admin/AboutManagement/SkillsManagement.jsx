@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Typography, Divider } from "antd";
+import { Card, Typography } from "antd";
 import { AcademicCapIcon } from '@heroicons/react/24/outline';
 import { PageHeader } from '../../../components/Admin';
 

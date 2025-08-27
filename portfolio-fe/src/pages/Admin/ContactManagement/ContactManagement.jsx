@@ -39,7 +39,7 @@ import { formatDate } from "utils/dateUtils";
 import "./contact-management.scss";
 
 const { Search } = Input;
-const { Text, Title, Paragraph } = Typography;
+const { Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
 // Modal Component chi tiết liên hệ sử dụng Ant Design

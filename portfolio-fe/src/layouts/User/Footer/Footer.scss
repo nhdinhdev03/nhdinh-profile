@@ -47,10 +47,8 @@
 	position: relative;
 	margin-top: 5rem;
 	color: var(--ft-text);
-	background:
-		radial-gradient(1200px 400px at 8% -10%, var(--ft-grad-primary), transparent 60%),
-		radial-gradient(900px 350px at 92% 0%, var(--ft-grad-secondary), transparent 55%),
-		var(--ft-surface-bg);
+	background: rgba(5, 5, 5, 0.9);
+
 	overflow: hidden;
 
 	.footer__bg {

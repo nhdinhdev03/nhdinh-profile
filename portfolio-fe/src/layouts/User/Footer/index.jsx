@@ -4,6 +4,7 @@ import facebookIcon from "../../../assets/icon/f-facebook.svg";
 import linkedinIcon from "../../../assets/icon/f-linkedIn.svg";
 import youtubeIcon from "../../../assets/icon/f-youtube.svg";
 import { useUserTheme } from "../../../theme";
+import { ROUTES } from "../../../router/routeConstants";
 
 function Footer() {
   const currentYear = new Date().getFullYear();
@@ -86,10 +87,10 @@ function Footer() {
             <nav className="footer__nav" aria-label="Khám phá" data-col>
               <h3 className="footer__heading">Khám phá</h3>
               <ul className="footer__list">
-                <li><Link to="/#about">Giới thiệu</Link></li>
-                <li><Link to="/#skills">Kỹ năng</Link></li>
-                <li><Link to="/#projects">Dự án</Link></li>
-                <li><Link to="/#contact">Liên hệ</Link></li>
+                <li><Link to={ROUTES.ABOUT}>Giới thiệu</Link></li>
+                <li><Link to={ROUTES.SKILLS}>Kỹ năng</Link></li>
+                <li><Link to={ROUTES.PROJECTS}>Dự án</Link></li>
+                <li><Link to={ROUTES.CONTACT}>Liên hệ</Link></li>
               </ul>
             </nav>
 
@@ -103,8 +104,8 @@ function Footer() {
                 <li>
                   <a href="https://dribbble.com/" target="_blank" rel="noopener noreferrer">Behance/Dribbble</a>
                 </li>
-                <li><Link to="/#faq">FAQ</Link></li>
-                <li><Link to="/#blog">Blog</Link></li>
+                <li><Link to={ROUTES.BLOG}>Blog</Link></li>
+                <li><Link to={ROUTES.CONTACT}>Hỗ trợ</Link></li>
               </ul>
             </nav>
 
@@ -158,10 +159,10 @@ function Footer() {
             <p className="copyright">© {yearText} nhdinh. Crafted with passion.</p>
             <ul className="policies">
               <li>
-                <Link to="/privacy" className="policy__link">Chính sách bảo mật</Link>
+                <Link to={ROUTES.PRIVACY} className="policy__link">Chính sách bảo mật</Link>
               </li>
               <li>
-                <Link to="/terms" className="policy__link">Điều khoản</Link>
+                <Link to={ROUTES.TERMS} className="policy__link">Điều khoản</Link>
               </li>
             </ul>
           </div>

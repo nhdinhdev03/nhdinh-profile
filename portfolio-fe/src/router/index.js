@@ -15,7 +15,9 @@ export const publicRoutes = [
   { path: ROUTES.BLOG, component: PageUser.Blog, layout: UserLayout },
   { path: ROUTES.CONTACT, component: PageUser.Contact, layout: UserLayout },
   { path: ROUTES.PROJECTS, component: PageUser.Projects, layout: UserLayout },
-
+  { path: ROUTES.SKILLS, component: PageUser.Skills, layout: UserLayout },
+  { path: ROUTES.PRIVACY, component: PageUser.Privacy, layout: UserLayout },
+  { path: ROUTES.TERMS, component: PageUser.Terms, layout: UserLayout },
 
 ];
 

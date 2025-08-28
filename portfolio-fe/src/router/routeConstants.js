@@ -11,6 +11,10 @@ export const ROUTES = {
   BLOG: `/${API_VERSION}/blog`,
   CONTACT: `/${API_VERSION}/contact`,
   PROJECTS: `/${API_VERSION}/projects`,
+  //
+  SKILLS: `/${API_VERSION}/skills`,
+  PRIVACY: `/${API_VERSION}/privacy`,
+  TERMS: `/${API_VERSION}/terms`,
   
   ADMIN: {
     // Dashboard

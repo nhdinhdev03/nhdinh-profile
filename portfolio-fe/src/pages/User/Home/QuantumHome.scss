@@ -1153,41 +1153,6 @@
   50% { opacity: 0.9; }
 }
 
-/* ============= EFFECTS TOGGLE BUTTON ============= */
-.effects-toggle {
-  position: fixed;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  z-index: 1000;
-  
-  .toggle-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: var(--glass-1);
-    border: 1px solid rgba(0, 245, 255, 0.3);
-    color: var(--neon-blue);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(10px);
-    
-    &:hover {
-      background: var(--glass-2);
-      border-color: var(--neon-blue);
-      box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
-      transform: scale(1.1);
-    }
-    
-    i {
-      font-size: 18px;
-    }
-  }
-}
-
 /* ============= KEYBOARD HINTS ============= */
 .keyboard-hints {
   position: fixed;
@@ -1343,15 +1308,6 @@
     gap: 2rem;
   }
   
-  .effects-toggle {
-    right: 15px;
-    
-    .toggle-btn {
-      width: 45px;
-      height: 45px;
-    }
-  }
-  
   .keyboard-hints {
     display: none; /* Hide on tablet for cleaner look */
   }
@@ -1475,20 +1431,6 @@
     p {
       font-size: 1rem;
       margin-bottom: 2rem;
-    }
-  }
-  
-  .effects-toggle {
-    right: 15px;
-    top: 45%;
-    
-    .toggle-btn {
-      width: 45px;
-      height: 45px;
-      
-      i {
-        font-size: 16px;
-      }
     }
   }
   
@@ -1705,20 +1647,6 @@
     }
   }
   
-  .effects-toggle {
-    right: 10px;
-    top: 40%;
-    
-    .toggle-btn {
-      width: 40px;
-      height: 40px;
-      
-      i {
-        font-size: 14px;
-      }
-    }
-  }
-  
   /* Further optimize background effects for small screens */
   .matrix-canvas {
     opacity: 0.03;
@@ -1838,20 +1766,6 @@
     
     p {
       font-size: 0.8rem;
-    }
-  }
-  
-  .effects-toggle {
-    right: 5px;
-    top: 35%;
-    
-    .toggle-btn {
-      width: 35px;
-      height: 35px;
-      
-      i {
-        font-size: 12px;
-      }
     }
   }
 }
@@ -1978,7 +1892,6 @@
   .quantum-grid,
   .floating-shapes,
   .quantum-data-streams,
-  .effects-toggle,
   .keyboard-hints {
     display: none !important;
   }

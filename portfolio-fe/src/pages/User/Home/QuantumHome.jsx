@@ -433,17 +433,6 @@ const QuantumHome = () => {
         </>
       )}
 
-      {/* Effects Toggle Button */}
-      <div className="effects-toggle">
-        <button 
-          className="toggle-btn"
-          onClick={() => setBackgroundEffects(!backgroundEffects)}
-          title={backgroundEffects ? "Disable Effects (Space)" : "Enable Effects (Space)"}
-        >
-          <i className={`fas ${backgroundEffects ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-        </button>
-      </div>
-
       {/* Keyboard Hints */}
       <div className="keyboard-hints">
         <div className="hint">

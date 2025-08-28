@@ -24,6 +24,7 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.10.1",
     "antd-img-crop": "^4.13.0",
+    "aos": "^2.3.4",
     "apexcharts": "^4.3.0",
     "axios": "^1.5.0",
     "axois": "^0.0.1-security",

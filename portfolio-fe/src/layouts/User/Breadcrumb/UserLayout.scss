@@ -3,15 +3,20 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: #0a0a0a; /* Dark background for quantum theme */
+  color: white;
 }
 
 .page-container {
   flex: 1;
-  padding-top: 0.5rem; /* Khoảng trống mặc định cho các trang thông thường */
+  padding-top: 120px; /* Space for quantum header */
+  position: relative;
+  z-index: 1;
 }
 
-/* Loại bỏ khoảng trống đầu trang cho trang Home */
+/* Remove top space for Home page to allow full-screen quantum effect */
 .home-container {
-  padding-top: 0 !important;
+  padding-top: 0 !important; /* No padding for quantum home */
   margin-top: 0 !important;
+  min-height: 100vh;
 }

@@ -1,0 +1,383 @@
+// Responsive Design Mixins và Utilities
+// ===========================================
+
+// Breakpoints
+$breakpoints: (
+  mobile-small: 320px,
+  mobile-large: 480px,
+  tablet: 768px,
+  laptop: 1024px,
+  desktop: 1200px,
+  desktop-large: 1440px
+);
+
+// Media Query Mixins
+@mixin mobile-small {
+  @media (max-width: map-get($breakpoints, mobile-large) - 1px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: map-get($breakpoints, tablet) - 1px) {
+    @content;
+  }
+}
+
+@mixin mobile-large {
+  @media (min-width: map-get($breakpoints, mobile-large)) and (max-width: map-get($breakpoints, tablet) - 1px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: map-get($breakpoints, tablet)) and (max-width: map-get($breakpoints, laptop) - 1px) {
+    @content;
+  }
+}
+
+@mixin laptop {
+  @media (min-width: map-get($breakpoints, laptop)) and (max-width: map-get($breakpoints, desktop) - 1px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: map-get($breakpoints, desktop)) {
+    @content;
+  }
+}
+
+@mixin desktop-large {
+  @media (min-width: map-get($breakpoints, desktop-large)) {
+    @content;
+  }
+}
+
+// Orientation Mixins
+@mixin landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin portrait {
+  @media (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin landscape-mobile {
+  @media screen and (orientation: landscape) and (max-height: 600px) {
+    @content;
+  }
+}
+
+// Device-specific Mixins
+@mixin touch-device {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+@mixin hover-device {
+  @media (hover: hover) and (pointer: fine) {
+    @content;
+  }
+}
+
+@mixin high-dpi {
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    @content;
+  }
+}
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// Container Mixins
+@mixin container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  @include mobile {
+    padding: 0 1rem;
+  }
+
+  @include mobile-small {
+    padding: 0 0.75rem;
+  }
+}
+
+@mixin section-spacing {
+  padding: 6rem 0;
+
+  @include tablet {
+    padding: 4rem 0;
+  }
+
+  @include mobile {
+    padding: 3rem 0;
+  }
+
+  @include mobile-small {
+    padding: 2.5rem 0;
+  }
+}
+
+// Typography Mixins
+@mixin responsive-text($mobile-size, $tablet-size: null, $desktop-size: null) {
+  font-size: $mobile-size;
+
+  @if $tablet-size {
+    @include tablet {
+      font-size: $tablet-size;
+    }
+  }
+
+  @if $desktop-size {
+    @include desktop {
+      font-size: $desktop-size;
+    }
+  }
+}
+
+@mixin fluid-text($min-size, $max-size, $min-screen: 320px, $max-screen: 1200px) {
+  font-size: clamp(#{$min-size}, #{$min-size} + (#{strip-unit($max-size)} - #{strip-unit($min-size)}) * ((100vw - #{$min-screen}) / (#{strip-unit($max-screen)} - #{strip-unit($min-screen)})), #{$max-size});
+}
+
+// Helper function to strip units
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+  @return $number;
+}
+
+// Grid Mixins
+@mixin responsive-grid($mobile-cols: 1, $tablet-cols: 2, $desktop-cols: 3, $gap: 2rem) {
+  display: grid;
+  gap: $gap;
+  grid-template-columns: repeat($mobile-cols, 1fr);
+
+  @include tablet {
+    grid-template-columns: repeat($tablet-cols, 1fr);
+  }
+
+  @include desktop {
+    grid-template-columns: repeat($desktop-cols, 1fr);
+  }
+
+  @include mobile {
+    gap: calc($gap * 0.75);
+  }
+
+  @include mobile-small {
+    gap: calc($gap * 0.5);
+  }
+}
+
+@mixin auto-fit-grid($min-width: 300px, $gap: 2rem) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $gap;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: calc($gap * 0.75);
+  }
+}
+
+// Button Mixins
+@mixin responsive-button {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  min-height: 44px; // Touch target size
+  min-width: 44px;
+
+  @include mobile {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  @include mobile-small {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.8rem;
+  }
+
+  @include touch-device {
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+// Avatar/Image Mixins
+@mixin responsive-avatar($desktop-size: 400px) {
+  width: $desktop-size;
+  height: $desktop-size;
+
+  @include tablet {
+    width: calc($desktop-size * 0.75);
+    height: calc($desktop-size * 0.75);
+  }
+
+  @include mobile {
+    width: calc($desktop-size * 0.6);
+    height: calc($desktop-size * 0.6);
+  }
+
+  @include mobile-small {
+    width: calc($desktop-size * 0.45);
+    height: calc($desktop-size * 0.45);
+  }
+}
+
+// Performance Mixins
+@mixin gpu-acceleration {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+@mixin performance-optimized {
+  @include gpu-acceleration;
+
+  @include mobile {
+    will-change: auto; // Reduce GPU usage on mobile
+  }
+
+  @include reduced-motion {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+// Background Effect Mixins
+@mixin mobile-optimized-effects {
+  @include mobile {
+    opacity: 0.3;
+    animation-duration: 1.5s; // Slower animations
+  }
+
+  @include mobile-small {
+    opacity: 0.1;
+    animation: none; // Disable on very small screens
+  }
+}
+
+// Layout Mixins
+@mixin hero-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 4rem;
+
+  @include laptop {
+    gap: 3rem;
+  }
+
+  @include tablet {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 2.5rem;
+  }
+
+  @include mobile {
+    gap: 2rem;
+  }
+}
+
+@mixin card-hover-effects {
+  transition: all 0.3s ease;
+
+  @include hover-device {
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  @include touch-device {
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+// Spacing Utilities
+@mixin responsive-spacing($property, $mobile-value, $tablet-value: null, $desktop-value: null) {
+  #{$property}: $mobile-value;
+
+  @if $tablet-value {
+    @include tablet {
+      #{$property}: $tablet-value;
+    }
+  }
+
+  @if $desktop-value {
+    @include desktop {
+      #{$property}: $desktop-value;
+    }
+  }
+}
+
+// Safe Area Support (for iOS devices with notch)
+@mixin safe-area-inset($property, $value) {
+  #{$property}: $value;
+  #{$property}: calc(#{$value} + env(safe-area-inset-top));
+  
+  &.bottom {
+    #{$property}: calc(#{$value} + env(safe-area-inset-bottom));
+  }
+  
+  &.left {
+    #{$property}: calc(#{$value} + env(safe-area-inset-left));
+  }
+  
+  &.right {
+    #{$property}: calc(#{$value} + env(safe-area-inset-right));
+  }
+}
+
+// Visibility Mixins
+@mixin hide-on-mobile {
+  @include mobile {
+    display: none !important;
+  }
+}
+
+@mixin show-on-mobile-only {
+  display: none;
+
+  @include mobile {
+    display: block;
+  }
+}
+
+@mixin hide-on-tablet {
+  @include tablet {
+    display: none !important;
+  }
+}
+
+// Print Styles
+@mixin print-hidden {
+  @media print {
+    display: none !important;
+  }
+}
+
+@mixin print-optimized {
+  @media print {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}

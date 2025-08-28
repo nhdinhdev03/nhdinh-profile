@@ -1,0 +1,633 @@
+/* ============= FUTURISTIC CSS VARIABLES ============= */
+:root {
+  --neon-blue: #00f5ff;
+  --neon-purple: #bf00ff;
+  --neon-pink: #ff0080;
+  --neon-green: #39ff14;
+  --neon-orange: #ff6600;
+  --cyber-dark: #0a0a0a;
+  --cyber-darker: #050505;
+  --cyber-gray: #1a1a1a;
+  --cyber-light: #2a2a2a;
+  --glass-1: rgba(255, 255, 255, 0.05);
+  --glass-2: rgba(255, 255, 255, 0.1);
+  --glass-3: rgba(255, 255, 255, 0.15);
+  --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --gradient-cyber: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 50%, var(--neon-pink) 100%);
+  --shadow-neon: 0 0 50px rgba(0, 245, 255, 0.5);
+  --shadow-purple: 0 0 50px rgba(191, 0, 255, 0.5);
+  --shadow-pink: 0 0 50px rgba(255, 0, 128, 0.5);
+}
+
+/* ============= ADVANCED TYPOGRAPHY ============= */
+.font-cyber { 
+  font-family: 'Orbitron', monospace; 
+}
+.font-space { 
+  font-family: 'Space Grotesk', sans-serif; 
+}
+.font-mono { 
+  font-family: 'JetBrains Mono', monospace; 
+}
+.font-inter { 
+  font-family: 'Inter', sans-serif; 
+}
+
+/* ============= HOLOGRAPHIC BACKGROUND ============= */
+.holographic-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(0, 245, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(191, 0, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 60% 60%, rgba(57, 255, 20, 0.1) 0%, transparent 50%);
+  z-index: -2;
+  animation: holographicShift 20s ease-in-out infinite;
+}
+
+@keyframes holographicShift {
+  0%, 100% { 
+    filter: hue-rotate(0deg) saturate(1);
+    transform: scale(1);
+  }
+  25% { 
+    filter: hue-rotate(90deg) saturate(1.2);
+    transform: scale(1.02);
+  }
+  50% { 
+    filter: hue-rotate(180deg) saturate(0.8);
+    transform: scale(0.98);
+  }
+  75% { 
+    filter: hue-rotate(270deg) saturate(1.1);
+    transform: scale(1.01);
+  }
+}
+
+/* ============= QUANTUM GRID BACKGROUND ============= */
+.quantum-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 245, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: -1;
+  animation: gridPulse 8s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* ============= FLOATING GEOMETRIC SHAPES ============= */
+.floating-shapes {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.shape {
+  position: absolute;
+  border: 2px solid var(--neon-blue);
+  animation: floatShape 15s linear infinite;
+}
+
+.shape:nth-child(1) {
+  width: 80px;
+  height: 80px;
+  left: 10%;
+  animation-delay: 0s;
+  border-color: var(--neon-blue);
+  border-radius: 50%;
+}
+
+.shape:nth-child(2) {
+  width: 60px;
+  height: 60px;
+  left: 30%;
+  animation-delay: -3s;
+  border-color: var(--neon-purple);
+  transform: rotate(45deg);
+}
+
+.shape:nth-child(3) {
+  width: 100px;
+  height: 100px;
+  left: 60%;
+  animation-delay: -6s;
+  border-color: var(--neon-pink);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.shape:nth-child(4) {
+  width: 70px;
+  height: 70px;
+  left: 80%;
+  animation-delay: -9s;
+  border-color: var(--neon-green);
+  border-radius: 20px;
+}
+
+@keyframes floatShape {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10%, 90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ============= CYBER GLASS MORPHISM ============= */
+.cyber-glass {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cyber-glass-strong {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 20px rgba(0, 245, 255, 0.1);
+}
+
+/* ============= QUANTUM HEADER ============= */
+.quantum-header {
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(30px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(0, 245, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 245, 255, 0.2);
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &--scrolled {
+    background: rgba(5, 5, 5, 0.95);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(0, 245, 255, 0.2);
+  }
+
+  .holo-nav {
+    color: var(--neon-blue) !important;
+  }
+
+  .logo-text {
+    color: var(--neon-blue) !important;
+  }
+}
+
+/* ============= QUANTUM LOGO EFFECTS ============= */
+.quantum-logo {
+  position: relative;
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  &:hover {
+    transform: scale(1.1) rotateY(15deg) rotateX(5deg);
+  }
+}
+
+.logo-core {
+  background: var(--gradient-cyber);
+  box-shadow: var(--shadow-neon);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: logoSpin 3s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+}
+
+.quantum-logo:hover .logo-core::before {
+  opacity: 1;
+}
+
+@keyframes logoSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.logo-text {
+  background: var(--gradient-cyber);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+  position: relative;
+
+  &::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--gradient-cyber);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: blur(2px);
+    opacity: 0.7;
+    z-index: -1;
+  }
+}
+
+/* ============= HOLOGRAPHIC NAVIGATION ============= */
+.holo-nav {
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 16px 24px;
+  border-radius: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  text-decoration: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-cyber);
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    bottom: 8px;
+    left: 50%;
+    background: var(--gradient-cyber);
+    border-radius: 2px;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform: translateX(-50%);
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.8);
+  }
+
+  &:hover {
+    transform: translateY(-4px) scale(1.05);
+    color: var(--neon-blue) !important;
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.8);
+
+    &::before {
+      opacity: 0.2;
+    }
+
+    &::after {
+      width: 80%;
+    }
+  }
+
+  &--active {
+    color: var(--neon-blue) !important;
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.8);
+
+    &::after {
+      width: 80%;
+    }
+  }
+}
+
+/* ============= QUANTUM CTA BUTTON ============= */
+.quantum-cta {
+  background: var(--gradient-cyber);
+  border: none;
+  position: relative;
+  overflow: hidden;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 
+    0 10px 30px rgba(0, 245, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.7s ease;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: -1;
+    border-radius: inherit;
+  }
+
+  &:hover {
+    transform: translateY(-6px) scale(1.05);
+    box-shadow: 
+      0 20px 60px rgba(0, 245, 255, 0.5),
+      0 0 50px rgba(191, 0, 255, 0.3);
+
+    &::before {
+      left: 100%;
+    }
+  }
+}
+
+/* ============= QUANTUM TOGGLE BUTTON ============= */
+.quantum-toggle {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--neon-blue);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 
+    0 4px 15px rgba(0, 245, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    transform: translateY(-3px) scale(1.1);
+    border-color: var(--neon-pink);
+    box-shadow: 
+      0 8px 25px rgba(255, 0, 128, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    i {
+      color: var(--neon-pink) !important;
+      text-shadow: 0 0 15px rgba(255, 0, 128, 0.8);
+    }
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 
+      0 0 0 3px rgba(0, 245, 255, 0.3),
+      0 4px 15px rgba(0, 245, 255, 0.3);
+  }
+}
+
+/* ============= NEURAL NETWORK MOBILE MENU ============= */
+.neural-menu {
+  transform: translateX(100%);
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(30px);
+  border-left: 2px solid var(--neon-blue);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.8);
+
+  &.active {
+    transform: translateX(0);
+  }
+}
+
+.neural-nav-link {
+  transition: all 0.4s ease;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  margin: 8px 0;
+  border: none;
+  background: transparent;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-cyber);
+    transition: left 0.4s ease;
+    z-index: -1;
+    opacity: 0.3;
+  }
+
+  &:hover {
+    transform: translateX(15px) scale(1.02);
+    color: white !important;
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.8);
+
+    &::before {
+      left: 0;
+    }
+  }
+
+  &--active {
+    color: var(--neon-blue) !important;
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.8);
+
+    &::before {
+      left: 0;
+    }
+  }
+}
+
+/* ============= HOLOGRAPHIC HAMBURGER ============= */
+.holo-hamburger {
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+  padding: 12px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+
+  &:hover {
+    background: rgba(0, 245, 255, 0.1);
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+  }
+}
+
+.hamburger-line {
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-origin: center;
+  background: var(--neon-blue);
+  box-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+}
+
+.holo-hamburger.active .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(7px, 7px);
+  background: var(--neon-pink);
+}
+
+.holo-hamburger.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.holo-hamburger.active .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+  background: var(--neon-pink);
+}
+
+/* ============= NOTIFICATION SYSTEM ============= */
+.quantum-badge {
+  background: var(--gradient-2);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  animation: quantumPulse 2s infinite;
+  box-shadow: 0 0 20px rgba(240, 147, 251, 0.6);
+}
+
+@keyframes quantumPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(240, 147, 251, 0.6);
+  }
+  50% { 
+    transform: scale(1.2);
+    box-shadow: 0 0 30px rgba(240, 147, 251, 0.8);
+  }
+}
+
+/* ============= RESPONSIVE DESIGN ============= */
+@media (max-width: 768px) {
+  .neural-menu {
+    width: 100vw;
+    max-width: 400px;
+  }
+
+  .quantum-logo {
+    .logo-text {
+      font-size: 1.5rem;
+    }
+  }
+
+  .quantum-header {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .neural-menu {
+    width: 100vw;
+  }
+
+  .logo-core {
+    width: 3rem;
+    height: 3rem;
+    
+    span {
+      font-size: 1.25rem;
+    }
+  }
+
+  .quantum-logo {
+    .logo-text {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+/* ============= DARK THEME OVERRIDES ============= */
+:root.dark {
+  .quantum-header {
+    background: rgba(5, 5, 5, 0.9);
+  }
+
+  .neural-menu {
+    background: rgba(5, 5, 5, 0.98);
+  }
+}
+
+/* ============= SMOOTH TRANSITIONS ============= */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============= CONTAINER UTILITIES ============= */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ============= UTILITY CLASSES ============= */
+.text-transparent {
+  color: transparent;
+}
+
+.bg-gradient-cyber {
+  background: var(--gradient-cyber);
+}
+
+.shadow-neon {
+  box-shadow: var(--shadow-neon);
+}
+
+.shadow-purple {
+  box-shadow: var(--shadow-purple);
+}
+
+.shadow-pink {
+  box-shadow: var(--shadow-pink);
+}

@@ -1,11 +1,13 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { UserThemeProvider } from "../../theme";
-import Header from "./Header";
+import QuantumHeader from "./Header/QuantumHeader";
 import Breadcrumb from "./Breadcrumb";
 import Footer from "./Footer";
+import QuantumCursor from "../../components/UI/QuantumCursor";
 import { ROUTES } from "router/routeConstants";
 import "./Breadcrumb/UserLayout.scss";
+import "../../components/UI/QuantumCursor/QuantumCursor.scss";
 
 function UserLayout({ children }) {
   const location = useLocation();
@@ -14,7 +16,8 @@ function UserLayout({ children }) {
   return (
     <UserThemeProvider>
       <div className="layout">
-        <Header />
+        <QuantumCursor />
+        <QuantumHeader />
 
         <main id="main" className={`page-container ${isHomePage ? "home-container" : ""}`}>
           {!isHomePage && (

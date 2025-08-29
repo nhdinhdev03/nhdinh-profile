@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useDebounce } from './useDebounce';
-import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from 'api/admin';
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useDebounce } from "./useDebounce";
+import { ProjectApi, ProjectCategoryApi, ProjectTagApi } from "api/admin";
 
 const useProjectsManagement = () => {
   const [projects, setProjects] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null);
 
   // Debounce search term to avoid excessive API calls
@@ -16,11 +16,16 @@ const useProjectsManagement = () => {
 
   // Memoized filtered projects to avoid unnecessary recalculations
   const filteredProjects = useMemo(() => {
-    return projects.filter(project => {
-      const matchesFilter = filter === 'all' || project.status === filter;
-      const matchesSearch = !debouncedSearchTerm || 
-        project.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        project.description?.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
+    return projects.filter((project) => {
+      const matchesFilter = filter === "all" || project.status === filter;
+      const matchesSearch =
+        !debouncedSearchTerm ||
+        project.title
+          .toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()) ||
+        project.description
+          ?.toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase());
       return matchesFilter && matchesSearch;
     });
   }, [projects, filter, debouncedSearchTerm]);
@@ -28,9 +33,9 @@ const useProjectsManagement = () => {
   // Memoized stats to avoid recalculation
   const stats = useMemo(() => {
     const total = projects.length;
-    const published = projects.filter(p => p.status === 'published').length;
-    const draft = projects.filter(p => p.status === 'draft').length;
-    const featured = projects.filter(p => p.isFeatured).length;
+    const published = projects.filter((p) => p.status === "published").length;
+    const draft = projects.filter((p) => p.status === "draft").length;
+    const featured = projects.filter((p) => p.isFeatured).length;
 
     return { total, published, draft, featured };
   }, [projects]);
@@ -40,37 +45,36 @@ const useProjectsManagement = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const [projectsRes, categoriesRes, tagsRes] = await Promise.allSettled([
         ProjectApi.getAll(),
         ProjectCategoryApi.getAll(),
-        ProjectTagApi.getAll()
+        ProjectTagApi.getAll(),
       ]);
-      
+
       // Handle projects
-      if (projectsRes.status === 'fulfilled') {
+      if (projectsRes.status === "fulfilled") {
         setProjects(projectsRes.value.data || []);
       } else {
-        console.error('Error loading projects:', projectsRes.reason);
+        console.error("Error loading projects:", projectsRes.reason);
       }
-      
+
       // Handle categories
-      if (categoriesRes.status === 'fulfilled') {
+      if (categoriesRes.status === "fulfilled") {
         setCategories(categoriesRes.value.data || []);
       } else {
-        console.error('Error loading categories:', categoriesRes.reason);
+        console.error("Error loading categories:", categoriesRes.reason);
       }
-      
+
       // Handle tags
-      if (tagsRes.status === 'fulfilled') {
+      if (tagsRes.status === "fulfilled") {
         setTags(tagsRes.value.data || []);
       } else {
-        console.error('Error loading tags:', tagsRes.reason);
+        console.error("Error loading tags:", tagsRes.reason);
       }
-      
     } catch (error) {
-      console.error('Error loading data:', error);
-      setError('Có lỗi xảy ra khi tải dữ liệu');
+      console.error("Error loading data:", error);
+      setError("Có lỗi xảy ra khi tải dữ liệu");
     } finally {
       setLoading(false);
     }
@@ -81,14 +85,14 @@ const useProjectsManagement = () => {
     try {
       const response = await ProjectApi.create(formData);
       const newProject = response.data;
-      
+
       // Update state directly instead of reloading all data
-      setProjects(prev => [newProject, ...prev]);
-      
+      setProjects((prev) => [newProject, ...prev]);
+
       return newProject;
     } catch (error) {
-      console.error('Error creating project:', error);
-      setError('Có lỗi xảy ra khi tạo dự án');
+      console.error("Error creating project:", error);
+      setError("Có lỗi xảy ra khi tạo dự án");
       throw error;
     }
   }, []);
@@ -98,18 +102,18 @@ const useProjectsManagement = () => {
     try {
       const response = await ProjectApi.update(projectId, formData);
       const updatedProject = response.data;
-      
+
       // Update state directly
-      setProjects(prev => 
-        prev.map(project => 
+      setProjects((prev) =>
+        prev.map((project) =>
           project.id === projectId ? updatedProject : project
         )
       );
-      
+
       return updatedProject;
     } catch (error) {
-      console.error('Error updating project:', error);
-      setError('Có lỗi xảy ra khi cập nhật dự án');
+      console.error("Error updating project:", error);
+      setError("Có lỗi xảy ra khi cập nhật dự án");
       throw error;
     }
   }, []);
@@ -118,13 +122,12 @@ const useProjectsManagement = () => {
   const deleteProject = useCallback(async (projectId) => {
     try {
       await ProjectApi.delete(projectId);
-      
+
       // Update state directly
-      setProjects(prev => prev.filter(project => project.id !== projectId));
-      
+      setProjects((prev) => prev.filter((project) => project.id !== projectId));
     } catch (error) {
-      console.error('Error deleting project:', error);
-      setError('Có lỗi xảy ra khi xóa dự án');
+      console.error("Error deleting project:", error);
+      setError("Có lỗi xảy ra khi xóa dự án");
       throw error;
     }
   }, []);
@@ -133,19 +136,18 @@ const useProjectsManagement = () => {
   const toggleFeatured = useCallback(async (projectId, currentStatus) => {
     try {
       await ProjectApi.toggleFeatured(projectId, !currentStatus);
-      
+
       // Update state directly
-      setProjects(prev => 
-        prev.map(project => 
-          project.id === projectId 
+      setProjects((prev) =>
+        prev.map((project) =>
+          project.id === projectId
             ? { ...project, isFeatured: !currentStatus }
             : project
         )
       );
-      
     } catch (error) {
-      console.error('Error toggling featured status:', error);
-      setError('Có lỗi xảy ra khi cập nhật trạng thái nổi bật');
+      console.error("Error toggling featured status:", error);
+      setError("Có lỗi xảy ra khi cập nhật trạng thái nổi bật");
       throw error;
     }
   }, []);
@@ -154,22 +156,23 @@ const useProjectsManagement = () => {
   const batchUpdateProjects = useCallback(async (updates) => {
     try {
       const response = await ProjectApi.batchUpdate(updates);
-      
+
       // Update state with all changes
-      setProjects(prev => {
+      setProjects((prev) => {
         const updatedProjects = [...prev];
-        response.data.forEach(updatedProject => {
-          const index = updatedProjects.findIndex(p => p.id === updatedProject.id);
+        response.data.forEach((updatedProject) => {
+          const index = updatedProjects.findIndex(
+            (p) => p.id === updatedProject.id
+          );
           if (index !== -1) {
             updatedProjects[index] = updatedProject;
           }
         });
         return updatedProjects;
       });
-      
     } catch (error) {
-      console.error('Error batch updating projects:', error);
-      setError('Có lỗi xảy ra khi cập nhật hàng loạt');
+      console.error("Error batch updating projects:", error);
+      setError("Có lỗi xảy ra khi cập nhật hàng loạt");
       throw error;
     }
   }, []);
@@ -191,13 +194,13 @@ const useProjectsManagement = () => {
     tags,
     filteredProjects,
     stats,
-    
+
     // States
     loading,
     error,
     filter,
     searchTerm,
-    
+
     // Actions
     setFilter,
     setSearchTerm,
@@ -207,7 +210,7 @@ const useProjectsManagement = () => {
     deleteProject,
     toggleFeatured,
     batchUpdateProjects,
-    clearError
+    clearError,
   };
 };
 

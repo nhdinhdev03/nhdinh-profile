@@ -5,10 +5,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import "./UserStyles.scss";
 import "../ThemeTransitions.scss";
-import { initBrowserOptimizations, handleBrowserThemeChange } from "../BrowserOptimizations";
 
 const UserThemeCtx = createContext({
   light: true,
@@ -19,36 +18,40 @@ const UserThemeCtx = createContext({
 
 function getInitialLight() {
   // Check local storage first (guard SSR / private mode)
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
       // First check if preload script already set the theme
-      const isCurrentlyDark = document.documentElement.classList.contains('dark');
+      const isCurrentlyDark =
+        document.documentElement.classList.contains("dark");
       const stored = window.localStorage.getItem("userTheme");
-      
+
       if (stored === "light") return { light: true, source: "user" };
       if (stored === "dark") return { light: false, source: "user" };
-      
+
       // Check system preference if no user preference
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
+      const systemPrefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
       // If no stored preference but DOM has dark class from preload, respect it
       if (isCurrentlyDark) {
         const themeToStore = systemPrefersDark ? "dark" : "light";
         window.localStorage.setItem("userTheme", themeToStore);
         return { light: !systemPrefersDark, source: "system" };
       }
-      
+
       // Use system preference as default
       const defaultLight = !systemPrefersDark;
       window.localStorage.setItem("userTheme", defaultLight ? "light" : "dark");
       return { light: defaultLight, source: "system" };
     } catch (e) {
       // If storage inaccessible (private mode), fall back to current DOM state
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV === "development") {
         // eslint-disable-next-line no-console
-        console.warn('UserTheme: cannot access localStorage', e);
+        console.warn("UserTheme: cannot access localStorage", e);
       }
-      const isCurrentlyDark = document.documentElement.classList.contains('dark');
+      const isCurrentlyDark =
+        document.documentElement.classList.contains("dark");
       return { light: !isCurrentlyDark, source: "system" };
     }
   }
@@ -57,18 +60,15 @@ function getInitialLight() {
 
 export function UserThemeProvider({ children }) {
   // Initialize browser optimizations
-  useEffect(() => {
-    initBrowserOptimizations();
-  }, []);
 
   // Apply initial theme immediately before React hydration
   const initialTheme = getInitialLight();
-  if (typeof document !== 'undefined') {
+  if (typeof document !== "undefined") {
     const root = document.documentElement;
-    
+
     // Mark as loading to disable transitions initially
-    root.classList.add('loading');
-    
+    root.classList.add("loading");
+
     if (initialTheme.light) {
       root.classList.remove("dark");
       root.style.colorScheme = "light";
@@ -76,9 +76,8 @@ export function UserThemeProvider({ children }) {
       root.classList.add("dark");
       root.style.colorScheme = "dark";
     }
-    
+
     // Apply browser-specific optimizations for initial theme
-    handleBrowserThemeChange(!initialTheme.light);
   }
 
   const [{ light, source }, setState] = useState(initialTheme);
@@ -88,18 +87,18 @@ export function UserThemeProvider({ children }) {
     const root = document.documentElement;
     // Small delay to ensure DOM is ready
     const timeoutId = setTimeout(() => {
-      root.classList.remove('loading');
+      root.classList.remove("loading");
     }, 100);
-    
+
     return () => clearTimeout(timeoutId);
   }, []);
 
   useEffect(() => {
     const root = document.documentElement;
-    
+
     // Add temporary class to indicate theme is switching (for CSS optimizations)
-    root.classList.add('theme-switching');
-    
+    root.classList.add("theme-switching");
+
     // Use requestAnimationFrame for smoother transitions
     requestAnimationFrame(() => {
       if (light) {
@@ -109,13 +108,10 @@ export function UserThemeProvider({ children }) {
         root.classList.add("dark");
         root.style.colorScheme = "dark";
       }
-      
-      // Apply browser-specific theme handling
-      handleBrowserThemeChange(!light);
-      
+
       // Remove switching class after transition
       setTimeout(() => {
-        root.classList.remove('theme-switching');
+        root.classList.remove("theme-switching");
       }, 250);
     });
   }, [light]);
@@ -125,7 +121,7 @@ export function UserThemeProvider({ children }) {
     return () => {
       const root = document.documentElement;
       // Only reset if we are leaving a dark state to avoid flicker if another provider would manage it
-      if (root.classList.contains('dark')) {
+      if (root.classList.contains("dark")) {
         root.classList.remove("dark");
         root.style.colorScheme = "light";
       }
@@ -169,5 +165,5 @@ export function useUserTheme() {
 }
 
 UserThemeProvider.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };

@@ -1,13 +1,3 @@
-/**
- * Form validation utility functions
- */
-
-/**
- * Validates login form fields
- * @param {string} username - Username or email
- * @param {string} password - Password
- * @returns {Object} - Validation errors object
- */
 export const validateLoginForm = (username, password) => {
   const errors = {};
   
@@ -22,21 +12,13 @@ export const validateLoginForm = (username, password) => {
   return errors;
 };
 
-/**
- * Validates email format
- * @param {string} email - Email to validate
- * @returns {boolean} - True if valid email
- */
+
 export const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-/**
- * Validates phone number format (Vietnam)
- * @param {string} phone - Phone number to validate
- * @returns {boolean} - True if valid phone number
- */
+
 export const isValidPhone = (phone) => {
   // Vietnamese phone number format
   const phoneRegex = /^(\+84|84|0)(3|5|7|8|9)([0-9]{8})$/;

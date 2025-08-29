@@ -1,8 +1,4 @@
-/**
- * Format date for display
- * @param {string|Date} date - Date to format
- * @returns {string} Formatted date string
- */
+
 export const formatDate = (date) => {
   if (!date) return 'N/A';
   
@@ -25,11 +21,7 @@ export const formatDate = (date) => {
   }
 };
 
-/**
- * Format relative time (e.g., "2 hours ago")
- * @param {string|Date} date - Date to format
- * @returns {string} Relative time string
- */
+
 export const formatRelativeTime = (date) => {
   if (!date) return 'N/A';
   
@@ -53,11 +45,7 @@ export const formatRelativeTime = (date) => {
   }
 };
 
-/**
- * Check if date is today
- * @param {string|Date} date - Date to check
- * @returns {boolean} True if date is today
- */
+
 export const isToday = (date) => {
   if (!date) return false;
   

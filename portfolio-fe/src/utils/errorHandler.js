@@ -1,12 +1,3 @@
-/**
- * Utility functions for handling and formatting error messages
- */
-
-/**
- * Converts technical error messages to user-friendly Vietnamese messages
- * @param {string} error - The original error message
- * @returns {string} - User-friendly error message with appropriate emoji
- */
 export const getErrorMessage = (error) => {
   if (!error) return "⚠️ Có lỗi xảy ra. Vui lòng thử lại.";
   
@@ -61,11 +52,7 @@ export const getErrorMessage = (error) => {
   return error.match(/^[🔑🚫❓🔒⚠️🔧🌐📝⏰❌]/) ? error : `⚠️ ${error}`;
 };
 
-/**
- * Gets specific login error messages
- * @param {string} error - The login error
- * @returns {string} - Formatted login error message
- */
+
 export const getLoginErrorMessage = (error) => {
   const errorStr = error.toString().toLowerCase();
   
@@ -88,11 +75,7 @@ export const getLoginErrorMessage = (error) => {
   return getErrorMessage(error);
 };
 
-/**
- * Gets network-related error messages
- * @param {Error} error - Network error object
- * @returns {string} - Formatted network error message
- */
+
 export const getNetworkErrorMessage = (error) => {
   if (!error) return "🌐 Lỗi kết nối mạng.";
   
@@ -111,9 +94,7 @@ export const getNetworkErrorMessage = (error) => {
   return getErrorMessage(error.message || error);
 };
 
-/**
- * Error message constants for common scenarios
- */
+
 export const ERROR_MESSAGES = {
   // Authentication
   INVALID_CREDENTIALS: "🔑 Thông tin đăng nhập không chính xác.",
@@ -136,11 +117,7 @@ export const ERROR_MESSAGES = {
   CONTACT_SUPPORT: "📞 Vui lòng liên hệ hỗ trợ nếu vấn đề tiếp tục xảy ra."
 };
 
-/**
- * Combines multiple error messages
- * @param {string[]} errors - Array of error messages
- * @returns {string} - Combined error message
- */
+
 export const combineErrorMessages = (errors) => {
   if (!errors || errors.length === 0) return ERROR_MESSAGES.UNKNOWN_ERROR;
   if (errors.length === 1) return getErrorMessage(errors[0]);

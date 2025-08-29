@@ -80,7 +80,7 @@
 }
 
 /* Hide default cursor when quantum cursor is active */
-body {
+.quantum-cursor-active {
   cursor: none;
   
   * {
@@ -98,7 +98,7 @@ body {
 
 /* Mobile optimization - show default cursor on touch devices */
 @media (hover: none) {
-  body {
+  .quantum-cursor-active {
     cursor: auto;
     
     * {

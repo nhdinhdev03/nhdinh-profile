@@ -5,22 +5,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 
-/**
- * @typedef {Object} InlineConfirmationProps
- * @property {boolean} isOpen
- * @property {() => void} onClose
- * @property {() => void} onConfirm
- * @property {string|React.ReactNode} message
- * @property {string} [confirmText]
- * @property {string} [cancelText]
- * @property {boolean} [loading]
- * @property {React.RefObject=} triggerRef
- * @property {HTMLElement=} anchorEl
- * @property {('top'|'bottom')} [placement]
- * @property {number} [offset]
- * @property {number} [boundaryPadding]
- * @property {boolean} [usePortal]
- */
+
 
 /** @param {InlineConfirmationProps} props */
 const InlineConfirmation = ({

@@ -104,6 +104,9 @@ const QuantumCursor = () => {
     const isTouchDevice = window.matchMedia('(hover: none)').matches;
     if (isTouchDevice) return;
 
+    // Add class to body to hide cursor
+    document.body.classList.add('quantum-cursor-active');
+
     initializeTrail();
 
     // Add event listeners
@@ -118,6 +121,9 @@ const QuantumCursor = () => {
 
     // Cleanup
     return () => {
+      // Remove class from body
+      document.body.classList.remove('quantum-cursor-active');
+      
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mouseup', handleMouseUp);

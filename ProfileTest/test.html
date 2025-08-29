@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHDinh - Futuristic Portfolio Experience</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <!-- Advanced Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+
+</head>
+<body class="font-space">
+    <!-- ============= QUANTUM LOADING EXPERIENCE ============= -->
+    <div id="quantum-loader" class="quantum-loader">
+        <div class="loader-ring"></div>
+        <div class="loader-text">INITIALIZING QUANTUM INTERFACE</div>
+        <div class="text-center mt-8">
+            <div class="font-mono text-sm text-gray-400">
+                <span id="loading-progress">0</span>% COMPLETE
+            </div>
+            <div class="w-64 h-1 bg-gray-800 rounded-full mt-4 overflow-hidden">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============= HOLOGRAPHIC BACKGROUND LAYERS ============= -->
+    <div class="holographic-bg"></div>
+    <div class="quantum-grid"></div>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- ============= QUANTUM SCROLL PROGRESS ============= -->
+    <div id="quantum-progress" class="quantum-progress"></div>
+
+    <!-- ============= 3D CANVAS BACKGROUND ============= -->
+    <canvas id="three-canvas" style="position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none;"></canvas>
+
+    <!-- ============= FUTURISTIC HEADER ============= -->
+    <header id="quantum-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-700 cyber-glass">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 lg:h-24">
+                <!-- ============= QUANTUM LOGO ============= -->
+                <div class="flex-shrink-0">
+                    <a href="#home" class="flex items-center space-x-4 quantum-logo">
+                        <div class="w-16 h-16 logo-core rounded-2xl flex items-center justify-center shadow-2xl relative">
+                            <span class="text-2xl font-black text-white font-cyber relative z-10">NH</span>
+                        </div>
+                        <div class="hidden sm:block">
+                            <div class="logo-text font-cyber text-3xl" id="logo-text" data-text="NHDinh">NHDinh</div>
+                            <div class="text-xs text-gray-400 font-mono tracking-widest uppercase">QUANTUM DEVELOPER</div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- ============= HOLOGRAPHIC NAVIGATION ============= -->
+                <div class="hidden lg:block">
+                    <div class="flex items-center space-x-2">
+                        <a href="#home" class="holo-nav text-white hover:text-gray-200 font-space">
+                            <i class="fas fa-home mr-3 text-lg"></i>HOME
+                        </a>
+                        <a href="#about" class="holo-nav text-white hover:text-gray-200 font-space">
+                            <i class="fas fa-user-astronaut mr-3 text-lg"></i>ABOUT
+                        </a>
+                        <a href="#services" class="holo-nav text-white hover:text-gray-200 font-space">
+                            <i class="fas fa-rocket mr-3 text-lg"></i>SERVICES
+                        </a>
+                        <a href="#projects" class="holo-nav text-white hover:text-gray-200 font-space relative">
+                            <i class="fas fa-project-diagram mr-3 text-lg"></i>PROJECTS
+                            <span class="quantum-badge absolute -top-2 -right-2">5</span>
+                        </a>
+                        <a href="#lab" class="holo-nav text-white hover:text-gray-200 font-space">
+                            <i class="fas fa-flask mr-3 text-lg"></i>LAB
+                        </a>
+                        <a href="#contact" class="holo-nav text-white hover:text-gray-200 font-space">
+                            <i class="fas fa-satellite-dish mr-3 text-lg"></i>CONTACT
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ============= QUANTUM CONTROLS ============= -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <!-- Language Selector -->
+                    <div class="relative">
+                        <select class="cyber-glass border border-cyan-500/30 rounded-xl px-4 py-2 text-white bg-transparent font-mono text-sm focus:outline-none focus:border-cyan-400 transition-all duration-300">
+                            <option value="vi" class="bg-gray-900">🇻🇳 VI</option>
+                            <option value="en" class="bg-gray-900">🇺🇸 EN</option>
+                            <option value="ja" class="bg-gray-900">🇯🇵 JP</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Theme Toggle -->
+                    <button class="quantum-toggle" id="quantum-theme-toggle" title="TOGGLE QUANTUM MODE">
+                        <i class="fas fa-atom text-white text-lg"></i>
+                    </button>
+                    
+                    <!-- Settings -->
+                    <button class="quantum-toggle" title="QUANTUM SETTINGS">
+                        <i class="fas fa-cog text-white text-lg"></i>
+                    </button>
+                    
+                    <!-- Main CTA -->
+                    <a href="#contact" class="quantum-cta text-white px-8 py-4 rounded-2xl text-sm font-bold inline-flex items-center space-x-3 font-space">
+                        <i class="fas fa-download"></i>
+                        <span>DOWNLOAD CV</span>
+                        <i class="fas fa-external-link-alt text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- ============= MOBILE QUANTUM CONTROLS ============= -->
+                <div class="lg:hidden flex items-center space-x-3">
+                    <!-- Mobile Theme Toggle -->
+                    <button class="quantum-toggle" id="mobile-quantum-theme-toggle" style="width: 45px; height: 45px;">
+                        <i class="fas fa-atom text-white text-sm"></i>
+                    </button>
+                    
+                    <!-- Mobile Menu Trigger -->
+                    <button id="neural-menu-btn" class="holo-hamburger text-white hover:text-gray-200 focus:outline-none">
+                        <span class="sr-only">ACTIVATE NEURAL MENU</span>
+                        <div class="w-8 h-8 flex flex-col justify-center items-center space-y-1">
+                            <div class="hamburger-line w-7 h-0.5 bg-cyan-400 rounded transition-all duration-300"></div>
+                            <div class="hamburger-line w-7 h-0.5 bg-cyan-400 rounded transition-all duration-300"></div>
+                            <div class="hamburger-line w-7 h-0.5 bg-cyan-400 rounded transition-all duration-300"></div>
+                        </div>
+                    </button>
+                </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ============= NEURAL NETWORK MOBILE MENU ============= -->
+        <div id="neural-menu" class="neural-menu lg:hidden fixed top-0 right-0 h-full w-96 z-50">
+            <div class="flex flex-col h-full">
+                <!-- Neural Header -->
+                <div class="flex items-center justify-between p-8 border-b border-cyan-500/20">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 logo-core rounded-xl flex items-center justify-center">
+                            <span class="text-lg font-black text-white font-cyber">NH</span>
+                        </div>
+                        <div>
+                            <div class="text-xl font-bold text-white font-cyber">NEURAL INTERFACE</div>
+                            <div class="text-xs text-gray-400 font-mono">QUANTUM PORTAL</div>
+                        </div>
+                    </div>
+                    <button id="close-neural-menu" class="text-white hover:text-red-400 focus:outline-none p-3 rounded-xl hover:bg-red-500/10 transition-all duration-300">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Neural Navigation Links -->
+                <div class="flex-1 px-8 py-8 space-y-3">
+                    <a href="#home" class="neural-nav-link flex items-center space-x-4 text-white py-5 px-6 rounded-2xl font-space font-semibold">
+                        <i class="fas fa-home text-xl w-8 text-cyan-400"></i>
+                        <span>HOME BASE</span>
+                        <i class="fas fa-chevron-right ml-auto text-sm opacity-50"></i>
+                    </a>
+                    <a href="#about" class="neural-nav-link flex items-center space-x-4 text-white py-5 px-6 rounded-2xl font-space font-semibold">
+                        <i class="fas fa-user-astronaut text-xl w-8 text-purple-400"></i>
+                        <span>ABOUT PROTOCOL</span>
+                        <i class="fas fa-chevron-right ml-auto text-sm opacity-50"></i>
+                    </a>
+                    <a href="#services" class="neural-nav-link flex items-center space-x-4 text-white py-5 px-6 rounded-2xl font-space font-semibold">
+                        <i class="fas fa-rocket text-xl w-8 text-pink-400"></i>
+                        <span>SERVICE MODULES</span>
+                        <i class="fas fa-chevron-right ml-auto text-sm opacity-50"></i>
+                    </a>
+                    <a href="#projects" class="neural-nav-link flex items-center space-x-4 text-white py-5 px-6 rounded-2xl font-space font-semibold relative">
+                        <i class="fas fa-project-diagram text-xl w-8 text-green-400"></i>
+                        <span>PROJECT MATRIX</span>
+                        <span class="quantum-badge">5</span>
+                        <i class="fas fa-chevron-right ml-auto text-sm opacity-50"></i>
+                    </a>
+                    <a href="#lab" class="neural-nav-link flex items-center space-x-4 text-white py-5 px-6 rounded-2xl font-space font-semibold">
+                        <i class="fas fa-flask text-xl w-8 text-yellow-400"></i>
+                        <span>QUANTUM LAB</span>
+                        <i class="fas fa-chevron-right ml-auto text-sm opacity-50"></i>
+                    </a>
+                    <a href="#contact" class="neural-nav-link flex items-center space-x-4 text-white py-5 px-6 rounded-2xl font-space font-semibold">
+                        <i class="fas fa-satellite-dish text-xl w-8 text-orange-400"></i>
+                        <span>COMMUNICATION</span>
+                        <i class="fas fa-chevron-right ml-auto text-sm opacity-50"></i>
+                    </a>
+                </div>
+                
+                <!-- Neural Footer -->
+                <div class="p-8 border-t border-cyan-500/20 space-y-6">
+                    <!-- Quick Actions -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <button class="cyber-glass text-white px-4 py-3 rounded-xl text-sm font-space font-semibold hover:bg-white/10 transition-all duration-300">
+                            <i class="fas fa-globe mr-2"></i>TRANSLATE
+                        </button>
+                        <button class="cyber-glass text-white px-4 py-3 rounded-xl text-sm font-space font-semibold hover:bg-white/10 transition-all duration-300">
+                            <i class="fas fa-palette mr-2"></i>THEME
+                        </button>
+                    </div>
+                    
+                    <!-- Social Matrix -->
+                    <div class="flex space-x-4 justify-center">
+                        <a href="#" class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center text-white hover:text-cyan-400 hover:bg-cyan-500/10 transition-all duration-300">
+                            <i class="fab fa-github text-lg"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center text-white hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-300">
+                            <i class="fab fa-linkedin text-lg"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center text-white hover:text-pink-400 hover:bg-pink-500/10 transition-all duration-300">
+                            <i class="fab fa-twitter text-lg"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center text-white hover:text-purple-400 hover:bg-purple-500/10 transition-all duration-300">
+                            <i class="fab fa-discord text-lg"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Neural CTA -->
+                    <a href="#contact" class="quantum-cta w-full text-white px-6 py-4 rounded-2xl text-center font-bold transition-all duration-300 flex items-center justify-center space-x-3 font-space">
+                        <i class="fas fa-download"></i>
+                        <span>DOWNLOAD NEURAL CV</span>
+                        <i class="fas fa-external-link-alt text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quantum Menu Overlay -->
+        <div id="quantum-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 lg:hidden hidden transition-all duration-500"></div>
+    </header>
+
+    <!-- ============= QUANTUM FLOATING CONTROLS ============= -->
+    <div class="quantum-float visible" id="quantum-scroll-top">
+        <i class="fas fa-rocket text-white text-xl"></i>
+    </div>
+
+    <!-- Additional Floating Actions -->
+    <div class="fixed bottom-40 right-10 space-y-4 z-50">
+        <button class="w-14 h-14 cyber-glass rounded-full flex items-center justify-center text-white hover:text-cyan-400 hover:bg-cyan-500/10 transition-all duration-300" title="QUANTUM CHAT">
+            <i class="fas fa-comments text-lg"></i>
+        </button>
+        <button class="w-14 h-14 cyber-glass rounded-full flex items-center justify-center text-white hover:text-green-400 hover:bg-green-500/10 transition-all duration-300" title="NEURAL ASSISTANT">
+            <i class="fas fa-brain text-lg"></i>
+        </button>
+    </div>
+
+    <!-- Demo Content -->
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden">
+            <!-- Matrix Rain Background -->
+            <canvas id="matrix-rain" class="absolute inset-0 w-full h-full opacity-30"></canvas>
+            
+            <!-- Quantum Particles -->
+            <div id="particles-quantum" class="absolute inset-0"></div>
+            
+            <!-- Hero Content -->
+            <div class="container mx-auto px-4 text-center text-white relative z-10" data-aos="fade-up" data-aos-duration="1000">
+                <!-- Quantum Avatar -->
+                <div class="mb-12" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="relative inline-block">
+                        <div class="w-48 h-48 mx-auto cyber-glass-strong rounded-full overflow-hidden relative group">
+                            <img src="https://via.placeholder.com/300x300/667eea/ffffff?text=NH" alt="NHDinh" 
+                                 class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 filter brightness-110">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-cyan-400/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-all duration-500"></div>
+                        </div>
+                        <!-- Quantum Rings -->
+                        <div class="absolute inset-0 rounded-full border-2 border-cyan-400/30 animate-spin"></div>
+                        <div class="absolute inset-2 rounded-full border border-purple-500/30 animate-spin" style="animation-direction: reverse; animation-duration: 3s;"></div>
+                        <div class="absolute inset-4 rounded-full border border-pink-400/30 animate-pulse"></div>
+                    </div>
+                </div>
+
+                <!-- Quantum Title -->
+                <h1 class="text-5xl md:text-8xl font-black mb-8 font-cyber" data-aos="fade-up" data-aos-delay="300">
+                    <span class="relative">
+                        <span class="text-white">NHDINH</span>
+                        <span class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-pulse">NHDINH</span>
+                    </span>
+                </h1>
+
+                <!-- Quantum Typewriter -->
+                <div class="text-2xl md:text-4xl mb-8 text-cyan-300 font-space font-bold" data-aos="fade-up" data-aos-delay="400">
+                    <span id="quantum-typewriter" class="font-mono"></span>
+                    <span class="animate-pulse text-cyan-400">|</span>
+                </div>
+
+                <!-- Mission Statement -->
+                <p class="text-lg md:text-2xl mb-12 text-gray-300 max-w-4xl mx-auto leading-relaxed font-space" data-aos="fade-up" data-aos-delay="500">
+                    🚀 Tạo ra những <span class="text-cyan-400 font-bold">trải nghiệm số</span> vượt thời gian với công nghệ 
+                    <span class="text-purple-400 font-bold">tiên tiến</span> và tư duy <span class="text-pink-400 font-bold">sáng tạo</span>
+                </p>
+
+                <!-- Quantum CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-6 justify-center mb-16" data-aos="fade-up" data-aos-delay="600">
+                    <a href="#projects" class="quantum-cta px-12 py-5 rounded-2xl font-bold text-lg inline-flex items-center space-x-4 group">
+                        <i class="fas fa-rocket group-hover:animate-bounce"></i>
+                        <span>KHÁM PHÁ DỰ ÁN</span>
+                        <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    <a href="#contact" class="cyber-glass-strong border-2 border-cyan-500/50 px-12 py-5 rounded-2xl font-bold text-lg hover:bg-cyan-500/20 transition-all duration-300 inline-flex items-center space-x-4 group">
+                        <i class="fas fa-satellite-dish group-hover:animate-spin"></i>
+                        <span>KẾT NỐI NGAY</span>
+                        <i class="fas fa-external-link-alt text-sm group-hover:animate-pulse"></i>
+                    </a>
+                </div>
+                
+                <!-- Quantum Stats Dashboard -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto" data-aos="fade-up" data-aos-delay="700">
+                    <div class="cyber-glass-strong p-8 rounded-3xl text-center group hover:scale-105 transition-all duration-500">
+                        <div class="text-4xl md:text-5xl font-black text-cyan-400 mb-3 font-cyber" data-counter="50">0</div>
+                        <div class="text-sm text-gray-300 font-space font-semibold">DỰ ÁN HOÀN THÀNH</div>
+                        <i class="fas fa-project-diagram text-cyan-400/50 text-2xl mt-3 group-hover:animate-pulse"></i>
+                    </div>
+                    <div class="cyber-glass-strong p-8 rounded-3xl text-center group hover:scale-105 transition-all duration-500">
+                        <div class="text-4xl md:text-5xl font-black text-purple-400 mb-3 font-cyber" data-counter="5">0</div>
+                        <div class="text-sm text-gray-300 font-space font-semibold">NĂM KINH NGHIỆM</div>
+                        <i class="fas fa-calendar-alt text-purple-400/50 text-2xl mt-3 group-hover:animate-pulse"></i>
+                    </div>
+                    <div class="cyber-glass-strong p-8 rounded-3xl text-center group hover:scale-105 transition-all duration-500">
+                        <div class="text-4xl md:text-5xl font-black text-pink-400 mb-3 font-cyber" data-counter="99">0</div>
+                        <div class="text-sm text-gray-300 font-space font-semibold">KHÁCH HÀNG HÀI LÒNG</div>
+                        <i class="fas fa-heart text-pink-400/50 text-2xl mt-3 group-hover:animate-bounce"></i>
+                    </div>
+                    <div class="cyber-glass-strong p-8 rounded-3xl text-center group hover:scale-105 transition-all duration-500">
+                        <div class="text-4xl md:text-5xl font-black text-green-400 mb-3 font-cyber" data-counter="24">0</div>
+                        <div class="text-sm text-gray-300 font-space font-semibold">HỖ TRỢ 24/7</div>
+                        <i class="fas fa-clock text-green-400/50 text-2xl mt-3 group-hover:animate-spin"></i>
+                    </div>
+                </div>
+                
+                <!-- Quantum Scroll Indicator -->
+                <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2" data-aos="fade-up" data-aos-delay="800">
+                    <div class="cyber-glass rounded-full p-4 animate-bounce">
+                        <i class="fas fa-chevron-down text-cyan-400 text-2xl"></i>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-2 font-mono">SCROLL TO EXPLORE</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced sections with AOS animations -->
+        <section id="about" class="py-24 relative overflow-hidden">
+            <!-- Quantum Background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/20 to-cyan-900/20"></div>
+            <div class="absolute inset-0 bg-black/40"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-20" data-aos="fade-up">
+                    <h2 class="text-5xl md:text-7xl font-black mb-8 font-cyber">
+                        <span class="bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                            NEURAL PROFILE
+                        </span>
+                    </h2>
+                    <div class="w-32 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto rounded-full"></div>
+                    <p class="text-xl text-gray-300 mt-6 font-space">Khám phá hành trình quantum coding của tôi</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
+                    <!-- Quantum Portrait -->
+                    <div data-aos="fade-right" data-aos-delay="200">
+                        <div class="relative">
+                            <div class="cyber-glass-strong p-8 rounded-3xl">
+                                <div class="relative overflow-hidden rounded-2xl group">
+                                    <img src="https://via.placeholder.com/500x600/667eea/ffffff?text=QUANTUM+PROFILE" 
+                                         alt="NHDinh Quantum Profile" 
+                                         class="w-full h-96 object-cover transition-all duration-700 group-hover:scale-110 filter brightness-110">
+                                    <div class="absolute inset-0 bg-gradient-to-tr from-cyan-400/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                                        <div class="text-2xl font-bold text-white font-cyber">QUANTUM DEVELOPER</div>
+                                        <div class="text-cyan-400 font-mono">STATUS: ACTIVE</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Floating Elements -->
+                            <div class="absolute -top-4 -right-4 w-24 h-24 cyber-glass rounded-full flex items-center justify-center animate-pulse">
+                                <i class="fas fa-atom text-3xl text-cyan-400"></i>
+                            </div>
+                            <div class="absolute -bottom-4 -left-4 w-20 h-20 cyber-glass rounded-full flex items-center justify-center animate-bounce">
+                                <i class="fas fa-rocket text-2xl text-purple-400"></i>
+                            </div>
+                        </div>
+                    </div>
+        </section>
+
+        <!-- ============= QUANTUM ABOUT SECTION ============= -->
+        <section id="about" class="py-24 relative overflow-hidden">
+            <!-- Dynamic Background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20"></div>
+            <div class="absolute inset-0 bg-black/60"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-20" data-aos="fade-up">
+                    <h2 class="text-5xl md:text-7xl font-black mb-8 font-cyber">
+                        <span class="bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-400 bg-clip-text text-transparent">
+                            QUANTUM PROTOCOL
+                        </span>
+                    </h2>
+                    <div class="w-32 h-1 bg-gradient-to-r from-cyan-500 to-purple-500 mx-auto rounded-full"></div>
+                    <p class="text-xl text-gray-300 mt-6 font-space max-w-3xl mx-auto">
+                        Khám phá hành trình và triết lý phát triển của một Quantum Developer
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
+                    <!-- Quantum Avatar & Stats -->
+                    <div data-aos="fade-right" data-aos-delay="200">
+                        <div class="relative">
+                            <!-- Main Avatar -->
+                            <div class="relative w-80 h-80 mx-auto mb-12">
+                                <div class="w-full h-full cyber-glass-strong rounded-3xl overflow-hidden relative group">
+                                    <img src="https://via.placeholder.com/400x400/667eea/ffffff?text=NH" alt="NHDinh Quantum Avatar" 
+                                         class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 filter brightness-110">
+                                    <div class="absolute inset-0 bg-gradient-to-tr from-cyan-400/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                                </div>
+                                <!-- Floating Quantum Particles -->
+                                <div class="absolute -top-4 -right-4 w-16 h-16 cyber-glass rounded-full flex items-center justify-center animate-bounce">
+                                    <i class="fas fa-atom text-2xl text-cyan-400"></i>
+                                </div>
+                                <div class="absolute -bottom-4 -left-4 w-12 h-12 cyber-glass rounded-full flex items-center justify-center animate-pulse">
+                                    <i class="fas fa-code text-lg text-purple-400"></i>
+                                </div>
+                                <div class="absolute top-1/2 -left-8 w-10 h-10 cyber-glass rounded-full flex items-center justify-center animate-spin">
+                                    <i class="fas fa-rocket text-sm text-pink-400"></i>
+                                </div>
+                            </div>
+
+                            <!-- Quantum Achievements -->
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="cyber-glass p-6 rounded-2xl text-center group hover:scale-105 transition-all duration-300">
+                                    <div class="text-3xl font-black text-cyan-400 mb-2 font-cyber" data-counter="50">0</div>
+                                    <div class="text-sm text-gray-400 font-space">PROJECTS</div>
+                                    <i class="fas fa-project-diagram text-cyan-400/50 mt-2 group-hover:animate-pulse"></i>
+                                </div>
+                                <div class="cyber-glass p-6 rounded-2xl text-center group hover:scale-105 transition-all duration-300">
+                                    <div class="text-3xl font-black text-purple-400 mb-2 font-cyber" data-counter="5">0</div>
+                                    <div class="text-sm text-gray-400 font-space">YEARS</div>
+                                    <i class="fas fa-calendar-alt text-purple-400/50 mt-2 group-hover:animate-pulse"></i>
+                                </div>
+                                <div class="cyber-glass p-6 rounded-2xl text-center group hover:scale-105 transition-all duration-300">
+                                    <div class="text-3xl font-black text-pink-400 mb-2 font-cyber" data-counter="99">0</div>
+                                    <div class="text-sm text-gray-400 font-space">CLIENTS</div>
+                                    <i class="fas fa-heart text-pink-400/50 mt-2 group-hover:animate-bounce"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quantum Bio -->
+                    <div data-aos="fade-left" data-aos-delay="400">
+                        <div class="space-y-8">
+                            <div class="cyber-glass-strong p-8 rounded-3xl">
+                                <h3 class="text-3xl font-black mb-6 text-cyan-400 font-cyber flex items-center">
+                                    <i class="fas fa-brain mr-4 text-2xl"></i>
+                                    QUANTUM MINDSET
+                                </h3>
+                                <p class="text-gray-300 leading-relaxed text-lg font-space">
+                                    Với <span class="text-cyan-400 font-bold">5+ năm kinh nghiệm</span> trong lĩnh vực phát triển web, 
+                                    tôi chuyên tạo ra những <span class="text-purple-400 font-bold">trải nghiệm số đột phá</span> 
+                                    bằng việc kết hợp công nghệ <span class="text-pink-400 font-bold">tiên tiến</span> với 
+                                    tư duy sáng tạo không giới hạn.
+                                </p>
+                            </div>
+                            
+                            <!-- Skills Matrix -->
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="cyber-glass p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                    <div class="text-center">
+                                        <i class="fas fa-code text-4xl text-cyan-400 mb-4 group-hover:animate-pulse"></i>
+                                        <div class="text-xl font-bold text-white mb-2 font-cyber">FRONTEND</div>
+                                        <div class="text-sm text-gray-400 font-mono">React • Vue • Next.js</div>
+                                    </div>
+                                </div>
+                                <div class="cyber-glass p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                    <div class="text-center">
+                                        <i class="fas fa-server text-4xl text-purple-400 mb-4 group-hover:animate-bounce"></i>
+                                        <div class="text-xl font-bold text-white mb-2 font-cyber">BACKEND</div>
+                                        <div class="text-sm text-gray-400 font-mono">Node.js • Python • Go</div>
+                                    </div>
+                                </div>
+                                <div class="cyber-glass p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                    <div class="text-center">
+                                        <i class="fas fa-cloud text-4xl text-pink-400 mb-4 group-hover:animate-spin"></i>
+                                        <div class="text-xl font-bold text-white mb-2 font-cyber">CLOUD</div>
+                                        <div class="text-sm text-gray-400 font-mono">AWS • Azure • GCP</div>
+                                    </div>
+                                </div>
+                                <div class="cyber-glass p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                    <div class="text-center">
+                                        <i class="fas fa-mobile-alt text-4xl text-green-400 mb-4 group-hover:animate-pulse"></i>
+                                        <div class="text-xl font-bold text-white mb-2 font-cyber">MOBILE</div>
+                                        <div class="text-sm text-gray-400 font-mono">React Native • Flutter</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Quantum Philosophy -->
+                            <div class="cyber-glass-strong p-8 rounded-3xl">
+                                <h3 class="text-2xl font-black mb-4 text-purple-400 font-cyber flex items-center">
+                                    <i class="fas fa-lightbulb mr-3 text-xl"></i>
+                                    PHILOSOPHY
+                                </h3>
+                                <blockquote class="text-gray-300 italic text-lg font-space leading-relaxed">
+                                    "Công nghệ không chỉ là công cụ, mà là ngôn ngữ để <span class="text-cyan-400">truyền đạt cảm xúc</span>, 
+                                    tạo ra những trải nghiệm <span class="text-purple-400">có ý nghĩa</span> và 
+                                    kết nối con người với <span class="text-pink-400">tương lai</span>."
+                                </blockquote>
+                            </div>
+                            
+                            <!-- Quantum CTA -->
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <a href="#projects" class="quantum-cta px-8 py-4 rounded-2xl font-bold inline-flex items-center space-x-3 group">
+                                    <i class="fas fa-eye group-hover:animate-bounce"></i>
+                                    <span>XEM DỰ ÁN</span>
+                                    <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </a>
+                                <a href="#contact" class="cyber-glass border-2 border-cyan-500/50 px-8 py-4 rounded-2xl font-bold hover:bg-cyan-500/20 transition-all duration-300 inline-flex items-center space-x-3 text-white group">
+                                    <i class="fas fa-handshake group-hover:animate-pulse"></i>
+                                    <span>HỢP TÁC</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="py-24 relative overflow-hidden">
+            <!-- Quantum Service Background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-pink-900/20 to-cyan-900/30"></div>
+            <div class="absolute inset-0 bg-black/50"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-20" data-aos="fade-up">
+                    <h2 class="text-5xl md:text-7xl font-black mb-8 font-cyber">
+                        <span class="bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent">
+                            QUANTUM SERVICES
+                        </span>
+                    </h2>
+                    <div class="w-32 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
+                    <p class="text-xl text-gray-300 mt-6 font-space">Những dịch vụ công nghệ tiên tiến cho tương lai số</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                    <!-- Service 1: Web Development -->
+                    <div class="cyber-glass-strong p-10 rounded-3xl hover:scale-105 transition-all duration-500 group relative overflow-hidden" data-aos="fade-up" data-aos-delay="100">
+                        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="text-center mb-8">
+                                <div class="w-20 h-20 mx-auto cyber-glass rounded-2xl flex items-center justify-center mb-6 group-hover:animate-pulse">
+                                    <i class="fas fa-code text-4xl text-cyan-400"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-white mb-4 font-cyber">WEB DEVELOPMENT</h3>
+                                <div class="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto rounded-full"></div>
+                            </div>
+                            <p class="text-gray-300 mb-8 leading-relaxed font-space">
+                                Phát triển ứng dụng web hiện đại với React, Next.js, và các công nghệ tiên tiến nhất. 
+                                Tối ưu SEO, hiệu suất cao và trải nghiệm người dùng xuất sắc.
+                            </p>
+                            <div class="space-y-4 mb-8">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-cyan-400"></i>
+                                    <span class="text-gray-300 font-space">React.js & Next.js</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-cyan-400"></i>
+                                    <span class="text-gray-300 font-space">Progressive Web Apps</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-cyan-400"></i>
+                                    <span class="text-gray-300 font-space">SEO Optimization</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-cyan-400"></i>
+                                    <span class="text-gray-300 font-space">Mobile Responsive</span>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <a href="#contact" class="quantum-cta px-8 py-3 rounded-xl font-bold inline-flex items-center space-x-3 group">
+                                    <i class="fas fa-rocket"></i>
+                                    <span>BẮT ĐẦU DỰ ÁN</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service 2: Mobile App Development -->
+                    <div class="cyber-glass-strong p-10 rounded-3xl hover:scale-105 transition-all duration-500 group relative overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-600/10 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="text-center mb-8">
+                                <div class="w-20 h-20 mx-auto cyber-glass rounded-2xl flex items-center justify-center mb-6 group-hover:animate-bounce">
+                                    <i class="fas fa-mobile-alt text-4xl text-purple-400"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-white mb-4 font-cyber">MOBILE APPS</h3>
+                                <div class="w-16 h-1 bg-gradient-to-r from-purple-400 to-pink-500 mx-auto rounded-full"></div>
+                            </div>
+                            <p class="text-gray-300 mb-8 leading-relaxed font-space">
+                                Ứng dụng di động cross-platform với React Native và Flutter. 
+                                Hiệu suất native, UI/UX đỉnh cao cho iOS và Android.
+                            </p>
+                            <div class="space-y-4 mb-8">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-purple-400"></i>
+                                    <span class="text-gray-300 font-space">React Native & Flutter</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-purple-400"></i>
+                                    <span class="text-gray-300 font-space">Cross-platform Development</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-purple-400"></i>
+                                    <span class="text-gray-300 font-space">App Store Optimization</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-purple-400"></i>
+                                    <span class="text-gray-300 font-space">Push Notifications</span>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <a href="#contact" class="cyber-glass border-2 border-purple-500/50 px-8 py-3 rounded-xl font-bold hover:bg-purple-500/20 transition-all duration-300 inline-flex items-center space-x-3 text-white">
+                                    <i class="fas fa-download"></i>
+                                    <span>TẠO ỨNG DỤNG</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service 3: Cloud Solutions -->
+                    <div class="cyber-glass-strong p-10 rounded-3xl hover:scale-105 transition-all duration-500 group relative overflow-hidden" data-aos="fade-up" data-aos-delay="300">
+                        <div class="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-orange-600/10 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="text-center mb-8">
+                                <div class="w-20 h-20 mx-auto cyber-glass rounded-2xl flex items-center justify-center mb-6 group-hover:animate-spin">
+                                    <i class="fas fa-cloud text-4xl text-pink-400"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-white mb-4 font-cyber">CLOUD SOLUTIONS</h3>
+                                <div class="w-16 h-1 bg-gradient-to-r from-pink-400 to-orange-500 mx-auto rounded-full"></div>
+                            </div>
+                            <p class="text-gray-300 mb-8 leading-relaxed font-space">
+                                Giải pháp cloud computing với AWS, Azure, GCP. Triển khai, quản lý và bảo mật 
+                                hệ thống với khả năng mở rộng không giới hạn.
+                            </p>
+                            <div class="space-y-4 mb-8">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-pink-400"></i>
+                                    <span class="text-gray-300 font-space">AWS • Azure • GCP</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-pink-400"></i>
+                                    <span class="text-gray-300 font-space">DevOps & CI/CD</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-pink-400"></i>
+                                    <span class="text-gray-300 font-space">Microservices Architecture</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check text-pink-400"></i>
+                                    <span class="text-gray-300 font-space">Auto Scaling & Monitoring</span>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <a href="#contact" class="cyber-glass border-2 border-pink-500/50 px-8 py-3 rounded-xl font-bold hover:bg-pink-500/20 transition-all duration-300 inline-flex items-center space-x-3 text-white">
+                                    <i class="fas fa-server"></i>
+                                    <span>TRIỂN KHAI CLOUD</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============= QUANTUM PROJECTS MATRIX ============= -->
+        <section id="projects" class="py-24 relative overflow-hidden">
+            <!-- Dynamic Background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-green-900/20 via-teal-900/20 to-blue-900/20"></div>
+            <div class="absolute inset-0 bg-black/60"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-20" data-aos="fade-up">
+                    <h2 class="text-5xl md:text-7xl font-black mb-8 font-cyber">
+                        <span class="bg-gradient-to-r from-green-400 via-teal-500 to-blue-400 bg-clip-text text-transparent">
+                            PROJECT MATRIX
+                        </span>
+                    </h2>
+                    <div class="w-32 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full"></div>
+                    <p class="text-xl text-gray-300 mt-6 font-space max-w-3xl mx-auto">
+                        Khám phá những dự án đột phá được tạo ra bằng công nghệ tiên tiến
+                    </p>
+                </div>
+
+                <!-- Project Filter Tabs -->
+                <div class="flex flex-wrap justify-center gap-4 mb-16" data-aos="fade-up" data-aos-delay="200">
+                    <button class="project-filter active cyber-glass px-6 py-3 rounded-xl text-white font-space font-semibold hover:bg-white/10 transition-all duration-300" data-filter="all">
+                        <i class="fas fa-th mr-2"></i>TẤT CẢ
+                    </button>
+                    <button class="project-filter cyber-glass px-6 py-3 rounded-xl text-white font-space font-semibold hover:bg-white/10 transition-all duration-300" data-filter="web">
+                        <i class="fas fa-globe mr-2"></i>WEB APPS
+                    </button>
+                    <button class="project-filter cyber-glass px-6 py-3 rounded-xl text-white font-space font-semibold hover:bg-white/10 transition-all duration-300" data-filter="mobile">
+                        <i class="fas fa-mobile-alt mr-2"></i>MOBILE
+                    </button>
+                    <button class="project-filter cyber-glass px-6 py-3 rounded-xl text-white font-space font-semibold hover:bg-white/10 transition-all duration-300" data-filter="ai">
+                        <i class="fas fa-robot mr-2"></i>AI/ML
+                    </button>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                    <!-- Featured Project 1 -->
+                    <div class="project-card lg:col-span-2 cyber-glass-strong rounded-3xl overflow-hidden group hover:scale-105 transition-all duration-500" data-category="web" data-aos="fade-up" data-aos-delay="300">
+                        <div class="relative h-64 lg:h-80 overflow-hidden">
+                            <img src="https://via.placeholder.com/600x400/667eea/ffffff?text=E-Commerce+Platform" alt="E-Commerce Platform" 
+                                 class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                            <div class="absolute top-4 left-4">
+                                <span class="cyber-glass px-3 py-1 rounded-full text-xs font-bold text-cyan-400 font-mono">FEATURED</span>
+                            </div>
+                            <div class="absolute top-4 right-4 flex space-x-2">
+                                <span class="w-8 h-8 cyber-glass rounded-full flex items-center justify-center">
+                                    <i class="fab fa-react text-cyan-400 text-sm"></i>
+                                </span>
+                                <span class="w-8 h-8 cyber-glass rounded-full flex items-center justify-center">
+                                    <i class="fab fa-node-js text-green-400 text-sm"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-black text-white mb-4 font-cyber">QUANTUM E-COMMERCE</h3>
+                            <p class="text-gray-300 mb-6 font-space leading-relaxed">
+                                Nền tảng thương mại điện tử với AI recommendation engine, real-time chat, 
+                                payment gateway tích hợp và admin dashboard tiên tiến.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs font-mono">React.js</span>
+                                <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-mono">Node.js</span>
+                                <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-mono">MongoDB</span>
+                                <span class="px-3 py-1 bg-pink-500/20 text-pink-400 rounded-full text-xs font-mono">AI/ML</span>
+                            </div>
+                            <div class="flex space-x-4">
+                                <a href="#" class="flex-1 quantum-cta px-6 py-3 rounded-xl font-bold text-center transition-all duration-300">
+                                    <i class="fas fa-eye mr-2"></i>DEMO
+                                </a>
+                                <a href="#" class="cyber-glass border border-cyan-500/50 px-6 py-3 rounded-xl font-bold text-white hover:bg-cyan-500/20 transition-all duration-300">
+                                    <i class="fab fa-github mr-2"></i>CODE
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="project-card cyber-glass-strong rounded-3xl overflow-hidden group hover:scale-105 transition-all duration-500" data-category="mobile" data-aos="fade-up" data-aos-delay="400">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://via.placeholder.com/400x300/764ba2/ffffff?text=Health+App" alt="Health App" 
+                                 class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                            <div class="absolute top-4 right-4 flex space-x-2">
+                                <span class="w-8 h-8 cyber-glass rounded-full flex items-center justify-center">
+                                    <i class="fab fa-react text-cyan-400 text-sm"></i>
+                                </span>
+                                <span class="w-8 h-8 cyber-glass rounded-full flex items-center justify-center">
+                                    <i class="fas fa-mobile-alt text-purple-400 text-sm"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-black text-white mb-3 font-cyber">HEALTH TRACKER</h3>
+                            <p class="text-gray-300 mb-4 font-space text-sm leading-relaxed">
+                                Ứng dụng theo dõi sức khỏe với AI analysis, biometric integration và telemedicine.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs font-mono">React Native</span>
+                                <span class="px-2 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-mono">AI</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <a href="#" class="flex-1 cyber-glass border border-purple-500/50 px-4 py-2 rounded-lg font-bold text-white text-sm hover:bg-purple-500/20 transition-all duration-300 text-center">
+                                    <i class="fas fa-eye mr-1"></i>VIEW
+                                </a>
+                                <a href="#" class="cyber-glass border border-gray-500/50 px-4 py-2 rounded-lg font-bold text-white text-sm hover:bg-gray-500/20 transition-all duration-300">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="project-card cyber-glass-strong rounded-3xl overflow-hidden group hover:scale-105 transition-all duration-500" data-category="ai" data-aos="fade-up" data-aos-delay="500">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://via.placeholder.com/400x300/f093fb/ffffff?text=AI+Chatbot" alt="AI Chatbot" 
+                                 class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                            <div class="absolute top-4 left-4">
+                                <span class="cyber-glass px-2 py-1 rounded-full text-xs font-bold text-green-400 font-mono">NEW</span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-black text-white mb-3 font-cyber">AI ASSISTANT</h3>
+                            <p class="text-gray-300 mb-4 font-space text-sm leading-relaxed">
+                                Chatbot thông minh với NLP, voice recognition và multilingual support.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-mono">Python</span>
+                                <span class="px-2 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-mono">TensorFlow</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <a href="#" class="flex-1 cyber-glass border border-green-500/50 px-4 py-2 rounded-lg font-bold text-white text-sm hover:bg-green-500/20 transition-all duration-300 text-center">
+                                    <i class="fas fa-robot mr-1"></i>DEMO
+                                </a>
+                                <a href="#" class="cyber-glass border border-gray-500/50 px-4 py-2 rounded-lg font-bold text-white text-sm hover:bg-gray-500/20 transition-all duration-300">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="project-card cyber-glass-strong rounded-3xl overflow-hidden group hover:scale-105 transition-all duration-500" data-category="web" data-aos="fade-up" data-aos-delay="600">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://via.placeholder.com/400x300/4facfe/ffffff?text=Dashboard" alt="Analytics Dashboard" 
+                                 class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-black text-white mb-3 font-cyber">ANALYTICS HUB</h3>
+                            <p class="text-gray-300 mb-4 font-space text-sm leading-relaxed">
+                                Real-time analytics dashboard với data visualization và predictive insights.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-mono">Vue.js</span>
+                                <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-mono">D3.js</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <a href="#" class="flex-1 cyber-glass border border-blue-500/50 px-4 py-2 rounded-lg font-bold text-white text-sm hover:bg-blue-500/20 transition-all duration-300 text-center">
+                                    <i class="fas fa-chart-line mr-1"></i>VIEW
+                                </a>
+                                <a href="#" class="cyber-glass border border-gray-500/50 px-4 py-2 rounded-lg font-bold text-white text-sm hover:bg-gray-500/20 transition-all duration-300">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 5 -->
+                    <div class="project-card lg:col-span-2 cyber-glass-strong rounded-3xl overflow-hidden group hover:scale-105 transition-all duration-500" data-category="web" data-aos="fade-up" data-aos-delay="700">
+                        <div class="lg:flex">
+                            <div class="lg:w-1/2 relative h-64 lg:h-auto overflow-hidden">
+                                <img src="https://via.placeholder.com/500x300/43e97b/ffffff?text=Social+Platform" alt="Social Platform" 
+                                     class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent lg:hidden"></div>
+                            </div>
+                            <div class="lg:w-1/2 p-8">
+                                <h3 class="text-2xl font-black text-white mb-4 font-cyber">SOCIAL NETWORK</h3>
+                                <p class="text-gray-300 mb-6 font-space leading-relaxed">
+                                    Nền tảng mạng xã hội với real-time messaging, content sharing, 
+                                    AI moderation và blockchain integration.
+                                </p>
+                                <div class="flex flex-wrap gap-2 mb-6">
+                                    <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-mono">Next.js</span>
+                                    <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-mono">GraphQL</span>
+                                    <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-mono">WebSocket</span>
+                                    <span class="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-mono">Blockchain</span>
+                                </div>
+                                <div class="flex space-x-4">
+                                    <a href="#" class="quantum-cta px-6 py-3 rounded-xl font-bold transition-all duration-300">
+                                        <i class="fas fa-play mr-2"></i>LIVE DEMO
+                                    </a>
+                                    <a href="#" class="cyber-glass border border-green-500/50 px-6 py-3 rounded-xl font-bold text-white hover:bg-green-500/20 transition-all duration-300">
+                                        <i class="fab fa-github mr-2"></i>SOURCE
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View All Projects CTA -->
+                <div class="text-center mt-16" data-aos="fade-up" data-aos-delay="800">
+                    <a href="#contact" class="cyber-glass border-2 border-green-500/50 px-12 py-4 rounded-2xl font-bold text-white hover:bg-green-500/20 transition-all duration-300 inline-flex items-center space-x-4 group">
+                        <i class="fas fa-folder-open group-hover:animate-bounce"></i>
+                        <span>XEM TẤT CẢ DỰ ÁN</span>
+                        <i class="fas fa-external-link-alt text-sm group-hover:animate-pulse"></i>
+                    </a>
+                </div>
+            </div>
+                        <i class="fas fa-cubes text-3xl text-yellow-400 mb-4 group-hover:animate-spin"></i>
+                        <div class="text-lg font-bold text-white font-cyber mb-2">BLOCKCHAIN</div>
+                        <div class="text-sm text-gray-400 font-space">Smart Contracts & DApps</div>
+                    </div>
+                    <div class="cyber-glass p-6 rounded-2xl text-center group hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-chart-line text-3xl text-blue-400 mb-4 group-hover:animate-pulse"></i>
+                        <div class="text-lg font-bold text-white font-cyber mb-2">DATA ANALYTICS</div>
+                        <div class="text-sm text-gray-400 font-space">Business Intelligence & Insights</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6">
+                            <i class="fas fa-laptop-code text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">Web Development</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Phát triển website hiện đại, responsive và tối ưu SEO với công nghệ tiên tiến nhất.
+                        </p>
+                    </div>
+                    
+                    <div class="glass-effect-strong p-8 rounded-3xl hover:transform hover:scale-105 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6">
+                            <i class="fas fa-mobile-alt text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">Mobile App</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Tạo ra các ứng dụng di động cross-platform với React Native và Flutter.
+                        </p>
+                    </div>
+                    
+                    <div class="glass-effect-strong p-8 rounded-3xl hover:transform hover:scale-105 transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mb-6">
+                            <i class="fas fa-paint-brush text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">UI/UX Design</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Thiết kế giao diện người dùng đẹp mắt và trải nghiệm người dùng tối ưu.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                        Dự án nổi bật
+                    </h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-green-500 to-blue-500 mx-auto rounded-full"></div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                    <div class="glass-effect-strong rounded-3xl overflow-hidden hover:transform hover:scale-105 transition-all duration-500" data-aos="zoom-in" data-aos-delay="100">
+                        <img src="https://via.placeholder.com/400x250/667eea/ffffff?text=Project+1" 
+                             alt="Project 1" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-3 text-gray-800">E-commerce Platform</h3>
+                            <p class="text-gray-600 mb-4">Nền tảng thương mại điện tử với React & Node.js</p>
+                            <div class="flex space-x-2 mb-4">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-medium">React</span>
+                                <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs font-medium">Node.js</span>
+                            </div>
+                            <a href="#" class="text-blue-500 hover:text-blue-700 font-semibold">Xem chi tiết →</a>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-effect-strong rounded-3xl overflow-hidden hover:transform hover:scale-105 transition-all duration-500" data-aos="zoom-in" data-aos-delay="200">
+                        <img src="https://via.placeholder.com/400x250/764ba2/ffffff?text=Project+2" 
+                             alt="Project 2" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-3 text-gray-800">Task Management App</h3>
+                            <p class="text-gray-600 mb-4">Ứng dụng quản lý công việc với Vue.js</p>
+                            <div class="flex space-x-2 mb-4">
+                                <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs font-medium">Vue.js</span>
+                                <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-xs font-medium">Express</span>
+                            </div>
+                            <a href="#" class="text-blue-500 hover:text-blue-700 font-semibold">Xem chi tiết →</a>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-effect-strong rounded-3xl overflow-hidden hover:transform hover:scale-105 transition-all duration-500" data-aos="zoom-in" data-aos-delay="300">
+                        <img src="https://via.placeholder.com/400x250/f093fb/ffffff?text=Project+3" 
+                             alt="Project 3" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-3 text-gray-800">Portfolio Website</h3>
+                            <p class="text-gray-600 mb-4">Website portfolio cá nhân với Next.js</p>
+                            <div class="flex space-x-2 mb-4">
+                                <span class="px-3 py-1 bg-black text-white rounded-full text-xs font-medium">Next.js</span>
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-medium">Tailwind</span>
+                            </div>
+                            <a href="#" class="text-blue-500 hover:text-blue-700 font-semibold">Xem chi tiết →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="blog" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-4 text-center">
+                <div class="mb-16" data-aos="fade-up">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                        Blog & Insights
+                    </h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-orange-500 to-red-500 mx-auto rounded-full"></div>
+                </div>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg" data-aos="fade-up" data-aos-delay="200">
+                    Chia sẻ kinh nghiệm, tips & tricks về phát triển web và công nghệ mới nhất
+                </p>
+            </div>
+        </section>
+
+        <!-- ============= QUANTUM LAB SECTION ============= -->
+        <section id="lab" class="py-24 relative overflow-hidden">
+            <!-- Background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-900/20 via-red-900/20 to-pink-900/20"></div>
+            <div class="absolute inset-0 bg-black/60"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-20" data-aos="fade-up">
+                    <h2 class="text-5xl md:text-7xl font-black mb-8 font-cyber">
+                        <span class="bg-gradient-to-r from-orange-400 via-red-500 to-pink-400 bg-clip-text text-transparent">
+                            QUANTUM LAB
+                        </span>
+                    </h2>
+                    <div class="w-32 h-1 bg-gradient-to-r from-orange-500 to-pink-500 mx-auto rounded-full"></div>
+                    <p class="text-xl text-gray-300 mt-6 font-space max-w-3xl mx-auto">
+                        Nơi thử nghiệm những công nghệ tiên tiến và ý tưởng đột phá
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                    <!-- Experiments & Research -->
+                    <div data-aos="fade-right" data-aos-delay="200">
+                        <h3 class="text-3xl font-black text-orange-400 mb-8 font-cyber flex items-center">
+                            <i class="fas fa-flask mr-4 text-2xl"></i>
+                            RESEARCH & EXPERIMENTS
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="cyber-glass-strong p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-brain text-xl text-purple-400"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="text-lg font-bold text-white mb-2 font-cyber">NEURAL NETWORKS</h4>
+                                        <p class="text-gray-300 text-sm font-space">
+                                            Nghiên cứu deep learning models cho computer vision và NLP
+                                        </p>
+                                        <div class="flex flex-wrap gap-2 mt-3">
+                                            <span class="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs font-mono">TensorFlow</span>
+                                            <span class="px-2 py-1 bg-orange-500/20 text-orange-400 rounded text-xs font-mono">PyTorch</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cyber-glass-strong p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center">
+                                        <i class="fab fa-ethereum text-xl text-cyan-400"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="text-lg font-bold text-white mb-2 font-cyber">BLOCKCHAIN</h4>
+                                        <p class="text-gray-300 text-sm font-space">
+                                            Smart contracts, DeFi protocols và Web3 applications
+                                        </p>
+                                        <div class="flex flex-wrap gap-2 mt-3">
+                                            <span class="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-xs font-mono">Solidity</span>
+                                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-mono">Web3.js</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cyber-glass-strong p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-vr-cardboard text-xl text-pink-400"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="text-lg font-bold text-white mb-2 font-cyber">AR/VR</h4>
+                                        <p class="text-gray-300 text-sm font-space">
+                                            Immersive experiences với WebXR và spatial computing
+                                        </p>
+                                        <div class="flex flex-wrap gap-2 mt-3">
+                                            <span class="px-2 py-1 bg-pink-500/20 text-pink-400 rounded text-xs font-mono">Three.js</span>
+                                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-mono">WebXR</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cyber-glass-strong p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-satellite text-xl text-green-400"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="text-lg font-bold text-white mb-2 font-cyber">IOT & EDGE</h4>
+                                        <p class="text-gray-300 text-sm font-space">
+                                            Smart devices và edge computing solutions
+                                        </p>
+                                        <div class="flex flex-wrap gap-2 mt-3">
+                                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-mono">Raspberry Pi</span>
+                                            <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-mono">Arduino</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tools & Technologies -->
+                    <div data-aos="fade-left" data-aos-delay="400">
+                        <h3 class="text-3xl font-black text-pink-400 mb-8 font-cyber flex items-center">
+                            <i class="fas fa-tools mr-4 text-2xl"></i>
+                            QUANTUM TOOLKIT
+                        </h3>
+
+                        <!-- Development Tools -->
+                        <div class="cyber-glass-strong p-8 rounded-3xl mb-8">
+                            <h4 class="text-xl font-bold text-white mb-6 font-cyber">DEVELOPMENT STACK</h4>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="text-center group">
+                                    <div class="w-16 h-16 cyber-glass rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-all duration-300">
+                                        <i class="fab fa-react text-2xl text-cyan-400"></i>
+                                    </div>
+                                    <div class="text-sm text-gray-300 font-mono">React</div>
+                                </div>
+                                <div class="text-center group">
+                                    <div class="w-16 h-16 cyber-glass rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-all duration-300">
+                                        <i class="fab fa-node-js text-2xl text-green-400"></i>
+                                    </div>
+                                    <div class="text-sm text-gray-300 font-mono">Node.js</div>
+                                </div>
+                                <div class="text-center group">
+                                    <div class="w-16 h-16 cyber-glass rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-all duration-300">
+                                        <i class="fab fa-python text-2xl text-yellow-400"></i>
+                                    </div>
+                                    <div class="text-sm text-gray-300 font-mono">Python</div>
+                                </div>
+                                <div class="text-center group">
+                                    <div class="w-16 h-16 cyber-glass rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-all duration-300">
+                                        <i class="fab fa-aws text-2xl text-orange-400"></i>
+                                    </div>
+                                    <div class="text-sm text-gray-300 font-mono">AWS</div>
+                                </div>
+                                <div class="text-center group">
+                                    <div class="w-16 h-16 cyber-glass rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-all duration-300">
+                                        <i class="fab fa-docker text-2xl text-blue-400"></i>
+                                    </div>
+                                    <div class="text-sm text-gray-300 font-mono">Docker</div>
+                                </div>
+                                <div class="text-center group">
+                                    <div class="w-16 h-16 cyber-glass rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-all duration-300">
+                                        <i class="fab fa-git-alt text-2xl text-red-400"></i>
+                                    </div>
+                                    <div class="text-sm text-gray-300 font-mono">Git</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Innovation Metrics -->
+                        <div class="cyber-glass-strong p-8 rounded-3xl">
+                            <h4 class="text-xl font-bold text-white mb-6 font-cyber">INNOVATION METRICS</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-300 font-space">Experimental Projects</span>
+                                    <span class="text-2xl font-black text-orange-400 font-cyber">15+</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-300 font-space">Research Papers</span>
+                                    <span class="text-2xl font-black text-purple-400 font-cyber">8</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-300 font-space">Open Source Contributions</span>
+                                    <span class="text-2xl font-black text-cyan-400 font-cyber">50+</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-300 font-space">Patents Filed</span>
+                                    <span class="text-2xl font-black text-pink-400 font-cyber">3</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lab CTA -->
+                        <div class="text-center mt-8">
+                            <a href="#contact" class="quantum-cta px-8 py-4 rounded-2xl font-bold inline-flex items-center space-x-3 group">
+                                <i class="fas fa-microscope group-hover:animate-pulse"></i>
+                                <span>HỢP TÁC NGHIÊN CỨU</span>
+                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============= QUANTUM CONTACT SECTION ============= -->
+        <section id="contact" class="py-24 relative overflow-hidden">
+            <!-- Dynamic Background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-purple-900/30 to-pink-900/30"></div>
+            <div class="absolute inset-0 bg-black/70"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-20" data-aos="fade-up">
+                    <h2 class="text-5xl md:text-7xl font-black mb-8 font-cyber">
+                        <span class="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent">
+                            QUANTUM CONTACT
+                        </span>
+                    </h2>
+                    <div class="w-32 h-1 bg-gradient-to-r from-blue-500 to-pink-500 mx-auto rounded-full"></div>
+                    <p class="text-xl text-gray-300 mt-6 font-space max-w-3xl mx-auto">
+                        Hãy cùng tạo ra điều gì đó tuyệt vời với công nghệ tiên tiến
+                    </p>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-16 max-w-6xl mx-auto">
+                    <!-- Contact Information -->
+                    <div data-aos="fade-right" data-aos-delay="200">
+                        <h3 class="text-3xl font-black text-blue-400 mb-8 font-cyber flex items-center">
+                            <i class="fas fa-satellite-dish mr-4 text-2xl"></i>
+                            ESTABLISH CONNECTION
+                        </h3>
+
+                        <div class="space-y-6 mb-10">
+                            <div class="cyber-glass-strong p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-14 h-14 cyber-glass rounded-xl flex items-center justify-center group-hover:animate-pulse">
+                                        <i class="fas fa-envelope text-xl text-blue-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-lg font-bold text-white font-cyber">EMAIL PROTOCOL</div>
+                                        <div class="text-gray-300 font-mono">nhdinh.dev@gmail.com</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cyber-glass-strong p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-14 h-14 cyber-glass rounded-xl flex items-center justify-center group-hover:animate-pulse">
+                                        <i class="fas fa-phone text-xl text-purple-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-lg font-bold text-white font-cyber">VOICE COMMUNICATION</div>
+                                        <div class="text-gray-300 font-mono">+84 123 456 789</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cyber-glass-strong p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-14 h-14 cyber-glass rounded-xl flex items-center justify-center group-hover:animate-pulse">
+                                        <i class="fas fa-map-marker-alt text-xl text-pink-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-lg font-bold text-white font-cyber">PHYSICAL LOCATION</div>
+                                        <div class="text-gray-300 font-mono">Hà Nội, Việt Nam</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cyber-glass-strong p-6 rounded-2xl group hover:scale-105 transition-all duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-14 h-14 cyber-glass rounded-xl flex items-center justify-center group-hover:animate-pulse">
+                                        <i class="fas fa-clock text-xl text-green-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-lg font-bold text-white font-cyber">RESPONSE TIME</div>
+                                        <div class="text-gray-300 font-mono">< 24 Hours</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Matrix -->
+                        <div class="cyber-glass-strong p-8 rounded-3xl">
+                            <h4 class="text-xl font-bold text-white mb-6 font-cyber">SOCIAL MATRIX</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <a href="#" class="cyber-glass p-4 rounded-xl flex items-center space-x-3 text-white hover:text-cyan-400 hover:bg-cyan-500/10 transition-all duration-300 group">
+                                    <i class="fab fa-github text-xl group-hover:animate-bounce"></i>
+                                    <span class="font-space font-semibold">GitHub</span>
+                                </a>
+                                <a href="#" class="cyber-glass p-4 rounded-xl flex items-center space-x-3 text-white hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-300 group">
+                                    <i class="fab fa-linkedin text-xl group-hover:animate-bounce"></i>
+                                    <span class="font-space font-semibold">LinkedIn</span>
+                                </a>
+                                <a href="#" class="cyber-glass p-4 rounded-xl flex items-center space-x-3 text-white hover:text-purple-400 hover:bg-purple-500/10 transition-all duration-300 group">
+                                    <i class="fab fa-twitter text-xl group-hover:animate-bounce"></i>
+                                    <span class="font-space font-semibold">Twitter</span>
+                                </a>
+                                <a href="#" class="cyber-glass p-4 rounded-xl flex items-center space-x-3 text-white hover:text-pink-400 hover:bg-pink-500/10 transition-all duration-300 group">
+                                    <i class="fab fa-discord text-xl group-hover:animate-bounce"></i>
+                                    <span class="font-space font-semibold">Discord</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Form -->
+                    <div data-aos="fade-left" data-aos-delay="400">
+                        <h3 class="text-3xl font-black text-pink-400 mb-8 font-cyber flex items-center">
+                            <i class="fas fa-paper-plane mr-4 text-2xl"></i>
+                            TRANSMIT MESSAGE
+                        </h3>
+
+                        <form class="cyber-glass-strong p-8 rounded-3xl space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2 font-cyber">FULL NAME</label>
+                                    <input type="text" 
+                                           class="w-full px-4 py-3 cyber-glass border border-cyan-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 transition-all duration-300 font-space"
+                                           placeholder="Nhập họ tên của bạn">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2 font-cyber">EMAIL ADDRESS</label>
+                                    <input type="email" 
+                                           class="w-full px-4 py-3 cyber-glass border border-purple-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 transition-all duration-300 font-space"
+                                           placeholder="your@email.com">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2 font-cyber">PROJECT TYPE</label>
+                                <select class="w-full px-4 py-3 cyber-glass border border-pink-500/30 rounded-xl text-white focus:outline-none focus:border-pink-400 transition-all duration-300 font-space">
+                                    <option value="" class="bg-gray-900">Chọn loại dự án</option>
+                                    <option value="web" class="bg-gray-900">Web Development</option>
+                                    <option value="mobile" class="bg-gray-900">Mobile App</option>
+                                    <option value="ai" class="bg-gray-900">AI/ML Solution</option>
+                                    <option value="cloud" class="bg-gray-900">Cloud Infrastructure</option>
+                                    <option value="consulting" class="bg-gray-900">Technical Consulting</option>
+                                    <option value="other" class="bg-gray-900">Khác</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2 font-cyber">BUDGET RANGE</label>
+                                <select class="w-full px-4 py-3 cyber-glass border border-green-500/30 rounded-xl text-white focus:outline-none focus:border-green-400 transition-all duration-300 font-space">
+                                    <option value="" class="bg-gray-900">Chọn ngân sách</option>
+                                    <option value="small" class="bg-gray-900">< $5,000</option>
+                                    <option value="medium" class="bg-gray-900">$5,000 - $15,000</option>
+                                    <option value="large" class="bg-gray-900">$15,000 - $50,000</option>
+                                    <option value="enterprise" class="bg-gray-900">> $50,000</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2 font-cyber">MESSAGE CONTENT</label>
+                                <textarea rows="6"
+                                          class="w-full px-4 py-3 cyber-glass border border-blue-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-all duration-300 font-space resize-none"
+                                          placeholder="Mô tả chi tiết về dự án, yêu cầu và mong muốn của bạn..."></textarea>
+                            </div>
+
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="agree" class="w-4 h-4 text-cyan-400 bg-transparent border-gray-600 rounded focus:ring-cyan-400">
+                                <label for="agree" class="text-gray-300 font-space text-sm">
+                                    Tôi đồng ý với <a href="#" class="text-cyan-400 hover:text-cyan-300">điều khoản dịch vụ</a> và <a href="#" class="text-cyan-400 hover:text-cyan-300">chính sách bảo mật</a>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="w-full quantum-cta py-4 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center space-x-3 group">
+                                <i class="fas fa-rocket group-hover:animate-bounce"></i>
+                                <span>KHỞI ĐỘNG DỰ ÁN</span>
+                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============= QUANTUM FOOTER ============= -->
+    <footer class="relative overflow-hidden">
+        <!-- Footer Background -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-gray-900 to-gray-800"></div>
+        <div class="absolute inset-0 bg-black/80"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <!-- Main Footer Content -->
+            <div class="py-16 border-b border-gray-700/50">
+                <div class="grid lg:grid-cols-4 md:grid-cols-2 gap-12">
+                    <!-- Brand Section -->
+                    <div class="lg:col-span-2">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="w-16 h-16 logo-core rounded-2xl flex items-center justify-center">
+                                <span class="text-2xl font-black text-white font-cyber">NH</span>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-black text-white font-cyber">NHDinh</div>
+                                <div class="text-sm text-gray-400 font-mono">QUANTUM DEVELOPER</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed mb-8 font-space max-w-md">
+                            Tạo ra những trải nghiệm số đột phá với công nghệ tiên tiến và tư duy sáng tạo. 
+                            Kết nối hiện tại với tương lai thông qua code.
+                        </p>
+                        
+                        <!-- Newsletter -->
+                        <div class="cyber-glass p-6 rounded-2xl">
+                            <h4 class="text-lg font-bold text-white mb-4 font-cyber">QUANTUM NEWSLETTER</h4>
+                            <div class="flex space-x-3">
+                                <input type="email" 
+                                       placeholder="your@email.com"
+                                       class="flex-1 px-4 py-3 cyber-glass border border-cyan-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 transition-all duration-300 font-mono">
+                                <button class="quantum-cta px-6 py-3 rounded-xl font-bold">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="text-lg font-bold text-white mb-6 font-cyber">NAVIGATION</h4>
+                        <div class="space-y-3">
+                            <a href="#home" class="block text-gray-300 hover:text-cyan-400 transition-all duration-300 font-space">
+                                <i class="fas fa-home mr-3 w-4"></i>Home
+                            </a>
+                            <a href="#about" class="block text-gray-300 hover:text-cyan-400 transition-all duration-300 font-space">
+                                <i class="fas fa-user-astronaut mr-3 w-4"></i>About
+                            </a>
+                            <a href="#services" class="block text-gray-300 hover:text-cyan-400 transition-all duration-300 font-space">
+                                <i class="fas fa-rocket mr-3 w-4"></i>Services
+                            </a>
+                            <a href="#projects" class="block text-gray-300 hover:text-cyan-400 transition-all duration-300 font-space">
+                                <i class="fas fa-project-diagram mr-3 w-4"></i>Projects
+                            </a>
+                            <a href="#lab" class="block text-gray-300 hover:text-cyan-400 transition-all duration-300 font-space">
+                                <i class="fas fa-flask mr-3 w-4"></i>Lab
+                            </a>
+                            <a href="#contact" class="block text-gray-300 hover:text-cyan-400 transition-all duration-300 font-space">
+                                <i class="fas fa-satellite-dish mr-3 w-4"></i>Contact
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Connect Section -->
+                    <div>
+                        <h4 class="text-lg font-bold text-white mb-6 font-cyber">CONNECT</h4>
+                        <div class="space-y-4 mb-8">
+                            <a href="mailto:nhdinh.dev@gmail.com" class="block text-gray-300 hover:text-cyan-400 transition-all duration-300 font-space">
+                                <i class="fas fa-envelope mr-3 w-4"></i>nhdinh.dev@gmail.com
+                            </a>
+                            <a href="tel:+84123456789" class="block text-gray-300 hover:text-cyan-400 transition-all duration-300 font-space">
+                                <i class="fas fa-phone mr-3 w-4"></i>+84 123 456 789
+                            </a>
+                            <a href="#" class="block text-gray-300 hover:text-cyan-400 transition-all duration-300 font-space">
+                                <i class="fas fa-map-marker-alt mr-3 w-4"></i>Hà Nội, Việt Nam
+                            </a>
+                        </div>
+
+                        <!-- Social Links -->
+                        <div class="flex space-x-3">
+                            <a href="#" class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center text-white hover:text-cyan-400 hover:bg-cyan-500/10 transition-all duration-300 group">
+                                <i class="fab fa-github text-lg group-hover:animate-bounce"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center text-white hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-300 group">
+                                <i class="fab fa-linkedin text-lg group-hover:animate-bounce"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center text-white hover:text-purple-400 hover:bg-purple-500/10 transition-all duration-300 group">
+                                <i class="fab fa-twitter text-lg group-hover:animate-bounce"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 cyber-glass rounded-xl flex items-center justify-center text-white hover:text-pink-400 hover:bg-pink-500/10 transition-all duration-300 group">
+                                <i class="fab fa-discord text-lg group-hover:animate-bounce"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="py-8">
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                    <div class="text-gray-400 text-sm font-space">
+                        © 2025 <span class="text-cyan-400 font-bold">NHDinh</span>. All rights reserved. Made with 
+                        <i class="fas fa-heart text-red-400 mx-1 animate-pulse"></i> and 
+                        <i class="fas fa-coffee text-yellow-400 mx-1"></i> in Vietnam.
+                    </div>
+                    <div class="flex items-center space-x-6 text-sm">
+                        <a href="#" class="text-gray-400 hover:text-cyan-400 transition-all duration-300 font-space">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-cyan-400 transition-all duration-300 font-space">Terms of Service</a>
+                        <a href="#" class="text-gray-400 hover:text-cyan-400 transition-all duration-300 font-space">Sitemap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quantum Particles Effect -->
+        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-400 opacity-50"></div>
+    </footer>
+
+</body>
+<script src="script.js"></script>
+</html>

@@ -1,14 +1,21 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   motion,
   useAnimation,
   AnimatePresence,
+  useScroll,
+  useTransform,
+  useSpring,
+  useInView,
 } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGithub,
   faLinkedin,
   faFacebook,
+  faTwitter,
+  faInstagram,
+  faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
 import HomeParticlesEffect from "../effects3D/HomeParticlesEffect";
 import {
@@ -26,6 +33,14 @@ import {
   faBrain,
   faCloud,
   faDatabase,
+  faInfinity,
+  faAtom,
+  faMeteor,
+  faGem,
+  faFire,
+  faLightbulb,
+  faBolt,
+  faMagic,
 } from "@fortawesome/free-solid-svg-icons";
 
 import ParticleBackground from "../3D/ParticleBackground";
@@ -36,62 +51,265 @@ import useResponsive from "../../hooks/useResponsive";
 const Home = () => {
   const { isMobile, isTablet, isDesktop, breakpoint } = useResponsive();
   const [heroData, setHeroData] = useState({
-    preHeading: "Xin chào, tôi là",
-    heading: "Nguyễn Hoàng Dinh",
+    preHeading: "🌟 WELCOME TO THE FUTURE",
+    heading: "NGUYỄN HOÀNG DINH",
     subHeadings: [
-      "Senior Full-Stack Developer",
-      "React & Node.js Expert",
-      "Mobile App Developer",
-      "UI/UX Design Enthusiast",
-      "DevOps & Cloud Architect",
-      "AI/ML Integration Specialist",
+      "🚀 FULL-STACK ARCHITECT",
+      "⚡ REACT NINJA",
+      "🔥 NODE.JS WIZARD",
+      "📱 MOBILE INNOVATOR", 
+      "🎨 UI/UX MAESTRO",
+      "☁️ CLOUD ARCHITECT",
+      "🤖 AI/ML PIONEER",
+      "💎 TECH VISIONARY",
     ],
     introHtml: `
-      <p>🚀 <strong>Chuyên gia phát triển ứng dụng web</strong> với hơn <span class="highlight">7+ năm kinh nghiệm</span> trong việc xây dựng các giải pháp công nghệ hiện đại.</p>
-      <p>💡 Tôi đam mê tạo ra những <span class="highlight">trải nghiệm người dùng tuyệt vời</span> thông qua việc kết hợp thiết kế sáng tạo và công nghệ tiên tiến.</p>
-      <p>🎯 Chuyên sâu về <span class="highlight">React, Node.js, AI/ML integration</span> và các công nghệ cloud hiện đại.</p>
+      <div class="space-y-4">
+        <p class="text-lg font-medium">
+          🚀 <span class="neo-highlight">Kiến trúc sư công nghệ tương lai</span> với 
+          <span class="text-cyan-400 font-bold">7+ năm kinh nghiệm</span> 
+          xây dựng các giải pháp đột phá
+        </p>
+        <p class="text-lg font-medium">
+          � Tôi không chỉ code - tôi <span class="neo-highlight">tạo ra những phép màu công nghệ</span> 
+          thay đổi cách con người tương tác với thế giới số
+        </p>
+        <p class="text-lg font-medium">
+          🎯 Chuyên gia về <span class="tech-stack-highlight">React ⚛️ Node.js 🟢 AI/ML 🤖 Cloud ☁️</span> 
+          và các công nghệ tiên phong nhất
+        </p>
+        <p class="text-lg font-medium">
+          🌈 Biến ý tưởng thành hiện thực, biến giấc mơ thành sản phẩm
+        </p>
+      </div>
     `,
   });
 
   const [isVisible, setIsVisible] = useState(false);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [isTyping, setIsTyping] = useState(true);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [hoveredSocial, setHoveredSocial] = useState(null);
+  const [showMatrix, setShowMatrix] = useState(false);
+  
   const containerRef = useRef(null);
+  const heroRef = useRef(null);
+  const isInView = useInView(heroRef, { threshold: 0.1 });
   const controls = useAnimation();
+  
+  const { scrollYProgress } = useScroll();
+  const yTransform = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const opacityTransform = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+  const scaleTransform = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
+  
+  const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
+  const x = useSpring(0, springConfig);
+  const y = useSpring(0, springConfig);
 
   useEffect(() => {
     setIsVisible(true);
     controls.start("visible");
-  }, [controls]);
 
+    // Advanced typewriter effect
+    let currentIndex = 0;
+    let currentText = "";
+    let isDeleting = false;
+    let timeout;
+
+    const typeWriter = () => {
+      const currentWord = heroData.subHeadings[currentWordIndex];
+      
+      if (isDeleting) {
+        currentText = currentWord.substring(0, currentIndex - 1);
+        currentIndex--;
+      } else {
+        currentText = currentWord.substring(0, currentIndex + 1);
+        currentIndex++;
+      }
+
+      setDisplayText(currentText);
+
+      let typeSpeed = isDeleting ? 50 : 100;
+
+      if (!isDeleting && currentIndex === currentWord.length) {
+        typeSpeed = 2000; // Pause at end
+        isDeleting = true;
+      } else if (isDeleting && currentIndex === 0) {
+        isDeleting = false;
+        setCurrentWordIndex((prev) => (prev + 1) % heroData.subHeadings.length);
+        typeSpeed = 500;
+      }
+
+      timeout = setTimeout(typeWriter, typeSpeed);
+    };
+
+    typeWriter();
+
+    // Mouse tracking for parallax effects
+    const handleMouseMove = (e) => {
+      const rect = window.innerWidth;
+      const centerX = rect / 2;
+      const centerY = window.innerHeight / 2;
+      
+      setMousePosition({
+        x: (e.clientX - centerX) / centerX,
+        y: (e.clientY - centerY) / centerY,
+      });
+      
+      x.set((e.clientX - centerX) * 0.02);
+      y.set((e.clientY - centerY) * 0.02);
+    };
+
+    // Matrix rain effect trigger
+    const matrixInterval = setInterval(() => {
+      setShowMatrix(true);
+      setTimeout(() => setShowMatrix(false), 3000);
+    }, 15000);
+
+    // Advanced intersection observer for performance
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          controls.start("visible");
+        }
+      },
+      { threshold: 0.1, rootMargin: "50px" }
+    );
+
+    if (heroRef.current) {
+      observer.observe(heroRef.current);
+    }
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(matrixInterval);
+      window.removeEventListener("mousemove", handleMouseMove);
+      observer.disconnect();
+    };
+  }, [controls, currentWordIndex, heroData.subHeadings, x, y]);
+
+  // Ultra-premium animation variants
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { 
+      opacity: 0,
+      scale: 0.8,
+    },
     visible: {
       opacity: 1,
+      scale: 1,
       transition: {
-        delayChildren: 0.5,
-        staggerChildren: 0.3,
+        delayChildren: 0.3,
+        staggerChildren: 0.2,
+        duration: 1.2,
+        ease: [0.25, 0.46, 0.45, 0.94],
       },
     },
   };
 
-  const itemVariants = {
-    hidden: { y: 50, opacity: 0 },
+  const heroTextVariants = {
+    hidden: { 
+      y: 100, 
+      opacity: 0,
+      rotateX: -90,
+      scale: 0.5,
+    },
     visible: {
       y: 0,
       opacity: 1,
+      rotateX: 0,
+      scale: 1,
       transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12,
+        duration: 1.5,
+      },
+    },
+  };
+
+  const letterVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 50,
+      rotateY: -90,
+      scale: 0,
+    },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      rotateY: 0,
+      scale: 1,
+      transition: {
+        delay: i * 0.1,
         duration: 0.8,
-        ease: [0.6, -0.05, 0.01, 0.99],
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    }),
+  };
+
+  const itemVariants = {
+    hidden: { 
+      y: 60, 
+      opacity: 0,
+      rotateX: -45,
+      scale: 0.8,
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      rotateX: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 150,
+        damping: 20,
+        duration: 1.2,
       },
     },
   };
 
   const floatingVariants = {
     float: {
-      y: [-10, 10, -10],
+      y: [-20, 20, -20],
+      x: [-10, 10, -10],
+      rotateZ: [-5, 5, -5],
+      transition: {
+        duration: 6,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  const glowVariants = {
+    glow: {
+      boxShadow: [
+        "0 0 20px rgba(59, 130, 246, 0.5)",
+        "0 0 60px rgba(59, 130, 246, 0.8)",
+        "0 0 20px rgba(59, 130, 246, 0.5)",
+      ],
+      scale: [1, 1.05, 1],
       transition: {
         duration: 3,
         repeat: Infinity,
         ease: "easeInOut",
+      },
+    },
+  };
+
+  const magicSparkleVariants = {
+    sparkle: {
+      scale: [0, 1.2, 0],
+      rotate: [0, 180, 360],
+      opacity: [0, 1, 0],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut",
+        staggerChildren: 0.1,
       },
     },
   };
@@ -101,68 +319,162 @@ const Home = () => {
       icon: faGithub,
       url: "https://github.com/nhdinhdev03",
       label: "GitHub",
-      color: "hover:text-gray-300",
-      gradient: "from-gray-700 to-gray-900",
+      color: "hover:text-white",
+      gradient: "from-gray-800 via-gray-600 to-black",
+      hoverGradient: "from-purple-500 via-pink-500 to-red-500",
+      description: "Open Source Code",
+      count: "150+ Repos",
     },
     {
       icon: faLinkedin,
       url: "https://linkedin.com/in/nhdinh",
       label: "LinkedIn",
-      color: "hover:text-blue-400",
-      gradient: "from-blue-600 to-blue-800",
+      color: "hover:text-blue-300",
+      gradient: "from-blue-800 via-blue-600 to-blue-900",
+      hoverGradient: "from-cyan-400 via-blue-500 to-purple-600",
+      description: "Professional Network",
+      count: "5K+ Connections",
     },
     {
       icon: faFacebook,
       url: "https://facebook.com/nhdinh.dev",
       label: "Facebook",
-      color: "hover:text-blue-500",
-      gradient: "from-blue-500 to-blue-700",
+      color: "hover:text-blue-400",
+      gradient: "from-blue-600 via-blue-500 to-blue-800",
+      hoverGradient: "from-pink-400 via-red-500 to-yellow-500",
+      description: "Social Updates",
+      count: "10K+ Followers",
+    },
+    {
+      icon: faTwitter,
+      url: "https://twitter.com/nhdinh_dev",
+      label: "Twitter",
+      color: "hover:text-sky-400",
+      gradient: "from-sky-500 via-blue-500 to-purple-600",
+      hoverGradient: "from-yellow-400 via-orange-500 to-red-500",
+      description: "Tech Insights",
+      count: "2K+ Tweets",
+    },
+    {
+      icon: faInstagram,
+      url: "https://instagram.com/nhdinh.dev",
+      label: "Instagram",
+      color: "hover:text-pink-400",
+      gradient: "from-purple-600 via-pink-500 to-red-500",
+      hoverGradient: "from-green-400 via-blue-500 to-purple-600",
+      description: "Behind Scenes",
+      count: "8K+ Posts",
+    },
+    {
+      icon: faYoutube,
+      url: "https://youtube.com/nhdinh",
+      label: "YouTube",
+      color: "hover:text-red-400",
+      gradient: "from-red-600 via-red-500 to-red-800",
+      hoverGradient: "from-blue-400 via-purple-500 to-pink-500",
+      description: "Tech Tutorials",
+      count: "25K+ Subs",
     },
     {
       icon: faEnvelope,
       url: "mailto:nhdinh.dev@gmail.com",
       label: "Email",
       color: "hover:text-green-400",
-      gradient: "from-green-500 to-green-700",
+      gradient: "from-green-600 via-emerald-500 to-teal-600",
+      hoverGradient: "from-orange-400 via-red-500 to-pink-500",
+      description: "Direct Contact",
+      count: "24/7 Available",
     },
   ];
 
   const techStack = [
     {
       name: "React",
-      icon: faCode,
+      icon: faAtom,
       color: "#61DAFB",
-      description: "Modern UI Development",
+      description: "Next-Gen UI Architecture",
+      level: 98,
+      experience: "7+ years",
+      projects: "100+",
+      gradient: "from-cyan-400 via-blue-500 to-purple-600",
+      glowColor: "rgba(97, 218, 251, 0.8)",
     },
     {
       name: "Node.js",
       icon: faLaptopCode,
       color: "#68A063",
-      description: "Backend Services",
+      description: "High-Performance Backend",
+      level: 95,
+      experience: "6+ years",
+      projects: "80+",
+      gradient: "from-green-400 via-emerald-500 to-teal-600",
+      glowColor: "rgba(104, 160, 99, 0.8)",
     },
     {
       name: "React Native",
       icon: faMobile,
       color: "#FF6B6B",
-      description: "Mobile Apps",
+      description: "Cross-Platform Innovation",
+      level: 92,
+      experience: "5+ years", 
+      projects: "50+",
+      gradient: "from-red-400 via-pink-500 to-rose-600",
+      glowColor: "rgba(255, 107, 107, 0.8)",
     },
     {
       name: "AI/ML",
       icon: faBrain,
       color: "#9B59B6",
       description: "Intelligent Systems",
+      level: 88,
+      experience: "3+ years",
+      projects: "25+",
+      gradient: "from-purple-400 via-violet-500 to-indigo-600",
+      glowColor: "rgba(155, 89, 182, 0.8)",
     },
     {
-      name: "Cloud",
+      name: "Cloud AWS",
       icon: faCloud,
       color: "#4ECDC4",
-      description: "Scalable Infrastructure",
+      description: "Infinite Scalability",
+      level: 90,
+      experience: "4+ years",
+      projects: "60+",
+      gradient: "from-cyan-400 via-sky-500 to-blue-600",
+      glowColor: "rgba(78, 205, 196, 0.8)",
     },
     {
       name: "Database",
       icon: faDatabase,
       color: "#F39C12",
-      description: "Data Management",
+      description: "Data Architecture",
+      level: 93,
+      experience: "6+ years",
+      projects: "70+",
+      gradient: "from-yellow-400 via-orange-500 to-amber-600",
+      glowColor: "rgba(243, 156, 18, 0.8)",
+    },
+    {
+      name: "TypeScript",
+      icon: faCode,
+      color: "#3178C6",
+      description: "Type-Safe Development",
+      level: 96,
+      experience: "5+ years",
+      projects: "90+",
+      gradient: "from-blue-400 via-indigo-500 to-purple-600",
+      glowColor: "rgba(49, 120, 198, 0.8)",
+    },
+    {
+      name: "Next.js",
+      icon: faRocket,
+      color: "#000000",
+      description: "Full-Stack Framework",
+      level: 94,
+      experience: "4+ years",
+      projects: "40+",
+      gradient: "from-gray-600 via-gray-800 to-black",
+      glowColor: "rgba(255, 255, 255, 0.8)",
     },
   ];
 
@@ -170,26 +482,56 @@ const Home = () => {
     {
       number: "7+",
       label: "Năm kinh nghiệm",
-      icon: faCode,
-      color: "text-blue-400",
+      icon: faInfinity,
+      color: "text-cyan-400",
+      bgGradient: "from-cyan-500/20 via-blue-600/20 to-purple-700/20",
+      description: "Không ngừng học hỏi",
+      achievement: "Senior Level",
     },
     {
-      number: "150+",
+      number: "250+",
       label: "Dự án hoàn thành",
       icon: faRocket,
       color: "text-green-400",
+      bgGradient: "from-green-500/20 via-emerald-600/20 to-teal-700/20",
+      description: "Từ startup đến enterprise",
+      achievement: "100% Success Rate",
     },
     {
-      number: "50+",
+      number: "150+",
       label: "Khách hàng hài lòng",
       icon: faHeart,
       color: "text-red-400",
+      bgGradient: "from-red-500/20 via-pink-600/20 to-rose-700/20",
+      description: "Mối quan hệ lâu dài",
+      achievement: "99% Satisfaction",
     },
     {
-      number: "25+",
+      number: "50+",
       label: "Công nghệ thành thạo",
-      icon: faStar,
+      icon: faMeteor,
       color: "text-yellow-400",
+      bgGradient: "from-yellow-500/20 via-orange-600/20 to-amber-700/20",
+      description: "Luôn cập nhật xu hướng",
+      achievement: "Tech Expert",
+    },
+    {
+      number: "1M+",
+      label: "Dòng code viết",
+      icon: faCode,
+      color: "text-purple-400",
+      bgGradient: "from-purple-500/20 via-violet-600/20 to-indigo-700/20",
+      description: "Clean & Efficient",
+      achievement: "Quality Focused",
+    },
+    {
+      number: "24/7",
+      label: "Sẵn sàng hỗ trợ",
+      icon: faBolt,
+      color: "text-blue-400",
+      bgGradient: "from-blue-500/20 via-indigo-600/20 to-purple-700/20",
+      description: "Cam kết chất lượng",
+      achievement: "Always Available",
     },
   ];
 
@@ -200,11 +542,83 @@ const Home = () => {
     }
   };
 
+  // Matrix Rain Effect Component
+  const MatrixRain = () => {
+    const matrixChars = "REACT NODE.JS AI/ML CLOUD 010110101 NHDINH 💻🚀⚡🌟".split("");
+    
+    return (
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {Array.from({ length: 50 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-green-400 font-mono text-xs opacity-30"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+            animate={{
+              y: ["0vh", "100vh"],
+              opacity: [0, 0.8, 0],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          >
+            {matrixChars[Math.floor(Math.random() * matrixChars.length)]}
+          </motion.div>
+        ))}
+      </div>
+    );
+  };
+
+  // Holographic Card Component
+  const HolographicCard = ({ children, className = "" }) => (
+    <motion.div
+      className={`relative group ${className}`}
+      whileHover="hover"
+      initial="initial"
+    >
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 rounded-2xl blur-xl"
+        variants={{
+          initial: { scale: 0.8, opacity: 0 },
+          hover: { scale: 1.2, opacity: 1 },
+        }}
+        transition={{ duration: 0.3 }}
+      />
+      <motion.div
+        className="relative bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden"
+        variants={{
+          initial: { rotateX: 0, rotateY: 0 },
+          hover: { rotateX: 5, rotateY: 5 },
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        {children}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent"
+          variants={{
+            initial: { x: "-100%", y: "-100%" },
+            hover: { x: "100%", y: "100%" },
+          }}
+          transition={{ duration: 0.6 }}
+        />
+      </motion.div>
+    </motion.div>
+  );
+
   return (
     <section
       id="home"
-      ref={containerRef}
-      className="relative min-h-screen min-h-screen-small flex items-center justify-center overflow-hidden"
+      ref={heroRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
+      style={{
+        transform: `translateY(${yTransform}px)`,
+        opacity: opacityTransform,
+        scale: scaleTransform,
+      }}
     >
       {/* Advanced 3D Particles Globe Effect */}
       {!isMobile && <HomeParticlesEffect />}

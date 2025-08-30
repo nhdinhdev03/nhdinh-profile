@@ -13,6 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faGithub, faLinkedin, faFacebook, faTelegram } from '@fortawesome/free-brands-svg-icons';
 import { useInView } from 'react-intersection-observer';
+import ContactEnvelopeEffect from '../effects3D/ContactEnvelopeEffect';
 
 const Contact = () => {
   const [ref, inView] = useInView({
@@ -112,6 +113,9 @@ const Contact = () => {
 
   return (
     <section id="contact" className="relative py-20 lg:py-32 overflow-hidden">
+      {/* 3D Interactive Envelope Effect */}
+      <ContactEnvelopeEffect className="opacity-70" />
+      
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-900/10 to-purple-900/10" />
       

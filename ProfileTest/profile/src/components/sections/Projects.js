@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt, faCode, faEye, faFilter, faStar } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { useInView } from 'react-intersection-observer';
+import Projects3DCarousel from '../effects3D/Projects3DCarousel';
 
 const Projects = () => {
   const [ref, inView] = useInView({
@@ -257,6 +258,9 @@ const Projects = () => {
 
   return (
     <section id="projects" className="relative py-20 lg:py-32 overflow-hidden">
+      {/* 3D Projects Carousel */}
+      <Projects3DCarousel projects={projects} className="opacity-70" />
+      
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/10 to-blue-900/10" />
       

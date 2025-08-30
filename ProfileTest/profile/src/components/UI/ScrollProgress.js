@@ -100,71 +100,12 @@ const ScrollProgress = () => {
         </motion.div>
       </motion.div>
 
-      {/* Circular Progress Indicator */}
-      <motion.div
-        className="fixed top-6 right-6 z-[9994] w-16 h-16 rounded-full glass-effect flex items-center justify-center"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ 
-          opacity: isVisible ? 1 : 0, 
-          scale: isVisible ? 1 : 0.8,
-        }}
-        transition={{ duration: 0.3 }}
-      >
-        <svg className="w-14 h-14 transform -rotate-90" viewBox="0 0 100 100">
-          {/* Background circle */}
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            stroke="rgba(59, 130, 246, 0.2)"
-            strokeWidth="8"
-            fill="none"
-          />
-          {/* Progress circle */}
-          <motion.circle
-            cx="50"
-            cy="50"
-            r="45"
-            stroke="url(#progressGradient)"
-            strokeWidth="8"
-            fill="none"
-            strokeLinecap="round"
-            strokeDasharray={283}
-            style={{
-              strokeDashoffset: useTransform(scrollYProgress, [0, 1], [283, 0])
-            }}
-          />
-          {/* Gradient definition */}
-          <defs>
-            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#3B82F6" />
-              <stop offset="50%" stopColor="#8B5CF6" />
-              <stop offset="100%" stopColor="#10B981" />
-            </linearGradient>
-          </defs>
-        </svg>
-        
-        {/* Percentage text */}
-        <motion.span
-          className="absolute text-white font-bold text-sm"
-          animate={{
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 0.5,
-            repeat: Infinity,
-            repeatDelay: 2
-          }}
-        >
-          {progressPercentage}%
-        </motion.span>
-      </motion.div>
 
-      {/* Enhanced Navigation Dots */}
+      {/* Enhanced Navigation Dots - Hidden on mobile for better UX */}
       <AnimatePresence>
         {isVisible && (
           <motion.div
-            className="fixed right-8 top-1/2 transform -translate-y-1/2 z-[9994] space-y-4"
+            className="fixed right-8 top-1/2 transform -translate-y-1/2 z-[9994] space-y-4 hidden md:block"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
@@ -240,11 +181,11 @@ const ScrollProgress = () => {
         )}
       </AnimatePresence>
 
-      {/* Enhanced Scroll to Top Button */}
+      {/* Enhanced Scroll to Top Button - Optimized for mobile */}
       <AnimatePresence>
         {isVisible && (
           <motion.button
-            className="fixed bottom-8 right-8 z-[9994] w-14 h-14 glass-effect-strong rounded-full flex items-center justify-center group overflow-hidden"
+            className="fixed bottom-6 right-4 md:bottom-8 md:right-8 z-[9994] w-12 h-12 md:w-14 md:h-14 glass-effect-strong rounded-full flex items-center justify-center group overflow-hidden"
             onClick={scrollToTop}
             initial={{ opacity: 0, scale: 0.8, y: 100 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -286,7 +227,7 @@ const ScrollProgress = () => {
             >
               <FontAwesomeIcon 
                 icon={faRocket} 
-                className="text-blue-400 text-xl group-hover:text-white transition-colors duration-300"
+                className="text-blue-400 text-lg md:text-xl group-hover:text-white transition-colors duration-300"
               />
             </motion.div>
 

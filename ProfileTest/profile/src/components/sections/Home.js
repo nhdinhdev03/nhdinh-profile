@@ -10,6 +10,7 @@ import {
   faLinkedin,
   faFacebook,
 } from "@fortawesome/free-brands-svg-icons";
+import HomeParticlesEffect from "../effects3D/HomeParticlesEffect";
 import {
   faDownload,
   faEnvelope,
@@ -205,8 +206,8 @@ const Home = () => {
       ref={containerRef}
       className="relative min-h-screen min-h-screen-small flex items-center justify-center overflow-hidden"
     >
-      {/* Advanced Particle Background */}
-      {!isMobile && <ParticleBackground />}
+      {/* Advanced 3D Particles Globe Effect */}
+      {!isMobile && <HomeParticlesEffect />}
 
       {/* Dynamic Background Gradient */}
       <motion.div

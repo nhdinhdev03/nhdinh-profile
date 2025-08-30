@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 // Direct imports for components
 import NavbarModern from './components/Layout/NavbarModern';
 import Home from './components/sections/Home';
-import About from './components/sections/About_new';
+import About from './components/sections/About';
 import Projects from './components/sections/Projects';
 import Blog from './components/sections/Blog';
 import Contact from './components/sections/Contact';

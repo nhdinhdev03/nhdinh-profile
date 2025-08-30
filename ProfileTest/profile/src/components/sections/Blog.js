@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faClock, faTag, faArrowRight, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { useInView } from 'react-intersection-observer';
+import BlogPapersEffect from '../effects3D/BlogPapersEffect';
 
 const Blog = () => {
   const [ref, inView] = useInView({
@@ -214,6 +215,9 @@ const Blog = () => {
 
   return (
     <section id="blog" className="relative py-20 lg:py-32 overflow-hidden">
+      {/* 3D Flying Paper Cards Effect */}
+      <BlogPapersEffect className="opacity-60" />
+      
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-green-900/10 to-blue-900/10" />
       

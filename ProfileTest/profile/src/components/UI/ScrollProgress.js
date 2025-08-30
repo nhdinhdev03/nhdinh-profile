@@ -82,9 +82,9 @@ const ScrollProgress = () => {
 
   return (
     <>
-      {/* Top Progress Bar */}
+      {/* Top Progress Bar - Optimized for mobile */}
       <motion.div
-        className="fixed top-0 left-0 right-0 z-[9995] h-2 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm"
+        className="fixed top-0 left-0 right-0 z-[9995] h-1 md:h-2 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm"
         style={{ opacity }}
       >
         <motion.div
@@ -254,9 +254,9 @@ const ScrollProgress = () => {
         )}
       </AnimatePresence>
 
-      {/* Side Progress Bar */}
+      {/* Side Progress Bar - Hidden on mobile for cleaner look */}
       <motion.div
-        className="fixed left-0 top-0 bottom-0 w-1 z-[9993] bg-gradient-to-b from-blue-600/20 to-purple-600/20"
+        className="fixed left-0 top-0 bottom-0 w-1 z-[9993] bg-gradient-to-b from-blue-600/20 to-purple-600/20 hidden md:block"
         style={{ opacity: isVisible ? 1 : 0 }}
       >
         <motion.div

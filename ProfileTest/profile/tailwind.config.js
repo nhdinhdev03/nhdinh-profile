@@ -49,11 +49,12 @@ module.exports = {
           900: '#831843',
         },
       },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['Fira Code', 'JetBrains Mono', 'monospace'],
-        display: ['Inter', 'system-ui', 'sans-serif'],
-      },
+   fontFamily: {
+  sans: ['Inter', 'system-ui', 'sans-serif'],
+  mono: ['Fira Code', 'JetBrains Mono', 'monospace'],
+  display: ['Sour Gummy', 'Inter', 'system-ui', 'sans-serif'], // Thêm Sour Gummy
+  'sour-gummy': ['Sour Gummy', 'sans-serif'], // Hoặc tạo class riêng
+},
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],
         'sm': ['0.875rem', { lineHeight: '1.25rem' }],

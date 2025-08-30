@@ -1,0 +1,224 @@
+/* Home Component Optimized Styles */
+
+.homeSection {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Performance optimizations */
+  will-change: auto;
+  contain: layout style paint;
+}
+
+.backgroundContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* GPU acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.gradientOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(88, 28, 135, 0.5) 50%, rgba(15, 23, 42, 0.8) 100%);
+  /* Reduce paint operations */
+  will-change: background;
+}
+
+.floatingIcon {
+  position: absolute;
+  opacity: 0.1;
+  /* Optimize animations */
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 10;
+  max-width: 80rem;
+  margin: 0 auto;
+  text-align: center;
+  /* Reduce layout thrashing */
+  contain: layout;
+}
+
+.techPill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Optimize hover effects */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, background-color;
+}
+
+.techPill:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ctaButton {
+  position: relative;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: white;
+  overflow: hidden;
+  /* Optimize button animations */
+  will-change: transform;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ctaPrimary {
+  background: linear-gradient(to right, #2563eb, #7c3aed, #2563eb);
+}
+
+.ctaSecondary {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.socialLink {
+  width: 3rem;
+  height: 3rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Optimize hover animations */
+  will-change: transform, background-color;
+}
+
+.socialLink:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.scrollIndicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgb(148, 163, 184);
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.scrollIndicator:hover {
+  color: white;
+}
+
+.scrollLine {
+  width: 1px;
+  height: 2rem;
+  background: linear-gradient(to bottom, rgb(148, 163, 184), transparent);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .homeSection {
+    padding: 5rem 0;
+  }
+  
+  .heroContent {
+    padding: 0 1rem;
+  }
+  
+  .techPill {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .ctaButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .socialLink {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+  /* Disable expensive effects on mobile */
+  .floatingIcon {
+    display: none;
+  }
+  
+  .gradientOverlay {
+    animation: none;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .techPill,
+  .ctaButton,
+  .socialLink,
+  .scrollIndicator {
+    transition: none;
+  }
+  
+  .floatingIcon {
+    animation: none;
+  }
+  
+  .gradientOverlay {
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .techPill {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  .socialLink {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Performance optimizations for animations */
+.fadeInUp {
+  animation: fadeInUp 0.8s cubic-bezier(0.6, -0.05, 0.01, 0.99) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.highlight {
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { 
   FiMenu, 
   FiX, 
@@ -10,7 +10,10 @@ import {
   FiBookOpen, 
   FiMail,
   FiSun,
-  FiMoon
+  FiMoon,
+  FiZap,
+  FiGlobe,
+  FiStar
 } from 'react-icons/fi';
 import { useTheme } from '../../../contexts/ThemeContext';
 import './Header.scss';
@@ -18,8 +21,14 @@ import './Header.scss';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('/');
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
+  
+  const { scrollYProgress } = useScroll();
+  const headerY = useTransform(scrollYProgress, [0, 0.1], [0, -10]);
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.98]);
+  const logoScale = useTransform(scrollYProgress, [0, 0.1], [1, 0.9]);
 
   const navItems = [
     { path: '/', label: 'Trang chủ', icon: FiHome },
@@ -31,12 +40,16 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
+      
+      // Update active section based on scroll position
+      setActiveSection(location.pathname);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -52,6 +65,10 @@ const Header = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
+      style={{
+        y: headerY,
+        opacity: headerOpacity,
+      }}
     >
       <div className="container mx-auto px-4">
         <div className="header-content-v2">
@@ -61,14 +78,38 @@ const Header = () => {
               className="logo-container"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              style={{ scale: logoScale }}
             >
               <div className="logo-icon">
-                <span className="logo-text">NH</span>
-                <div className="logo-glow" />
+                <motion.span 
+                  className="logo-text"
+                  animate={{
+                    textShadow: [
+                      "0 0 10px #00d4ff80",
+                      "0 0 20px #00d4ff80", 
+                      "0 0 10px #00d4ff80"
+                    ]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  NH
+                </motion.span>
+                <motion.div 
+                  className="logo-glow"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.5, 1, 0.5]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <FiZap className="logo-spark" />
               </div>
               <div className="logo-label">
                 <span className="logo-name">Nguyễn Hoài Dinh</span>
-                <span className="logo-role">Full-Stack Developer</span>
+                <span className="logo-role">
+                  <FiGlobe className="role-icon" />
+                  Full-Stack Developer
+                </span>
               </div>
             </motion.div>
           </Link>
@@ -87,9 +128,34 @@ const Header = () => {
                     to={item.path}
                     className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
                   >
-                    <item.icon className="nav-icon" />
+                    <motion.div
+                      className="nav-icon-wrapper"
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <item.icon className="nav-icon" />
+                    </motion.div>
                     <span className="nav-text">{item.label}</span>
-                    <div className="nav-indicator" />
+                    <motion.div 
+                      className="nav-indicator"
+                      animate={{
+                        scale: location.pathname === item.path ? [1, 1.2, 1] : 1
+                      }}
+                      transition={{ duration: 1, repeat: location.pathname === item.path ? Infinity : 0 }}
+                    />
+                    {location.pathname === item.path && (
+                      <motion.div
+                        className="nav-active-glow"
+                        animate={{
+                          boxShadow: [
+                            "0 0 10px #00d4ff40",
+                            "0 0 20px #00d4ff60",
+                            "0 0 10px #00d4ff40"
+                          ]
+                        }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                    )}
                   </Link>
                 </motion.li>
               ))}
@@ -106,19 +172,66 @@ const Header = () => {
               whileTap={{ scale: 0.9 }}
               aria-label="Toggle theme"
             >
-              <div className="theme-toggle-inner">
-                {isDark ? (
-                  <FiSun className="theme-icon" />
-                ) : (
-                  <FiMoon className="theme-icon" />
-                )}
-              </div>
+              <motion.div 
+                className="theme-toggle-inner"
+                animate={{
+                  rotate: isDark ? 0 : 180,
+                  background: isDark 
+                    ? "linear-gradient(135deg, #ffd60a, #ffbe0b)"
+                    : "linear-gradient(135deg, #8b5cf6, #7c3aed)"
+                }}
+                transition={{ duration: 0.5 }}
+              >
+                <AnimatePresence mode="wait">
+                  {isDark ? (
+                    <motion.div
+                      key="sun"
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      exit={{ scale: 0, rotate: 180 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <FiSun className="theme-icon" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="moon"
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      exit={{ scale: 0, rotate: 180 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <FiMoon className="theme-icon" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             </motion.button>
 
-            {/* CTA Button */}
+            {/* Enhanced CTA Button */}
             <Link to="/contact" className="cta-button">
-              <span>Thuê tôi</span>
-              <div className="cta-glow" />
+              <motion.span
+                animate={{
+                  background: [
+                    "linear-gradient(45deg, #00d4ff, #8b5cf6)",
+                    "linear-gradient(45deg, #8b5cf6, #06ffa5)",
+                    "linear-gradient(45deg, #06ffa5, #00d4ff)"
+                  ]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="cta-text"
+              >
+                <FiStar className="cta-icon" />
+                Thuê tôi
+              </motion.span>
+              <motion.div 
+                className="cta-glow"
+                animate={{
+                  opacity: [0.5, 1, 0.5],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
             </Link>
 
             {/* Mobile Menu Toggle */}

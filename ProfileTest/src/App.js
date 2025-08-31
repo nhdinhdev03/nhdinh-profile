@@ -3,6 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import AOS from 'aos';
 import { Toaster } from 'react-hot-toast';
 
+// Enhanced Styles
+import './styles/enhanced-globals.css';
+
 // Contexts
 import { ThemeProvider } from './contexts/ThemeContext';
 

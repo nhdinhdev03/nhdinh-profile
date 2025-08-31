@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, useAnimation, useInView } from 'framer-motion';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { motion, useAnimation, useInView, LazyMotion, domAnimation } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   FiArrowDown, 
@@ -20,8 +20,27 @@ import {
   FiTarget
 } from 'react-icons/fi';
 
-const Home = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+// Static data moved outside component to prevent recreation
+const TECH_STACK = [
+  { name: 'React', icon: FiCode, level: 95, category: 'Frontend' },
+  { name: 'Node.js', icon: FiServer, level: 90, category: 'Backend' },
+  { name: 'Python', icon: FiCpu, level: 88, category: 'AI/ML' },
+  { name: 'TypeScript', icon: FiCode, level: 92, category: 'Language' },
+  { name: 'AWS', icon: FiCloud, level: 85, category: 'Cloud' },
+  { name: 'Docker', icon: FiBox, level: 87, category: 'DevOps' },
+  { name: 'GraphQL', icon: FiDatabase, level: 83, category: 'API' },
+  { name: 'Next.js', icon: FiGlobe, level: 89, category: 'Framework' }
+];
+
+const STATS = [
+  { label: 'Projects Completed', value: '50+', icon: FiTarget },
+  { label: 'Years Experience', value: '5+', icon: FiTrendingUp },
+  { label: 'Technologies Mastered', value: '25+', icon: FiZap },
+  { label: 'Happy Clients', value: '30+', icon: FiUsers }
+];
+
+const Home = React.memo(() => {
+  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const heroRef = useRef(null);
   const skillsRef = useRef(null);
   const statsRef = useRef(null);
@@ -34,13 +53,22 @@ const Home = () => {
   const skillsAnimation = useAnimation();
   const statsAnimation = useAnimation();
 
-  // Mouse tracking for interactive effects
+  // Throttled mouse tracking (RAF)
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+    let frame;    
+    const handle = (e) => {
+      if (!frame) {
+        frame = requestAnimationFrame(() => {
+          setMousePosition({ x: e.clientX, y: e.clientY });
+          frame = null;
+        });
+      }
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('pointermove', handle, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', handle);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
 
@@ -87,46 +115,27 @@ const Home = () => {
     }
   };
 
-  // Tech stack data
-  const techStack = [
-    { name: 'React', icon: FiCode, level: 95, category: 'Frontend' },
-    { name: 'Node.js', icon: FiServer, level: 90, category: 'Backend' },
-  { name: 'Python', icon: FiCpu, level: 88, category: 'AI/ML' },
-  { name: 'TypeScript', icon: FiCode, level: 92, category: 'Language' },
-    { name: 'AWS', icon: FiCloud, level: 85, category: 'Cloud' },
-    { name: 'Docker', icon: FiBox, level: 87, category: 'DevOps' },
-    { name: 'GraphQL', icon: FiDatabase, level: 83, category: 'API' },
-    { name: 'Next.js', icon: FiGlobe, level: 89, category: 'Framework' }
-  ];
-
-  const stats = [
-    { label: 'Projects Completed', value: '50+', icon: FiTarget },
-    { label: 'Years Experience', value: '5+', icon: FiTrendingUp },
-    { label: 'Technologies Mastered', value: '25+', icon: FiZap },
-    { label: 'Happy Clients', value: '30+', icon: FiUsers }
-  ];
+  const techStack = TECH_STACK; // alias for readability
+  const stats = STATS;
 
   // Floating particle component
-  const FloatingParticle = ({ delay = 0 }) => (
+  const FloatingParticle = useCallback(({ delay = 0, left }) => (
     <motion.div
-      className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-60"
-      animate={{
-        y: [-20, -100],
-        opacity: [0, 1, 0],
-      }}
-      transition={{
-        duration: 3,
-        repeat: Infinity,
-        delay,
-        ease: "easeOut",
-      }}
-      style={{
-        left: Math.random() * 100 + "%",
-      }}
+      className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-60 will-change-transform"
+      animate={{ y: [-20, -100], opacity: [0, 1, 0] }}
+      transition={{ duration: 3, repeat: Infinity, delay, ease: "easeOut" }}
+      style={{ left }}
     />
-  );
+  ), []);
+
+  const particles = useMemo(() => (
+    Array.from({ length: 18 }).map((_, i) => (
+      <FloatingParticle key={i} delay={i * 0.25} left={(i * 5.5) % 100 + '%'} />
+    ))
+  ), []); // FloatingParticle is stable
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen bg-black overflow-hidden relative">
       {/* Neural Network Background */}
       <div className="absolute inset-0 opacity-30">
@@ -152,24 +161,19 @@ const Home = () => {
           }}
         />
 
-        {/* Floating Particles */}
-        {[...Array(20)].map((_, i) => (
-          <FloatingParticle key={i} delay={i * 0.2} />
-        ))}
+        {/* Floating Particles (deterministic) */}
+          {particles}
       </div>
 
       {/* Mouse Follower Effect */}
       <motion.div
         className="fixed w-6 h-6 border border-cyan-400 rounded-full pointer-events-none z-50 mix-blend-difference"
-        animate={{
-          x: mousePosition.x - 12,
-          y: mousePosition.y - 12,
-        }}
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        animate={{ x: mousePosition.x - 12, y: mousePosition.y - 12 }}
+        transition={{ type: "spring", stiffness: 300, damping: 40 }}
       />
 
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center relative z-10" ref={heroRef}>
+  <section className="min-h-screen flex items-center justify-center relative z-10" ref={heroRef} aria-label="Hero section">
         <motion.div
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
           variants={containerVariants}
@@ -188,7 +192,7 @@ const Home = () => {
           {/* Main Heading */}
           <motion.h1
             variants={itemVariants}
-            className="text-5xl md:text-7xl lg:text-8xl font-black mb-6"
+            className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[1.05]"
           >
             <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               Nguyen Hoang
@@ -200,7 +204,7 @@ const Home = () => {
           {/* Subtitle */}
           <motion.p
             variants={itemVariants}
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto font-light"
           >
             Crafting the future through{' '}
             <span className="text-cyan-400 font-semibold">Artificial Intelligence</span>,{' '}
@@ -215,7 +219,7 @@ const Home = () => {
           >
             <Link
               to="/projects"
-              className="group bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-cyan-400 hover:to-purple-400 transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transform hover:scale-105"
+              className="group bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-cyan-400 hover:to-purple-400 transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-cyan-400/60"
             >
               <span className="flex items-center space-x-2">
                 <span>Explore Projects</span>
@@ -227,7 +231,7 @@ const Home = () => {
             <a
               href="/resume.pdf"
               download
-              className="group bg-transparent border-2 border-gray-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:border-cyan-400 hover:text-cyan-400 transition-all duration-300 transform hover:scale-105"
+              className="group bg-transparent border-2 border-gray-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:border-cyan-400 hover:text-cyan-400 transition-all duration-300 transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-cyan-400/60"
             >
               <span className="flex items-center space-x-2">
                 <FiDownload className="w-5 h-5 group-hover:animate-bounce" />
@@ -271,7 +275,7 @@ const Home = () => {
       </section>
 
       {/* Skills Section */}
-      <section className="py-32 relative" ref={skillsRef}>
+  <section className="py-32 relative" ref={skillsRef} aria-label="Technologies section">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/5 via-purple-900/5 to-cyan-900/5" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -302,7 +306,7 @@ const Home = () => {
             variants={containerVariants}
             initial="hidden"
             animate={skillsAnimation}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {techStack.map((tech, index) => (
               <motion.div
@@ -342,7 +346,7 @@ const Home = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-32 relative overflow-hidden" ref={statsRef}>
+  <section className="py-32 relative overflow-hidden" ref={statsRef} aria-label="Statistics section">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-purple-500/5 to-pink-500/5" />
           
@@ -422,8 +426,9 @@ const Home = () => {
         </div>
       </section>
     </div>
+    </LazyMotion>
   );
-};
+});
 
 
 

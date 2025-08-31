@@ -4,7 +4,7 @@ import ScrollToHash from "./router/ScrollToHash";
 import PageTransition from "./components/PageTransition/PageTransition";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AnimatePresence } from "framer-motion";
-import { useEffect } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -20,49 +20,38 @@ function App() {
     });
   }, []);
 
+  const routeElements = useMemo(() => (
+    [...publicRoutes, ...privateRoutes].map(({ path, component: Component, layout: Layout }) => {
+      const content = (
+        <PageTransition>
+          <Component />
+        </PageTransition>
+      );
+      return (
+        <Route
+          key={path}
+            path={path}
+            element={Layout ? <Layout>{content}</Layout> : content}
+        />
+      );
+    })
+  ), []); // routes are static definitions
+
   return (
     <ThemeProvider>
       <BrowserRouter>
         <ScrollToHash />
-        <Routes>
-          {publicRoutes.map(
-            ({ path, component: Component, layout: Layout }) => (
-              <Route
-                key={path}
-                path={path}
-                element={
-                  <Layout>
-                    <PageTransition>
-                      <Component />
-                    </PageTransition>
-                  </Layout>
-                }
-              />
-            )
-          )}
-
-          {privateRoutes.map(
-            ({ path, component: Component, layout: Layout }) => (
-              <Route
-                key={path}
-                path={path}
-                element={
-                  Layout ? (
-                    <Layout>
-                      <PageTransition>
-                        <Component />
-                      </PageTransition>
-                    </Layout>
-                  ) : (
-                    <PageTransition>
-                      <Component />
-                    </PageTransition>
-                  )
-                }
-              />
-            )
-          )}
-        </Routes>
+        <Suspense fallback={
+          <div className="w-full h-screen flex items-center justify-center bg-black text-cyan-400">
+            <div className="animate-pulse tracking-widest font-semibold">Loading...</div>
+          </div>
+        }>
+          <AnimatePresence mode="wait" initial={false}>
+            <Routes>
+              {routeElements}
+            </Routes>
+          </AnimatePresence>
+        </Suspense>
       </BrowserRouter>
     </ThemeProvider>
   );

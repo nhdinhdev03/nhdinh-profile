@@ -1,361 +1,603 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faEnvelope, 
-  faPhone, 
-  faMapMarkerAlt,
-  faPaperPlane,
-  faCheckCircle
-} from '@fortawesome/free-solid-svg-icons';
-import { faGithub, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Alert,
+  Snackbar,
+  IconButton,
+  Paper,
+  useTheme,
+  useMediaQuery,
+  Fade,
+  Slide,
+} from '@mui/material';
+import {
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  LocationOn as LocationIcon,
+  Send as SendIcon,
+  GitHub as GitHubIcon,
+  LinkedIn as LinkedInIcon,
+  Twitter as TwitterIcon,
+  Schedule as ScheduleIcon,
+  Message as MessageIcon,
+  Person as PersonIcon,
+} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+
+const GradientText = styled(Typography)(({ theme }) => ({
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  display: 'inline-block',
+}));
+
+const ContactCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  background: 'rgba(255, 255, 255, 0.9)',
+  backdropFilter: 'blur(20px)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  '&:hover': {
+    transform: 'translateY(-8px)',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+  },
+}));
+
+const SocialButton = styled(IconButton)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  margin: theme.spacing(1),
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-3px)',
+    boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+  },
+  '&.github:hover': {
+    backgroundColor: '#333',
+    color: 'white',
+  },
+  '&.linkedin:hover': {
+    backgroundColor: '#0077B5',
+    color: 'white',
+  },
+  '&.twitter:hover': {
+    backgroundColor: '#1DA1F2',
+    color: 'white',
+  },
+}));
 
 const Contact = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
     message: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-      
-      // Reset success message after 5 seconds
-      setTimeout(() => setIsSubmitted(false), 5000);
-    }, 2000);
-  };
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
 
   const contactInfo = [
     {
-      icon: faEnvelope,
+      icon: EmailIcon,
       title: 'Email',
       value: 'nhdinh.dev@gmail.com',
-      link: 'mailto:nhdinh.dev@gmail.com'
+      href: 'mailto:nhdinh.dev@gmail.com',
+      color: '#EA4335'
     },
     {
-      icon: faPhone,
+      icon: PhoneIcon,
       title: 'Phone',
       value: '+84 123 456 789',
-      link: 'tel:+84123456789'
+      href: 'tel:+84123456789',
+      color: '#34A853'
     },
     {
-      icon: faMapMarkerAlt,
+      icon: LocationIcon,
       title: 'Location',
       value: 'Ho Chi Minh City, Vietnam',
-      link: null
+      href: 'https://maps.google.com/vietnam',
+      color: '#4285F4'
+    },
+    {
+      icon: ScheduleIcon,
+      title: 'Availability',
+      value: 'Mon - Fri, 9AM - 6PM (GMT+7)',
+      color: '#FBBC04'
     }
   ];
 
   const socialLinks = [
-    { icon: faGithub, href: 'https://github.com/nhdinhdev03', label: 'GitHub' },
-    { icon: faLinkedin, href: 'https://linkedin.com/in/nhdinh', label: 'LinkedIn' },
-    { icon: faTwitter, href: 'https://twitter.com/nhdinh', label: 'Twitter' }
+    {
+      icon: GitHubIcon,
+      href: 'https://github.com/nhdinhdev03',
+      label: 'GitHub',
+      className: 'github'
+    },
+    {
+      icon: LinkedInIcon,
+      href: 'https://linkedin.com/in/nhdinh',
+      label: 'LinkedIn',
+      className: 'linkedin'
+    },
+    {
+      icon: TwitterIcon,
+      href: 'https://twitter.com/nhdinh',
+      label: 'Twitter',
+      className: 'twitter'
+    }
   ];
 
-  const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email format is invalid';
+    }
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = 'Subject is required';
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setSnackbar({
+        open: true,
+        message: 'Message sent successfully! I\'ll get back to you soon.',
+        severity: 'success'
+      });
+      
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Failed to send message. Please try again.',
+        severity: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
   };
 
   return (
-    <div className="pt-20">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+    <Box sx={{ py: 8 }}>
+      <Container maxWidth="lg">
+        {/* Hero Section */}
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Typography
+            variant="h6"
+            color="primary"
+            sx={{ 
+              fontWeight: 600, 
+              mb: 2,
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em'
+            }}
           >
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              Get In <span className="text-blue-600">Touch</span>
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              I'm always open to discussing new opportunities, interesting projects, 
-              or just having a chat about technology and development.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+            Get In Touch
+          </Typography>
+          
+          <Typography
+            variant="h2"
+            sx={{ 
+              fontWeight: 700, 
+              mb: 4,
+              color: 'text.primary'
+            }}
+          >
+            Let's Work <GradientText variant="h2" component="span">Together</GradientText>
+          </Typography>
+          
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ 
+              fontSize: '1.1rem',
+              maxWidth: '700px',
+              mx: 'auto',
+              lineHeight: 1.8,
+              mb: 6
+            }}
+          >
+            Have a project in mind or just want to chat about technology? I'm always excited to 
+            discuss new opportunities and ideas. Let's connect and create something amazing together!
+          </Typography>
+        </Box>
 
-      {/* Contact Form & Info Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="bg-white rounded-2xl shadow-xl p-8"
-            >
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Send me a message
-              </h2>
-              
-              {isSubmitted && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="mb-6 p-4 bg-green-100 border border-green-300 rounded-lg flex items-center"
+        <Grid container spacing={6}>
+          {/* Contact Information */}
+          <Grid item xs={12} md={5}>
+            <Fade in timeout={1000}>
+              <Box>
+                <Typography
+                  variant="h4"
+                  sx={{ 
+                    fontWeight: 600, 
+                    mb: 4,
+                    color: 'text.primary'
+                  }}
                 >
-                  <FontAwesomeIcon icon={faCheckCircle} className="w-5 h-5 text-green-600 mr-3" />
-                  <span className="text-green-700">Message sent successfully! I'll get back to you soon.</span>
-                </motion.div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="name" className="form-label">
-                      Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      className="form-input"
-                      placeholder="Your full name"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="form-label">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="form-input"
-                      placeholder="your.email@example.com"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="subject" className="form-label">
-                    Subject *
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="form-input"
-                    placeholder="What is this about?"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="form-label">
-                    Message *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={6}
-                    className="form-textarea"
-                    placeholder="Tell me about your project or just say hello..."
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? (
-                    "Sending..."
-                  ) : (
-                    <>
-                      Send Message
-                      <FontAwesomeIcon icon={faPaperPlane} className="ml-2 w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </form>
-            </motion.div>
-
-            {/* Contact Information */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-8"
-            >
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
                   Contact Information
-                </h2>
-                <p className="text-gray-600 mb-8">
-                  Feel free to reach out through any of these channels. 
-                  I'm always happy to connect and discuss new opportunities.
-                </p>
-              </div>
+                </Typography>
 
-              {/* Contact Details */}
-              <div className="space-y-6">
-                {contactInfo.map((info, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                    className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                  >
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                      <FontAwesomeIcon icon={info.icon} className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{info.title}</h3>
-                      {info.link ? (
-                        <a
-                          href={info.link}
-                          className="text-blue-600 hover:text-blue-700 transition-colors duration-200"
-                        >
-                          {info.value}
-                        </a>
-                      ) : (
-                        <p className="text-gray-600">{info.value}</p>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Social Media */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="pt-8"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Follow me on social media
-                </h3>
-                <div className="flex space-x-4">
-                  {socialLinks.map((social, index) => (
-                    <a
-                      key={index}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors duration-200"
-                      aria-label={social.label}
-                    >
-                      <FontAwesomeIcon icon={social.icon} className="w-5 h-5" />
-                    </a>
+                <Grid container spacing={3}>
+                  {contactInfo.map((info, index) => (
+                    <Grid item xs={12} key={index}>
+                      <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                        viewport={{ once: true }}
+                      >
+                        <ContactCard>
+                          <CardContent sx={{ p: 3 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <Box
+                                sx={{
+                                  width: 50,
+                                  height: 50,
+                                  borderRadius: 2,
+                                  backgroundColor: info.color + '20',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  mr: 3,
+                                }}
+                              >
+                                <info.icon sx={{ color: info.color, fontSize: 24 }} />
+                              </Box>
+                              
+                              <Box>
+                                <Typography
+                                  variant="h6"
+                                  sx={{ 
+                                    fontWeight: 600,
+                                    color: 'text.primary',
+                                    mb: 0.5
+                                  }}
+                                >
+                                  {info.title}
+                                </Typography>
+                                
+                                {info.href ? (
+                                  <Typography
+                                    component="a"
+                                    href={info.href}
+                                    variant="body2"
+                                    sx={{
+                                      color: 'text.secondary',
+                                      textDecoration: 'none',
+                                      '&:hover': {
+                                        color: 'primary.main',
+                                        textDecoration: 'underline',
+                                      },
+                                    }}
+                                  >
+                                    {info.value}
+                                  </Typography>
+                                ) : (
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                  >
+                                    {info.value}
+                                  </Typography>
+                                )}
+                              </Box>
+                            </Box>
+                          </CardContent>
+                        </ContactCard>
+                      </motion.div>
+                    </Grid>
                   ))}
-                </div>
-              </motion.div>
+                </Grid>
 
-              {/* Availability */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100"
+                {/* Social Links */}
+                <Box sx={{ mt: 6 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ 
+                      fontWeight: 600, 
+                      mb: 3,
+                      color: 'text.primary'
+                    }}
+                  >
+                    Follow Me
+                  </Typography>
+                  
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    {socialLinks.map((social) => {
+                      const IconComponent = social.icon;
+                      return (
+                        <SocialButton
+                          key={social.label}
+                          href={social.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={social.className}
+                          aria-label={social.label}
+                        >
+                          <IconComponent />
+                        </SocialButton>
+                      );
+                    })}
+                  </Box>
+                </Box>
+              </Box>
+            </Fade>
+          </Grid>
+
+          {/* Contact Form */}
+          <Grid item xs={12} md={7}>
+            <Slide direction="left" in timeout={1200}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 4,
+                  background: 'rgba(255, 255, 255, 0.9)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: 3,
+                }}
               >
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Currently Available
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  I'm open to new opportunities and interesting projects. 
-                  Let's discuss how we can work together!
-                </p>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+                <Typography
+                  variant="h4"
+                  sx={{ 
+                    fontWeight: 600, 
+                    mb: 4,
+                    color: 'text.primary',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  <MessageIcon sx={{ mr: 2, color: 'primary.main' }} />
+                  Send Message
+                </Typography>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            {...fadeInUp}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-lg text-gray-600">
-              Here are some common questions I get asked.
-            </p>
-          </motion.div>
+                <Box component="form" onSubmit={handleSubmit}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Full Name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        error={!!errors.name}
+                        helperText={errors.name}
+                        variant="outlined"
+                        InputProps={{
+                          startAdornment: <PersonIcon sx={{ mr: 1, color: 'action.active' }} />,
+                        }}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Email Address"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        error={!!errors.email}
+                        helperText={errors.email}
+                        variant="outlined"
+                        InputProps={{
+                          startAdornment: <EmailIcon sx={{ mr: 1, color: 'action.active' }} />,
+                        }}
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleInputChange}
+                        error={!!errors.subject}
+                        helperText={errors.subject}
+                        variant="outlined"
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Message"
+                        name="message"
+                        multiline
+                        rows={6}
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        error={!!errors.message}
+                        helperText={errors.message}
+                        variant="outlined"
+                        placeholder="Tell me about your project, ideas, or just say hello!"
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={12}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                        disabled={loading}
+                        endIcon={loading ? null : <SendIcon />}
+                        sx={{
+                          py: 2,
+                          px: 4,
+                          borderRadius: 3,
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          fontSize: '1rem',
+                          minWidth: 160,
+                        }}
+                      >
+                        {loading ? 'Sending...' : 'Send Message'}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Paper>
+            </Slide>
+          </Grid>
+        </Grid>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
+        {/* FAQ Section */}
+        <Box sx={{ mt: 12, textAlign: 'center' }}>
+          <Typography
+            variant="h4"
+            sx={{ 
+              fontWeight: 600, 
+              mb: 4,
+              color: 'text.primary'
+            }}
           >
+            Frequently Asked Questions
+          </Typography>
+
+          <Grid container spacing={4}>
             {[
               {
                 question: "What's your typical response time?",
-                answer: "I usually respond to emails within 24 hours during weekdays."
+                answer: "I usually respond to emails within 24 hours during business days."
               },
               {
-                question: "Are you available for freelance projects?",
-                answer: "Yes, I'm open to freelance opportunities. Let's discuss your project requirements."
+                question: "Do you work on weekends?",
+                answer: "For urgent projects, yes! But I prefer to discuss availability beforehand."
               },
               {
-                question: "What technologies do you specialize in?",
-                answer: "I specialize in React, Node.js, Python, and modern web technologies. Check out my skills page for more details."
-              },
-              {
-                question: "Do you work remotely?",
-                answer: "Yes, I'm comfortable working remotely and have experience collaborating with distributed teams."
+                question: "What information should I include in my message?",
+                answer: "Project details, timeline, budget range, and any specific requirements you have."
               }
             ].map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white rounded-lg p-6 shadow-md"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {faq.question}
-                </h3>
-                <p className="text-gray-600">
-                  {faq.answer}
-                </p>
-              </motion.div>
+              <Grid item xs={12} md={4} key={index}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Paper
+                    elevation={2}
+                    sx={{
+                      p: 3,
+                      height: '100%',
+                      background: 'rgba(255, 255, 255, 0.7)',
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{ 
+                        fontWeight: 600, 
+                        mb: 2,
+                        color: 'primary.main'
+                      }}
+                    >
+                      {faq.question}
+                    </Typography>
+                    
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ lineHeight: 1.6 }}
+                    >
+                      {faq.answer}
+                    </Typography>
+                  </Paper>
+                </motion.div>
+              </Grid>
             ))}
-          </motion.div>
-        </div>
-      </section>
-    </div>
+          </Grid>
+        </Box>
+
+        {/* Success/Error Snackbar */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar.severity}
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      </Container>
+    </Box>
   );
 };
 

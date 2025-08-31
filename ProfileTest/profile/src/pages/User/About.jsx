@@ -1,35 +1,99 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faGraduationCap, 
-  faBriefcase, 
-  faAward,
-  faCode,
-  faDatabase,
-  faCloud,
-  faMobile
-} from '@fortawesome/free-solid-svg-icons';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Avatar,
+  LinearProgress,
+  Chip,
+  Paper,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
+import {
+  Timeline,
+  TimelineItem,
+  TimelineSeparator,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDot,
+  TimelineOppositeContent,
+} from '@mui/lab';
+import {
+  School as EducationIcon,
+  Work as WorkIcon,
+  EmojiEvents as AwardIcon,
+  Code as CodeIcon,
+  Storage as DatabaseIcon,
+  Cloud as CloudIcon,
+  Phone as MobileIcon,
+  Psychology as PsychologyIcon,
+  Language as LanguageIcon,
+} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+
+const GradientText = styled(Typography)(({ theme }) => ({
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  display: 'inline-block',
+}));
+
+const SkillCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  background: 'rgba(255, 255, 255, 0.8)',
+  backdropFilter: 'blur(20px)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  '&:hover': {
+    transform: 'translateY(-8px)',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+  },
+}));
+
+const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 8,
+  borderRadius: 4,
+  backgroundColor: theme.palette.grey[200],
+  '& .MuiLinearProgress-bar': {
+    borderRadius: 4,
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  },
+}));
 
 const About = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const experience = [
     {
       title: 'Senior Full-Stack Developer',
       company: 'Tech Solutions Inc.',
       period: '2022 - Present',
-      description: 'Leading development of enterprise web applications using React, Node.js, and cloud technologies.'
+      description: 'Leading development of enterprise web applications using React, Node.js, and cloud technologies. Managing a team of 5 developers.',
+      icon: WorkIcon,
+      color: '#1976d2'
     },
     {
       title: 'Full-Stack Developer',
       company: 'Digital Agency Co.',
       period: '2020 - 2022',
-      description: 'Developed responsive web applications and mobile apps for various clients using modern frameworks.'
+      description: 'Developed responsive web applications and mobile apps for various clients using modern frameworks and best practices.',
+      icon: WorkIcon,
+      color: '#388e3c'
     },
     {
       title: 'Frontend Developer',
       company: 'StartUp Hub',
       period: '2019 - 2020',
-      description: 'Built user interfaces for web applications using React, Vue.js, and modern CSS frameworks.'
+      description: 'Built user interfaces for web applications using React, Vue.js, and modern CSS frameworks.',
+      icon: WorkIcon,
+      color: '#f57c00'
     }
   ];
 
@@ -38,258 +102,425 @@ const About = () => {
       degree: 'Bachelor of Computer Science',
       school: 'University of Technology',
       period: '2015 - 2019',
-      description: 'Graduated with honors, specialized in Software Engineering and Web Development.'
+      description: 'Graduated with honors, specialized in Software Engineering and Web Development. GPA: 3.8/4.0',
+      icon: EducationIcon,
+      color: '#7b1fa2'
     }
   ];
 
   const skills = [
     {
-      category: 'Frontend',
-      icon: faCode,
-      items: ['React', 'Vue.js', 'Angular', 'TypeScript', 'Tailwind CSS', 'SASS']
+      category: 'Frontend Development',
+      icon: CodeIcon,
+      color: '#61DAFB',
+      items: [
+        { name: 'React', level: 95 },
+        { name: 'Vue.js', level: 90 },
+        { name: 'Angular', level: 85 },
+        { name: 'TypeScript', level: 92 },
+        { name: 'Next.js', level: 88 },
+        { name: 'Tailwind CSS', level: 95 }
+      ]
     },
     {
-      category: 'Backend',
-      icon: faDatabase,
-      items: ['Node.js', 'Express', 'Python', 'Django', 'Java', 'Spring Boot']
+      category: 'Backend Development',
+      icon: DatabaseIcon,
+      color: '#68A063',
+      items: [
+        { name: 'Node.js', level: 93 },
+        { name: 'Python', level: 87 },
+        { name: 'Java', level: 82 },
+        { name: 'Express.js', level: 90 },
+        { name: 'NestJS', level: 85 },
+        { name: 'Spring Boot', level: 80 }
+      ]
     },
     {
-      category: 'Database',
-      icon: faDatabase,
-      items: ['MongoDB', 'PostgreSQL', 'MySQL', 'Redis', 'Firebase']
+      category: 'Database & Cloud',
+      icon: CloudIcon,
+      color: '#4ECDC4',
+      items: [
+        { name: 'MongoDB', level: 90 },
+        { name: 'PostgreSQL', level: 88 },
+        { name: 'AWS', level: 85 },
+        { name: 'Docker', level: 87 },
+        { name: 'Redis', level: 82 },
+        { name: 'Firebase', level: 88 }
+      ]
     },
     {
-      category: 'Cloud & DevOps',
-      icon: faCloud,
-      items: ['AWS', 'Docker', 'Kubernetes', 'CI/CD', 'Git', 'Linux']
-    },
-    {
-      category: 'Mobile',
-      icon: faMobile,
-      items: ['React Native', 'Flutter', 'iOS', 'Android']
+      category: 'Mobile Development',
+      icon: MobileIcon,
+      color: '#FF6B6B',
+      items: [
+        { name: 'React Native', level: 88 },
+        { name: 'Flutter', level: 80 },
+        { name: 'Ionic', level: 75 },
+        { name: 'Swift', level: 70 },
+        { name: 'Kotlin', level: 72 },
+        { name: 'Expo', level: 85 }
+      ]
     }
   ];
 
   const achievements = [
-    'Led team of 5 developers in successful delivery of 10+ projects',
-    'Optimized application performance resulting in 40% faster load times',
-    'Implemented CI/CD pipeline reducing deployment time by 60%',
-    'Mentored 3 junior developers helping them advance their careers'
+    'AWS Certified Solutions Architect',
+    'Google Cloud Professional Developer',
+    'React Certified Developer',
+    'Scrum Master Certified',
+    'Top 1% on Stack Overflow',
+    'Open Source Contributor'
   ];
 
-  const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
-  };
+  const languages = [
+    { name: 'Vietnamese', level: 100, flag: '🇻🇳' },
+    { name: 'English', level: 90, flag: '🇺🇸' },
+    { name: 'Japanese', level: 60, flag: '🇯🇵' }
+  ];
+
+  const personalValues = [
+    'Continuous Learning',
+    'Clean Code',
+    'Team Collaboration',
+    'Innovation',
+    'User-Centric Design',
+    'Performance Optimization'
+  ];
 
   return (
-    <div className="pt-20">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-                About <span className="text-blue-600">Me</span>
-              </h1>
-              <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                I'm a passionate full-stack developer with over 5 years of experience 
-                creating innovative digital solutions. I love turning complex problems 
-                into simple, beautiful, and intuitive solutions.
-              </p>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                When I'm not coding, you can find me exploring new technologies, 
-                contributing to open-source projects, or sharing knowledge with the 
-                developer community through blogs and tutorials.
-              </p>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="flex justify-center"
-            >
-              <div className="relative">
-                <img
-                  src="/api/placeholder/400/500"
-                  alt="NH Dinh"
-                  className="rounded-2xl shadow-2xl w-80 h-96 object-cover"
+    <Box sx={{ py: 8 }}>
+      <Container maxWidth="lg">
+        {/* Hero Section */}
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Typography
+            variant="h6"
+            color="primary"
+            sx={{ 
+              fontWeight: 600, 
+              mb: 2,
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em'
+            }}
+          >
+            About Me
+          </Typography>
+          
+          <Typography
+            variant="h2"
+            sx={{ 
+              fontWeight: 700, 
+              mb: 4,
+              color: 'text.primary'
+            }}
+          >
+            Getting to Know{' '}
+            <GradientText variant="h2" component="span">
+              NH Dinh
+            </GradientText>
+          </Typography>
+
+          <Grid container spacing={4} alignItems="center">
+            <Grid item xs={12} md={4}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+                <Avatar
+                  src="/profile-about.jpg"
+                  sx={{
+                    width: { xs: 200, md: 280 },
+                    height: { xs: 200, md: 280 },
+                    border: '4px solid',
+                    borderColor: 'primary.main',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                  }}
                 />
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-blue-600/20 to-transparent"></div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Skills Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            {...fadeInUp}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Technical Skills
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              I work with a diverse set of technologies to create robust and scalable solutions.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {skills.map((skill, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-gray-50 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300"
+              </Box>
+            </Grid>
+            
+            <Grid item xs={12} md={8}>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ 
+                  fontSize: '1.1rem',
+                  lineHeight: 1.8,
+                  mb: 3,
+                  textAlign: 'left'
+                }}
               >
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                    <FontAwesomeIcon icon={skill.icon} className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900">{skill.category}</h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {skill.items.map((item, itemIndex) => (
-                    <span
-                      key={itemIndex}
-                      className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Experience Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            {...fadeInUp}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Work Experience
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              My journey through various roles has shaped my expertise in full-stack development.
-            </p>
-          </motion.div>
-
-          <div className="space-y-8">
-            {experience.map((exp, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+                I'm a passionate full-stack developer with over 5 years of experience in creating 
+                digital solutions that make a difference. My journey in technology started with a 
+                curiosity about how things work, and it has evolved into a deep love for building 
+                applications that solve real-world problems.
+              </Typography>
+              
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ 
+                  fontSize: '1.1rem',
+                  lineHeight: 1.8,
+                  mb: 4,
+                  textAlign: 'left'
+                }}
               >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900">{exp.title}</h3>
-                    <p className="text-blue-600 font-medium">{exp.company}</p>
-                  </div>
-                  <span className="text-gray-500 text-sm mt-2 md:mt-0">{exp.period}</span>
-                </div>
-                <p className="text-gray-600">{exp.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+                I believe in writing clean, maintainable code and staying up-to-date with the latest 
+                technologies. When I'm not coding, you can find me contributing to open-source projects, 
+                mentoring junior developers, or exploring new technologies.
+              </Typography>
 
-      {/* Education Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            {...fadeInUp}
-            className="text-center mb-16"
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {personalValues.map((value, index) => (
+                  <Chip
+                    key={index}
+                    label={value}
+                    variant="outlined"
+                    sx={{
+                      borderColor: 'primary.main',
+                      color: 'primary.main',
+                      fontWeight: 500,
+                      '&:hover': {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                      }
+                    }}
+                  />
+                ))}
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* Experience & Education Timeline */}
+        <Box sx={{ mb: 8 }}>
+          <Typography
+            variant="h3"
+            sx={{ 
+              fontWeight: 700, 
+              mb: 6,
+              textAlign: 'center',
+              color: 'text.primary'
+            }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Education
-            </h2>
-          </motion.div>
+            My <GradientText variant="h3" component="span">Journey</GradientText>
+          </Typography>
 
-          <div className="max-w-3xl mx-auto">
-            {education.map((edu, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-8"
-              >
-                <div className="flex items-start">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-6">
-                    <FontAwesomeIcon icon={faGraduationCap} className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{edu.degree}</h3>
-                    <p className="text-blue-600 font-medium mb-2">{edu.school}</p>
-                    <p className="text-gray-500 text-sm mb-3">{edu.period}</p>
-                    <p className="text-gray-600">{edu.description}</p>
-                  </div>
-                </div>
-              </motion.div>
+          <Timeline position={isMobile ? 'right' : 'alternate'}>
+            {[...experience, ...education].map((item, index) => (
+              <TimelineItem key={index}>
+                <TimelineOppositeContent
+                  sx={{ 
+                    m: 'auto 0',
+                    display: isMobile ? 'none' : 'block'
+                  }}
+                  align={index % 2 === 0 ? 'right' : 'left'}
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {item.period}
+                </TimelineOppositeContent>
+                
+                <TimelineSeparator>
+                  <TimelineConnector />
+                  <TimelineDot
+                    sx={{
+                      backgroundColor: item.color,
+                      p: 1.5,
+                    }}
+                  >
+                    <item.icon sx={{ color: 'white' }} />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                
+                <TimelineContent sx={{ py: '12px', px: 2 }}>
+                  <Paper
+                    elevation={3}
+                    sx={{
+                      p: 3,
+                      backgroundColor: 'background.paper',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                    }}
+                  >
+                    <Typography variant="h6" component="span" sx={{ fontWeight: 600 }}>
+                      {item.title || item.degree}
+                    </Typography>
+                    <Typography color="primary" sx={{ fontWeight: 500 }}>
+                      {item.company || item.school}
+                    </Typography>
+                    {isMobile && (
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        {item.period}
+                      </Typography>
+                    )}
+                    <Typography variant="body2" color="text.secondary">
+                      {item.description}
+                    </Typography>
+                  </Paper>
+                </TimelineContent>
+              </TimelineItem>
             ))}
-          </div>
-        </div>
-      </section>
+          </Timeline>
+        </Box>
 
-      {/* Achievements Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            {...fadeInUp}
-            className="text-center mb-16"
+        {/* Skills Section */}
+        <Box sx={{ mb: 8 }}>
+          <Typography
+            variant="h3"
+            sx={{ 
+              fontWeight: 700, 
+              mb: 6,
+              textAlign: 'center',
+              color: 'text.primary'
+            }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Key Achievements
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Some highlights from my professional journey.
-            </p>
-          </motion.div>
+            Technical <GradientText variant="h3" component="span">Skills</GradientText>
+          </Typography>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {achievements.map((achievement, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
-              >
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
-                    <FontAwesomeIcon icon={faAward} className="w-4 h-4 text-green-600" />
-                  </div>
-                  <p className="text-gray-700 flex-1">{achievement}</p>
-                </div>
-              </motion.div>
+          <Grid container spacing={4}>
+            {skills.map((skillCategory, index) => (
+              <Grid item xs={12} md={6} key={index}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <SkillCard>
+                    <CardContent sx={{ p: 4 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                        <Avatar
+                          sx={{
+                            backgroundColor: skillCategory.color + '20',
+                            color: skillCategory.color,
+                            width: 50,
+                            height: 50,
+                            mr: 2,
+                          }}
+                        >
+                          <skillCategory.icon sx={{ fontSize: 24 }} />
+                        </Avatar>
+                        
+                        <Typography
+                          variant="h6"
+                          sx={{ 
+                            fontWeight: 600,
+                            color: 'text.primary'
+                          }}
+                        >
+                          {skillCategory.category}
+                        </Typography>
+                      </Box>
+
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {skillCategory.items.map((skill, skillIndex) => (
+                          <Box key={skillIndex}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                {skill.name}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {skill.level}%
+                              </Typography>
+                            </Box>
+                            <StyledLinearProgress 
+                              variant="determinate" 
+                              value={skill.level}
+                            />
+                          </Box>
+                        ))}
+                      </Box>
+                    </CardContent>
+                  </SkillCard>
+                </motion.div>
+              </Grid>
             ))}
-          </div>
-        </div>
-      </section>
-    </div>
+          </Grid>
+        </Box>
+
+        {/* Additional Info */}
+        <Grid container spacing={4}>
+          {/* Achievements */}
+          <Grid item xs={12} md={6}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 4,
+                height: '100%',
+                background: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <AwardIcon sx={{ color: 'primary.main', mr: 2, fontSize: 30 }} />
+                <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                  Achievements
+                </Typography>
+              </Box>
+              
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {achievements.map((achievement, index) => (
+                  <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        backgroundColor: 'primary.main',
+                        mr: 2,
+                      }}
+                    />
+                    <Typography variant="body1" color="text.secondary">
+                      {achievement}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Paper>
+          </Grid>
+
+          {/* Languages */}
+          <Grid item xs={12} md={6}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 4,
+                height: '100%',
+                background: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <LanguageIcon sx={{ color: 'primary.main', mr: 2, fontSize: 30 }} />
+                <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                  Languages
+                </Typography>
+              </Box>
+              
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {languages.map((language, index) => (
+                  <Box key={index}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                      <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                        {language.flag} {language.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {language.level}%
+                      </Typography>
+                    </Box>
+                    <StyledLinearProgress 
+                      variant="determinate" 
+                      value={language.level}
+                    />
+                  </Box>
+                ))}
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

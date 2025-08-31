@@ -1,378 +1,649 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faCalendar, 
-  faClock, 
-  faUser,
-  faSearch,
-  faTag,
-  faArrowRight
-} from '@fortawesome/free-solid-svg-icons';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActions,
+  Button,
+  Chip,
+  Avatar,
+  TextField,
+  InputAdornment,
+  Pagination,
+  useTheme,
+  useMediaQuery,
+  Fade,
+} from '@mui/material';
+import {
+  Search as SearchIcon,
+  CalendarToday as CalendarIcon,
+  Person as PersonIcon,
+  Visibility as ViewIcon,
+  Comment as CommentIcon,
+  Share as ShareIcon,
+  BookmarkBorder as BookmarkIcon,
+  TrendingUp as TrendingIcon,
+  Code as CodeIcon,
+  Web as WebIcon,
+  Phone as PhoneIcon,
+  Cloud as CloudIcon,
+} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+
+const GradientText = styled(Typography)(({ theme }) => ({
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  display: 'inline-block',
+}));
+
+const BlogCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  background: 'rgba(255, 255, 255, 0.9)',
+  backdropFilter: 'blur(20px)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  cursor: 'pointer',
+  '&:hover': {
+    transform: 'translateY(-8px)',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+  },
+}));
+
+const FeaturedCard = styled(Card)(({ theme }) => ({
+  position: 'relative',
+  height: '400px',
+  borderRadius: theme.spacing(2),
+  overflow: 'hidden',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'scale(1.02)',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+  },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'linear-gradient(45deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%)',
+    zIndex: 1,
+  },
+}));
+
+const CategoryChip = styled(Chip)(({ theme, selected }) => ({
+  margin: theme.spacing(0.5),
+  transition: 'all 0.3s ease',
+  cursor: 'pointer',
+  ...(selected && {
+    backgroundColor: theme.palette.primary.main,
+    color: 'white',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  }),
+}));
 
 const Blog = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 6;
+
+  const categories = [
+    { name: 'All', icon: null, count: 12 },
+    { name: 'Web Development', icon: WebIcon, count: 5 },
+    { name: 'Mobile Development', icon: PhoneIcon, count: 3 },
+    { name: 'Cloud & DevOps', icon: CloudIcon, count: 2 },
+    { name: 'Programming', icon: CodeIcon, count: 2 },
+  ];
 
   const blogPosts = [
     {
       id: 1,
-      title: 'Building Scalable React Applications',
-      excerpt: 'Learn how to structure and build scalable React applications with modern best practices, state management, and performance optimization techniques.',
-      content: 'Full content here...',
+      title: 'Building Scalable React Applications with TypeScript',
+      excerpt: 'Learn how to structure large React applications using TypeScript for better maintainability and developer experience.',
+      content: 'In this comprehensive guide, we\'ll explore the best practices for building scalable React applications...',
+      image: '/blog/react-typescript.jpg',
+      category: 'Web Development',
       author: 'NH Dinh',
-      date: '2024-01-15',
+      publishDate: '2024-01-15',
       readTime: '8 min read',
-      category: 'React',
-      tags: ['React', 'JavaScript', 'Performance'],
-      image: '/api/placeholder/400/250',
-      featured: true
+      views: 1250,
+      comments: 23,
+      tags: ['React', 'TypeScript', 'JavaScript', 'Frontend'],
+      featured: true,
     },
     {
       id: 2,
-      title: 'Node.js Performance Optimization',
-      excerpt: 'Discover advanced techniques for optimizing Node.js applications, including memory management, async patterns, and monitoring strategies.',
-      content: 'Full content here...',
+      title: 'Mastering Node.js Performance Optimization',
+      excerpt: 'Discover advanced techniques to optimize your Node.js applications for maximum performance and efficiency.',
+      content: 'Performance optimization is crucial for Node.js applications. Here are the key strategies...',
+      image: '/blog/nodejs-performance.jpg',
+      category: 'Web Development',
       author: 'NH Dinh',
-      date: '2024-01-10',
-      readTime: '10 min read',
-      category: 'Node.js',
-      tags: ['Node.js', 'Performance', 'Backend'],
-      image: '/api/placeholder/400/250',
-      featured: false
+      publishDate: '2024-01-10',
+      readTime: '12 min read',
+      views: 980,
+      comments: 17,
+      tags: ['Node.js', 'Performance', 'Backend', 'JavaScript'],
+      featured: true,
     },
     {
       id: 3,
-      title: 'Database Design Patterns',
-      excerpt: 'Explore common database design patterns and when to use them in your applications for optimal performance and maintainability.',
-      content: 'Full content here...',
+      title: 'Introduction to React Native Development',
+      excerpt: 'Get started with React Native and learn how to build cross-platform mobile applications efficiently.',
+      content: 'React Native allows you to build mobile apps using React. Let\'s dive into the fundamentals...',
+      image: '/blog/react-native.jpg',
+      category: 'Mobile Development',
       author: 'NH Dinh',
-      date: '2024-01-05',
-      readTime: '12 min read',
-      category: 'Database',
-      tags: ['Database', 'SQL', 'Design Patterns'],
-      image: '/api/placeholder/400/250',
-      featured: false
+      publishDate: '2024-01-05',
+      readTime: '10 min read',
+      views: 750,
+      comments: 12,
+      tags: ['React Native', 'Mobile', 'iOS', 'Android'],
+      featured: false,
     },
     {
       id: 4,
-      title: 'Modern CSS Techniques',
-      excerpt: 'Master modern CSS features like Grid, Flexbox, custom properties, and animation techniques to create stunning user interfaces.',
-      content: 'Full content here...',
+      title: 'Docker and Kubernetes for Modern Development',
+      excerpt: 'Learn how to containerize your applications and orchestrate them using Docker and Kubernetes.',
+      content: 'Containerization has revolutionized modern software development. Here\'s how to get started...',
+      image: '/blog/docker-kubernetes.jpg',
+      category: 'Cloud & DevOps',
       author: 'NH Dinh',
-      date: '2023-12-28',
-      readTime: '6 min read',
-      category: 'CSS',
-      tags: ['CSS', 'Frontend', 'Design'],
-      image: '/api/placeholder/400/250',
-      featured: true
+      publishDate: '2023-12-28',
+      readTime: '15 min read',
+      views: 1100,
+      comments: 31,
+      tags: ['Docker', 'Kubernetes', 'DevOps', 'Cloud'],
+      featured: false,
     },
     {
       id: 5,
-      title: 'API Security Best Practices',
-      excerpt: 'Essential security practices for building secure APIs, including authentication, authorization, rate limiting, and data validation.',
-      content: 'Full content here...',
+      title: 'Advanced JavaScript Patterns and Techniques',
+      excerpt: 'Explore advanced JavaScript patterns that will make you a more effective developer.',
+      content: 'JavaScript is a powerful language with many patterns and techniques. Let\'s explore the advanced ones...',
+      image: '/blog/javascript-patterns.jpg',
+      category: 'Programming',
       author: 'NH Dinh',
-      date: '2023-12-20',
+      publishDate: '2023-12-20',
       readTime: '9 min read',
-      category: 'Security',
-      tags: ['Security', 'API', 'Backend'],
-      image: '/api/placeholder/400/250',
-      featured: false
+      views: 650,
+      comments: 8,
+      tags: ['JavaScript', 'Patterns', 'Programming', 'ES6'],
+      featured: false,
     },
     {
       id: 6,
-      title: 'Docker for Developers',
-      excerpt: 'A comprehensive guide to using Docker in development workflows, from basic concepts to advanced deployment strategies.',
-      content: 'Full content here...',
+      title: 'Building RESTful APIs with Express.js',
+      excerpt: 'Learn how to create robust and scalable RESTful APIs using Express.js and best practices.',
+      content: 'Building APIs is a fundamental skill for backend developers. Here\'s how to do it right...',
+      image: '/blog/express-api.jpg',
+      category: 'Web Development',
       author: 'NH Dinh',
-      date: '2023-12-15',
-      readTime: '15 min read',
-      category: 'DevOps',
-      tags: ['Docker', 'DevOps', 'Deployment'],
-      image: '/api/placeholder/400/250',
-      featured: false
-    }
-  ];
-
-  const categories = [
-    'all',
-    'React',
-    'Node.js',
-    'Database',
-    'CSS',
-    'Security',
-    'DevOps'
+      publishDate: '2023-12-15',
+      readTime: '11 min read',
+      views: 920,
+      comments: 19,
+      tags: ['Express.js', 'API', 'Node.js', 'Backend'],
+      featured: false,
+    },
   ];
 
   const filteredPosts = blogPosts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
-    
+    const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const featuredPosts = blogPosts.filter(post => post.featured);
-  const recentPosts = blogPosts.slice(0, 3);
+  const regularPosts = filteredPosts.filter(post => !post.featured);
 
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+  // Pagination
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = regularPosts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(regularPosts.length / postsPerPage);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const getCategoryIcon = (categoryName) => {
+    const category = categories.find(cat => cat.name === categoryName);
+    return category?.icon ? <category.icon fontSize="small" /> : null;
   };
 
   return (
-    <div className="pt-20">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+    <Box sx={{ py: 8 }}>
+      <Container maxWidth="lg">
+        {/* Hero Section */}
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Typography
+            variant="h6"
+            color="primary"
+            sx={{ 
+              fontWeight: 600, 
+              mb: 2,
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em'
+            }}
           >
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              My <span className="text-blue-600">Blog</span>
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Thoughts, tutorials, and insights about web development, 
-              programming, and technology trends.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+            My Blog
+          </Typography>
+          
+          <Typography
+            variant="h2"
+            sx={{ 
+              fontWeight: 700, 
+              mb: 4,
+              color: 'text.primary'
+            }}
+          >
+            Thoughts & <GradientText variant="h2" component="span">Insights</GradientText>
+          </Typography>
+          
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ 
+              fontSize: '1.1rem',
+              maxWidth: '700px',
+              mx: 'auto',
+              lineHeight: 1.8,
+              mb: 6
+            }}
+          >
+            Welcome to my tech blog where I share insights, tutorials, and experiences 
+            from my journey in software development and technology.
+          </Typography>
+        </Box>
 
-      {/* Search and Filter */}
-      <section className="py-8 bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <FontAwesomeIcon 
-                icon={faSearch} 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" 
-              />
-              <input
-                type="text"
+        {/* Featured Posts */}
+        {featuredPosts.length > 0 && (
+          <Box sx={{ mb: 8 }}>
+            <Typography
+              variant="h4"
+              sx={{ 
+                fontWeight: 600, 
+                mb: 4,
+                color: 'text.primary',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <TrendingIcon sx={{ mr: 2, color: 'primary.main' }} />
+              Featured Posts
+            </Typography>
+            
+            <Grid container spacing={4}>
+              {featuredPosts.map((post, index) => (
+                <Grid item xs={12} md={6} key={post.id}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <FeaturedCard>
+                      <CardMedia
+                        component="img"
+                        height="400"
+                        image={post.image || '/blog-placeholder.jpg'}
+                        alt={post.title}
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          p: 3,
+                          color: 'white',
+                          zIndex: 2,
+                        }}
+                      >
+                        <Chip
+                          label={post.category}
+                          size="small"
+                          sx={{
+                            backgroundColor: 'primary.main',
+                            color: 'white',
+                            mb: 2,
+                          }}
+                        />
+                        
+                        <Typography
+                          variant="h5"
+                          sx={{ 
+                            fontWeight: 600, 
+                            mb: 2,
+                            color: 'white'
+                          }}
+                        >
+                          {post.title}
+                        </Typography>
+                        
+                        <Typography
+                          variant="body2"
+                          sx={{ 
+                            mb: 2,
+                            color: 'rgba(255,255,255,0.9)',
+                            lineHeight: 1.6
+                          }}
+                        >
+                          {post.excerpt}
+                        </Typography>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <CalendarIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                            <Typography variant="caption">
+                              {formatDate(post.publishDate)}
+                            </Typography>
+                          </Box>
+                          
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <ViewIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                            <Typography variant="caption">
+                              {post.views} views
+                            </Typography>
+                          </Box>
+                          
+                          <Typography variant="caption">
+                            {post.readTime}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </FeaturedCard>
+                  </motion.div>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
+
+        {/* Search and Filter */}
+        <Box sx={{ mb: 6 }}>
+          <Grid container spacing={4} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
                 placeholder="Search articles..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Category Filter */}
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
-                    selectedCategory === category
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {category === 'all' ? 'All' : category}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Posts */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            {...fadeInUp}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Featured Articles
-            </h2>
-            <p className="text-lg text-gray-600">
-              Hand-picked articles covering the latest in web development.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-            {featuredPosts.map((post, index) => (
-              <motion.article
-                key={post.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300"
-              >
-                <div className="relative">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                      Featured
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center text-sm text-gray-500 mb-3">
-                    <FontAwesomeIcon icon={faCalendar} className="w-4 h-4 mr-2" />
-                    <span>{formatDate(post.date)}</span>
-                    <span className="mx-2">•</span>
-                    <FontAwesomeIcon icon={faClock} className="w-4 h-4 mr-2" />
-                    <span>{post.readTime}</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
-                    {post.excerpt}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {post.tags.map((tag, tagIndex) => (
-                      <span
-                        key={tagIndex}
-                        className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                  <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors duration-200 flex items-center">
-                    Read More
-                    <FontAwesomeIcon icon={faArrowRight} className="ml-2 w-4 h-4" />
-                  </button>
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* All Posts */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            {...fadeInUp}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              All Articles
-            </h2>
-            <p className="text-lg text-gray-600">
-              {filteredPosts.length} {filteredPosts.length === 1 ? 'article' : 'articles'} found
-            </p>
-          </motion.div>
-
-          {filteredPosts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredPosts.map((post, index) => (
-                <motion.article
-                  key={post.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
-                >
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  <div className="p-6">
-                    <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <FontAwesomeIcon icon={faCalendar} className="w-4 h-4 mr-2" />
-                      <span>{formatDate(post.date)}</span>
-                      <span className="mx-2">•</span>
-                      <FontAwesomeIcon icon={faClock} className="w-4 h-4 mr-2" />
-                      <span>{post.readTime}</span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                      {post.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">
-                        {post.category}
-                      </span>
-                      <button className="text-blue-600 hover:text-blue-700 transition-colors duration-200 text-sm font-medium">
-                        Read More →
-                      </button>
-                    </div>
-                  </div>
-                </motion.article>
-              ))}
-            </div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20"
-            >
-              <FontAwesomeIcon icon={faSearch} className="w-16 h-16 text-gray-300 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                No articles found
-              </h3>
-              <p className="text-gray-500 mb-4">
-                Try adjusting your search terms or filter criteria.
-              </p>
-              <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedCategory('all');
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
                 }}
-                className="btn-primary"
-              >
-                Clear Filters
-              </button>
-            </motion.div>
-          )}
-        </div>
-      </section>
-
-      {/* Newsletter Signup */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            {...fadeInUp}
-            className="space-y-6"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">
-              Stay Updated
-            </h2>
-            <p className="text-xl text-blue-100">
-              Subscribe to get notified about new articles and tutorials.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg border border-transparent focus:ring-2 focus:ring-white focus:border-transparent"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 3,
+                  },
+                }}
               />
-              <button className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                Subscribe
-              </button>
-            </div>
-            <p className="text-blue-200 text-sm">
-              No spam, unsubscribe at any time.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-    </div>
+            </Grid>
+            
+            <Grid item xs={12} md={6}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
+                {categories.map((category) => (
+                  <CategoryChip
+                    key={category.name}
+                    label={
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        {category.icon && <category.icon fontSize="small" />}
+                        {category.name} ({category.count})
+                      </Box>
+                    }
+                    selected={selectedCategory === category.name}
+                    onClick={() => setSelectedCategory(category.name)}
+                  />
+                ))}
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* Blog Posts Grid */}
+        <Grid container spacing={4}>
+          {currentPosts.map((post, index) => (
+            <Grid item xs={12} md={6} lg={4} key={post.id}>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <BlogCard>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={post.image || '/blog-placeholder.jpg'}
+                    alt={post.title}
+                    sx={{ objectFit: 'cover' }}
+                  />
+                  
+                  <CardContent sx={{ p: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <Chip
+                        label={post.category}
+                        size="small"
+                        icon={getCategoryIcon(post.category)}
+                        sx={{
+                          backgroundColor: 'primary.main',
+                          color: 'white',
+                          mr: 'auto',
+                        }}
+                      />
+                      
+                      <Typography variant="caption" color="text.secondary">
+                        {post.readTime}
+                      </Typography>
+                    </Box>
+                    
+                    <Typography
+                      variant="h6"
+                      sx={{ 
+                        fontWeight: 600, 
+                        mb: 2,
+                        color: 'text.primary',
+                        lineHeight: 1.3,
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: 2,
+                      }}
+                    >
+                      {post.title}
+                    </Typography>
+                    
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ 
+                        mb: 3, 
+                        lineHeight: 1.6,
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: 3,
+                      }}
+                    >
+                      {post.excerpt}
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                      <Avatar
+                        sx={{ 
+                          width: 32, 
+                          height: 32, 
+                          mr: 1,
+                          backgroundColor: 'primary.main'
+                        }}
+                      >
+                        <PersonIcon fontSize="small" />
+                      </Avatar>
+                      
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          {post.author}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {formatDate(post.publishDate)}
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+                      {post.tags.slice(0, 3).map((tag, tagIndex) => (
+                        <Chip
+                          key={tagIndex}
+                          label={tag}
+                          size="small"
+                          variant="outlined"
+                          sx={{
+                            fontSize: '0.7rem',
+                            height: 24,
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  </CardContent>
+
+                  <CardActions sx={{ px: 3, pb: 3, justifyContent: 'space-between' }}>
+                    <Button variant="contained" size="small">
+                      Read More
+                    </Button>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <ViewIcon sx={{ fontSize: 16, color: 'text.secondary', mr: 0.5 }} />
+                        <Typography variant="caption" color="text.secondary">
+                          {post.views}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <CommentIcon sx={{ fontSize: 16, color: 'text.secondary', mr: 0.5 }} />
+                        <Typography variant="caption" color="text.secondary">
+                          {post.comments}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </CardActions>
+                </BlogCard>
+              </motion.div>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+              size={isMobile ? 'small' : 'medium'}
+            />
+          </Box>
+        )}
+
+        {/* No Results */}
+        {filteredPosts.length === 0 && (
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant="h5" color="text.secondary" sx={{ mb: 2 }}>
+              No articles found
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Try adjusting your search terms or filters.
+            </Typography>
+          </Box>
+        )}
+
+        {/* Newsletter Subscription */}
+        <Box
+          sx={{
+            mt: 12,
+            p: 6,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: 3,
+            textAlign: 'center',
+            color: 'white',
+          }}
+        >
+          <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>
+            Stay Updated
+          </Typography>
+          
+          <Typography variant="body1" sx={{ mb: 4, opacity: 0.9 }}>
+            Subscribe to my newsletter and get the latest articles delivered to your inbox.
+          </Typography>
+          
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 2, 
+            maxWidth: 400, 
+            mx: 'auto',
+            flexDirection: { xs: 'column', sm: 'row' }
+          }}>
+            <TextField
+              placeholder="Enter your email"
+              variant="outlined"
+              size="small"
+              sx={{
+                flex: 1,
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: 'white',
+                  borderRadius: 2,
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              sx={{
+                px: 3,
+                backgroundColor: 'white',
+                color: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'grey.100',
+                },
+              }}
+            >
+              Subscribe
+            </Button>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

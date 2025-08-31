@@ -1,299 +1,634 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faExternalLinkAlt, 
-  faCode,
-  faFilter
-} from '@fortawesome/free-solid-svg-icons';
-import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActions,
+  Button,
+  Chip,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  useTheme,
+  useMediaQuery,
+  Tabs,
+  Tab,
+  Avatar,
+} from '@mui/material';
+import {
+  GitHub as GitHubIcon,
+  Launch as LaunchIcon,
+  Close as CloseIcon,
+  Star as StarIcon,
+  Code as CodeIcon,
+  Web as WebIcon,
+  Phone as PhoneIcon,
+  Cloud as CloudIcon,
+} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+
+const GradientText = styled(Typography)(({ theme }) => ({
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  display: 'inline-block',
+}));
+
+const ProjectCard = styled(Card)(({ theme }) => ({
+  height: '100%',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  background: 'rgba(255, 255, 255, 0.9)',
+  backdropFilter: 'blur(20px)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  overflow: 'hidden',
+  '&:hover': {
+    transform: 'translateY(-8px)',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+  },
+}));
+
+const CategoryChip = styled(Chip)(({ theme, selected }) => ({
+  margin: theme.spacing(0.5),
+  transition: 'all 0.3s ease',
+  ...(selected && {
+    backgroundColor: theme.palette.primary.main,
+    color: 'white',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  }),
+}));
 
 const Projects = () => {
-  const [activeFilter, setActiveFilter] = useState('all');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const categories = ['All', 'Web Development', 'Mobile Apps', 'Full-Stack', 'UI/UX Design'];
 
   const projects = [
     {
       id: 1,
       title: 'E-Commerce Platform',
-      description: 'A full-stack e-commerce solution with React, Node.js, and MongoDB. Features include user authentication, payment integration, and admin dashboard.',
-      image: '/api/placeholder/400/250',
-      technologies: ['React', 'Node.js', 'MongoDB', 'Stripe'],
-      category: 'fullstack',
-      github: 'https://github.com/nhdinhdev03/ecommerce',
-      live: 'https://ecommerce-demo.com',
-      featured: true
+      category: 'Full-Stack',
+      description: 'Modern e-commerce platform with React, Node.js, and MongoDB. Features include real-time inventory, payment processing, and admin dashboard.',
+      longDescription: 'A comprehensive e-commerce platform built with modern technologies. Features include user authentication, product management, shopping cart, payment integration with Stripe, order tracking, admin dashboard with analytics, and responsive design for all devices.',
+      image: '/projects/ecommerce.jpg',
+      technologies: ['React', 'Node.js', 'MongoDB', 'Express', 'Stripe', 'JWT'],
+      liveUrl: 'https://ecommerce-demo.com',
+      githubUrl: 'https://github.com/nhdinhdev03/ecommerce',
+      featured: true,
+      rating: 5,
+      status: 'Completed'
     },
     {
       id: 2,
       title: 'Task Management App',
-      description: 'A modern task management application with real-time updates, drag-and-drop functionality, and team collaboration features.',
-      image: '/api/placeholder/400/250',
-      technologies: ['React', 'Firebase', 'Material-UI'],
-      category: 'frontend',
-      github: 'https://github.com/nhdinhdev03/task-manager',
-      live: 'https://taskmanager-demo.com',
-      featured: true
+      category: 'Web Development',
+      description: 'Collaborative task management application with real-time updates, drag-and-drop functionality, and team collaboration features.',
+      longDescription: 'A comprehensive task management solution designed for teams. Features include project organization, task assignment, real-time collaboration, file attachments, time tracking, progress analytics, and integration with popular tools like Slack and Google Drive.',
+      image: '/projects/taskmanager.jpg',
+      technologies: ['Vue.js', 'Firebase', 'Vuex', 'Vuetify', 'Socket.io'],
+      liveUrl: 'https://taskmanager-demo.com',
+      githubUrl: 'https://github.com/nhdinhdev03/taskmanager',
+      featured: true,
+      rating: 5,
+      status: 'Completed'
     },
     {
       id: 3,
-      title: 'Weather Dashboard',
-      description: 'A responsive weather dashboard that displays current weather conditions and forecasts for multiple cities worldwide.',
-      image: '/api/placeholder/400/250',
-      technologies: ['Vue.js', 'API Integration', 'Chart.js'],
-      category: 'frontend',
-      github: 'https://github.com/nhdinhdev03/weather-dashboard',
-      live: 'https://weather-dashboard-demo.com',
-      featured: false
+      title: 'Weather Mobile App',
+      category: 'Mobile Apps',
+      description: 'Cross-platform weather application with location-based forecasts, interactive maps, and customizable notifications.',
+      longDescription: 'A feature-rich weather application providing accurate forecasts and weather information. Includes GPS location detection, 7-day forecasts, weather maps, severe weather alerts, customizable widgets, and offline caching for reliable access.',
+      image: '/projects/weather.jpg',
+      technologies: ['React Native', 'TypeScript', 'Redux', 'OpenWeather API', 'Maps'],
+      liveUrl: 'https://apps.apple.com/weather-app',
+      githubUrl: 'https://github.com/nhdinhdev03/weather-app',
+      featured: false,
+      rating: 4,
+      status: 'Completed'
     },
     {
       id: 4,
-      title: 'RESTful API Service',
-      description: 'A scalable RESTful API built with Express.js and PostgreSQL, featuring JWT authentication and comprehensive documentation.',
-      image: '/api/placeholder/400/250',
-      technologies: ['Node.js', 'Express', 'PostgreSQL', 'JWT'],
-      category: 'backend',
-      github: 'https://github.com/nhdinhdev03/api-service',
-      live: null,
-      featured: false
+      title: 'Portfolio Dashboard',
+      category: 'UI/UX Design',
+      description: 'Modern dashboard interface for portfolio management with data visualization and analytics.',
+      longDescription: 'An elegant dashboard design for investment portfolio management. Features include interactive charts, performance analytics, asset allocation visualization, market trends, and responsive design optimized for both desktop and mobile use.',
+      image: '/projects/dashboard.jpg',
+      technologies: ['Figma', 'Adobe XD', 'Principle', 'InVision'],
+      liveUrl: 'https://portfolio-dashboard-demo.com',
+      githubUrl: null,
+      featured: false,
+      rating: 4,
+      status: 'Completed'
     },
     {
       id: 5,
-      title: 'Social Media Dashboard',
-      description: 'A comprehensive social media management dashboard with analytics, post scheduling, and multi-platform integration.',
-      image: '/api/placeholder/400/250',
-      technologies: ['React', 'Python', 'Django', 'PostgreSQL'],
-      category: 'fullstack',
-      github: 'https://github.com/nhdinhdev03/social-dashboard',
-      live: 'https://social-dashboard-demo.com',
-      featured: true
+      title: 'Social Media Platform',
+      category: 'Full-Stack',
+      description: 'Social networking platform with real-time messaging, content sharing, and community features.',
+      longDescription: 'A complete social media platform with modern features. Includes user profiles, posts and media sharing, real-time messaging, friend connections, groups and communities, content moderation, and advanced privacy controls.',
+      image: '/projects/social.jpg',
+      technologies: ['Next.js', 'PostgreSQL', 'Prisma', 'Socket.io', 'AWS S3', 'Redis'],
+      liveUrl: 'https://social-platform-demo.com',
+      githubUrl: 'https://github.com/nhdinhdev03/social-platform',
+      featured: true,
+      rating: 5,
+      status: 'In Progress'
     },
     {
       id: 6,
-      title: 'Mobile Fitness App',
-      description: 'A cross-platform mobile app for fitness tracking with workout plans, progress monitoring, and social features.',
-      image: '/api/placeholder/400/250',
-      technologies: ['React Native', 'Firebase', 'Redux'],
-      category: 'mobile',
-      github: 'https://github.com/nhdinhdev03/fitness-app',
-      live: null,
-      featured: false
+      title: 'Learning Management System',
+      category: 'Web Development',
+      description: 'Educational platform with course management, video streaming, and progress tracking.',
+      longDescription: 'A comprehensive learning management system for educational institutions. Features include course creation and management, video lectures with streaming, student progress tracking, assignments and quizzes, grade management, and interactive learning tools.',
+      image: '/projects/lms.jpg',
+      technologies: ['Angular', 'Spring Boot', 'MySQL', 'WebRTC', 'Docker'],
+      liveUrl: 'https://lms-demo.com',
+      githubUrl: 'https://github.com/nhdinhdev03/lms',
+      featured: false,
+      rating: 4,
+      status: 'Completed'
     }
   ];
 
-  const categories = [
-    { key: 'all', label: 'All Projects' },
-    { key: 'fullstack', label: 'Full Stack' },
-    { key: 'frontend', label: 'Frontend' },
-    { key: 'backend', label: 'Backend' },
-    { key: 'mobile', label: 'Mobile' }
-  ];
-
-  const filteredProjects = activeFilter === 'all' 
+  const filteredProjects = selectedCategory === 'All' 
     ? projects 
-    : projects.filter(project => project.category === activeFilter);
+    : projects.filter(project => project.category === selectedCategory);
 
-  const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
+  const featuredProjects = projects.filter(project => project.featured);
+
+  const handleProjectClick = (project) => {
+    setSelectedProject(project);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setSelectedProject(null);
+  };
+
+  const getCategoryIcon = (category) => {
+    switch (category) {
+      case 'Web Development':
+        return <WebIcon />;
+      case 'Mobile Apps':
+        return <PhoneIcon />;
+      case 'Full-Stack':
+        return <CloudIcon />;
+      case 'UI/UX Design':
+        return <CodeIcon />;
+      default:
+        return <StarIcon />;
+    }
   };
 
   return (
-    <div className="pt-20">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+    <Box sx={{ py: 8 }}>
+      <Container maxWidth="lg">
+        {/* Hero Section */}
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Typography
+            variant="h6"
+            color="primary"
+            sx={{ 
+              fontWeight: 600, 
+              mb: 2,
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em'
+            }}
           >
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              My <span className="text-blue-600">Projects</span>
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              A collection of projects I've worked on, showcasing my skills in 
-              full-stack development, frontend design, and mobile applications.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+            My Portfolio
+          </Typography>
+          
+          <Typography
+            variant="h2"
+            sx={{ 
+              fontWeight: 700, 
+              mb: 4,
+              color: 'text.primary'
+            }}
+          >
+            Featured <GradientText variant="h2" component="span">Projects</GradientText>
+          </Typography>
+          
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ 
+              fontSize: '1.1rem',
+              maxWidth: '700px',
+              mx: 'auto',
+              lineHeight: 1.8,
+              mb: 6
+            }}
+          >
+            Here's a collection of my recent work showcasing various technologies and design approaches. 
+            Each project represents a unique challenge and learning experience.
+          </Typography>
+        </Box>
 
-      {/* Filter Tabs */}
-      <section className="py-8 bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-wrap justify-center gap-4"
+        {/* Featured Projects */}
+        <Box sx={{ mb: 8 }}>
+          <Typography
+            variant="h4"
+            sx={{ 
+              fontWeight: 600, 
+              mb: 4,
+              color: 'text.primary',
+              textAlign: 'center'
+            }}
           >
-            {categories.map((category) => (
-              <button
-                key={category.key}
-                onClick={() => setActiveFilter(category.key)}
-                className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-                  activeFilter === category.key
-                    ? 'bg-blue-600 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {category.label}
-              </button>
+            🌟 Featured Projects
+          </Typography>
+          
+          <Grid container spacing={4}>
+            {featuredProjects.map((project, index) => (
+              <Grid item xs={12} md={6} lg={4} key={project.id}>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <ProjectCard>
+                    <CardMedia
+                      component="img"
+                      height="200"
+                      image={project.image || '/placeholder-project.jpg'}
+                      alt={project.title}
+                      sx={{
+                        objectFit: 'cover',
+                        transition: 'transform 0.3s ease',
+                        '&:hover': {
+                          transform: 'scale(1.05)',
+                        },
+                      }}
+                    />
+                    
+                    <CardContent sx={{ p: 3 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                        <Typography
+                          variant="h6"
+                          sx={{ 
+                            fontWeight: 600,
+                            color: 'text.primary',
+                            flex: 1
+                          }}
+                        >
+                          {project.title}
+                        </Typography>
+                        
+                        <Chip
+                          size="small"
+                          label={project.status}
+                          color={project.status === 'Completed' ? 'success' : 'warning'}
+                          sx={{ ml: 1 }}
+                        />
+                      </Box>
+                      
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mb: 3, lineHeight: 1.6 }}
+                      >
+                        {project.description}
+                      </Typography>
+
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 3 }}>
+                        {project.technologies.slice(0, 3).map((tech, techIndex) => (
+                          <Chip
+                            key={techIndex}
+                            label={tech}
+                            size="small"
+                            variant="outlined"
+                            sx={{
+                              fontSize: '0.75rem',
+                              borderColor: 'primary.main',
+                              color: 'primary.main',
+                            }}
+                          />
+                        ))}
+                        {project.technologies.length > 3 && (
+                          <Chip
+                            label={`+${project.technologies.length - 3}`}
+                            size="small"
+                            variant="outlined"
+                            sx={{
+                              fontSize: '0.75rem',
+                              borderColor: 'grey.400',
+                              color: 'grey.600',
+                            }}
+                          />
+                        )}
+                      </Box>
+
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        {[...Array(5)].map((_, i) => (
+                          <StarIcon
+                            key={i}
+                            sx={{
+                              fontSize: 16,
+                              color: i < project.rating ? '#ffd700' : '#e0e0e0',
+                            }}
+                          />
+                        ))}
+                        <Typography variant="caption" sx={{ ml: 1, color: 'text.secondary' }}>
+                          ({project.rating}/5)
+                        </Typography>
+                      </Box>
+                    </CardContent>
+
+                    <CardActions sx={{ px: 3, pb: 3 }}>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        onClick={() => handleProjectClick(project)}
+                        sx={{ mr: 1 }}
+                      >
+                        View Details
+                      </Button>
+                      
+                      {project.liveUrl && (
+                        <IconButton
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          size="small"
+                          sx={{ color: 'primary.main' }}
+                        >
+                          <LaunchIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                      
+                      {project.githubUrl && (
+                        <IconButton
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          size="small"
+                          sx={{ color: 'text.secondary' }}
+                        >
+                          <GitHubIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                    </CardActions>
+                  </ProjectCard>
+                </motion.div>
+              </Grid>
             ))}
-          </motion.div>
-        </div>
-      </section>
+          </Grid>
+        </Box>
 
-      {/* Projects Grid */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        {/* All Projects with Filter */}
+        <Box>
+          <Typography
+            variant="h4"
+            sx={{ 
+              fontWeight: 600, 
+              mb: 4,
+              color: 'text.primary',
+              textAlign: 'center'
+            }}
           >
+            All Projects
+          </Typography>
+
+          {/* Category Filter */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 6 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexWrap: 'wrap', 
+              justifyContent: 'center',
+              gap: 1,
+              p: 2,
+              backgroundColor: 'background.paper',
+              borderRadius: 2,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
+            }}>
+              {categories.map((category) => (
+                <CategoryChip
+                  key={category}
+                  label={category}
+                  selected={selectedCategory === category}
+                  onClick={() => setSelectedCategory(category)}
+                  icon={getCategoryIcon(category)}
+                />
+              ))}
+            </Box>
+          </Box>
+
+          {/* Projects Grid */}
+          <Grid container spacing={4}>
             {filteredProjects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 ${
-                  project.featured ? 'ring-2 ring-blue-500' : ''
-                }`}
-              >
-                {project.featured && (
-                  <div className="bg-blue-600 text-white text-xs font-semibold px-3 py-1 absolute top-4 left-4 rounded-full z-10">
-                    Featured
-                  </div>
+              <Grid item xs={12} md={6} lg={4} key={project.id}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <ProjectCard>
+                    <CardMedia
+                      component="img"
+                      height="180"
+                      image={project.image || '/placeholder-project.jpg'}
+                      alt={project.title}
+                    />
+                    
+                    <CardContent sx={{ p: 3 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600, flex: 1 }}>
+                          {project.title}
+                        </Typography>
+                        
+                        <Avatar
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            backgroundColor: 'primary.main',
+                            ml: 1
+                          }}
+                        >
+                          {getCategoryIcon(project.category)}
+                        </Avatar>
+                      </Box>
+                      
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mb: 2, lineHeight: 1.6 }}
+                      >
+                        {project.description}
+                      </Typography>
+
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {project.technologies.map((tech, techIndex) => (
+                          <Chip
+                            key={techIndex}
+                            label={tech}
+                            size="small"
+                            variant="outlined"
+                            sx={{
+                              fontSize: '0.7rem',
+                              height: 24,
+                            }}
+                          />
+                        ))}
+                      </Box>
+                    </CardContent>
+
+                    <CardActions sx={{ px: 3, pb: 3, justifyContent: 'space-between' }}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleProjectClick(project)}
+                      >
+                        Learn More
+                      </Button>
+                      
+                      <Box>
+                        {project.liveUrl && (
+                          <IconButton
+                            href={project.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            size="small"
+                          >
+                            <LaunchIcon fontSize="small" />
+                          </IconButton>
+                        )}
+                        
+                        {project.githubUrl && (
+                          <IconButton
+                            href={project.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            size="small"
+                          >
+                            <GitHubIcon fontSize="small" />
+                          </IconButton>
+                        )}
+                      </Box>
+                    </CardActions>
+                  </ProjectCard>
+                </motion.div>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+
+        {/* Project Detail Dialog */}
+        <Dialog
+          open={dialogOpen}
+          onClose={handleCloseDialog}
+          maxWidth="md"
+          fullWidth
+          fullScreen={isMobile}
+        >
+          {selectedProject && (
+            <>
+              <DialogTitle>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                    {selectedProject.title}
+                  </Typography>
+                  <IconButton onClick={handleCloseDialog}>
+                    <CloseIcon />
+                  </IconButton>
+                </Box>
+              </DialogTitle>
+              
+              <DialogContent>
+                <Box sx={{ mb: 3 }}>
+                  <img
+                    src={selectedProject.image || '/placeholder-project.jpg'}
+                    alt={selectedProject.title}
+                    style={{
+                      width: '100%',
+                      height: '300px',
+                      objectFit: 'cover',
+                      borderRadius: '12px',
+                    }}
+                  />
+                </Box>
+                
+                <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
+                  {selectedProject.longDescription}
+                </Typography>
+
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                  Technologies Used:
+                </Typography>
+                
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
+                  {selectedProject.technologies.map((tech, index) => (
+                    <Chip
+                      key={index}
+                      label={tech}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  ))}
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="body1" sx={{ mr: 2 }}>
+                    Rating:
+                  </Typography>
+                  {[...Array(5)].map((_, i) => (
+                    <StarIcon
+                      key={i}
+                      sx={{
+                        fontSize: 20,
+                        color: i < selectedProject.rating ? '#ffd700' : '#e0e0e0',
+                      }}
+                    />
+                  ))}
+                </Box>
+              </DialogContent>
+              
+              <DialogActions sx={{ p: 3 }}>
+                {selectedProject.liveUrl && (
+                  <Button
+                    href={selectedProject.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="contained"
+                    startIcon={<LaunchIcon />}
+                  >
+                    View Live
+                  </Button>
                 )}
                 
-                <div className="relative overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-48 object-cover transition-transform duration-300 hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-4">
-                    {project.github && (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-900 hover:bg-gray-100 transition-colors duration-200"
-                      >
-                        <FontAwesomeIcon icon={faGithub} className="w-5 h-5" />
-                      </a>
-                    )}
-                    {project.live && (
-                      <a
-                        href={project.live}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors duration-200"
-                      >
-                        <FontAwesomeIcon icon={faExternalLinkAlt} className="w-4 h-4" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    {project.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                    {project.description}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech, techIndex) => (
-                      <span
-                        key={techIndex}
-                        className="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex space-x-3">
-                      {project.github && (
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
-                        >
-                          <FontAwesomeIcon icon={faCode} className="w-4 h-4" />
-                        </a>
-                      )}
-                      {project.live && (
-                        <a
-                          href={project.live}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-700 transition-colors duration-200"
-                        >
-                          <FontAwesomeIcon icon={faExternalLinkAlt} className="w-4 h-4" />
-                        </a>
-                      )}
-                    </div>
-                    <span className="text-xs text-gray-400 capitalize">
-                      {project.category}
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {filteredProjects.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20"
-            >
-              <FontAwesomeIcon icon={faFilter} className="w-16 h-16 text-gray-300 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                No projects found
-              </h3>
-              <p className="text-gray-500">
-                Try selecting a different category to see more projects.
-              </p>
-            </motion.div>
+                {selectedProject.githubUrl && (
+                  <Button
+                    href={selectedProject.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="outlined"
+                    startIcon={<GitHubIcon />}
+                  >
+                    View Code
+                  </Button>
+                )}
+              </DialogActions>
+            </>
           )}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            {...fadeInUp}
-            className="space-y-6"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">
-              Have a Project in Mind?
-            </h2>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-              I'm always interested in new opportunities and exciting projects. 
-              Let's discuss how we can work together.
-            </p>
-            <a
-              href="/contact"
-              className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200"
-            >
-              Start a Project
-              <FontAwesomeIcon icon={faExternalLinkAlt} className="ml-2 w-4 h-4" />
-            </a>
-          </motion.div>
-        </div>
-      </section>
-    </div>
+        </Dialog>
+      </Container>
+    </Box>
   );
 };
 

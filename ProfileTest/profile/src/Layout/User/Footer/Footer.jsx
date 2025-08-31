@@ -1,22 +1,100 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faGithub, 
-  faLinkedin, 
-  faTwitter, 
-  faFacebook 
-} from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  IconButton,
+  Divider,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
+import {
+  GitHub as GitHubIcon,
+  LinkedIn as LinkedInIcon,
+  Twitter as TwitterIcon,
+  Facebook as FacebookIcon,
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  LocationOn as LocationIcon,
+  Favorite as FavoriteIcon,
+} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+
+const FooterContainer = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1a1a1a' : '#f8f9fa',
+  color: theme.palette.text.primary,
+  paddingTop: theme.spacing(6),
+  paddingBottom: theme.spacing(4),
+  marginTop: 'auto',
+}));
+
+const GradientText = styled(Typography)(({ theme }) => ({
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  display: 'inline-block',
+}));
+
+const SocialIconButton = styled(IconButton)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
+  margin: theme.spacing(0.5),
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-3px)',
+    boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+  },
+  '&.github:hover': {
+    backgroundColor: '#333',
+    color: 'white',
+  },
+  '&.linkedin:hover': {
+    backgroundColor: '#0077B5',
+    color: 'white',
+  },
+  '&.twitter:hover': {
+    backgroundColor: '#1DA1F2',
+    color: 'white',
+  },
+  '&.facebook:hover': {
+    backgroundColor: '#4267B2',
+    color: 'white',
+  },
+}));
 
 const Footer = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { icon: faGithub, href: 'https://github.com/nhdinhdev03', label: 'GitHub' },
-    { icon: faLinkedin, href: 'https://linkedin.com/in/nhdinh', label: 'LinkedIn' },
-    { icon: faTwitter, href: 'https://twitter.com/nhdinh', label: 'Twitter' },
-    { icon: faFacebook, href: 'https://facebook.com/nhdinh', label: 'Facebook' }
+    { 
+      icon: GitHubIcon, 
+      href: 'https://github.com/nhdinhdev03', 
+      label: 'GitHub',
+      className: 'github'
+    },
+    { 
+      icon: LinkedInIcon, 
+      href: 'https://linkedin.com/in/nhdinh', 
+      label: 'LinkedIn',
+      className: 'linkedin'
+    },
+    { 
+      icon: TwitterIcon, 
+      href: 'https://twitter.com/nhdinh', 
+      label: 'Twitter',
+      className: 'twitter'
+    },
+    { 
+      icon: FacebookIcon, 
+      href: 'https://facebook.com/nhdinh', 
+      label: 'Facebook',
+      className: 'facebook'
+    }
   ];
 
   const quickLinks = [
@@ -27,97 +105,230 @@ const Footer = () => {
     { name: 'Contact', path: '/contact' }
   ];
 
+  const contactInfo = [
+    { icon: EmailIcon, text: 'nhdinh.dev@gmail.com', href: 'mailto:nhdinh.dev@gmail.com' },
+    { icon: PhoneIcon, text: '+84 123 456 789', href: 'tel:+84123456789' },
+    { icon: LocationIcon, text: 'Ho Chi Minh City, Vietnam' }
+  ];
+
   return (
-    <footer className="footer">
-      <div className="footer__container">
-        {/* Main content */}
-        <div className="footer__main">
-          {/* Brand section */}
-          <div className="footer__brand">
-            <div className="footer__logo">
-              <span>NH<span className="text-gradient">Dinh</span></span>
-            </div>
-            <p className="footer__description">
-              Passionate developer creating amazing web experiences with modern technologies. 
-              Let's build something great together!
-            </p>
-            <div className="footer__social">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                >
-                  <FontAwesomeIcon icon={social.icon} className="icon" />
-                </a>
-              ))}
-            </div>
-          </div>
+    <FooterContainer>
+      <Container maxWidth="lg">
+        <Grid container spacing={4}>
+          {/* Brand Section */}
+          <Grid item xs={12} md={4}>
+            <Box sx={{ mb: 3 }}>
+              <Typography
+                variant="h5"
+                component={Link}
+                to="/"
+                sx={{
+                  textDecoration: 'none',
+                  fontWeight: 700,
+                  fontFamily: '"Sour Gummy", sans-serif',
+                  mb: 2,
+                  display: 'block',
+                  color: 'text.primary',
+                }}
+              >
+                NH<GradientText variant="h5" component="span">Dinh</GradientText>
+              </Typography>
+              
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ 
+                  mb: 3, 
+                  lineHeight: 1.8,
+                  maxWidth: '300px'
+                }}
+              >
+                Passionate developer creating amazing web experiences with modern technologies. 
+                Let's build something great together!
+              </Typography>
+
+              {/* Social Links */}
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {socialLinks.map((social) => {
+                  const IconComponent = social.icon;
+                  return (
+                    <SocialIconButton
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={social.className}
+                      aria-label={social.label}
+                    >
+                      <IconComponent fontSize="small" />
+                    </SocialIconButton>
+                  );
+                })}
+              </Box>
+            </Box>
+          </Grid>
 
           {/* Quick Links */}
-          <div className="footer__column">
-            <h3 className="footer__title">Quick Links</h3>
-            <ul className="footer__links">
+          <Grid item xs={12} md={2}>
+            <Typography
+              variant="h6"
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                color: 'text.primary'
+              }}
+            >
+              Quick Links
+            </Typography>
+            
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               {quickLinks.map((link) => (
-                <li key={link.path}>
-                  <Link to={link.path}>{link.name}</Link>
-                </li>
+                <Typography
+                  key={link.path}
+                  component={Link}
+                  to={link.path}
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary',
+                    textDecoration: 'none',
+                    transition: 'color 0.3s ease',
+                    '&:hover': {
+                      color: 'primary.main',
+                    },
+                  }}
+                >
+                  {link.name}
+                </Typography>
               ))}
-            </ul>
-          </div>
+            </Box>
+          </Grid>
 
           {/* Services */}
-          <div className="footer__column">
-            <h3 className="footer__title">Services</h3>
-            <ul className="footer__links">
-              <li><a href="#web-development">Web Development</a></li>
-              <li><a href="#mobile-development">Mobile Development</a></li>
-              <li><a href="#ui-ux-design">UI/UX Design</a></li>
-              <li><a href="#consulting">Consulting</a></li>
-            </ul>
-          </div>
+          <Grid item xs={12} md={3}>
+            <Typography
+              variant="h6"
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                color: 'text.primary'
+              }}
+            >
+              Services
+            </Typography>
+            
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              {[
+                'Web Development',
+                'Mobile Apps',
+                'UI/UX Design',
+                'API Development',
+                'Consulting'
+              ].map((service) => (
+                <Typography
+                  key={service}
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ lineHeight: 1.6 }}
+                >
+                  {service}
+                </Typography>
+              ))}
+            </Box>
+          </Grid>
 
-          {/* Newsletter */}
-          <div className="footer__newsletter">
-            <h3 className="footer__newsletter-title">Stay Updated</h3>
-            <p className="footer__newsletter-desc">
-              Subscribe to get the latest news and updates about my projects.
-            </p>
-            <form className="footer__newsletter-form" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                required
-              />
-              <button type="submit">Subscribe</button>
-            </form>
-          </div>
-        </div>
+          {/* Contact Info */}
+          <Grid item xs={12} md={3}>
+            <Typography
+              variant="h6"
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                color: 'text.primary'
+              }}
+            >
+              Get in Touch
+            </Typography>
+            
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {contactInfo.map((info, index) => {
+                const IconComponent = info.icon;
+                const content = (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                    }}
+                  >
+                    <IconComponent 
+                      fontSize="small" 
+                      sx={{ color: 'primary.main' }} 
+                    />
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ lineHeight: 1.6 }}
+                    >
+                      {info.text}
+                    </Typography>
+                  </Box>
+                );
+
+                return info.href ? (
+                  <Box
+                    key={index}
+                    component="a"
+                    href={info.href}
+                    sx={{
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      transition: 'color 0.3s ease',
+                      '&:hover': {
+                        color: 'primary.main',
+                      },
+                    }}
+                  >
+                    {content}
+                  </Box>
+                ) : content;
+              })}
+            </Box>
+          </Grid>
+        </Grid>
+
+        {/* Divider */}
+        <Divider sx={{ my: 4 }} />
 
         {/* Bottom section */}
-        <div className="footer__bottom">
-          <p className="footer__copyright">
-            © {currentYear} NHDinh. All rights reserved.
-          </p>
-          <div className="footer__legal">
-            <a href="/privacy">Privacy Policy</a>
-            <a href="/terms">Terms of Service</a>
-            <a href="/cookies">Cookie Policy</a>
-          </div>
-        </div>
-      </div>
-
-      {/* Back to top button */}
-      <button
-        className="footer__back-to-top"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        aria-label="Back to top"
-      >
-        <span className="icon">↑</span>
-      </button>
-    </footer>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+            textAlign: isMobile ? 'center' : 'left',
+          }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            © {currentYear} NH Dinh. All rights reserved.
+          </Typography>
+          
+          <Typography 
+            variant="body2" 
+            color="text.secondary"
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 0.5 
+            }}
+          >
+            Made with <FavoriteIcon sx={{ fontSize: 16, color: 'error.main' }} /> in Vietnam
+          </Typography>
+        </Box>
+      </Container>
+    </FooterContainer>
   );
 };
 

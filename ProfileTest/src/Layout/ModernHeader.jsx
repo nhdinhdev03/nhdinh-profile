@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 // Fixed relative import paths (file is in src/Layout)
 import { useTheme } from '../contexts/ThemeContext';
 import { ROUTES } from '../router/routeConstants';
@@ -18,42 +18,80 @@ import {
   FiActivity
 } from 'react-icons/fi';
 
-const ModernHeader = () => {
+// Static navigation data
+const NAVIGATION = [
+  { name: 'Home', href: ROUTES.HOME, icon: FiHome, color: 'from-blue-500 to-cyan-500' },
+  { name: 'About', href: ROUTES.ABOUT, icon: FiUser, color: 'from-purple-500 to-pink-500' },
+  { name: 'Projects', href: ROUTES.PROJECTS, icon: FiBriefcase, color: 'from-green-500 to-emerald-500' },
+  { name: 'Blog', href: ROUTES.BLOG, icon: FiBook, color: 'from-orange-500 to-red-500' },
+  { name: 'Contact', href: ROUTES.CONTACT, icon: FiMail, color: 'from-teal-500 to-blue-500' },
+];
+
+const ModernHeader = React.memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
 
-  const navigation = [
-    { name: 'Home', href: ROUTES.HOME, icon: FiHome, color: 'from-blue-500 to-cyan-500' },
-    { name: 'About', href: ROUTES.ABOUT, icon: FiUser, color: 'from-purple-500 to-pink-500' },
-    { name: 'Projects', href: ROUTES.PROJECTS, icon: FiBriefcase, color: 'from-green-500 to-emerald-500' },
-    { name: 'Blog', href: ROUTES.BLOG, icon: FiBook, color: 'from-orange-500 to-red-500' },
-    { name: 'Contact', href: ROUTES.CONTACT, icon: FiMail, color: 'from-teal-500 to-blue-500' },
-  ];
-
+  // Throttled scroll handler
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Throttled mouse move handler
+  useEffect(() => {
+    let frame;
     const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      if (!frame) {
+        frame = requestAnimationFrame(() => {
+          setMousePosition({ x: e.clientX, y: e.clientY });
+          frame = null;
+        });
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('pointermove', handleMouseMove, { passive: true });
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('pointermove', handleMouseMove);
+      if (frame) cancelAnimationFrame(frame);
     };
   }, []);
 
-  const closeMenu = () => setIsMenuOpen(false);
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
+
+  const isActiveLink = useCallback((href) => {
+    return location.pathname === href;
+  }, [location.pathname]);
+
+  // Memoized navigation items
+  const navigationItems = useMemo(() => 
+    NAVIGATION.map((item) => ({
+      ...item,
+      isActive: isActiveLink(item.href)
+    })), [isActiveLink]
+  );
 
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       {/* Neural Network Cursor Follower */}
       <motion.div
         className="fixed pointer-events-none w-32 h-32 rounded-full z-50 opacity-30"
@@ -171,8 +209,8 @@ const ModernHeader = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-2">
-              {navigation.map((item) => {
-                const isActive = location.pathname === item.href;
+              {navigationItems.map((item) => {
+                const isActive = item.isActive;
                 return (
                   <motion.div
                     key={item.name}
@@ -294,7 +332,7 @@ const ModernHeader = () => {
 
               {/* Mobile Menu Toggle */}
               <motion.button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onClick={toggleMenu}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className="md:hidden relative w-12 h-12 rounded-xl bg-gray-900/50 border border-gray-700/50 hover:border-gray-600 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
@@ -372,8 +410,8 @@ const ModernHeader = () => {
               <div className="relative z-10 p-8 pt-24">
                 {/* Menu Items */}
                 <nav className="space-y-6">
-                  {navigation.map((item, index) => {
-                    const isActive = location.pathname === item.href;
+                  {navigationItems.map((item, index) => {
+                    const isActive = item.isActive;
                     return (
                       <motion.div
                         key={item.name}
@@ -453,8 +491,8 @@ const ModernHeader = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </LazyMotion>
   );
-};
+});
 
 export default ModernHeader;

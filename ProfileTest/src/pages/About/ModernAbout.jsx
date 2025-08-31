@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import { 
   FiCpu,
   FiCode,
@@ -27,27 +27,15 @@ import {
   FiUsers
 } from 'react-icons/fi';
 
-function ModernAbout() {
-  const [activeSkill, setActiveSkill] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [selectedTimeline, setSelectedTimeline] = useState('career');
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  const skillCategories = [
-    {
-      title: 'AI & Machine Learning',
-      icon: FiCpu,
-      gradient: 'from-purple-600 to-pink-600',
-      skills: [
-        { name: 'TensorFlow', level: 95, color: 'from-orange-500 to-red-500' },
-        { name: 'PyTorch', level: 92, color: 'from-red-500 to-pink-500' },
+// Static data moved outside component
+const SKILL_CATEGORIES = [
+  {
+    title: 'AI & Machine Learning',
+    icon: FiCpu,
+    gradient: 'from-purple-600 to-pink-600',
+    skills: [
+      { name: 'TensorFlow', level: 95, color: 'from-orange-500 to-red-500' },
+      { name: 'PyTorch', level: 92, color: 'from-red-500 to-pink-500' },
         { name: 'OpenAI GPT', level: 88, color: 'from-green-500 to-emerald-500' },
         { name: 'Computer Vision', level: 85, color: 'from-blue-500 to-cyan-500' },
         { name: 'NLP', level: 90, color: 'from-purple-500 to-indigo-500' },
@@ -95,7 +83,32 @@ function ModernAbout() {
     }
   ];
 
-  const timeline = {
+const ModernAbout = React.memo(() => {
+  const [activeSkill, setActiveSkill] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
+  const [selectedTimeline, setSelectedTimeline] = useState('career');
+
+  // Optimized mouse tracking
+  useEffect(() => {
+    let frame;
+    const handleMouseMove = (e) => {
+      if (!frame) {
+        frame = requestAnimationFrame(() => {
+          setMousePosition({ x: e.clientX, y: e.clientY });
+          frame = null;
+        });
+      }
+    };
+    window.addEventListener('pointermove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', handleMouseMove);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const skillCategories = SKILL_CATEGORIES;
+
+  const timeline = useMemo(() => ({
     career: [
       {
         year: '2024',
@@ -156,16 +169,17 @@ function ModernAbout() {
         gradient: 'from-purple-600 to-blue-600'
       }
     ]
-  };
+  }), []);
 
-  const certifications = [
+  const certifications = useMemo(() => [
     { name: 'AWS Solutions Architect', issuer: 'Amazon', year: '2024', icon: FiCloud },
     { name: 'Certified Kubernetes Administrator', issuer: 'CNCF', year: '2024', icon: FiServer },
     { name: 'TensorFlow Developer Certificate', issuer: 'Google', year: '2023', icon: FiCpu },
     { name: 'Blockchain Developer', issuer: 'Ethereum Foundation', year: '2023', icon: FiGlobe }
-  ];
+  ], []);
 
   return (
+    <LazyMotion features={domAnimation}>
     <div className="min-h-screen relative overflow-hidden">
       {/* Dynamic Background */}
       <div className="absolute inset-0">
@@ -639,7 +653,8 @@ function ModernAbout() {
         </div>
       </div>
     </div>
+    </LazyMotion>
   );
-}
+});
 
 export default ModernAbout;

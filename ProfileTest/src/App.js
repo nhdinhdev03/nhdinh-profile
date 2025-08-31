@@ -4,19 +4,34 @@ import ScrollToHash from "./router/ScrollToHash";
 import PageTransition from "./components/PageTransition/PageTransition";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AnimatePresence } from "framer-motion";
-import { Suspense, useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo, startTransition } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import SmartLoader from "./components/UI/SmartLoader";
+import PerformanceMonitor from "./components/Performance/PerformanceMonitor";
+
+// Enhanced loading component
+const LoadingFallback = () => (
+  <SmartLoader 
+    progress={75} 
+    status="Loading Experience..." 
+    showProgress={true}
+    showStats={true}
+  />
+);
 
 function App() {
   useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      easing: 'ease-out-cubic',
-      once: false,
-      mirror: true,
-      offset: 50,
-      anchorPlacement: 'top-bottom'
+    startTransition(() => {
+      AOS.init({
+        duration: 800,
+        easing: 'ease-out-cubic',
+        once: true,
+        mirror: false,
+        offset: 100,
+        anchorPlacement: 'top-bottom',
+        disable: 'mobile' // Disable on mobile for better performance
+      });
     });
   }, []);
 
@@ -30,8 +45,8 @@ function App() {
       return (
         <Route
           key={path}
-            path={path}
-            element={Layout ? <Layout>{content}</Layout> : content}
+          path={path}
+          element={Layout ? <Layout>{content}</Layout> : content}
         />
       );
     })
@@ -41,17 +56,14 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <ScrollToHash />
-        <Suspense fallback={
-          <div className="w-full h-screen flex items-center justify-center bg-black text-cyan-400">
-            <div className="animate-pulse tracking-widest font-semibold">Loading...</div>
-          </div>
-        }>
+        <Suspense fallback={<LoadingFallback />}>
           <AnimatePresence mode="wait" initial={false}>
             <Routes>
               {routeElements}
             </Routes>
           </AnimatePresence>
         </Suspense>
+        <PerformanceMonitor />
       </BrowserRouter>
     </ThemeProvider>
   );

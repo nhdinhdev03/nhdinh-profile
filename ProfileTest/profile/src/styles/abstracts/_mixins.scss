@@ -1,0 +1,316 @@
+// ==========================================================================
+// Mixins - Các hàm tiện ích tái sử dụng
+// ==========================================================================
+
+// Responsive Mixins
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == 'sm' {
+    @media (min-width: $breakpoint-sm) { @content; }
+  }
+  @if $breakpoint == 'md' {
+    @media (min-width: $breakpoint-md) { @content; }
+  }
+  @if $breakpoint == 'lg' {
+    @media (min-width: $breakpoint-lg) { @content; }
+  }
+  @if $breakpoint == 'xl' {
+    @media (min-width: $breakpoint-xl) { @content; }
+  }
+  @if $breakpoint == '2xl' {
+    @media (min-width: $breakpoint-2xl) { @content; }
+  }
+}
+
+@mixin respond-below($breakpoint) {
+  @if $breakpoint == 'sm' {
+    @media (max-width: #{$breakpoint-sm - 1px}) { @content; }
+  }
+  @if $breakpoint == 'md' {
+    @media (max-width: #{$breakpoint-md - 1px}) { @content; }
+  }
+  @if $breakpoint == 'lg' {
+    @media (max-width: #{$breakpoint-lg - 1px}) { @content; }
+  }
+  @if $breakpoint == 'xl' {
+    @media (max-width: #{$breakpoint-xl - 1px}) { @content; }
+  }
+  @if $breakpoint == '2xl' {
+    @media (max-width: #{$breakpoint-2xl - 1px}) { @content; }
+  }
+}
+
+// Flexbox Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@mixin flex-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+// Grid Mixins
+@mixin grid-center {
+  display: grid;
+  place-items: center;
+}
+
+@mixin grid-columns($columns, $gap: $spacing-4) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+@mixin grid-auto-fit($min-width: 250px, $gap: $spacing-4) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $gap;
+}
+
+// Typography Mixins
+@mixin text-gradient($gradient: $accent-gradient) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-clamp($lines: 3) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Button Mixins
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-family-primary;
+  font-weight: $font-medium;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: $transition-normal;
+  border-radius: $rounded-lg;
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-size($padding-y, $padding-x, $font-size) {
+  padding: $padding-y $padding-x;
+  font-size: $font-size;
+}
+
+@mixin button-variant($bg-color, $text-color: $white, $hover-bg: null) {
+  background-color: $bg-color;
+  color: $text-color;
+  
+  @if $hover-bg {
+    &:hover:not(:disabled) {
+      background-color: $hover-bg;
+    }
+  } @else {
+    &:hover:not(:disabled) {
+      background-color: darken($bg-color, 10%);
+    }
+  }
+}
+
+// Card Mixins
+@mixin card-base {
+  background: $white;
+  border-radius: $rounded-xl;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+  transition: $transition-normal;
+}
+
+@mixin card-hover {
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-xl;
+  }
+}
+
+@mixin card-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// Position Mixins
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin absolute-full {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@mixin fixed-full {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+// Animation Mixins
+@mixin fade-in($duration: $duration-300) {
+  opacity: 0;
+  animation: fadeIn $duration ease-in-out forwards;
+}
+
+@mixin slide-up($duration: $duration-300, $distance: 20px) {
+  opacity: 0;
+  transform: translateY($distance);
+  animation: slideUp $duration ease-out forwards;
+}
+
+@mixin scale-in($duration: $duration-300) {
+  opacity: 0;
+  transform: scale(0.9);
+  animation: scaleIn $duration ease-out forwards;
+}
+
+// Gradient Mixins
+@mixin gradient-text($gradient: $accent-gradient) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin gradient-border($gradient: $accent-gradient, $width: 2px) {
+  position: relative;
+  background: $gradient;
+  border-radius: inherit;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: $width;
+    background: $white;
+    border-radius: inherit;
+    z-index: -1;
+  }
+}
+
+// Scrollbar Mixins
+@mixin custom-scrollbar($thumb-color: $gray-400, $track-color: $gray-100) {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: $track-color;
+    border-radius: $rounded-full;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-color;
+    border-radius: $rounded-full;
+    
+    &:hover {
+      background: darken($thumb-color, 10%);
+    }
+  }
+}
+
+// Selection Mixins
+@mixin selection($bg-color: $primary-100, $text-color: $primary-900) {
+  &::selection {
+    background: $bg-color;
+    color: $text-color;
+  }
+  
+  &::-moz-selection {
+    background: $bg-color;
+    color: $text-color;
+  }
+}
+
+// Container Mixins
+@mixin container($max-width: $container-xl) {
+  width: 100%;
+  max-width: $max-width;
+  margin: 0 auto;
+  padding-left: $spacing-4;
+  padding-right: $spacing-4;
+  
+  @include respond-to('sm') {
+    padding-left: $spacing-6;
+    padding-right: $spacing-6;
+  }
+  
+  @include respond-to('lg') {
+    padding-left: $spacing-8;
+    padding-right: $spacing-8;
+  }
+}
+
+// Aspect Ratio Mixin
+@mixin aspect-ratio($width, $height) {
+  position: relative;
+  
+  &::before {
+    content: '';
+    display: block;
+    padding-top: percentage($height / $width);
+  }
+  
+  > * {
+    @include absolute-full;
+  }
+}

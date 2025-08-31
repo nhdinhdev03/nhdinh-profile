@@ -1,0 +1,271 @@
+// ==========================================================================
+// Dark Theme - Theme tối chuyên nghiệp
+// ==========================================================================
+
+[data-theme="dark"] {
+  // Color overrides for dark theme
+  --bg-primary: #{$gray-900};
+  --bg-secondary: #{$gray-800};
+  --bg-tertiary: #{$gray-700};
+  --text-primary: #{$white};
+  --text-secondary: #{$gray-300};
+  --text-muted: #{$gray-400};
+  --border-color: #{rgba(255, 255, 255, 0.1)};
+  
+  // Body
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+  
+  // Cards
+  .card {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    
+    &--glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  // Buttons
+  .btn {
+    &--secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      
+      &:hover:not(:disabled) {
+        background: var(--bg-secondary);
+      }
+    }
+    
+    &--outline {
+      border-color: var(--border-color);
+      color: var(--text-secondary);
+      
+      &:hover:not(:disabled) {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+    }
+    
+    &--ghost {
+      color: var(--text-secondary);
+      
+      &:hover:not(:disabled) {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+    }
+  }
+  
+  // Typography
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--text-primary);
+  }
+  
+  p, .paragraph {
+    color: var(--text-secondary);
+    
+    &.lead {
+      color: var(--text-primary);
+    }
+  }
+  
+  // Links
+  a, .link {
+    &.link-muted {
+      color: var(--text-muted);
+      
+      &:hover {
+        color: var(--text-primary);
+      }
+    }
+  }
+  
+  // Code
+  code {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+  }
+  
+  pre {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+  
+  // Blockquotes
+  blockquote {
+    background: var(--bg-secondary);
+    border-left-color: $primary-400;
+    
+    p {
+      color: var(--text-primary);
+    }
+    
+    cite {
+      color: var(--text-muted);
+    }
+  }
+  
+  // Forms (if you add them later)
+  input, textarea, select {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    
+    &::placeholder {
+      color: var(--text-muted);
+    }
+    
+    &:focus {
+      border-color: $primary-400;
+      box-shadow: 0 0 0 3px rgba($primary-400, 0.2);
+    }
+  }
+  
+  // Home page dark theme
+  .home {
+    &__hero {
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      
+      .hero__subtitle {
+        color: var(--text-secondary);
+      }
+    }
+    
+    &__skills {
+      background: var(--bg-secondary);
+      
+      .skills__header .section-subtitle {
+        color: var(--text-secondary);
+      }
+      
+      .skill-card {
+        background: var(--bg-tertiary);
+        
+        .skill-title {
+          color: var(--text-primary);
+        }
+        
+        .skill-description {
+          color: var(--text-secondary);
+        }
+      }
+    }
+    
+    &__features {
+      background: var(--bg-primary);
+      
+      .features__text {
+        .section-description {
+          color: var(--text-secondary);
+        }
+        
+        .features-list li span {
+          color: var(--text-secondary);
+        }
+      }
+      
+      .floating-card {
+        background: var(--bg-secondary);
+      }
+    }
+  }
+  
+  // Scrollbar dark theme
+  &::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    
+    &:hover {
+      background: $gray-600;
+    }
+  }
+  
+  // Selection dark theme
+  ::selection {
+    background: rgba($primary-400, 0.3);
+    color: var(--text-primary);
+  }
+  
+  ::-moz-selection {
+    background: rgba($primary-400, 0.3);
+    color: var(--text-primary);
+  }
+}
+
+// Dark mode toggle animation
+.dark-mode-toggle {
+  @include button-base();
+  padding: $spacing-2;
+  background: transparent;
+  border: 1px solid $gray-300;
+  border-radius: $rounded-lg;
+  transition: $transition-normal;
+  
+  &:hover {
+    background: $gray-100;
+  }
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+    transition: $transition-normal;
+  }
+  
+  &--dark {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: $gray-300;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: $white;
+    }
+  }
+}
+
+// Dark mode transition
+.dark-mode-transition {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Dark mode utilities
+.dark-mode-text {
+  [data-theme="dark"] & {
+    color: var(--text-primary);
+  }
+}
+
+.dark-mode-bg {
+  [data-theme="dark"] & {
+    background: var(--bg-secondary);
+  }
+}
+
+.dark-mode-border {
+  [data-theme="dark"] & {
+    border-color: var(--border-color);
+  }
+}
+
+// System preference detection
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    // Apply dark theme variables
+    --bg-primary: #{$gray-900};
+    --bg-secondary: #{$gray-800};
+    --bg-tertiary: #{$gray-700};
+    --text-primary: #{$white};
+    --text-secondary: #{$gray-300};
+    --text-muted: #{$gray-400};
+    --border-color: #{rgba(255, 255, 255, 0.1)};
+  }
+}

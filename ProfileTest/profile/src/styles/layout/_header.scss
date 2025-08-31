@@ -1,0 +1,362 @@
+// ==========================================================================
+// Header - Component header chuyên nghiệp
+// ==========================================================================
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-fixed;
+  transition: $transition-normal;
+  
+  // Default state
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  
+  // Scrolled state
+  &--scrolled {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    box-shadow: $shadow-lg;
+    border-bottom: 1px solid $gray-200;
+  }
+  
+  // Dark theme
+  &--dark {
+    background: rgba(17, 24, 39, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    
+    &.header--scrolled {
+      background: rgba(17, 24, 39, 0.98);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  // Transparent
+  &--transparent {
+    background: transparent;
+    border-bottom: none;
+    
+    &.header--scrolled {
+      background: rgba(255, 255, 255, 0.98);
+      border-bottom: 1px solid $gray-200;
+    }
+  }
+  
+  // Container
+  &__container {
+    @include container();
+    @include flex-between();
+    padding-top: $spacing-4;
+    padding-bottom: $spacing-4;
+    
+    @include respond-to('lg') {
+      padding-top: $spacing-5;
+      padding-bottom: $spacing-5;
+    }
+  }
+  
+  // Logo
+  &__logo {
+    @include flex-start();
+    gap: $spacing-3;
+    font-size: $text-xl;
+    font-weight: $font-bold;
+    color: $gray-900;
+    text-decoration: none;
+    transition: $transition-fast;
+    
+    &:hover {
+      color: $primary-600;
+      transform: scale(1.05);
+    }
+    
+    img {
+      height: 32px;
+      width: auto;
+      
+      @include respond-to('lg') {
+        height: 40px;
+      }
+    }
+    
+    .header--dark & {
+      color: $white;
+    }
+  }
+  
+  // Navigation
+  &__nav {
+    @include flex-center();
+    gap: $spacing-8;
+    
+    @include respond-below('lg') {
+      display: none;
+    }
+  }
+  
+  // Nav link
+  &__nav-link {
+    position: relative;
+    font-weight: $font-medium;
+    color: $gray-700;
+    text-decoration: none;
+    padding: $spacing-2 $spacing-1;
+    transition: $transition-fast;
+    
+    &:hover {
+      color: $primary-600;
+    }
+    
+    &--active {
+      color: $primary-600;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: $primary-600;
+        border-radius: $rounded-full;
+      }
+    }
+    
+    .header--dark & {
+      color: $gray-300;
+      
+      &:hover {
+        color: $white;
+      }
+      
+      &--active {
+        color: $white;
+      }
+    }
+  }
+  
+  // Actions
+  &__actions {
+    @include flex-center();
+    gap: $spacing-3;
+  }
+  
+  // Mobile menu button
+  &__mobile-toggle {
+    @include button-base();
+    padding: $spacing-2;
+    color: $gray-700;
+    background: transparent;
+    
+    @include respond-to('lg') {
+      display: none;
+    }
+    
+    .header--dark & {
+      color: $gray-300;
+    }
+    
+    .icon {
+      width: 24px;
+      height: 24px;
+      transition: $transition-fast;
+    }
+    
+    &--open .icon {
+      transform: rotate(90deg);
+    }
+  }
+  
+  // Mobile menu
+  &__mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: $white;
+    border-bottom: 1px solid $gray-200;
+    box-shadow: $shadow-lg;
+    padding: $spacing-4;
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: $transition-normal;
+    
+    &--open {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .header--dark & {
+      background: $gray-900;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  // Mobile nav
+  &__mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    margin-bottom: $spacing-4;
+  }
+  
+  // Mobile nav link
+  &__mobile-nav-link {
+    padding: $spacing-3;
+    color: $gray-700;
+    text-decoration: none;
+    font-weight: $font-medium;
+    border-radius: $rounded-lg;
+    transition: $transition-fast;
+    
+    &:hover {
+      background: $gray-50;
+      color: $primary-600;
+    }
+    
+    &--active {
+      background: $primary-50;
+      color: $primary-600;
+    }
+    
+    .header--dark & {
+      color: $gray-300;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: $white;
+      }
+      
+      &--active {
+        background: rgba($primary-600, 0.2);
+        color: $primary-400;
+      }
+    }
+  }
+  
+  // Search
+  &__search {
+    position: relative;
+    display: none;
+    
+    @include respond-to('md') {
+      display: block;
+    }
+    
+    input {
+      width: 240px;
+      padding: $spacing-2 $spacing-3 $spacing-2 $spacing-10;
+      border: 1px solid $gray-300;
+      border-radius: $rounded-full;
+      background: $white;
+      font-size: $text-sm;
+      transition: $transition-fast;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+        width: 280px;
+      }
+      
+      &::placeholder {
+        color: $gray-500;
+      }
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: $spacing-3;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $gray-400;
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  // CTA Button
+  &__cta {
+    @include button-base();
+    @include button-variant($primary-600, $white, $primary-700);
+    @include button-size($spacing-2, $spacing-4, $text-sm);
+    box-shadow: $shadow-md;
+    
+    &:hover:not(:disabled) {
+      box-shadow: $shadow-lg;
+      transform: translateY(-1px);
+    }
+    
+    @include respond-to('lg') {
+      @include button-size($spacing-3, $spacing-6, $text-base);
+    }
+  }
+  
+  // Theme toggle
+  &__theme-toggle {
+    @include button-base();
+    padding: $spacing-2;
+    color: $gray-700;
+    background: transparent;
+    border-radius: $rounded-lg;
+    
+    &:hover {
+      background: $gray-100;
+    }
+    
+    .header--dark & {
+      color: $gray-300;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+    
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+// Header animations
+.header-enter {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.header-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: $transition-normal;
+}
+
+.header-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.header-exit-active {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: $transition-normal;
+}
+
+// Sticky header animation
+@keyframes headerSlideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.header--sticky {
+  animation: headerSlideDown 0.3s ease-out;
+}

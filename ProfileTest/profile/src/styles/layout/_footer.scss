@@ -1,0 +1,351 @@
+// ==========================================================================
+// Footer - Component footer chuyên nghiệp
+// ==========================================================================
+
+.footer {
+  background: $gray-900;
+  color: $gray-300;
+  padding-top: $spacing-16;
+  padding-bottom: $spacing-8;
+  
+  // Container
+  &__container {
+    @include container();
+  }
+  
+  // Main content
+  &__main {
+    display: grid;
+    gap: $spacing-8;
+    margin-bottom: $spacing-12;
+    
+    @include respond-to('md') {
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: $spacing-12;
+    }
+    
+    @include respond-to('lg') {
+      gap: $spacing-16;
+    }
+  }
+  
+  // Brand section
+  &__brand {
+    .footer__logo {
+      @include flex-start();
+      gap: $spacing-3;
+      margin-bottom: $spacing-4;
+      
+      img {
+        height: 32px;
+        width: auto;
+      }
+      
+      span {
+        font-size: $text-xl;
+        font-weight: $font-bold;
+        color: $white;
+      }
+    }
+    
+    .footer__description {
+      color: $gray-400;
+      line-height: $leading-relaxed;
+      margin-bottom: $spacing-6;
+    }
+    
+    .footer__social {
+      @include flex-start();
+      gap: $spacing-4;
+      
+      a {
+        @include flex-center();
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        color: $gray-300;
+        border-radius: $rounded-lg;
+        transition: $transition-normal;
+        
+        &:hover {
+          background: $primary-600;
+          color: $white;
+          transform: translateY(-2px);
+        }
+        
+        .icon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+  
+  // Column
+  &__column {
+    .footer__title {
+      font-size: $text-lg;
+      font-weight: $font-semibold;
+      color: $white;
+      margin-bottom: $spacing-4;
+    }
+    
+    .footer__links {
+      list-style: none;
+      padding: 0;
+      
+      li {
+        margin-bottom: $spacing-2;
+      }
+      
+      a {
+        color: $gray-400;
+        text-decoration: none;
+        transition: $transition-fast;
+        
+        &:hover {
+          color: $white;
+        }
+      }
+    }
+  }
+  
+  // Newsletter
+  &__newsletter {
+    .footer__newsletter-title {
+      font-size: $text-lg;
+      font-weight: $font-semibold;
+      color: $white;
+      margin-bottom: $spacing-2;
+    }
+    
+    .footer__newsletter-desc {
+      color: $gray-400;
+      margin-bottom: $spacing-4;
+      font-size: $text-sm;
+    }
+    
+    .footer__newsletter-form {
+      display: flex;
+      gap: $spacing-2;
+      
+      @include respond-below('sm') {
+        flex-direction: column;
+      }
+      
+      input {
+        flex: 1;
+        padding: $spacing-3;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: $rounded-lg;
+        background: rgba(255, 255, 255, 0.1);
+        color: $white;
+        font-size: $text-sm;
+        
+        &::placeholder {
+          color: $gray-500;
+        }
+        
+        &:focus {
+          outline: none;
+          border-color: $primary-500;
+          box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+        }
+      }
+      
+      button {
+        @include button-base();
+        @include button-variant($primary-600, $white, $primary-700);
+        @include button-size($spacing-2, $spacing-4, $text-sm);
+        box-shadow: $shadow-md;
+        white-space: nowrap;
+        
+        &:hover:not(:disabled) {
+          box-shadow: $shadow-lg;
+          transform: translateY(-1px);
+        }
+        
+        @include respond-below('sm') {
+          width: 100%;
+        }
+      }
+    }
+  }
+  
+  // Bottom section
+  &__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: $spacing-8;
+    @include flex-between();
+    
+    @include respond-below('md') {
+      flex-direction: column;
+      gap: $spacing-4;
+      text-align: center;
+    }
+  }
+  
+  // Copyright
+  &__copyright {
+    color: $gray-500;
+    font-size: $text-sm;
+  }
+  
+  // Legal links
+  &__legal {
+    @include flex-center();
+    gap: $spacing-6;
+    
+    @include respond-below('md') {
+      gap: $spacing-4;
+    }
+    
+    a {
+      color: $gray-500;
+      font-size: $text-sm;
+      text-decoration: none;
+      transition: $transition-fast;
+      
+      &:hover {
+        color: $gray-300;
+      }
+    }
+  }
+  
+  // Back to top
+  &__back-to-top {
+    position: fixed;
+    bottom: $spacing-6;
+    right: $spacing-6;
+    @include flex-center();
+    width: 48px;
+    height: 48px;
+    background: $primary-600;
+    color: $white;
+    border-radius: $rounded-full;
+    box-shadow: $shadow-lg;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: $transition-normal;
+    z-index: $z-fixed;
+    
+    &--visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    &:hover {
+      background: $primary-700;
+      transform: translateY(-2px);
+      box-shadow: $shadow-xl;
+    }
+    
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+// Footer variants
+.footer--light {
+  background: $gray-50;
+  color: $gray-700;
+  
+  .footer__brand {
+    .footer__logo span {
+      color: $gray-900;
+    }
+    
+    .footer__description {
+      color: $gray-600;
+    }
+    
+    .footer__social a {
+      background: rgba(0, 0, 0, 0.1);
+      color: $gray-600;
+      
+      &:hover {
+        background: $primary-600;
+        color: $white;
+      }
+    }
+  }
+  
+  .footer__column {
+    .footer__title {
+      color: $gray-900;
+    }
+    
+    .footer__links a {
+      color: $gray-600;
+      
+      &:hover {
+        color: $gray-900;
+      }
+    }
+  }
+  
+  .footer__newsletter {
+    .footer__newsletter-title {
+      color: $gray-900;
+    }
+    
+    .footer__newsletter-desc {
+      color: $gray-600;
+    }
+    
+    .footer__newsletter-form input {
+      border-color: $gray-300;
+      background: $white;
+      color: $gray-900;
+      
+      &::placeholder {
+        color: $gray-500;
+      }
+    }
+  }
+  
+  .footer__bottom {
+    border-top-color: $gray-200;
+  }
+  
+  .footer__copyright {
+    color: $gray-500;
+  }
+  
+  .footer__legal a {
+    color: $gray-500;
+    
+    &:hover {
+      color: $gray-700;
+    }
+  }
+}
+
+// Minimal footer
+.footer--minimal {
+  padding: $spacing-8 0;
+  
+  .footer__main {
+    margin-bottom: $spacing-6;
+  }
+  
+  .footer__container {
+    text-align: center;
+  }
+  
+  .footer__brand {
+    .footer__logo {
+      justify-content: center;
+    }
+  }
+  
+  .footer__social {
+    justify-content: center;
+    margin-bottom: $spacing-6;
+  }
+}

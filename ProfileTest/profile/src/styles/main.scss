@@ -1,0 +1,159 @@
+// ==========================================================================
+// Main SCSS - Import tất cả các file SCSS
+// ==========================================================================
+
+// 1. Abstracts - Variables, mixins, functions
+@import 'abstracts/variables';
+@import 'abstracts/mixins';
+@import 'abstracts/functions';
+@import 'abstracts/animations';
+
+// 2. Base - Reset, typography, base styles
+@import 'base/reset';
+@import 'base/typography';
+
+// 3. Layout - Header, footer, grid system
+@import 'layout/header';
+@import 'layout/footer';
+
+// 4. Components - Buttons, cards, forms, etc.
+@import 'components/buttons';
+@import 'components/cards';
+@import 'components/forms';
+
+// 5. Pages - Page-specific styles
+@import 'pages/home';
+
+// 6. Themes - Theme variations
+@import 'themes/dark-theme';
+
+// 7. Utilities - Utility classes
+@import 'utilities/utilities';
+
+// ==========================================================================
+// Global Styles
+// ==========================================================================
+
+// Smooth scrolling
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+// Body
+body {
+  overflow-x: hidden;
+  @include custom-scrollbar();
+}
+
+// Main content wrapper
+.main-content {
+  padding-top: 80px; // Account for fixed header
+  min-height: calc(100vh - 80px);
+}
+
+// Loading spinner
+.loading-spinner {
+  @include flex-center();
+  height: 100vh;
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid $gray-200;
+    border-top: 4px solid $primary-600;
+    border-radius: $rounded-full;
+    animation: spinner 1s linear infinite;
+  }
+}
+
+// Page transitions
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: $transition-normal;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: $transition-normal;
+}
+
+// Skip to content link (accessibility)
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: $spacing-4;
+  background: $primary-600;
+  color: $white;
+  padding: $spacing-2 $spacing-4;
+  border-radius: $rounded;
+  text-decoration: none;
+  font-weight: $font-medium;
+  z-index: 9999;
+  transition: $transition-fast;
+  
+  &:focus {
+    top: $spacing-4;
+  }
+}
+
+// Focus styles for better accessibility
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+.focus-visible {
+  outline: 2px solid $primary-500;
+  outline-offset: 2px;
+}
+
+// Print styles
+@media print {
+  .header,
+  .footer,
+  .floating-elements,
+  .btn,
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: $black;
+    background: $white;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  
+  p, li {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  .container {
+    max-width: none;
+    padding: 0;
+  }
+}

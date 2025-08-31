@@ -33,12 +33,13 @@ export const ThemeProvider = ({ children }) => {
   }, [isDark]);
 
   const toggleTheme = () => {
-    setIsDark(!isDark);
+    setIsDark(prev => !prev);
   };
 
   const value = {
     isDark,
     toggleTheme,
+    theme: isDark ? 'dark' : 'light'
   };
 
   return (

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 // Fixed relative import paths (file is in src/Layout)
-import { useTheme, useThemeClasses } from '../contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { ROUTES } from '../router/routeConstants';
 import { 
   FiMenu, 

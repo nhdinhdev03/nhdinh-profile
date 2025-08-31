@@ -45,25 +45,6 @@ export const useTheme = () => {
   return context;
 };
 
-// Utility hook for theme-aware styling
-export const useThemeClasses = () => {
-  const { currentTheme } = useTheme();
-  
-  return useMemo(() => ({
-    background: `bg-gradient-to-br ${currentTheme.background}`,
-    surface: `bg-gradient-to-r ${currentTheme.surface}`,
-    text: currentTheme.text,
-    accent: `bg-gradient-to-r ${currentTheme.accent}`,
-    border: currentTheme.border,
-    shadow: currentTheme.shadow,
-    card: `${currentTheme.surface} backdrop-blur-sm ${currentTheme.border} ${currentTheme.shadow}`,
-    button: {
-      primary: `bg-gradient-to-r ${currentTheme.accent} text-white hover:opacity-90 transition-all duration-300 transform hover:scale-105`,
-      secondary: `bg-transparent ${currentTheme.border} ${currentTheme.text.primary} hover:${currentTheme.text.accent} transition-all duration-300`
-    }
-  }), [currentTheme]);
-};
-
 export const ThemeProvider = ({ children }) => {
   // Get system preference
   const getSystemTheme = useCallback(() => {

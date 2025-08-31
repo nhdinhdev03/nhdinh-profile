@@ -1,25 +1,16 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
-import { ThemeCard, ThemeText, ThemeButton } from '../../components/UI/ThemeComponents';
 import { 
   FiCpu,
   FiCode,
-  FiDatabase,
   FiCloud,
-  FiShield,
-  FiZap,
   FiTrendingUp,
   FiActivity,
   FiTarget,
   FiLayers,
   FiGlobe,
   FiServer,
-  FiSmartphone,
-  FiMonitor,
-  FiGitBranch,
-  FiTerminal,
-  FiBox,
   FiDownload,
   FiMail,
   FiLinkedin,
@@ -89,7 +80,7 @@ const ModernAbout = React.memo(() => {
   const [activeSkill, setActiveSkill] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const [selectedTimeline, setSelectedTimeline] = useState('career');
-  const { isDark, effectiveTheme } = useTheme();
+  const { isDark } = useTheme();
 
   // Optimized mouse tracking
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -8,310 +8,425 @@ import {
   FiMail, 
   FiDownload,
   FiCode,
-  FiLayers,
   FiZap,
   FiTrendingUp,
-  FiAward,
-  FiUsers
+  FiUsers,
+  FiCpu,
+  FiDatabase,
+  FiCloud,
+  FiServer,
+  FiGlobe,
+  FiBox,
+  FiTarget
 } from 'react-icons/fi';
 
-function Home() {
-  const controls = useAnimation();
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+const Home = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const heroRef = useRef(null);
+  const skillsRef = useRef(null);
+  const statsRef = useRef(null);
+  
+  const heroInView = useInView(heroRef, { once: true });
+  const skillsInView = useInView(skillsRef, { once: true });
+  const statsInView = useInView(statsRef, { once: true });
+
+  const heroAnimation = useAnimation();
+  const skillsAnimation = useAnimation();
+  const statsAnimation = useAnimation();
+
+  // Mouse tracking for interactive effects
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+
+  // Animation triggers
+  useEffect(() => {
+    if (heroInView) {
+      heroAnimation.start('visible');
+    }
+  }, [heroInView, heroAnimation]);
 
   useEffect(() => {
-    if (isInView) {
-      controls.start('visible');
+    if (skillsInView) {
+      skillsAnimation.start('visible');
     }
-  }, [controls, isInView]);
+  }, [skillsInView, skillsAnimation]);
 
+  useEffect(() => {
+    if (statsInView) {
+      statsAnimation.start('visible');
+    }
+  }, [statsInView, statsAnimation]);
+
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.2
+        delayChildren: 0.2,
+        staggerChildren: 0.1
       }
     }
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 50, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.5
+        type: "spring",
+        stiffness: 100
       }
     }
   };
 
-  const skills = [
-    { name: 'Frontend Development', icon: FiCode, percentage: 95 },
-    { name: 'Backend Development', icon: FiLayers, percentage: 90 },
-    { name: 'UI/UX Design', icon: FiZap, percentage: 85 },
-    { name: 'Project Management', icon: FiTrendingUp, percentage: 88 }
+  // Tech stack data
+  const techStack = [
+    { name: 'React', icon: FiCode, level: 95, category: 'Frontend' },
+    { name: 'Node.js', icon: FiServer, level: 90, category: 'Backend' },
+  { name: 'Python', icon: FiCpu, level: 88, category: 'AI/ML' },
+  { name: 'TypeScript', icon: FiCode, level: 92, category: 'Language' },
+    { name: 'AWS', icon: FiCloud, level: 85, category: 'Cloud' },
+    { name: 'Docker', icon: FiBox, level: 87, category: 'DevOps' },
+    { name: 'GraphQL', icon: FiDatabase, level: 83, category: 'API' },
+    { name: 'Next.js', icon: FiGlobe, level: 89, category: 'Framework' }
   ];
 
   const stats = [
-    { number: '50+', label: 'Projects Completed', icon: FiAward },
-    { number: '3+', label: 'Years Experience', icon: FiTrendingUp },
-    { number: '20+', label: 'Happy Clients', icon: FiUsers },
-    { number: '100%', label: 'Success Rate', icon: FiZap }
+    { label: 'Projects Completed', value: '50+', icon: FiTarget },
+    { label: 'Years Experience', value: '5+', icon: FiTrendingUp },
+    { label: 'Technologies Mastered', value: '25+', icon: FiZap },
+    { label: 'Happy Clients', value: '30+', icon: FiUsers }
   ];
 
+  // Floating particle component
+  const FloatingParticle = ({ delay = 0 }) => (
+    <motion.div
+      className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-60"
+      animate={{
+        y: [-20, -100],
+        opacity: [0, 1, 0],
+      }}
+      transition={{
+        duration: 3,
+        repeat: Infinity,
+        delay,
+        ease: "easeOut",
+      }}
+      style={{
+        left: Math.random() * 100 + "%",
+      }}
+    />
+  );
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-black overflow-hidden relative">
+      {/* Neural Network Background */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-cyan-900/20" />
+        
+        {/* Animated Grid */}
+        <motion.div 
+          className="absolute inset-0"
+          style={{
+            background: `
+              linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+              linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }}
+          animate={{
+            backgroundPosition: ['0px 0px', '50px 50px']
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+
+        {/* Floating Particles */}
+        {[...Array(20)].map((_, i) => (
+          <FloatingParticle key={i} delay={i * 0.2} />
+        ))}
+      </div>
+
+      {/* Mouse Follower Effect */}
+      <motion.div
+        className="fixed w-6 h-6 border border-cyan-400 rounded-full pointer-events-none z-50 mix-blend-difference"
+        animate={{
+          x: mousePosition.x - 12,
+          y: mousePosition.y - 12,
+        }}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      />
+
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        {/* Background Effects */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800" />
-          <div className="absolute inset-0 bg-neon-grid bg-repeat opacity-20" />
-          <motion.div
-            animate={{ 
-              backgroundPosition: ['0% 0%', '100% 100%'],
-              rotate: [0, 360]
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-primary-400/20 to-secondary-400/20 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{ 
-              backgroundPosition: ['100% 100%', '0% 0%'],
-              rotate: [360, 0]
-            }}
-            transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-            className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-secondary-400/20 to-accent-400/20 rounded-full blur-3xl"
-          />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            ref={ref}
-            variants={containerVariants}
-            initial="hidden"
-            animate={controls}
-            className="space-y-8"
-          >
-            {/* Avatar */}
-            <motion.div
-              variants={itemVariants}
-              className="relative mx-auto w-32 h-32 md:w-40 md:h-40"
-            >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500 p-1"
-              >
-                <div className="w-full h-full rounded-full bg-white dark:bg-neutral-900 p-2">
-                  <img
-                    src="/api/placeholder/150/150"
-                    alt="NH Dinh"
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                </div>
-              </motion.div>
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white dark:border-neutral-900"
-              />
-            </motion.div>
-
-            {/* Name & Title */}
-            <motion.div variants={itemVariants} className="space-y-4">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold">
-                <span className="bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent">
-                  NH Dinh
-                </span>
-              </h1>
-              <div className="text-xl md:text-2xl lg:text-3xl text-neutral-700 dark:text-neutral-300 font-medium">
-                <motion.span
-                  animate={{ opacity: [0, 1, 1, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  className="inline-block"
-                >
-                  Full-Stack Developer
-                </motion.span>
-              </div>
-            </motion.div>
-
-            {/* Description */}
-            <motion.p
-              variants={itemVariants}
-              className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto leading-relaxed"
-            >
-              Passionate about creating exceptional digital experiences with modern technologies. 
-              Specializing in React, Node.js, and cloud solutions.
-            </motion.p>
-
-            {/* CTA Buttons */}
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8"
-            >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link
-                  to="/projects"
-                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <span>View My Work</span>
-                  <FiArrowDown className="w-5 h-5" />
-                </Link>
-              </motion.div>
-              
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <a
-                  href="/resume.pdf"
-                  download
-                  className="inline-flex items-center space-x-2 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white px-8 py-4 rounded-2xl font-semibold text-lg border border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-300"
-                >
-                  <FiDownload className="w-5 h-5" />
-                  <span>Download CV</span>
-                </a>
-              </motion.div>
-            </motion.div>
-
-            {/* Social Links */}
-            <motion.div
-              variants={itemVariants}
-              className="flex items-center justify-center space-x-6 mt-12"
-            >
-              {[
-                { icon: FiGithub, href: 'https://github.com/nhdinhdev03', label: 'GitHub' },
-                { icon: FiLinkedin, href: 'https://linkedin.com/in/nhdinh', label: 'LinkedIn' },
-                { icon: FiMail, href: 'mailto:contact@nhdinh.dev', label: 'Email' }
-              ].map((social, index) => (
-                <motion.a
-                  key={social.label}
-                  href={social.href}
-                  whileHover={{ y: -5, scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-12 h-12 bg-white dark:bg-neutral-800 rounded-2xl flex items-center justify-center text-neutral-600 dark:text-neutral-400 hover:text-primary-500 dark:hover:text-primary-400 shadow-lg hover:shadow-xl transition-all duration-300 border border-neutral-200 dark:border-neutral-700"
-                  aria-label={social.label}
-                >
-                  <social.icon className="w-6 h-6" />
-                </motion.a>
-              ))}
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Scroll Indicator */}
+      <section className="min-h-screen flex items-center justify-center relative z-10" ref={heroRef}>
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+          variants={containerVariants}
+          initial="hidden"
+          animate={heroAnimation}
         >
-          <div className="w-6 h-10 border-2 border-neutral-400 dark:border-neutral-600 rounded-full flex justify-center">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-1 h-3 bg-neutral-400 dark:bg-neutral-600 rounded-full mt-2"
-            />
-          </div>
+          {/* AI Status Indicator */}
+          <motion.div
+            variants={itemVariants}
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 rounded-full px-6 py-2 mb-8"
+          >
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span className="text-cyan-300 text-sm font-medium">AI Engineer • Online</span>
+          </motion.div>
+
+          {/* Main Heading */}
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl md:text-7xl lg:text-8xl font-black mb-6"
+          >
+            <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Nguyen Hoang
+            </span>
+            <br />
+            <span className="text-white">Dinh</span>
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p
+            variants={itemVariants}
+            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
+          >
+            Crafting the future through{' '}
+            <span className="text-cyan-400 font-semibold">Artificial Intelligence</span>,{' '}
+            <span className="text-purple-400 font-semibold">Machine Learning</span>, and{' '}
+            <span className="text-pink-400 font-semibold">Neural Networks</span>
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+          >
+            <Link
+              to="/projects"
+              className="group bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-cyan-400 hover:to-purple-400 transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transform hover:scale-105"
+            >
+              <span className="flex items-center space-x-2">
+                <span>Explore Projects</span>
+                {/* Removed FiRocket (not in feather pack); using FiCode */}
+                <FiCode className="w-5 h-5 group-hover:animate-bounce" />
+              </span>
+            </Link>
+            
+            <a
+              href="/resume.pdf"
+              download
+              className="group bg-transparent border-2 border-gray-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:border-cyan-400 hover:text-cyan-400 transition-all duration-300 transform hover:scale-105"
+            >
+              <span className="flex items-center space-x-2">
+                <FiDownload className="w-5 h-5 group-hover:animate-bounce" />
+                <span>Download CV</span>
+              </span>
+            </a>
+          </motion.div>
+
+          {/* Social Links */}
+          <motion.div
+            variants={itemVariants}
+            className="flex items-center justify-center space-x-6"
+          >
+            {[
+              { icon: FiGithub, href: 'https://github.com/nhdinhdev03', label: 'GitHub' },
+              { icon: FiLinkedin, href: 'https://linkedin.com/in/nhdinh', label: 'LinkedIn' },
+              { icon: FiMail, href: 'mailto:contact@nhdinh.dev', label: 'Email' }
+            ].map((social, index) => (
+              <motion.a
+                key={social.label}
+                href={social.href}
+                whileHover={{ y: -5, scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-12 h-12 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/50 transition-all duration-300"
+                aria-label={social.label}
+              >
+                <social.icon className="w-6 h-6" />
+              </motion.a>
+            ))}
+          </motion.div>
+
+          {/* Scroll Indicator */}
+          <motion.div
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <FiArrowDown className="w-6 h-6 text-gray-400" />
+          </motion.div>
         </motion.div>
       </section>
 
       {/* Skills Section */}
-      <section className="py-20 bg-white dark:bg-neutral-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-32 relative" ref={skillsRef}>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/5 via-purple-900/5 to-cyan-900/5" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            variants={containerVariants}
+            initial="hidden"
+            animate={skillsAnimation}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
-              My Expertise
-            </h2>
-            <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-              Bringing ideas to life with cutting-edge technologies and best practices
-            </p>
+            <motion.h2
+              variants={itemVariants}
+              className="text-4xl md:text-5xl font-bold mb-6"
+            >
+              <span className="text-white">Tech </span>
+              <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                Arsenal
+              </span>
+            </motion.h2>
+            <motion.p
+              variants={itemVariants}
+              className="text-xl text-gray-300 max-w-3xl mx-auto"
+            >
+              Mastering cutting-edge technologies to build intelligent, scalable, and robust solutions
+            </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {skills.map((skill, index) => (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={skillsAnimation}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            {techStack.map((tech, index) => (
               <motion.div
-                key={skill.name}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700"
+                key={tech.name}
+                variants={itemVariants}
+                className="group bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
+                whileHover={{ y: -5 }}
               >
                 <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center text-white">
-                    <skill.icon className="w-6 h-6" />
+                  <div className="w-12 h-12 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-xl flex items-center justify-center">
+                    <tech.icon className="w-6 h-6 text-cyan-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                      {skill.name}
-                    </h3>
-                    <span className="text-primary-500 font-medium">{skill.percentage}%</span>
+                    <h3 className="text-white font-semibold">{tech.name}</h3>
+                    <p className="text-gray-400 text-sm">{tech.category}</p>
                   </div>
                 </div>
-                <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${skill.percentage}%` }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                    className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full"
-                  />
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-300 text-sm">Proficiency</span>
+                    <span className="text-cyan-400 font-semibold">{tech.level}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <motion.div
+                      className="h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: skillsInView ? `${tech.level}%` : 0 }}
+                      transition={{ duration: 1.5, delay: index * 0.1 }}
+                    />
+                  </div>
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-neutral-950 dark:to-neutral-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-32 relative overflow-hidden" ref={statsRef}>
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-purple-500/5 to-pink-500/5" />
+          
+          {/* Animated Background Elements */}
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-96 h-96 bg-gradient-to-r from-cyan-500/5 to-purple-500/5 rounded-full blur-3xl"
+              animate={{
+                x: [0, 100, 0],
+                y: [0, -50, 0],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 10 + i * 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{
+                left: Math.random() * 100 + "%",
+                top: Math.random() * 100 + "%",
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            variants={containerVariants}
+            initial="hidden"
+            animate={statsAnimation}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
-              Achievements
-            </h2>
-            <p className="text-lg text-neutral-600 dark:text-neutral-400">
-              Numbers that speak for my dedication and expertise
-            </p>
+            <motion.h2
+              variants={itemVariants}
+              className="text-4xl md:text-5xl font-bold mb-6"
+            >
+              <span className="text-white">By the </span>
+              <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                Numbers
+              </span>
+            </motion.h2>
           </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={statsAnimation}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="text-center"
+                variants={itemVariants}
+                className="text-center group"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center text-white mx-auto mb-4">
-                  <stat.icon className="w-8 h-8" />
-                </div>
                 <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 + 0.3 }}
-                  className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-2"
+                  className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center border border-cyan-500/30 group-hover:border-cyan-400/70 transition-all duration-300"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
                 >
-                  {stat.number}
+                  <stat.icon className="w-8 h-8 text-cyan-400" />
                 </motion.div>
-                <p className="text-neutral-600 dark:text-neutral-400">{stat.label}</p>
+                
+                <motion.div
+                  className="text-4xl md:text-5xl font-black text-white mb-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: statsInView ? 1 : 0, y: statsInView ? 0 : 20 }}
+                  transition={{ duration: 0.8, delay: index * 0.2 }}
+                >
+                  {stat.value}
+                </motion.div>
+                
+                <p className="text-gray-400 font-medium">{stat.label}</p>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
     </div>
   );
 };
+
+
+
+
 
 export default Home;

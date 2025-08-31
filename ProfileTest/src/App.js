@@ -3,17 +3,20 @@ import { publicRoutes, privateRoutes } from "./router";
 import ScrollToHash from "./router/ScrollToHash";
 import PageTransition from "./components/PageTransition/PageTransition";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AnimatePresence } from "framer-motion";
+import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { useEffect } from 'react';
 
 function App() {
   useEffect(() => {
     AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-      once: true,
-      offset: 100,
+      duration: 1000,
+      easing: 'ease-out-cubic',
+      once: false,
+      mirror: true,
+      offset: 50,
+      anchorPlacement: 'top-bottom'
     });
   }, []);
 

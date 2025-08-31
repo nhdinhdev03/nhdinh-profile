@@ -785,7 +785,7 @@ const Projects = () => {
   };
 
   return (
-    <section id="projects" className="relative py-20 lg:py-32 overflow-hidden">
+    <section className="relative py-20 lg:py-32 overflow-hidden">
       {/* Matrix Background */}
       {isMatrixMode && (
         <canvas

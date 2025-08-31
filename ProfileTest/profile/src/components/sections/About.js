@@ -443,7 +443,7 @@ const About = () => {
   };
 
   return (
-    <section id="about" className="relative py-20 lg:py-32 overflow-hidden" onMouseMove={handleMouseMove}>
+    <section className="relative py-20 lg:py-32 overflow-hidden" onMouseMove={handleMouseMove}>
       {/* Hologram Background */}
       {isHologramMode && (
         <canvas

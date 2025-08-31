@@ -15,6 +15,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^6.0.0",
+    "react-helmet-async": "^2.0.5",
     "react-intersection-observer": "^9.16.0",
     "react-router-dom": "^6.20.1",
     "react-scripts": "5.0.1",
@@ -33,10 +34,13 @@
     "tailwindcss": "^3.3.6"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "build:analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "performance": "npm run build && npm run serve",
+    "serve": "npx serve -s build -l 3001"
   },
   "browserslist": {
     "production": [

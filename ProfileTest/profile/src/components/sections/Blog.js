@@ -846,7 +846,7 @@ const Blog = () => {
   };
 
   return (
-    <section id="blog" className="relative py-20 lg:py-32 overflow-hidden">
+    <section className="relative py-20 lg:py-32 overflow-hidden">
       {/* Neural Network Background */}
       {isNeuroMode && (
         <canvas

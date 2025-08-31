@@ -1,7 +1,8 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, extend } from '@react-three/fiber';
 import { Points, PointMaterial, Float, Sphere, MeshDistortMaterial, OrbitControls, Environment, Lightformer } from '@react-three/drei';
 import * as THREE from 'three';
+import { usePerformanceOptimization } from '../../hooks/usePerformanceOptimization';
 
 // Custom Shader Material for advanced effects
 const AdvancedParticleShader = {
@@ -39,17 +40,25 @@ const AdvancedParticleShader = {
   `
 };
 
-// Advanced Particle System
+// Advanced Particle System with performance optimization
 function AdvancedParticles({ count = 5000 }) {
   const mesh = useRef();
   const shader = useRef();
+  const { deviceCapabilities } = usePerformanceOptimization();
+
+  // Optimize particle count based on device capabilities
+  const optimizedCount = useMemo(() => {
+    if (deviceCapabilities.isLowEndDevice) return Math.min(count * 0.3, 1500);
+    if (deviceCapabilities.connectionSpeed === 'slow') return Math.min(count * 0.5, 2500);
+    return count;
+  }, [count, deviceCapabilities]);
 
   const [positions, colors, sizes] = useMemo(() => {
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    const sizes = new Float32Array(count);
+    const positions = new Float32Array(optimizedCount * 3);
+    const colors = new Float32Array(optimizedCount * 3);
+    const sizes = new Float32Array(optimizedCount);
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < optimizedCount; i++) {
       // Create galaxy spiral pattern
       const i3 = i * 3;
       const radius = Math.random() * 25;
@@ -80,7 +89,7 @@ function AdvancedParticles({ count = 5000 }) {
     }
 
     return [positions, colors, sizes];
-  }, [count]);
+  }, [optimizedCount]);
 
   useFrame((state) => {
     if (mesh.current) {

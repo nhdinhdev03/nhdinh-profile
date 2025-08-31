@@ -573,45 +573,9 @@ const Home = () => {
     );
   };
 
-  // Holographic Card Component
-  const HolographicCard = ({ children, className = "" }) => (
-    <motion.div
-      className={`relative group ${className}`}
-      whileHover="hover"
-      initial="initial"
-    >
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 rounded-2xl blur-xl"
-        variants={{
-          initial: { scale: 0.8, opacity: 0 },
-          hover: { scale: 1.2, opacity: 1 },
-        }}
-        transition={{ duration: 0.3 }}
-      />
-      <motion.div
-        className="relative bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden"
-        variants={{
-          initial: { rotateX: 0, rotateY: 0 },
-          hover: { rotateX: 5, rotateY: 5 },
-        }}
-        transition={{ duration: 0.3 }}
-      >
-        {children}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent"
-          variants={{
-            initial: { x: "-100%", y: "-100%" },
-            hover: { x: "100%", y: "100%" },
-          }}
-          transition={{ duration: 0.6 }}
-        />
-      </motion.div>
-    </motion.div>
-  );
 
   return (
     <section
-      id="home"
       ref={heroRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
       style={{

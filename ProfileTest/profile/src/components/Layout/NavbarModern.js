@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faBars, 
@@ -17,41 +18,25 @@ import {
 
 const NavbarModern = ({ theme, setTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
   const [isScrolled, setIsScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navRef = useRef(null);
   const { scrollY } = useScroll();
+  const location = useLocation();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
   });
 
   const navItems = [
-    { name: 'Home', href: '#home', icon: faHome },
-    { name: 'About', href: '#about', icon: faUser },
-    { name: 'Projects', href: '#projects', icon: faProjectDiagram },
-    { name: 'Blog', href: '#blog', icon: faBlog },
-    { name: 'Contact', href: '#contact', icon: faEnvelope },
+    { name: 'Home', path: '/', icon: faHome },
+    { name: 'About', path: '/about', icon: faUser },
+    { name: 'Projects', path: '/projects', icon: faProjectDiagram },
+    { name: 'Blog', path: '/blog', icon: faBlog },
+    { name: 'Contact', path: '/contact', icon: faEnvelope },
   ];
 
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = navItems.map(item => item.href.substring(1));
-      const currentSection = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      
-      if (currentSection) {
-        setActiveSection(currentSection);
-      }
-    };
-
     const handleMouseMove = (e) => {
       if (navRef.current) {
         const rect = navRef.current.getBoundingClientRect();
@@ -62,24 +47,14 @@ const NavbarModern = ({ theme, setTheme }) => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
     window.addEventListener('mousemove', handleMouseMove);
     
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
-  const scrollToSection = (href) => {
-    const element = document.querySelector(href);
-    if (element) {
-      const offsetTop = element.offsetTop - 80;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: 'smooth'
-      });
-    }
+  const closeMenu = () => {
     setIsOpen(false);
   };
 
@@ -147,65 +122,71 @@ const NavbarModern = ({ theme, setTheme }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <motion.div 
-              className="flex items-center space-x-3"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="relative">
-                <motion.div
-                  className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 rounded-2xl flex items-center justify-center"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <FontAwesomeIcon icon={faCode} className="text-white text-xl" />
-                </motion.div>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                  NHDINH
-                </h1>
-                <p className="text-xs text-gray-400 font-medium">Full-Stack Developer</p>
-              </div>
-            </motion.div>
+            <Link to="/" className="flex items-center space-x-3">
+              <motion.div 
+                className="flex items-center space-x-3"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className="relative">
+                  <motion.div
+                    className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 rounded-2xl flex items-center justify-center"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <FontAwesomeIcon icon={faCode} className="text-white text-xl" />
+                  </motion.div>
+                </div>
+                <div className="hidden sm:block">
+                  <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                    NHDINH
+                  </h1>
+                  <p className="text-xs text-gray-400 font-medium">Full-Stack Developer</p>
+                </div>
+              </motion.div>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-1">
               {navItems.map((item, index) => (
-                <motion.button
+                <Link
                   key={item.name}
-                  onClick={() => scrollToSection(item.href)}
+                  to={item.path}
                   className={`relative px-4 xl:px-6 py-3 rounded-xl font-medium transition-all duration-300 group text-sm xl:text-base ${
-                    activeSection === item.href.substring(1)
+                    location.pathname === item.path
                       ? 'text-white'
                       : 'text-gray-300 hover:text-white'
                   }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
                 >
-                  {/* Active Background */}
-                  {activeSection === item.href.substring(1) && (
-                    <motion.div
-                      layoutId="navActiveBackground"
-                      className="absolute inset-0 bg-gradient-to-r from-blue-500/30 via-purple-600/30 to-pink-500/30 rounded-xl backdrop-blur-sm border border-white/20"
-                      initial={false}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                  
-                  {/* Hover Background */}
                   <motion.div
-                    className="absolute inset-0 bg-white/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                  
-                  <div className="relative flex items-center space-x-2">
-                    <FontAwesomeIcon icon={item.icon} className="text-sm" />
-                    <span>{item.name}</span>
-                  </div>
-                </motion.button>
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="w-full h-full flex items-center justify-center"
+                  >
+                    {/* Active Background */}
+                    {location.pathname === item.path && (
+                      <motion.div
+                        layoutId="navActiveBackground"
+                        className="absolute inset-0 bg-gradient-to-r from-blue-500/30 via-purple-600/30 to-pink-500/30 rounded-xl backdrop-blur-sm border border-white/20"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    
+                    {/* Hover Background */}
+                    <motion.div
+                      className="absolute inset-0 bg-white/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    />
+                    
+                    <div className="relative flex items-center space-x-2">
+                      <FontAwesomeIcon icon={item.icon} className="text-sm" />
+                      <span>{item.name}</span>
+                    </div>
+                  </motion.div>
+                </Link>
               ))}
             </div>
 
@@ -285,34 +266,39 @@ const NavbarModern = ({ theme, setTheme }) => {
               <div className="p-4 sm:p-6 safe-area-inset-bottom">
                 <motion.div className="space-y-2 sm:space-y-3">
                   {navItems.map((item, index) => (
-                    <motion.button
+                    <Link
                       key={item.name}
-                      variants={itemVariants}
-                      onClick={() => scrollToSection(item.href)}
+                      to={item.path}
+                      onClick={closeMenu}
                       className={`w-full flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl transition-all duration-300 group touch-target ${
-                        activeSection === item.href.substring(1)
+                        location.pathname === item.path
                           ? 'bg-gradient-to-r from-blue-500/30 via-purple-600/30 to-pink-500/30 text-white border border-white/20'
                           : 'hover:bg-white/10 text-gray-300 hover:text-white'
                       }`}
-                      whileHover={{ scale: 1.02, x: 5 }}
-                      whileTap={{ scale: 0.98 }}
                     >
-                      <div className={`p-2 rounded-lg ${
-                        activeSection === item.href.substring(1)
-                          ? 'bg-white/20'
-                          : 'bg-white/10 group-hover:bg-white/20'
-                      }`}>
-                        <FontAwesomeIcon icon={item.icon} className="text-base sm:text-lg" />
-                      </div>
-                      <span className="font-medium text-sm sm:text-base">{item.name}</span>
-                      {activeSection === item.href.substring(1) && (
-                        <motion.div
-                          className="ml-auto w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        />
-                      )}
-                    </motion.button>
+                      <motion.div
+                        variants={itemVariants}
+                        whileHover={{ scale: 1.02, x: 5 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full flex items-center space-x-3 sm:space-x-4"
+                      >
+                        <div className={`p-2 rounded-lg ${
+                          location.pathname === item.path
+                            ? 'bg-white/20'
+                            : 'bg-white/10 group-hover:bg-white/20'
+                        }`}>
+                          <FontAwesomeIcon icon={item.icon} className="text-base sm:text-lg" />
+                        </div>
+                        <span className="font-medium text-sm sm:text-base">{item.name}</span>
+                        {location.pathname === item.path && (
+                          <motion.div
+                            className="ml-auto w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          />
+                        )}
+                      </motion.div>
+                    </Link>
                   ))}
                 </motion.div>
                 
@@ -321,17 +307,20 @@ const NavbarModern = ({ theme, setTheme }) => {
                   variants={itemVariants}
                   className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/20"
                 >
-                  <motion.button
-                    onClick={() => scrollToSection('#contact')}
-                    className="w-full bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 text-white font-medium py-3 sm:py-4 rounded-xl hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 group touch-target"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                  <Link
+                    to="/contact"
+                    onClick={closeMenu}
+                    className="w-full bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 text-white font-medium py-3 sm:py-4 rounded-xl hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 group touch-target block"
                   >
-                    <div className="flex items-center justify-center space-x-2">
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex items-center justify-center space-x-2"
+                    >
                       <FontAwesomeIcon icon={faRocket} className="group-hover:animate-bounce text-sm sm:text-base" />
                       <span className="text-sm sm:text-base">Let's Work Together</span>
-                    </div>
-                  </motion.button>
+                    </motion.div>
+                  </Link>
                 </motion.div>
               </div>
             </motion.div>

@@ -1,19 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense, lazy, memo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { HelmetProvider } from 'react-helmet-async';
+import { usePerformanceOptimization } from './hooks/usePerformanceOptimization';
+import useAssetPreloader from './hooks/useAssetPreloader';
 
-// Direct imports for components
-import NavbarModern from './components/Layout/NavbarModern';
-import Home from './components/sections/Home';
-import About from './components/sections/About';
-import Projects from './components/sections/Projects';
-import Blog from './components/sections/Blog';
-import Contact from './components/sections/Contact';
-import BackgroundAnimation from './components/3D/BackgroundAnimation';
+// Lazy load pages for better performance
+const NavbarModern = lazy(() => import('./components/Layout/NavbarModern'));
+const HomePage = lazy(() => import('./pages/HomePage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+
+// Immediately imported for critical path
+import PageTransition from './components/UI/PageTransition';
+import LoadingPage from './components/UI/LoadingPage';
+import Breadcrumb from './components/UI/Breadcrumb';
 import ScrollProgress from './components/UI/ScrollProgress';
+import ErrorBoundary from './components/UI/ErrorBoundary';
 
-// Advanced Loading Component
-const AdvancedLoader = () => (
+// Conditionally load heavy 3D components
+const BackgroundAnimation = lazy(() => import('./components/3D/BackgroundAnimation'));
+
+// Advanced Loading Component with progress
+const AdvancedLoader = ({ progress = 0 }) => (
   <motion.div 
     className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
     initial={{ opacity: 1 }}
@@ -94,8 +106,8 @@ const AdvancedLoader = () => (
         <motion.div
           className="h-full bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 rounded-full"
           initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 2, delay: 0.8, ease: "easeInOut" }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
         />
       </motion.div>
       
@@ -113,126 +125,136 @@ const AdvancedLoader = () => (
 );
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState('dark');
+  const { performanceMode, shouldReduceAnimations, deviceCapabilities } = usePerformanceOptimization();
+  const { isLoading, loadingProgress } = useAssetPreloader(deviceCapabilities);
   
   useEffect(() => {
     // Enhanced smooth scroll with custom easing
     document.documentElement.style.scrollBehavior = 'smooth';
     
-    // Advanced preloader with realistic loading simulation
-    const preloadAssets = async () => {
-      // Simulate asset loading
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Add fade out animation
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-    };
-    
-    preloadAssets();
-    
     // Theme detection
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setTheme(prefersDark ? 'dark' : 'light');
     
-    // Performance optimizations
-    if ('serviceWorker' in navigator) {
+    // Performance optimizations only for capable devices
+    if (!deviceCapabilities.isLowEndDevice && 'serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(console.error);
     }
     
-    // Intersection Observer for animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-in');
-        }
+    // Optimized Intersection Observer for animations
+    if (!shouldReduceAnimations) {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '50px 0px'
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+          }
+        });
+      }, observerOptions);
+      
+      // Observe all sections
+      document.querySelectorAll('section').forEach(section => {
+        observer.observe(section);
       });
-    }, observerOptions);
-    
-    // Observe all sections
-    document.querySelectorAll('section').forEach(section => {
-      observer.observe(section);
-    });
-    
-    return () => observer.disconnect();
-  }, []);
+      
+      return () => observer.disconnect();
+    }
+  }, [shouldReduceAnimations, deviceCapabilities]);
 
   const pageVariants = {
-    initial: { opacity: 0, y: 20 },
-    in: { opacity: 1, y: 0 },
-    out: { opacity: 0, y: -20 }
+    initial: { 
+      opacity: 0, 
+      y: shouldReduceAnimations ? 0 : 20 
+    },
+    in: { 
+      opacity: 1, 
+      y: 0 
+    },
+    out: { 
+      opacity: 0, 
+      y: shouldReduceAnimations ? 0 : -20 
+    }
   };
 
   const pageTransition = {
     type: "tween",
     ease: "anticipate",
-    duration: 0.8
+    duration: shouldReduceAnimations ? 0.3 : 0.6
   };
 
+  // Memoized Background Component
+  const OptimizedBackground = memo(() => {
+    if (deviceCapabilities.isLowEndDevice || !deviceCapabilities.supportsWebGL) {
+      return (
+        <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 opacity-50" />
+      );
+    }
+    
+    return (
+      <Suspense fallback={<div className="fixed inset-0 bg-slate-900" />}>
+        <BackgroundAnimation />
+      </Suspense>
+    );
+  });
+
   return (
-    <Router>
-      <div className={`App ${theme} relative min-h-screen`}>
-        <AnimatePresence mode="wait">
-          {isLoading && <AdvancedLoader key="loader" />}
-        </AnimatePresence>
-        
-        {!isLoading && (
-          <>
-            {/* Advanced Scroll Progress */}
-            <ScrollProgress />
+    <ErrorBoundary>
+      <HelmetProvider>
+        <Router>
+          <div className={`App ${theme} relative min-h-screen`}>
+            <AnimatePresence mode="wait">
+              {isLoading && <AdvancedLoader key="loader" progress={loadingProgress} />}
+            </AnimatePresence>
             
-            {/* Premium 3D Background */}
-            <BackgroundAnimation />
-            
-            {/* Modern Navigation */}
-            <NavbarModern theme={theme} setTheme={setTheme} />
-            
-            {/* Enhanced Main Content */}
-            <motion.main 
-              className="relative z-10"
-              initial="initial"
-              animate="in"
-              exit="out"
-              variants={pageVariants}
-              transition={pageTransition}
-            >
-              <AnimatePresence mode="wait">
-                <Routes>
-                  <Route path="/" element={
-                    <motion.div
-                      key="home-page"
-                      initial="initial"
-                      animate="in"
-                      exit="out"
-                      variants={pageVariants}
-                      transition={pageTransition}
-                    >
-                      <Home />
-                      <About />
-                      <Projects />
-                      <Blog />
-                      <Contact />
-                    </motion.div>
-                  } />
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/projects" element={<Projects />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/contact" element={<Contact />} />
-                </Routes>
-              </AnimatePresence>
-            </motion.main>
-          </>
-        )}
-      </div>
-    </Router>
+            {!isLoading && (
+              <>
+                {/* Advanced Scroll Progress */}
+                <ScrollProgress />
+                
+                {/* Optimized 3D Background */}
+                <OptimizedBackground />
+                
+                {/* Modern Navigation */}
+                <Suspense fallback={<div className="h-16 bg-slate-900" />}>
+                  <NavbarModern theme={theme} setTheme={setTheme} />
+                </Suspense>
+                
+                {/* Breadcrumb Navigation */}
+                <Breadcrumb />
+                
+                {/* Enhanced Main Content with better error boundaries */}
+                <motion.main 
+                  className="relative z-10"
+                  initial="initial"
+                  animate="in"
+                  exit="out"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                >
+                  <Suspense fallback={<LoadingPage />}>
+                    <PageTransition>
+                      <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/projects" element={<ProjectsPage />} />
+                        <Route path="/blog" element={<BlogPage />} />
+                        <Route path="/contact" element={<ContactPage />} />
+                        <Route path="*" element={<NotFoundPage />} />
+                      </Routes>
+                    </PageTransition>
+                  </Suspense>
+                </motion.main>
+              </>
+            )}
+          </div>
+        </Router>
+      </HelmetProvider>
+    </ErrorBoundary>
   );
 }
 

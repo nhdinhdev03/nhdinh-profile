@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from '../../contexts/ThemeContext';
+import { generateThemeClasses } from '../../utils/themeUtils';
 import { 
   FiZap as Zap, 
   FiCode as Code, 
@@ -23,6 +25,8 @@ const ModernBlog = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [featuredPost, setFeaturedPost] = useState(0);
+  const { theme } = useTheme();
+  const themeClasses = generateThemeClasses(theme);
   
   // Removed custom loading hook outside src; simple local loading state if needed
   const [isLoading] = useState(false);
@@ -216,10 +220,10 @@ const ModernBlog = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className={themeClasses.container}>
       {/* Animated Background */}
-      <div className="fixed inset-0 opacity-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-cyan-900/20" />
+      <div className={`fixed inset-0 ${themeClasses.opacity}`}>
+        <div className={`absolute inset-0 ${themeClasses.heroBackground}`} />
         {/* Floating Particles */}
         {[...Array(50)].map((_, i) => (
           <FloatingParticle key={i} delay={i * 0.1} />
@@ -230,7 +234,11 @@ const ModernBlog = () => {
           {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-px h-full bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent"
+              className={`absolute w-px h-full ${
+                theme === 'dark' 
+                  ? 'bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent' 
+                  : 'bg-gradient-to-b from-transparent via-blue-500/10 to-transparent'
+              }`}
               style={{ left: `${(i + 1) * 5}%` }}
               animate={{ opacity: [0.1, 0.3, 0.1] }}
               transition={{ duration: 4, repeat: Infinity, delay: i * 0.2 }}
@@ -239,7 +247,11 @@ const ModernBlog = () => {
           {[...Array(15)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute h-px w-full bg-gradient-to-r from-transparent via-purple-500/10 to-transparent"
+              className={`absolute h-px w-full ${
+                theme === 'dark' 
+                  ? 'bg-gradient-to-r from-transparent via-purple-500/10 to-transparent' 
+                  : 'bg-gradient-to-r from-transparent via-purple-500/10 to-transparent'
+              }`}
               style={{ top: `${(i + 1) * 6.67}%` }}
               animate={{ opacity: [0.1, 0.3, 0.1] }}
               transition={{ duration: 3, repeat: Infinity, delay: i * 0.15 }}
@@ -278,7 +290,9 @@ const ModernBlog = () => {
               </motion.div>
               
               <motion.h1
-                className="text-5xl md:text-7xl font-bold mb-6"
+                className={`text-5xl md:text-7xl font-bold mb-6 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
@@ -287,11 +301,13 @@ const ModernBlog = () => {
                   Digital
                 </span>
                 <br />
-                <span className="text-white">Insights</span>
+                <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Insights</span>
               </motion.h1>
               
               <motion.p
-                className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
+                className={`text-xl max-w-3xl mx-auto leading-relaxed transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                }`}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
@@ -315,7 +331,11 @@ const ModernBlog = () => {
                   placeholder="Search articles, tags, or topics..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-gray-900/80 backdrop-blur-sm border border-gray-700 rounded-2xl pl-12 pr-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300"
+                  className={`w-full backdrop-blur-sm border rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 ${
+                    theme === 'dark' 
+                      ? 'bg-gray-900/80 border-gray-700 text-white placeholder-gray-400 focus:border-cyan-400' 
+                      : 'bg-white/80 border-gray-200 text-gray-900 placeholder-gray-500 focus:border-blue-400'
+                  }`}
                 />
               </motion.div>
 
@@ -335,7 +355,9 @@ const ModernBlog = () => {
                       className={`flex items-center space-x-2 px-4 py-2 rounded-xl border transition-all duration-300 ${
                         selectedCategory === category.name
                           ? `bg-gradient-to-r ${category.color} text-white border-transparent shadow-lg shadow-cyan-500/25`
-                          : "bg-gray-900/50 border-gray-700 text-gray-300 hover:border-cyan-400/50 hover:text-white"
+                          : theme === 'dark'
+                            ? "bg-gray-900/50 border-gray-700 text-gray-300 hover:border-cyan-400/50 hover:text-white"
+                            : "bg-white/70 border-gray-200 text-gray-600 hover:border-blue-400/50 hover:text-gray-900"
                       }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}

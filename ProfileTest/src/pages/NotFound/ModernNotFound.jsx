@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from '../../contexts/ThemeContext';
 import { 
   FiHome as Home, 
   FiArrowLeft as ArrowLeft, 
@@ -20,6 +21,7 @@ const ModernNotFound = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scannerPosition, setScannerPosition] = useState(0);
   const [systemStatus, setSystemStatus] = useState("scanning");
+  const { theme } = useTheme();
   const navigate = useNavigate();
 
   // Track mouse for interactive effects
@@ -130,11 +132,19 @@ const ModernNotFound = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${
+      theme === 'dark' 
+        ? 'bg-black text-white' 
+        : 'bg-gradient-to-br from-gray-50 to-white text-gray-900'
+    }`}>
       {/* Animated Background */}
       <div className="fixed inset-0">
         {/* Base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-gray-900 to-purple-900/20" />
+        <div className={`absolute inset-0 ${
+          theme === 'dark' 
+            ? 'bg-gradient-to-br from-red-900/20 via-gray-900 to-purple-900/20' 
+            : 'bg-gradient-to-br from-red-50/50 via-gray-50 to-purple-50/50'
+        }`} />
         
         {/* Circuit Pattern */}
         <CircuitPattern />
@@ -147,13 +157,21 @@ const ModernNotFound = () => {
         {/* Scanning Lines */}
         <div className="absolute inset-0">
           <motion.div
-            className="absolute w-full h-1 bg-gradient-to-r from-transparent via-red-500/50 to-transparent"
+            className={`absolute w-full h-1 ${
+              theme === 'dark' 
+                ? 'bg-gradient-to-r from-transparent via-red-500/50 to-transparent' 
+                : 'bg-gradient-to-r from-transparent via-red-400/30 to-transparent'
+            }`}
             style={{ top: `${scannerPosition}%` }}
             animate={{ opacity: [0.3, 1, 0.3] }}
             transition={{ duration: 1, repeat: Infinity }}
           />
           <motion.div
-            className="absolute h-full w-1 bg-gradient-to-b from-transparent via-cyan-500/30 to-transparent"
+            className={`absolute h-full w-1 ${
+              theme === 'dark' 
+                ? 'bg-gradient-to-b from-transparent via-cyan-500/30 to-transparent' 
+                : 'bg-gradient-to-b from-transparent via-blue-400/20 to-transparent'
+            }`}
             style={{ left: `${(scannerPosition + 30) % 100}%` }}
             animate={{ opacity: [0.2, 0.8, 0.2] }}
             transition={{ duration: 1.5, repeat: Infinity }}
@@ -161,11 +179,15 @@ const ModernNotFound = () => {
         </div>
 
         {/* Grid Lines */}
-        <div className="absolute inset-0 opacity-20">
+        <div className={`absolute inset-0 ${theme === 'dark' ? 'opacity-20' : 'opacity-10'}`}>
           {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-px h-full bg-gradient-to-b from-transparent via-red-500/20 to-transparent"
+              className={`absolute w-px h-full ${
+                theme === 'dark' 
+                  ? 'bg-gradient-to-b from-transparent via-red-500/20 to-transparent' 
+                  : 'bg-gradient-to-b from-transparent via-red-400/15 to-transparent'
+              }`}
               style={{ left: `${(i + 1) * 5}%` }}
               animate={{ opacity: [0.1, 0.3, 0.1] }}
               transition={{ duration: 4, repeat: Infinity, delay: i * 0.1 }}

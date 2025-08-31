@@ -1,0 +1,270 @@
+/* Theme Transition Utilities */
+/* Enhanced global styles for theme transitions */
+
+:root {
+  /* Theme transition variables */
+  --theme-transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-background-transition: background-color 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-color-transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-border-transition: border-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-opacity-transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Theme-aware shadows */
+  --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  
+  /* Performance optimizations */
+  --gpu-acceleration: translate3d(0, 0, 0);
+  --will-change-auto: auto;
+}
+
+/* Global theme transition classes */
+.theme-transition {
+  transition: var(--theme-transition);
+}
+
+.theme-background-transition {
+  transition: var(--theme-background-transition);
+}
+
+.theme-color-transition {
+  transition: var(--theme-color-transition);
+}
+
+.theme-border-transition {
+  transition: var(--theme-border-transition);
+}
+
+.theme-opacity-transition {
+  transition: var(--theme-opacity-transition);
+}
+
+/* Performance optimization classes */
+.gpu-accelerated {
+  transform: var(--gpu-acceleration);
+  will-change: transform;
+}
+
+.will-change-auto {
+  will-change: var(--will-change-auto);
+}
+
+/* Enhanced theme-aware scrollbar */
+.theme-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.theme-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.theme-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 4px;
+  transition: var(--theme-color-transition);
+}
+
+.theme-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
+/* Dark mode scrollbar */
+.dark .theme-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.5);
+}
+
+.dark .theme-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.7);
+}
+
+/* Theme-aware focus styles */
+.theme-focus {
+  outline: none;
+  transition: var(--theme-transition);
+}
+
+.theme-focus:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.dark .theme-focus:focus {
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.5);
+}
+
+/* Neural network animation classes */
+.neural-pattern {
+  animation: neuralPulse 10s ease-in-out infinite;
+}
+
+@keyframes neuralPulse {
+  0%, 100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Enhanced particle effects */
+.floating-particle {
+  animation: float 20s linear infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Glitch effect for dark mode */
+.glitch-effect {
+  position: relative;
+  animation: glitch 2s linear infinite;
+}
+
+.glitch-effect::before,
+.glitch-effect::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-effect::before {
+  animation: glitch-1 0.5s linear infinite reverse;
+  color: #ff0040;
+  z-index: -1;
+}
+
+.glitch-effect::after {
+  animation: glitch-2 0.5s linear infinite;
+  color: #00ffff;
+  z-index: -2;
+}
+
+@keyframes glitch {
+  0% {
+    transform: none;
+  }
+  20% {
+    transform: skew(-2deg);
+  }
+  40% {
+    transform: skew(2deg);
+  }
+  60% {
+    transform: skew(-1deg);
+  }
+  80% {
+    transform: skew(1deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes glitch-1 {
+  0% {
+    clip-path: inset(20% 0 30% 0);
+    transform: translate(-2px, 2px);
+  }
+  20% {
+    clip-path: inset(10% 0 20% 0);
+    transform: translate(2px, -2px);
+  }
+  40% {
+    clip-path: inset(30% 0 10% 0);
+    transform: translate(-2px, 2px);
+  }
+  60% {
+    clip-path: inset(5% 0 25% 0);
+    transform: translate(2px, -2px);
+  }
+  80% {
+    clip-path: inset(15% 0 35% 0);
+    transform: translate(-2px, 2px);
+  }
+  100% {
+    clip-path: inset(20% 0 30% 0);
+    transform: translate(2px, -2px);
+  }
+}
+
+@keyframes glitch-2 {
+  0% {
+    clip-path: inset(25% 0 15% 0);
+    transform: translate(2px, -2px);
+  }
+  20% {
+    clip-path: inset(35% 0 5% 0);
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    clip-path: inset(5% 0 35% 0);
+    transform: translate(2px, -2px);
+  }
+  60% {
+    clip-path: inset(15% 0 25% 0);
+    transform: translate(-2px, 2px);
+  }
+  80% {
+    clip-path: inset(30% 0 10% 0);
+    transform: translate(2px, -2px);
+  }
+  100% {
+    clip-path: inset(25% 0 15% 0);
+    transform: translate(-2px, 2px);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .neural-pattern,
+  .floating-particle,
+  .glitch-effect,
+  .glitch-effect::before,
+  .glitch-effect::after {
+    animation: none;
+  }
+  
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.3);
+    --shadow-dark: 0 4px 8px rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Print mode optimizations */
+@media print {
+  .neural-pattern,
+  .floating-particle,
+  .theme-transition,
+  .gpu-accelerated {
+    display: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { motion, useAnimation, useInView, LazyMotion, domAnimation } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
+import { generateThemeClasses, getThemeGradient } from '../../utils/themeUtils';
 import { 
   FiArrowDown, 
   FiGithub, 
@@ -41,6 +43,8 @@ const STATS = [
 
 const Home = React.memo(() => {
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
+  const { theme } = useTheme();
+  const themeClasses = useMemo(() => generateThemeClasses(theme), [theme]);
   const heroRef = useRef(null);
   const skillsRef = useRef(null);
   const statsRef = useRef(null);
@@ -136,19 +140,16 @@ const Home = React.memo(() => {
 
   return (
     <LazyMotion features={domAnimation}>
-    <div className="min-h-screen bg-black overflow-hidden relative">
+    <div className={themeClasses.container}>
       {/* Neural Network Background */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-cyan-900/20" />
+      <div className={`absolute inset-0 ${themeClasses.subtleOpacity}`}>
+        <div className={`absolute inset-0 ${themeClasses.heroBackground}`} />
         
         {/* Animated Grid */}
         <motion.div 
           className="absolute inset-0"
           style={{
-            background: `
-              linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-              linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px)
-            `,
+            background: getThemeGradient(theme, 'neural'),
             backgroundSize: '50px 50px'
           }}
           animate={{
@@ -183,10 +184,14 @@ const Home = React.memo(() => {
           {/* AI Status Indicator */}
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 rounded-full px-6 py-2 mb-8"
+            className={`inline-flex items-center space-x-2 bg-gradient-to-r border rounded-full px-6 py-2 mb-8 ${
+              theme === 'dark' 
+                ? 'from-cyan-500/10 to-purple-500/10 border-cyan-500/20' 
+                : 'from-cyan-100/50 to-purple-100/50 border-cyan-200/50'
+            }`}
           >
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-cyan-300 text-sm font-medium">AI Engineer • Online</span>
+            <span className={themeClasses.accentText}>AI Engineer • Online</span>
           </motion.div>
 
           {/* Main Heading */}
@@ -198,13 +203,13 @@ const Home = React.memo(() => {
               Nguyen Hoang
             </span>
             <br />
-            <span className="text-white">Dinh</span>
+            <span className={themeClasses.primaryText}>Dinh</span>
           </motion.h1>
 
           {/* Subtitle */}
           <motion.p
             variants={itemVariants}
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto font-light"
+            className={`text-xl md:text-2xl mb-8 max-w-3xl mx-auto font-light ${themeClasses.secondaryText}`}
           >
             Crafting the future through{' '}
             <span className="text-cyan-400 font-semibold">Artificial Intelligence</span>,{' '}

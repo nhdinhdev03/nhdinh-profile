@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../../contexts/ThemeContext';
+import { generateThemeClasses, getThemeGradient, getThemeParticleColor } from '../../utils/themeUtils';
 import { 
   FiMail,
   FiLinkedin,
@@ -29,6 +31,8 @@ function ModernContact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { theme } = useTheme();
+  const themeClasses = generateThemeClasses(theme);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -124,19 +128,16 @@ function ModernContact() {
   ];
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className={themeClasses.container}>
       {/* Dynamic Background */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-purple-900" />
+        <div className={`absolute inset-0 ${themeClasses.heroBackground}`} />
         
         {/* Neural network grid */}
         <div 
-          className="absolute inset-0 opacity-20"
+          className={`absolute inset-0 ${themeClasses.opacity}`}
           style={{
-            backgroundImage: `
-              linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px),
-              linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px)
-            `,
+            background: getThemeGradient(theme, 'neural'),
             backgroundSize: '50px 50px'
           }}
         />
@@ -145,7 +146,7 @@ function ModernContact() {
         {Array.from({ length: 15 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-purple-400 rounded-full"
+            className={`absolute w-2 h-2 rounded-full ${getThemeParticleColor(theme)}`}
             animate={{
               x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],
               y: [Math.random() * window.innerHeight, Math.random() * window.innerHeight],
@@ -191,7 +192,9 @@ function ModernContact() {
             className="text-center mb-20"
           >
             <motion.h1 
-              className="text-5xl md:text-7xl font-bold mb-6"
+              className={`text-5xl md:text-7xl font-bold mb-6 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}
               whileHover={{ scale: 1.02 }}
             >
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
@@ -199,7 +202,9 @@ function ModernContact() {
               </span>
             </motion.h1>
             <motion.p
-              className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8"
+              className={`text-xl max-w-3xl mx-auto leading-relaxed mb-8 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -218,10 +223,16 @@ function ModernContact() {
               {statusIndicators.map((status, index) => (
                 <motion.div
                   key={status.label}
-                  className="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-gray-900/50 border border-gray-700/50"
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-2xl border backdrop-blur-sm transition-all duration-300 ${
+                    theme === 'dark' 
+                      ? 'bg-gray-900/50 border-gray-700/50' 
+                      : 'bg-white/70 border-gray-200/50'
+                  }`}
                   whileHover={{ scale: 1.05, y: -5 }}
                   animate={{
-                    borderColor: ['rgba(75, 85, 99, 0.5)', 'rgba(139, 92, 246, 0.5)', 'rgba(75, 85, 99, 0.5)'],
+                    borderColor: theme === 'dark' 
+                      ? ['rgba(75, 85, 99, 0.5)', 'rgba(139, 92, 246, 0.5)', 'rgba(75, 85, 99, 0.5)']
+                      : ['rgba(229, 231, 235, 0.5)', 'rgba(139, 92, 246, 0.5)', 'rgba(229, 231, 235, 0.5)'],
                   }}
                   transition={{
                     borderColor: { duration: 3, repeat: Infinity, delay: index * 0.5 }

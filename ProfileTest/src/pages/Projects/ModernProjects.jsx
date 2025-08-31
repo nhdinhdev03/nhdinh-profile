@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../../contexts/ThemeContext';
+import { generateThemeClasses, getThemeGradient, getThemeParticleColor } from '../../utils/themeUtils';
 import { 
   FiExternalLink, 
   FiGithub, 
-  FiFilter,
+
   FiSearch,
   FiCalendar,
   FiUsers,
   FiCode,
-  FiStar,
+
   FiCpu,
-  FiDatabase,
+
   FiCloud,
   FiShield,
   FiZap,
@@ -21,7 +23,7 @@ import {
   FiGlobe,
   FiServer,
   FiSmartphone,
-  FiMonitor
+
 } from 'react-icons/fi';
 
 function ModernProjects() {
@@ -29,6 +31,8 @@ function ModernProjects() {
   const [searchTerm, setSearchTerm] = useState('');
   const [hoveredProject, setHoveredProject] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { theme } = useTheme();
+  const themeClasses = generateThemeClasses(theme);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -175,20 +179,17 @@ function ModernProjects() {
   const featuredProjects = projects.filter(project => project.featured);
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className={themeClasses.container}>
       {/* Dynamic Background */}
       <div className="absolute inset-0">
         {/* Base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-blue-900" />
+        <div className={`absolute inset-0 ${themeClasses.heroBackground}`} />
         
         {/* Neural network grid */}
         <div 
-          className="absolute inset-0 opacity-20"
+          className={`absolute inset-0 ${themeClasses.opacity}`}
           style={{
-            backgroundImage: `
-              linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-              linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px)
-            `,
+            background: getThemeGradient(theme, 'neural'),
             backgroundSize: '50px 50px'
           }}
         />
@@ -197,7 +198,7 @@ function ModernProjects() {
         {Array.from({ length: 30 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-blue-400 rounded-full"
+            className={`absolute w-1 h-1 rounded-full ${getThemeParticleColor(theme)}`}
             animate={{
               x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],
               y: [Math.random() * window.innerHeight, Math.random() * window.innerHeight],
@@ -221,7 +222,7 @@ function ModernProjects() {
       <motion.div
         className="fixed pointer-events-none w-96 h-96 rounded-full z-10"
         style={{
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
+          background: getThemeGradient(theme, 'radial'),
           left: mousePosition.x - 192,
           top: mousePosition.y - 192,
         }}
@@ -250,7 +251,9 @@ function ModernProjects() {
               </span>
             </motion.h1>
             <motion.p
-              className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8"
+              className={`text-xl max-w-3xl mx-auto leading-relaxed mb-8 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -273,19 +276,31 @@ function ModernProjects() {
               ].map((stat, index) => (
                 <motion.div
                   key={stat.label}
-                  className="flex items-center space-x-3 px-6 py-3 rounded-2xl bg-gray-900/50 border border-gray-700/50"
+                  className={`flex items-center space-x-3 px-6 py-3 rounded-2xl backdrop-blur-sm border transition-all duration-300 ${
+                    theme === 'dark' 
+                      ? 'bg-gray-900/50 border-gray-700/50 text-white' 
+                      : 'bg-white/70 border-gray-200/50 text-gray-900'
+                  }`}
                   whileHover={{ scale: 1.05, y: -5 }}
                   animate={{
-                    borderColor: ['rgba(75, 85, 99, 0.5)', 'rgba(59, 130, 246, 0.5)', 'rgba(75, 85, 99, 0.5)'],
+                    borderColor: theme === 'dark' 
+                      ? ['rgba(75, 85, 99, 0.5)', 'rgba(59, 130, 246, 0.5)', 'rgba(75, 85, 99, 0.5)']
+                      : ['rgba(229, 231, 235, 0.5)', 'rgba(59, 130, 246, 0.5)', 'rgba(229, 231, 235, 0.5)'],
                   }}
                   transition={{
                     borderColor: { duration: 3, repeat: Infinity, delay: index * 0.5 }
                   }}
                 >
-                  <stat.icon className="w-5 h-5 text-blue-400" />
+                  <stat.icon className={`w-5 h-5 ${
+                    theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
+                  }`} />
                   <div>
-                    <div className="text-white font-bold">{stat.value}</div>
-                    <div className="text-gray-400 text-sm">{stat.label}</div>
+                    <div className={`font-bold ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>{stat.value}</div>
+                    <div className={`text-sm ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    }`}>{stat.label}</div>
                   </div>
                 </motion.div>
               ))}
@@ -321,7 +336,11 @@ function ModernProjects() {
                   onHoverEnd={() => setHoveredProject(null)}
                 >
                   {/* Project Card */}
-                  <div className="relative h-96 rounded-3xl overflow-hidden bg-gray-900/50 border border-gray-800 backdrop-blur-sm">
+                  <div className={`relative h-96 rounded-3xl overflow-hidden backdrop-blur-sm border transition-all duration-300 ${
+                    theme === 'dark' 
+                      ? 'bg-gray-900/50 border-gray-800' 
+                      : 'bg-white/70 border-gray-200'
+                  }`}>
                     {/* Background Gradient */}
                     <motion.div
                       className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-20 group-hover:opacity-30 transition-opacity duration-500`}
@@ -336,7 +355,11 @@ function ModernProjects() {
                       />
                       
                       {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
+                      <div className={`absolute inset-0 ${
+                        theme === 'dark' 
+                          ? 'bg-gradient-to-t from-gray-900 via-transparent to-transparent' 
+                          : 'bg-gradient-to-t from-white via-transparent to-transparent'
+                      }`} />
                       
                       {/* Status Badge */}
                       <motion.div
@@ -363,10 +386,16 @@ function ModernProjects() {
 
                     {/* Content */}
                     <div className="p-6">
-                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">
+                      <h3 className={`text-xl font-bold mb-2 transition-colors ${
+                        theme === 'dark' 
+                          ? 'text-white group-hover:text-cyan-400' 
+                          : 'text-gray-900 group-hover:text-blue-600'
+                      }`}>
                         {project.title}
                       </h3>
-                      <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                      <p className={`text-sm mb-4 line-clamp-2 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
                         {project.description}
                       </p>
 
@@ -375,13 +404,21 @@ function ModernProjects() {
                         {project.technologies.slice(0, 3).map((tech) => (
                           <span
                             key={tech}
-                            className="px-2 py-1 text-xs bg-gray-800/50 text-gray-300 rounded-lg border border-gray-700"
+                            className={`px-2 py-1 text-xs rounded-lg border transition-colors ${
+                              theme === 'dark' 
+                                ? 'bg-gray-800/50 text-gray-300 border-gray-700' 
+                                : 'bg-gray-100 text-gray-700 border-gray-300'
+                            }`}
                           >
                             {tech}
                           </span>
                         ))}
                         {project.technologies.length > 3 && (
-                          <span className="px-2 py-1 text-xs bg-gray-800/50 text-gray-400 rounded-lg border border-gray-700">
+                          <span className={`px-2 py-1 text-xs rounded-lg border transition-colors ${
+                            theme === 'dark' 
+                              ? 'bg-gray-800/50 text-gray-400 border-gray-700' 
+                              : 'bg-gray-100 text-gray-500 border-gray-300'
+                          }`}>
                             +{project.technologies.length - 3} more
                           </span>
                         )}
@@ -394,7 +431,11 @@ function ModernProjects() {
                             href={project.githubUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+                              theme === 'dark' 
+                                ? 'bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white' 
+                                : 'bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-900'
+                            }`}
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             whileTap={{ scale: 0.95 }}
                           >
@@ -457,7 +498,9 @@ function ModernProjects() {
                     className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-medium transition-all duration-300 ${
                       selectedFilter === category.name
                         ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                        : 'bg-gray-900/50 text-gray-400 hover:text-white hover:bg-gray-800/50 border border-gray-700/50'
+                        : theme === 'dark'
+                          ? 'bg-gray-900/50 text-gray-400 hover:text-white hover:bg-gray-800/50 border border-gray-700/50'
+                          : 'bg-white/70 text-gray-600 hover:text-gray-900 hover:bg-white/90 border border-gray-200/50'
                     }`}
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
@@ -473,13 +516,19 @@ function ModernProjects() {
                 className="relative"
                 whileHover={{ scale: 1.02 }}
               >
-                <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <FiSearch className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                }`} />
                 <input
                   type="text"
                   placeholder="Search projects..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 pr-4 py-3 w-80 rounded-2xl bg-gray-900/50 border border-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors"
+                  className={`pl-12 pr-4 py-3 w-80 rounded-2xl border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    theme === 'dark' 
+                      ? 'bg-gray-900/50 border-gray-700/50 text-white placeholder-gray-400' 
+                      : 'bg-white/70 border-gray-200/50 text-gray-900 placeholder-gray-500'
+                  }`}
                 />
               </motion.div>
             </div>
@@ -492,7 +541,9 @@ function ModernProjects() {
             transition={{ duration: 0.8 }}
           >
             <motion.h2 
-              className="text-3xl md:text-4xl font-bold text-center mb-12"
+              className={`text-3xl md:text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}
               whileHover={{ scale: 1.02 }}
             >
               <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
@@ -516,7 +567,11 @@ function ModernProjects() {
                     onHoverEnd={() => setHoveredProject(null)}
                   >
                     {/* Project Card */}
-                    <div className="relative h-[400px] rounded-3xl overflow-hidden bg-gray-900/50 border border-gray-800 backdrop-blur-sm">
+                    <div className={`relative h-[400px] rounded-3xl overflow-hidden backdrop-blur-sm border transition-all duration-300 ${
+                      theme === 'dark' 
+                        ? 'bg-gray-900/50 border-gray-800' 
+                        : 'bg-white/70 border-gray-200'
+                    }`}>
                       {/* Background Gradient */}
                       <motion.div
                         className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-10 group-hover:opacity-20 transition-opacity duration-500`}
@@ -531,7 +586,11 @@ function ModernProjects() {
                         />
                         
                         {/* Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
+                        <div className={`absolute inset-0 ${
+                          theme === 'dark' 
+                            ? 'bg-gradient-to-t from-gray-900 via-transparent to-transparent' 
+                            : 'bg-gradient-to-t from-white via-transparent to-transparent'
+                        }`} />
                         
                         {/* Status Badge */}
                         <motion.div
@@ -558,15 +617,23 @@ function ModernProjects() {
 
                       {/* Content */}
                       <div className="p-5">
-                        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">
+                        <h3 className={`text-lg font-bold mb-2 transition-colors ${
+                          theme === 'dark' 
+                            ? 'text-white group-hover:text-cyan-400' 
+                            : 'text-gray-900 group-hover:text-blue-600'
+                        }`}>
                           {project.title}
                         </h3>
-                        <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                        <p className={`text-sm mb-3 line-clamp-2 ${
+                          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                        }`}>
                           {project.description}
                         </p>
 
                         {/* Project Info */}
-                        <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                        <div className={`flex items-center justify-between text-xs mb-3 ${
+                          theme === 'dark' ? 'text-gray-500' : 'text-gray-600'
+                        }`}>
                           <span className="flex items-center space-x-1">
                             <FiCalendar className="w-3 h-3" />
                             <span>{project.year}</span>
@@ -582,7 +649,11 @@ function ModernProjects() {
                           {project.technologies.slice(0, 4).map((tech) => (
                             <span
                               key={tech}
-                              className="px-2 py-1 text-xs bg-gray-800/50 text-gray-300 rounded-lg border border-gray-700"
+                              className={`px-2 py-1 text-xs rounded-lg border transition-colors ${
+                                theme === 'dark' 
+                                  ? 'bg-gray-800/50 text-gray-300 border-gray-700' 
+                                  : 'bg-gray-100 text-gray-700 border-gray-300'
+                              }`}
                             >
                               {tech}
                             </span>
@@ -596,7 +667,11 @@ function ModernProjects() {
                               href={project.githubUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="w-8 h-8 rounded-lg bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                                theme === 'dark' 
+                                  ? 'bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white' 
+                                  : 'bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-900'
+                              }`}
                               whileHover={{ scale: 1.1, rotate: 5 }}
                               whileTap={{ scale: 0.95 }}
                             >

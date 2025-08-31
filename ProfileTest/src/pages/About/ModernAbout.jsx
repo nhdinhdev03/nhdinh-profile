@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
+import { useTheme } from '../../contexts/ThemeContext';
+import { ThemeCard, ThemeText, ThemeButton } from '../../components/UI/ThemeComponents';
 import { 
   FiCpu,
   FiCode,
@@ -87,6 +89,7 @@ const ModernAbout = React.memo(() => {
   const [activeSkill, setActiveSkill] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const [selectedTimeline, setSelectedTimeline] = useState('career');
+  const { isDark, effectiveTheme } = useTheme();
 
   // Optimized mouse tracking
   useEffect(() => {
@@ -180,19 +183,32 @@ const ModernAbout = React.memo(() => {
 
   return (
     <LazyMotion features={domAnimation}>
-    <div className="min-h-screen relative overflow-hidden">
+    <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${
+      isDark ? 'bg-black' : 'bg-gradient-to-br from-gray-50 to-white'
+    }`}>
       {/* Dynamic Background */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-blue-900" />
+        <div className={`absolute inset-0 transition-all duration-500 ${
+          isDark 
+            ? 'bg-gradient-to-br from-gray-900 via-black to-blue-900' 
+            : 'bg-gradient-to-br from-blue-50/30 via-white to-purple-50/30'
+        }`} />
         
         {/* Neural network grid */}
         <div 
-          className="absolute inset-0 opacity-20"
+          className={`absolute inset-0 transition-opacity duration-500 ${
+            isDark ? 'opacity-20' : 'opacity-10'
+          }`}
           style={{
-            backgroundImage: `
-              linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-              linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px)
-            `,
+            backgroundImage: isDark 
+              ? `
+                linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+                linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+              `
+              : `
+                linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px)
+              `,
             backgroundSize: '50px 50px'
           }}
         />

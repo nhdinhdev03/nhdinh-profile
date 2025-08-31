@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 // Fixed relative import paths (file is in src/Layout)
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme, useThemeClasses } from '../contexts/ThemeContext';
 import { ROUTES } from '../router/routeConstants';
 import { 
   FiMenu, 
@@ -15,7 +15,8 @@ import {
   FiBook, 
   FiMail,
   FiCpu,
-  FiActivity
+  FiActivity,
+  FiMonitor
 } from 'react-icons/fi';
 
 // Static navigation data
@@ -25,13 +26,14 @@ const NAVIGATION = [
   { name: 'Projects', href: ROUTES.PROJECTS, icon: FiBriefcase, color: 'from-green-500 to-emerald-500' },
   { name: 'Blog', href: ROUTES.BLOG, icon: FiBook, color: 'from-orange-500 to-red-500' },
   { name: 'Contact', href: ROUTES.CONTACT, icon: FiMail, color: 'from-teal-500 to-blue-500' },
+  { name: 'Settings', href: ROUTES.SETTINGS, icon: FiCpu, color: 'from-gray-500 to-gray-700' },
 ];
 
 const ModernHeader = React.memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark, themeMode, toggleTheme, effectiveTheme } = useTheme();
   const location = useLocation();
 
   // Throttled scroll handler
@@ -296,38 +298,73 @@ const ModernHeader = React.memo(() => {
               </motion.div>
 
               {/* Theme Toggle */}
+              {/* Enhanced Theme Toggle with 3 modes */}
               <motion.button
                 onClick={toggleTheme}
-                whileHover={{ scale: 1.1, rotate: 180 }}
+                whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="relative w-12 h-12 rounded-xl bg-gray-900/50 border border-gray-700/50 hover:border-gray-600 flex items-center justify-center text-gray-400 hover:text-white transition-colors group"
+                className={`relative w-12 h-12 rounded-xl border transition-all duration-300 flex items-center justify-center group ${
+                  isDark 
+                    ? 'bg-gray-800/80 border-gray-600 text-cyan-400 hover:border-cyan-400' 
+                    : 'bg-white/80 border-gray-300 text-gray-700 hover:border-blue-400'
+                }`}
+                title={`Theme: ${themeMode} (${effectiveTheme})`}
               >
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
+                  className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity ${
+                    isDark 
+                      ? 'bg-gradient-to-r from-cyan-500/10 to-purple-500/10' 
+                      : 'bg-gradient-to-r from-blue-500/10 to-purple-500/10'
+                  }`}
                 />
+                
                 <AnimatePresence mode="wait">
-                  {isDark ? (
+                  {themeMode === 'light' ? (
                     <motion.div
                       key="sun"
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
+                      initial={{ rotate: -90, opacity: 0, scale: 0.8 }}
+                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                      exit={{ rotate: 90, opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="relative z-10"
                     >
-                      <FiSun className="w-5 h-5 relative z-10" />
+                      <FiSun className="w-5 h-5" />
+                    </motion.div>
+                  ) : themeMode === 'dark' ? (
+                    <motion.div
+                      key="moon"
+                      initial={{ rotate: 90, opacity: 0, scale: 0.8 }}
+                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                      exit={{ rotate: -90, opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="relative z-10"
+                    >
+                      <FiMoon className="w-5 h-5" />
                     </motion.div>
                   ) : (
                     <motion.div
-                      key="moon"
-                      initial={{ rotate: 90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: -90, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
+                      key="auto"
+                      initial={{ rotate: 180, opacity: 0, scale: 0.8 }}
+                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                      exit={{ rotate: -180, opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="relative z-10"
                     >
-                      <FiMoon className="w-5 h-5 relative z-10" />
+                      <FiMonitor className="w-5 h-5" />
                     </motion.div>
                   )}
                 </AnimatePresence>
+                
+                {/* Theme mode indicator */}
+                <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 transition-all duration-300 ${
+                  isDark ? 'border-gray-800' : 'border-white'
+                } ${
+                  themeMode === 'auto' 
+                    ? 'bg-gradient-to-r from-orange-400 to-orange-500' 
+                    : themeMode === 'dark'
+                      ? 'bg-gradient-to-r from-blue-400 to-cyan-500'
+                      : 'bg-gradient-to-r from-yellow-400 to-orange-500'
+                }`} />
               </motion.button>
 
               {/* Mobile Menu Toggle */}

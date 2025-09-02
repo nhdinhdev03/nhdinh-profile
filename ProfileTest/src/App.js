@@ -1,4 +1,3 @@
-
 import React, { useMemo, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
@@ -8,14 +7,13 @@ import "aos/dist/aos.css";
 import { publicRoutes, privateRoutes } from "./router";
 import ScrollToHash from "./router/ScrollToHash";
 
-
 function App() {
   // Initialize AOS animation library
   useEffect(() => {
     AOS.init({
       duration: 800,
       once: true,
-      easing: "ease-out-cubic"
+      easing: "ease-out-cubic",
     });
   }, []);
 
@@ -27,7 +25,15 @@ function App() {
           <Route
             key={path}
             path={path}
-            element={Layout ? <Layout><Component /></Layout> : <Component />}
+            element={
+              Layout ? (
+                <Layout>
+                  <Component />
+                </Layout>
+              ) : (
+                <Component />
+              )
+            }
           />
         )
       ),

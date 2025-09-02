@@ -1,6 +1,8 @@
-import React, { memo } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
+import "./Layout.scss";
 
 function Layout({ children }) {
   return (
@@ -13,5 +15,9 @@ function Layout({ children }) {
     </div>
   );
 }
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default Layout;

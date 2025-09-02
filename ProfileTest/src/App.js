@@ -7,7 +7,7 @@ import "aos/dist/aos.css";
 
 import { publicRoutes, privateRoutes } from "./router";
 import ScrollToHash from "./router/ScrollToHash";
-import { ThemeProvider } from "./contexts/ThemeContext";
+
 
 function App() {
   // Initialize AOS animation library
@@ -35,12 +35,12 @@ function App() {
   );
 
   return (
-    <ThemeProvider>
+    <>
       <ScrollToHash />
       <AnimatePresence mode="wait" initial={false}>
         <Routes>{routeElements}</Routes>
       </AnimatePresence>
-    </ThemeProvider>
+    </>
   );
 }
 

@@ -18,20 +18,10 @@ import { useNavigate } from "react-router-dom";
 
 const ModernNotFound = () => {
   const [glitchActive, setGlitchActive] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scannerPosition, setScannerPosition] = useState(0);
   const [systemStatus, setSystemStatus] = useState("scanning");
   const { theme } = useTheme();
   const navigate = useNavigate();
-
-  // Track mouse for interactive effects
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   // Glitch effect
   useEffect(() => {
@@ -205,17 +195,8 @@ const ModernNotFound = () => {
         </div>
       </div>
 
-      {/* Mouse Follower */}
-      <motion.div
-        className="fixed w-8 h-8 border-2 border-red-400 rounded-full pointer-events-none z-50 mix-blend-difference"
-        animate={{
-          x: mousePosition.x - 16,
-          y: mousePosition.y - 16,
-        }}
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-      >
-        <div className="absolute inset-1 bg-red-400 rounded-full animate-pulse opacity-30" />
-      </motion.div>
+
+    
 
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4">
         <div className="max-w-4xl mx-auto text-center">

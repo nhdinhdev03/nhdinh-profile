@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from '../../contexts/ThemeContext';
 import { generateThemeClasses } from '../../utils/themeUtils';
@@ -23,22 +23,12 @@ import {
 const ModernBlog = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [featuredPost, setFeaturedPost] = useState(0);
   const { theme } = useTheme();
   const themeClasses = generateThemeClasses(theme);
   
   // Removed custom loading hook outside src; simple local loading state if needed
   const [isLoading] = useState(false);
-
-  // Track mouse for interactive effects
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   // Rotate featured post
   useEffect(() => {
@@ -260,15 +250,7 @@ const ModernBlog = () => {
         </div>
       </div>
 
-      {/* Mouse Follower */}
-      <motion.div
-        className="fixed w-6 h-6 border border-cyan-400 rounded-full pointer-events-none z-50 mix-blend-difference"
-        animate={{
-          x: mousePosition.x - 12,
-          y: mousePosition.y - 12,
-        }}
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-      />
+
 
       <div className="relative z-10">
         {/* Header Section */}

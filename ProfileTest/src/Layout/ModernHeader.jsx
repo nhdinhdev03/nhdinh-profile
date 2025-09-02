@@ -32,7 +32,6 @@ const NAVIGATION = [
 const ModernHeader = React.memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const { isDark, themeMode, toggleTheme, effectiveTheme } = useTheme();
   const location = useLocation();
 
@@ -54,23 +53,6 @@ const ModernHeader = React.memo(() => {
   }, []);
 
   // Throttled mouse move handler
-  useEffect(() => {
-    let frame;
-    const handleMouseMove = (e) => {
-      if (!frame) {
-        frame = requestAnimationFrame(() => {
-          setMousePosition({ x: e.clientX, y: e.clientY });
-          frame = null;
-        });
-      }
-    };
-
-    window.addEventListener('pointermove', handleMouseMove, { passive: true });
-    return () => {
-      window.removeEventListener('pointermove', handleMouseMove);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
@@ -94,20 +76,7 @@ const ModernHeader = React.memo(() => {
 
   return (
     <LazyMotion features={domAnimation}>
-      {/* Neural Network Cursor Follower */}
-      <motion.div
-        className="fixed pointer-events-none w-32 h-32 rounded-full z-50 opacity-30"
-        style={{
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, transparent 70%)',
-          left: mousePosition.x - 64,
-          top: mousePosition.y - 64,
-        }}
-        animate={{
-          x: mousePosition.x - 64,
-          y: mousePosition.y - 64,
-        }}
-        transition={{ type: "spring", damping: 30, stiffness: 200 }}
-      />
+
 
       <motion.header
         initial={{ y: -100, opacity: 0 }}

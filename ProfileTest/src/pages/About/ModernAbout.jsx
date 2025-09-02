@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
-import { 
+import {
   FiCpu,
   FiCode,
   FiCloud,
@@ -78,27 +78,8 @@ const SKILL_CATEGORIES = [
 
 const ModernAbout = React.memo(() => {
   const [activeSkill, setActiveSkill] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const [selectedTimeline, setSelectedTimeline] = useState('career');
   const { isDark } = useTheme();
-
-  // Optimized mouse tracking
-  useEffect(() => {
-    let frame;
-    const handleMouseMove = (e) => {
-      if (!frame) {
-        frame = requestAnimationFrame(() => {
-          setMousePosition({ x: e.clientX, y: e.clientY });
-          frame = null;
-        });
-      }
-    };
-    window.addEventListener('pointermove', handleMouseMove, { passive: true });
-    return () => {
-      window.removeEventListener('pointermove', handleMouseMove);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
 
   const skillCategories = SKILL_CATEGORIES;
 
@@ -229,20 +210,7 @@ const ModernAbout = React.memo(() => {
         ))}
       </div>
 
-      {/* Mouse follower glow */}
-      <motion.div
-        className="fixed pointer-events-none w-96 h-96 rounded-full z-10"
-        style={{
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
-          left: mousePosition.x - 192,
-          top: mousePosition.y - 192,
-        }}
-        animate={{
-          x: mousePosition.x - 192,
-          y: mousePosition.y - 192,
-        }}
-        transition={{ type: "spring", damping: 30, stiffness: 200 }}
-      />
+
 
       <div className="relative z-20 pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

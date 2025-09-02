@@ -42,7 +42,6 @@ const STATS = [
 ];
 
 const Home = React.memo(() => {
-  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const { theme } = useTheme();
   const themeClasses = useMemo(() => generateThemeClasses(theme), [theme]);
   const heroRef = useRef(null);
@@ -56,24 +55,6 @@ const Home = React.memo(() => {
   const heroAnimation = useAnimation();
   const skillsAnimation = useAnimation();
   const statsAnimation = useAnimation();
-
-  // Throttled mouse tracking (RAF)
-  useEffect(() => {
-    let frame;    
-    const handle = (e) => {
-      if (!frame) {
-        frame = requestAnimationFrame(() => {
-          setMousePosition({ x: e.clientX, y: e.clientY });
-          frame = null;
-        });
-      }
-    };
-    window.addEventListener('pointermove', handle, { passive: true });
-    return () => {
-      window.removeEventListener('pointermove', handle);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
 
 
   // Animation triggers
@@ -166,12 +147,7 @@ const Home = React.memo(() => {
           {particles}
       </div>
 
-      {/* Mouse Follower Effect */}
-      <motion.div
-        className="fixed w-6 h-6 border border-cyan-400 rounded-full pointer-events-none z-50 mix-blend-difference"
-        animate={{ x: mousePosition.x - 12, y: mousePosition.y - 12 }}
-        transition={{ type: "spring", stiffness: 300, damping: 40 }}
-      />
+
 
       {/* Hero Section */}
   <section className="min-h-screen flex items-center justify-center relative z-10" ref={heroRef} aria-label="Hero section">

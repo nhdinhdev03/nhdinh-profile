@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
 import { generateThemeClasses, getThemeGradient, getThemeParticleColor } from '../../utils/themeUtils';
@@ -30,17 +30,8 @@ function ModernProjects() {
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [hoveredProject, setHoveredProject] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { theme } = useTheme();
   const themeClasses = generateThemeClasses(theme);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
 
   const categories = [
     { name: 'All', icon: FiLayers, color: 'from-blue-500 to-cyan-500' },
@@ -218,20 +209,7 @@ function ModernProjects() {
         ))}
       </div>
 
-      {/* Mouse follower glow */}
-      <motion.div
-        className="fixed pointer-events-none w-96 h-96 rounded-full z-10"
-        style={{
-          background: getThemeGradient(theme, 'radial'),
-          left: mousePosition.x - 192,
-          top: mousePosition.y - 192,
-        }}
-        animate={{
-          x: mousePosition.x - 192,
-          y: mousePosition.y - 192,
-        }}
-        transition={{ type: "spring", damping: 30, stiffness: 200 }}
-      />
+
 
       <div className="relative z-20 pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from '../../contexts/ThemeContext';
-import { generateThemeClasses, getThemeGradient, getThemeParticleColor } from '../../utils/themeUtils';
+
 import { 
   FiMail,
   FiLinkedin,
@@ -20,6 +19,8 @@ import {
   FiGlobe,
   FiCpu
 } from 'react-icons/fi';
+import { generateThemeClasses, getThemeGradient, getThemeParticleColor } from 'utils/themeUtils';
+import theme from 'tailwindcss/defaultTheme';
 
 function ModernContact() {
   const [formData, setFormData] = useState({
@@ -30,17 +31,8 @@ function ModernContact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const { theme } = useTheme();
-  const themeClasses = generateThemeClasses(theme);
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  const themeClasses = generateThemeClasses(theme);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -168,19 +160,6 @@ function ModernContact() {
       </div>
 
       {/* Mouse follower glow */}
-      <motion.div
-        className="fixed pointer-events-none w-96 h-96 rounded-full z-10"
-        style={{
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
-          left: mousePosition.x - 192,
-          top: mousePosition.y - 192,
-        }}
-        animate={{
-          x: mousePosition.x - 192,
-          y: mousePosition.y - 192,
-        }}
-        transition={{ type: "spring", damping: 30, stiffness: 200 }}
-      />
 
       <div className="relative z-20 pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

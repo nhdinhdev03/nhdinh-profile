@@ -114,7 +114,7 @@ export const ThemeProvider = ({ children }) => {
 
     // Update meta theme-color for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-    const themeColor = isDark ? '#0f172a' : '#ffffff';
+    const themeColor = isDark ? '#0a101e' : '#ffffff';
     if (metaThemeColor) {
       metaThemeColor.setAttribute('content', themeColor);
     } else {

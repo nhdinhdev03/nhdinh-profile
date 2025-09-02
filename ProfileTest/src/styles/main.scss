@@ -36,6 +36,12 @@
   --shadow-primary: rgba(0, 0, 0, 0.1);
   --shadow-secondary: rgba(0, 0, 0, 0.05);
   
+  // Header Specific
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --header-bg-solid: #ffffff;
+  --header-border: rgba(229, 231, 235, 0.6);
+  --header-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
   // Transitions
   --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -58,18 +64,24 @@
   --text-muted: #94a3b8;
   --text-accent: #60a5fa;
   
-  // Dark Theme Backgrounds (Dark colors)
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-tertiary: #334155;
-  --bg-card: #1e293b;
-  --bg-overlay: rgba(15, 23, 42, 0.9);
+  // Dark Theme Backgrounds (Deeper, more solid colors)
+  --bg-primary: #0a101e; // Darker background
+  --bg-secondary: #172032; // Deeper secondary
+  --bg-tertiary: #2a3444; // Stronger tertiary
+  --bg-card: #172032;
+  --bg-overlay: rgba(10, 16, 30, 0.98); // More solid overlay
   
   // Dark Theme Borders & Shadows
   --border-primary: #334155;
   --border-secondary: #475569;
-  --shadow-primary: rgba(0, 0, 0, 0.3);
-  --shadow-secondary: rgba(0, 0, 0, 0.2);
+  --shadow-primary: rgba(0, 0, 0, 0.4); // Stronger shadows
+  --shadow-secondary: rgba(0, 0, 0, 0.3);
+  
+  // Header Specific for Dark Mode
+  --header-bg: rgba(10, 16, 30, 0.98); // Solid dark header
+  --header-bg-solid: #0a101e; // Completely solid
+  --header-border: rgba(51, 65, 85, 0.8); // More visible border
+  --header-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); // Deep shadow for emphasis
 }
 
 * {
@@ -171,6 +183,24 @@ body {
   background: var(--bg-overlay);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-primary);
+  
+  .dark & {
+    background: rgba(15, 23, 42, 0.98); // More solid dark background
+    border-bottom: 1px solid rgba(51, 65, 85, 0.8); // More visible border
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); // Enhanced shadow for depth
+  }
+}
+
+.header-solid {
+  background: var(--header-bg-solid);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: var(--header-shadow);
+  
+  .dark & {
+    background: var(--header-bg-solid);
+    border-bottom: 1px solid var(--border-secondary);
+    box-shadow: var(--header-shadow);
+  }
 }
 
 .nav-link-enhanced {

@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import ModernHeader from './ModernHeader';
+
 import Footer from './Footer/Footer';
+import Header from './Header/Header';
 
 const Layout = memo(({ children }) => {
   const { theme } = useTheme();
@@ -69,7 +70,7 @@ const Layout = memo(({ children }) => {
         </div>
       </div>
       
-      <ModernHeader />
+      <Header />
       <main className="relative z-10 min-h-screen contain-layout">
         {children}
       </main>

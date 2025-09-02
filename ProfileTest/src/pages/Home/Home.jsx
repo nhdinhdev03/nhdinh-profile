@@ -53,7 +53,7 @@ const STATS = [
   { label: "Happy Clients", value: "30+", icon: FiUsers },
 ];
 
-const Home = React.memo(() => {
+function Home() {
   const { theme } = useTheme();
   const themeClasses = useMemo(() => generateThemeClasses(theme), [theme]);
   const heroRef = useRef(null);
@@ -467,6 +467,6 @@ const Home = React.memo(() => {
       </div>
     </LazyMotion>
   );
-});
+}
 
 export default Home;

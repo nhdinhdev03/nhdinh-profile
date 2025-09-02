@@ -77,7 +77,7 @@ const SKILL_CATEGORIES = [
     }
   ];
 
-const ModernAbout = React.memo(() => {
+function ModernAbout() {
   const [activeSkill, setActiveSkill] = useState(null);
   const [selectedTimeline, setSelectedTimeline] = useState('career');
   const { theme } = useTheme();
@@ -626,6 +626,6 @@ const ModernAbout = React.memo(() => {
     </div>
     </LazyMotion>
   );
-});
+}
 
 export default ModernAbout;

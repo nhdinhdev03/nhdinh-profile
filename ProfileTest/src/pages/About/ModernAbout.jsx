@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
+import { generateThemeClasses } from '../../utils/themeUtils';
 import {
   FiCpu,
   FiCode,
@@ -79,7 +80,8 @@ const SKILL_CATEGORIES = [
 const ModernAbout = React.memo(() => {
   const [activeSkill, setActiveSkill] = useState(null);
   const [selectedTimeline, setSelectedTimeline] = useState('career');
-  const { isDark } = useTheme();
+  const { theme } = useTheme();
+  const themeClasses = useMemo(() => generateThemeClasses(theme), [theme]);
 
   const skillCategories = SKILL_CATEGORIES;
 
@@ -155,24 +157,16 @@ const ModernAbout = React.memo(() => {
 
   return (
     <LazyMotion features={domAnimation}>
-    <div className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${
-      isDark ? 'bg-black' : 'bg-gradient-to-br from-gray-50 to-white'
-    }`}>
+    <div className={`min-h-screen relative overflow-hidden ${themeClasses.container}`}>
       {/* Dynamic Background */}
       <div className="absolute inset-0">
-        <div className={`absolute inset-0 transition-all duration-500 ${
-          isDark 
-            ? 'bg-gradient-to-br from-gray-900 via-black to-blue-900' 
-            : 'bg-gradient-to-br from-blue-50/30 via-white to-purple-50/30'
-        }`} />
+        <div className={`absolute inset-0 transition-all duration-500 ${themeClasses.heroBackground}`} />
         
         {/* Neural network grid */}
         <div 
-          className={`absolute inset-0 transition-opacity duration-500 ${
-            isDark ? 'opacity-20' : 'opacity-10'
-          }`}
+          className={`absolute inset-0 transition-opacity duration-500 ${themeClasses.subtleOpacity}`}
           style={{
-            backgroundImage: isDark 
+            backgroundImage: theme === 'dark'
               ? `
                 linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
                 linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px)
@@ -247,9 +241,11 @@ const ModernAbout = React.memo(() => {
                   opacity: [0.7, 1, 0.7],
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="absolute -top-2 -right-2 w-8 h-8 bg-green-400 rounded-full border-4 border-black shadow-lg flex items-center justify-center"
+                className={`absolute -top-2 -right-2 w-8 h-8 bg-emerald-400 rounded-full border-4 shadow-lg flex items-center justify-center ${
+                  theme === 'dark' ? 'border-slate-900' : 'border-white'
+                }`}
               >
-                <FiActivity className="w-4 h-4 text-black" />
+                <FiActivity className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-900' : 'text-white'}`} />
               </motion.div>
               
               <motion.div
@@ -258,21 +254,23 @@ const ModernAbout = React.memo(() => {
                   opacity: [0.5, 1, 0.5],
                 }}
                 transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                className="absolute -bottom-2 -left-2 w-6 h-6 bg-blue-400 rounded-full border-2 border-black"
+                className={`absolute -bottom-2 -left-2 w-6 h-6 bg-blue-400 rounded-full border-2 ${
+                  theme === 'dark' ? 'border-slate-900' : 'border-white'
+                }`}
               />
             </motion.div>
 
             <motion.h1 
-              className="text-5xl md:text-7xl font-bold mb-6"
+              className={`text-5xl md:text-7xl font-bold mb-6 ${themeClasses.primaryText}`}
               whileHover={{ scale: 1.02 }}
             >
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 About Me
               </span>
             </motion.h1>
-            
+
             <motion.p
-              className="text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed mb-8"
+              className={`text-xl max-w-4xl mx-auto leading-relaxed mb-8 ${themeClasses.secondaryText}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -297,7 +295,7 @@ const ModernAbout = React.memo(() => {
               ].map((stat, index) => (
                 <motion.div
                   key={stat.label}
-                  className="flex items-center space-x-3 px-6 py-3 rounded-2xl bg-gray-900/50 border border-gray-700/50"
+                  className={`flex items-center space-x-3 px-6 py-3 rounded-2xl ${themeClasses.cardBackground}`}
                   whileHover={{ scale: 1.05, y: -5 }}
                   animate={{
                     borderColor: ['rgba(75, 85, 99, 0.5)', 'rgba(139, 92, 246, 0.5)', 'rgba(75, 85, 99, 0.5)'],
@@ -306,10 +304,10 @@ const ModernAbout = React.memo(() => {
                     borderColor: { duration: 3, repeat: Infinity, delay: index * 0.5 }
                   }}
                 >
-                  <stat.icon className="w-5 h-5 text-purple-400" />
+                  <stat.icon className={`w-5 h-5 ${themeClasses.accentText}`} />
                   <div>
-                    <div className="text-white font-bold">{stat.value}</div>
-                    <div className="text-gray-400 text-sm">{stat.label}</div>
+                    <div className={`font-bold ${themeClasses.primaryText}`}>{stat.value}</div>
+                    <div className={`text-sm ${themeClasses.secondaryText}`}>{stat.label}</div>
                   </div>
                 </motion.div>
               ))}
@@ -323,16 +321,14 @@ const ModernAbout = React.memo(() => {
             transition={{ duration: 0.8 }}
             className="mb-20"
           >
-            <motion.h2 
-              className="text-3xl md:text-4xl font-bold text-center mb-12"
+            <motion.h2
+              className={`text-3xl md:text-4xl font-bold text-center mb-12 ${themeClasses.primaryText}`}
               whileHover={{ scale: 1.02 }}
             >
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Technical Expertise
               </span>
-            </motion.h2>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            </motion.h2>            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {skillCategories.map((category, categoryIndex) => (
                 <motion.div
                   key={category.title}
@@ -342,7 +338,7 @@ const ModernAbout = React.memo(() => {
                   transition={{ duration: 0.6, delay: categoryIndex * 0.2 }}
                   whileHover={{ scale: 1.02, rotateY: 5 }}
                 >
-                  <div className="p-8 rounded-3xl bg-gray-900/50 border border-gray-800 backdrop-blur-sm relative overflow-hidden">
+                  <div className={`p-8 rounded-3xl backdrop-blur-sm relative overflow-hidden ${themeClasses.cardBackground} hover:shadow-xl transition-all duration-300`}>
                     {/* Background Gradient */}
                     <motion.div
                       className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-10`}
@@ -365,7 +361,7 @@ const ModernAbout = React.memo(() => {
                       >
                         <category.icon className="w-8 h-8" />
                       </motion.div>
-                      <h3 className="text-2xl font-bold text-white">{category.title}</h3>
+                      <h3 className={`text-2xl font-bold ${themeClasses.primaryText}`}>{category.title}</h3>
                     </div>
 
                     {/* Skills */}
@@ -381,7 +377,7 @@ const ModernAbout = React.memo(() => {
                           onHoverEnd={() => setActiveSkill(null)}
                         >
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-gray-300 font-medium group-hover:text-white transition-colors">
+                            <span className={`font-medium group-hover:text-current transition-colors ${themeClasses.secondaryText}`}>
                               {skill.name}
                             </span>
                             <span className={`text-sm font-bold bg-gradient-to-r ${skill.color} bg-clip-text text-transparent`}>
@@ -389,7 +385,7 @@ const ModernAbout = React.memo(() => {
                             </span>
                           </div>
                           
-                          <div className="relative h-2 bg-gray-800 rounded-full overflow-hidden">
+                          <div className={`relative h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'}`}>
                             <motion.div
                               initial={{ width: 0 }}
                               whileInView={{ width: `${skill.level}%` }}

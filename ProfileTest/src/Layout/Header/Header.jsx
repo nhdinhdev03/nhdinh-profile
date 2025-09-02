@@ -45,9 +45,11 @@ const Header = () => {
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
           isScrolled
-            ? 'bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md shadow-lg border-b border-neutral-200/20 dark:border-neutral-700/20'
+            ? isDark 
+              ? 'bg-neutral-900/95 border-b border-neutral-800/30 backdrop-blur-md shadow-lg'
+              : 'bg-white/95 border-b border-neutral-200/30 backdrop-blur-md shadow-lg'
             : 'bg-transparent'
         }`}
       >
@@ -70,14 +72,14 @@ const Header = () => {
             </motion.div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-1">
+            <nav className="hidden md:flex items-center space-x-4">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.href;
                 return (
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                    className={`relative px-4 py-2 rounded-xl font-medium transition-colors duration-200 ${
                       isActive
                         ? 'text-primary-600 dark:text-primary-400'
                         : 'text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400'
@@ -90,7 +92,7 @@ const Header = () => {
                     {isActive && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute inset-0 bg-primary-100 dark:bg-primary-900/30 rounded-xl"
+                        className="absolute inset-0 bg-primary-100/80 dark:bg-primary-900/20 rounded-xl backdrop-blur-sm"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.2 }}
@@ -99,6 +101,42 @@ const Header = () => {
                   </Link>
                 );
               })}
+              
+              {/* Theme Toggle Button */}
+              <motion.button
+                onClick={toggleTheme}
+                className={`p-2 rounded-xl transition-colors duration-200
+                  ${isDark 
+                    ? 'bg-neutral-800 text-yellow-400 hover:bg-neutral-700' 
+                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                  }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <AnimatePresence mode="wait">
+                  {isDark ? (
+                    <motion.div
+                      key="sun"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FiSun className="w-5 h-5" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="moon"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FiMoon className="w-5 h-5" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
             </nav>
 
             {/* Theme Toggle & Mobile Menu Button */}
@@ -181,7 +219,7 @@ const Header = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-black/30 dark:bg-black/50 backdrop-blur-sm z-40 md:hidden"
               onClick={closeMenu}
             />
             <motion.nav
@@ -189,7 +227,11 @@ const Header = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-neutral-900 shadow-2xl z-50 md:hidden"
+              className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] shadow-2xl z-50 md:hidden
+                ${isDark 
+                  ? 'bg-neutral-900/95 backdrop-blur-sm border-l border-neutral-800/30' 
+                  : 'bg-white/95 backdrop-blur-sm border-l border-neutral-200/30'
+                }`}
             >
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">

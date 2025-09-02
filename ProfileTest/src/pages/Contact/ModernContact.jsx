@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import { useTheme } from '../../contexts/ThemeContext';
+import { generateThemeClasses, getThemeGradient, getThemeParticleColor } from '../../utils/themeUtils';
 import { 
   FiMail,
   FiLinkedin,
@@ -19,8 +20,6 @@ import {
   FiGlobe,
   FiCpu
 } from 'react-icons/fi';
-import { generateThemeClasses, getThemeGradient, getThemeParticleColor } from 'utils/themeUtils';
-import theme from 'tailwindcss/defaultTheme';
 
 function ModernContact() {
   const [formData, setFormData] = useState({
@@ -31,7 +30,7 @@ function ModernContact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
+  const { theme } = useTheme();
   const themeClasses = generateThemeClasses(theme);
 
   const handleSubmit = async (e) => {

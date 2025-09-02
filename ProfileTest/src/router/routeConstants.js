@@ -11,7 +11,7 @@ export const ROUTES = {
   BLOG: `/blog`,
   CONTACT: `/contact`,
   PROJECTS: `/projects`,
-  SETTINGS: `/settings`,
+
   //
   SKILLS: `/skills`,
   PRIVACY: `/privacy`,

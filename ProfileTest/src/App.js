@@ -1,14 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { publicRoutes, privateRoutes } from "./router";
 import ScrollToHash from "./router/ScrollToHash";
-import PageTransition from "./components/PageTransition/PageTransition";
+import { PageTransition, SmartLoader, PerformanceMonitor } from "./components";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AnimatePresence } from "framer-motion";
 import { Suspense, useEffect, useMemo, startTransition } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import SmartLoader from "./components/UI/SmartLoader";
-import PerformanceMonitor from "./components/Performance/PerformanceMonitor";
 
 // Enhanced loading component
 const LoadingFallback = () => (

@@ -1,7 +1,6 @@
 import React from 'react';
-
 import { motion } from 'framer-motion';
-import { useTheme } from 'contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 /**
  * Theme-aware card component with optimized styling

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
-import { ThemeCard, ThemeText, ThemeButton, ThemeSelector } from '../../components/UI/ThemeComponents';
+import { ThemeCard, ThemeText, ThemeButton, ThemeSelector } from '../../components';
 import { 
   FiSettings, 
   FiMonitor, 

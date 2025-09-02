@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
 import { ROUTES } from '../../router/routeConstants';
 import { 
@@ -20,6 +20,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
+  const prefersReducedMotion = useReducedMotion();
 
   const navigation = [
     { name: 'Home', href: ROUTES.HOME, icon: FiHome },
@@ -30,21 +31,24 @@ const Header = () => {
   ];
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    if (isMenuOpen) setIsMenuOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <>
       <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
+        initial={prefersReducedMotion ? false : { y: -100 }}
+        animate={prefersReducedMotion ? {} : { y: 0 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
             ? 'theme-bg-primary/95 theme-border border-b backdrop-blur-md shadow-lg'
@@ -62,10 +66,10 @@ const Header = () => {
                 to="/"
                 className="flex items-center space-x-2 text-2xl font-bold"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
                   N
                 </div>
-                <span className="hidden sm:block theme-text-primary bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                <span className="hidden sm:block theme-text-primary bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300 bg-clip-text text-transparent">
                   NH Dinh
                 </span>
               </Link>
@@ -79,20 +83,19 @@ const Header = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                      isActive
-                        ? 'theme-text-accent'
-                        : 'theme-text-secondary hover:theme-text-accent'
-                    }`}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 dark:focus-visible:ring-cyan-400 ${isActive
+                      ? 'theme-text-accent'
+                      : 'theme-text-secondary hover:theme-text-accent'} group`}
                   >
                     <span className="relative z-10 flex items-center space-x-2">
-                      <item.icon className="w-4 h-4" />
+                      <item.icon className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                       <span>{item.name}</span>
                     </span>
                     {isActive && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute inset-0 bg-blue-100/80 dark:bg-blue-900/30 rounded-xl backdrop-blur-sm"
+                        className="absolute inset-0 rounded-xl backdrop-blur-sm bg-blue-600/10 dark:bg-cyan-400/15 border border-blue-500/20 dark:border-cyan-400/20"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.3 }}
@@ -101,38 +104,6 @@ const Header = () => {
                   </Link>
                 );
               })}
-              
-              {/* Theme Toggle Button */}
-              <motion.button
-                onClick={toggleTheme}
-                className="p-2 rounded-xl theme-bg-secondary theme-text-primary hover:theme-bg-tertiary transition-all duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <AnimatePresence mode="wait">
-                  {isDark ? (
-                    <motion.div
-                      key="sun"
-                      initial={{ rotate: 90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: -90, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <FiSun className="w-5 h-5" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="moon"
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <FiMoon className="w-5 h-5" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.button>
             </nav>
 
             {/* Theme Toggle & Mobile Menu Button */}
@@ -148,9 +119,9 @@ const Header = () => {
                   {isDark ? (
                     <motion.div
                       key="sun"
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
+                      initial={prefersReducedMotion ? { opacity: 0 } : { rotate: -90, opacity: 0 }}
+                      animate={prefersReducedMotion ? { opacity: 1 } : { rotate: 0, opacity: 1 }}
+                      exit={prefersReducedMotion ? { opacity: 0 } : { rotate: 90, opacity: 0 }}
                       transition={{ duration: 0.2 }}
                     >
                       <FiSun className="w-5 h-5" />
@@ -158,9 +129,9 @@ const Header = () => {
                   ) : (
                     <motion.div
                       key="moon"
-                      initial={{ rotate: 90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: -90, opacity: 0 }}
+                      initial={prefersReducedMotion ? { opacity: 0 } : { rotate: 90, opacity: 0 }}
+                      animate={prefersReducedMotion ? { opacity: 1 } : { rotate: 0, opacity: 1 }}
+                      exit={prefersReducedMotion ? { opacity: 0 } : { rotate: -90, opacity: 0 }}
                       transition={{ duration: 0.2 }}
                     >
                       <FiMoon className="w-5 h-5" />
@@ -174,16 +145,18 @@ const Header = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-xl theme-bg-secondary theme-text-primary hover:theme-bg-tertiary transition-all duration-300"
+                className="md:hidden p-2 rounded-xl theme-bg-secondary theme-text-primary hover:theme-bg-tertiary transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 dark:focus-visible:ring-cyan-400"
                 aria-label="Toggle menu"
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-nav-panel"
               >
                 <AnimatePresence mode="wait">
                   {isMenuOpen ? (
                     <motion.div
                       key="close"
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
+                      initial={prefersReducedMotion ? { opacity: 0 } : { rotate: -90, opacity: 0 }}
+                      animate={prefersReducedMotion ? { opacity: 1 } : { rotate: 0, opacity: 1 }}
+                      exit={prefersReducedMotion ? { opacity: 0 } : { rotate: 90, opacity: 0 }}
                       transition={{ duration: 0.2 }}
                     >
                       <FiX className="w-6 h-6" />
@@ -191,9 +164,9 @@ const Header = () => {
                   ) : (
                     <motion.div
                       key="menu"
-                      initial={{ rotate: 90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: -90, opacity: 0 }}
+                      initial={prefersReducedMotion ? { opacity: 0 } : { rotate: 90, opacity: 0 }}
+                      animate={prefersReducedMotion ? { opacity: 1 } : { rotate: 0, opacity: 1 }}
+                      exit={prefersReducedMotion ? { opacity: 0 } : { rotate: -90, opacity: 0 }}
                       transition={{ duration: 0.2 }}
                     >
                       <FiMenu className="w-6 h-6" />
@@ -219,6 +192,7 @@ const Header = () => {
               onClick={closeMenu}
             />
             <motion.nav
+              id="mobile-nav-panel"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -232,16 +206,17 @@ const Header = () => {
                     onClick={closeMenu}
                     className="flex items-center space-x-2 text-xl font-bold"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 dark:from-blue-500 dark:to-cyan-400 rounded-lg flex items-center justify-center text-white font-bold">
                       N
                     </div>
-                    <span className="theme-text-primary bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                    <span className="theme-text-primary bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300 bg-clip-text text-transparent">
                       NH Dinh
                     </span>
                   </Link>
                   <button
                     onClick={closeMenu}
                     className="p-2 rounded-lg theme-text-muted hover:theme-text-primary transition-colors"
+                    aria-label="Close menu"
                   >
                     <FiX className="w-6 h-6" />
                   </button>
@@ -261,11 +236,10 @@ const Header = () => {
                           <Link
                             to={item.href}
                             onClick={closeMenu}
-                            className={`flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
-                              isActive
-                                ? 'theme-bg-card theme-text-accent theme-shadow'
-                                : 'theme-text-secondary hover:theme-bg-secondary hover:theme-text-primary'
-                            }`}
+                            className={`flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 dark:focus-visible:ring-cyan-400 ${isActive
+                              ? 'theme-bg-card theme-text-accent theme-shadow'
+                              : 'theme-text-secondary hover:theme-bg-secondary hover:theme-text-primary'}`}
+                            aria-current={isActive ? 'page' : undefined}
                           >
                             <item.icon className="w-5 h-5" />
                             <span>{item.name}</span>

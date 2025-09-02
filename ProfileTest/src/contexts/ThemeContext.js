@@ -3,33 +3,35 @@ import { themePerformance, optimizeThemeTransition } from '../utils/themePerform
 
 const ThemeContext = createContext();
 
-// Theme configuration with optimized color schemes
+// Theme configuration with CSS variables integration
 const THEMES = {
   light: {
     name: 'light',
-    background: 'from-gray-50 to-white',
-    surface: 'from-white to-gray-50',
+    background: 'theme-bg-primary',
+    surface: 'theme-bg-secondary',
+    card: 'theme-bg-card',
     text: {
-      primary: 'text-gray-900',
-      secondary: 'text-gray-600',
-      accent: 'text-blue-600'
+      primary: 'theme-text-primary',
+      secondary: 'theme-text-secondary',
+      muted: 'theme-text-muted',
+      accent: 'theme-text-accent'
     },
-    accent: 'from-blue-500 to-purple-500',
-    border: 'border-gray-200',
-    shadow: 'shadow-gray-200/50'
+    border: 'theme-border',
+    shadow: 'theme-shadow'
   },
   dark: {
     name: 'dark',
-    background: 'from-gray-900 via-black to-gray-900',
-    surface: 'from-gray-800/50 to-gray-900/50',
+    background: 'theme-bg-primary',
+    surface: 'theme-bg-secondary',
+    card: 'theme-bg-card',
     text: {
-      primary: 'text-white',
-      secondary: 'text-gray-300',
-      accent: 'text-cyan-400'
+      primary: 'theme-text-primary',
+      secondary: 'theme-text-secondary',
+      muted: 'theme-text-muted',
+      accent: 'theme-text-accent'
     },
-    accent: 'from-cyan-500 to-purple-500',
-    border: 'border-gray-700',
-    shadow: 'shadow-cyan-500/25'
+    border: 'theme-border',
+    shadow: 'theme-shadow'
   },
   auto: {
     name: 'auto',
@@ -96,26 +98,29 @@ export const ThemeProvider = ({ children }) => {
     // Save to localStorage
     localStorage.setItem('theme-mode', themeMode);
 
-    // Apply dark class
+    // Apply dark class and data-theme attribute
     const isDark = effectiveTheme === 'dark';
     const html = document.documentElement;
     
     if (isDark) {
       html.classList.add('dark');
+      html.setAttribute('data-theme', 'dark');
       html.style.colorScheme = 'dark';
     } else {
       html.classList.remove('dark');
+      html.setAttribute('data-theme', 'light');
       html.style.colorScheme = 'light';
     }
 
     // Update meta theme-color for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    const themeColor = isDark ? '#0f172a' : '#ffffff';
     if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', isDark ? '#000000' : '#ffffff');
+      metaThemeColor.setAttribute('content', themeColor);
     } else {
       const meta = document.createElement('meta');
       meta.name = 'theme-color';
-      meta.content = isDark ? '#000000' : '#ffffff';
+      meta.content = themeColor;
       document.head.appendChild(meta);
     }
 

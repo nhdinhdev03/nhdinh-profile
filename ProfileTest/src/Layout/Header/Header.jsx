@@ -45,11 +45,9 @@ const Header = () => {
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? isDark 
-              ? 'bg-neutral-900/95 border-b border-neutral-800/30 backdrop-blur-md shadow-lg'
-              : 'bg-white/95 border-b border-neutral-200/30 backdrop-blur-md shadow-lg'
+            ? 'theme-bg-primary/95 theme-border border-b backdrop-blur-md shadow-lg'
             : 'bg-transparent'
         }`}
       >
@@ -62,12 +60,14 @@ const Header = () => {
             >
               <Link
                 to="/"
-                className="flex items-center space-x-2 text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"
+                className="flex items-center space-x-2 text-2xl font-bold"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center text-white font-bold">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
                   N
                 </div>
-                <span className="hidden sm:block">NH Dinh</span>
+                <span className="hidden sm:block theme-text-primary bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                  NH Dinh
+                </span>
               </Link>
             </motion.div>
 
@@ -79,10 +79,10 @@ const Header = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`relative px-4 py-2 rounded-xl font-medium transition-colors duration-200 ${
+                    className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
                       isActive
-                        ? 'text-primary-600 dark:text-primary-400'
-                        : 'text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400'
+                        ? 'theme-text-accent'
+                        : 'theme-text-secondary hover:theme-text-accent'
                     }`}
                   >
                     <span className="relative z-10 flex items-center space-x-2">
@@ -92,10 +92,10 @@ const Header = () => {
                     {isActive && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute inset-0 bg-primary-100/80 dark:bg-primary-900/20 rounded-xl backdrop-blur-sm"
+                        className="absolute inset-0 bg-blue-100/80 dark:bg-blue-900/30 rounded-xl backdrop-blur-sm"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.3 }}
                       />
                     )}
                   </Link>
@@ -105,11 +105,7 @@ const Header = () => {
               {/* Theme Toggle Button */}
               <motion.button
                 onClick={toggleTheme}
-                className={`p-2 rounded-xl transition-colors duration-200
-                  ${isDark 
-                    ? 'bg-neutral-800 text-yellow-400 hover:bg-neutral-700' 
-                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                  }`}
+                className="p-2 rounded-xl theme-bg-secondary theme-text-primary hover:theme-bg-tertiary transition-all duration-300"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -145,7 +141,7 @@ const Header = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleTheme}
-                className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                className="p-2 rounded-xl theme-bg-secondary theme-text-primary hover:theme-bg-tertiary transition-all duration-300"
                 aria-label="Toggle theme"
               >
                 <AnimatePresence mode="wait">
@@ -178,7 +174,7 @@ const Header = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                className="md:hidden p-2 rounded-xl theme-bg-secondary theme-text-primary hover:theme-bg-tertiary transition-all duration-300"
                 aria-label="Toggle menu"
               >
                 <AnimatePresence mode="wait">
@@ -219,7 +215,7 @@ const Header = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/30 dark:bg-black/50 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-black/30 dark:bg-black/70 backdrop-blur-sm z-40 md:hidden"
               onClick={closeMenu}
             />
             <motion.nav
@@ -227,27 +223,25 @@ const Header = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] shadow-2xl z-50 md:hidden
-                ${isDark 
-                  ? 'bg-neutral-900/95 backdrop-blur-sm border-l border-neutral-800/30' 
-                  : 'bg-white/95 backdrop-blur-sm border-l border-neutral-200/30'
-                }`}
+              className="fixed top-0 right-0 h-full w-80 max-w-[85vw] shadow-2xl z-50 md:hidden theme-bg-primary theme-border border-l"
             >
               <div className="flex flex-col h-full">
-                <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">
+                <div className="flex items-center justify-between p-6 theme-border border-b">
                   <Link
                     to="/"
                     onClick={closeMenu}
-                    className="flex items-center space-x-2 text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"
+                    className="flex items-center space-x-2 text-xl font-bold"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center text-white font-bold">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold">
                       N
                     </div>
-                    <span>NH Dinh</span>
+                    <span className="theme-text-primary bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                      NH Dinh
+                    </span>
                   </Link>
                   <button
                     onClick={closeMenu}
-                    className="p-2 rounded-lg text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                    className="p-2 rounded-lg theme-text-muted hover:theme-text-primary transition-colors"
                   >
                     <FiX className="w-6 h-6" />
                   </button>
@@ -267,10 +261,10 @@ const Header = () => {
                           <Link
                             to={item.href}
                             onClick={closeMenu}
-                            className={`flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                            className={`flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
                               isActive
-                                ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400'
-                                : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                                ? 'theme-bg-card theme-text-accent theme-shadow'
+                                : 'theme-text-secondary hover:theme-bg-secondary hover:theme-text-primary'
                             }`}
                           >
                             <item.icon className="w-5 h-5" />
@@ -282,8 +276,8 @@ const Header = () => {
                   </div>
                 </div>
 
-                <div className="p-6 border-t border-neutral-200 dark:border-neutral-700">
-                  <div className="text-center text-sm text-neutral-500 dark:text-neutral-400">
+                <div className="p-6 theme-border border-t">
+                  <div className="text-center text-sm theme-text-muted">
                     © 2025 NH Dinh Portfolio
                   </div>
                 </div>

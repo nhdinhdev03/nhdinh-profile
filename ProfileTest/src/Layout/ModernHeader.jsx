@@ -84,14 +84,14 @@ const ModernHeader = React.memo(() => {
         transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
-            ? 'bg-black/80 backdrop-blur-xl shadow-2xl border-b border-gray-800/50'
+            ? 'theme-bg-primary/80 backdrop-blur-xl shadow-2xl theme-border border-b'
             : 'bg-transparent'
         }`}
       >
         {/* Holographic Header Effect */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10"
+            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 opacity-50 dark:opacity-30"
             animate={{
               x: ['-100%', '100%'],
             }}

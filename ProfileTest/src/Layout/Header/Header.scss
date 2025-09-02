@@ -1,9 +1,200 @@
-// Enhanced Header Styles V2
+// Enhanced Header Styles with CSS Variables
 :root {
   --header-bg-light: rgba(255, 255, 255, 0.95);
-  --header-bg-dark: rgba(23, 23, 23, 0.95);
-  --header-border-light: rgba(229, 231, 235, 0.2);
-  --header-border-dark: rgba(75, 85, 99, 0.2);
+  --header-bg-dark: rgba(15, 23, 42, 0.95);
+  --header-border-light: rgba(229, 231, 235, 0.3);
+  --header-border-dark: rgba(51, 65, 85, 0.3);
+  --header-shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --header-shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.header-enhanced {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  backdrop-filter: blur(16px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &.scrolled {
+    box-shadow: var(--header-shadow-light);
+    
+    .dark & {
+      box-shadow: var(--header-shadow-dark);
+    }
+  }
+  
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    
+    @media (min-width: 768px) {
+      padding: 0 2rem;
+    }
+  }
+  
+  // Enhanced Logo Styles
+  .logo-enhanced {
+    .logo-icon {
+      position: relative;
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transform: translateX(-100%) rotate(45deg);
+        transition: transform 0.6s ease;
+      }
+      
+      &:hover::before {
+        transform: translateX(100%) rotate(45deg);
+      }
+    }
+  }
+  
+  // Enhanced Navigation
+  .nav-enhanced {
+    .nav-item {
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        transform: translateX(-50%);
+        transition: width 0.3s ease;
+        border-radius: 1px;
+      }
+      
+      &:hover::before,
+      &.active::before {
+        width: 60%;
+      }
+      
+      &.active::before {
+        width: 80%;
+      }
+    }
+  }
+  
+  // Enhanced Theme Toggle
+  .theme-toggle-enhanced {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(45deg, #3b82f6, #06b6d4, #8b5cf6);
+      border-radius: 14px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+    
+    &:hover::before {
+      opacity: 0.3;
+    }
+    
+    .theme-icon {
+      transition: all 0.3s ease;
+      
+      &.sun {
+        color: #f59e0b;
+      }
+      
+      &.moon {
+        color: #3b82f6;
+      }
+    }
+  }
+  
+  // Enhanced Mobile Menu
+  .mobile-menu-enhanced {
+    backdrop-filter: blur(20px);
+    
+    .mobile-nav-item {
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        transform: translateY(-50%);
+        transition: width 0.3s ease;
+        border-radius: 1px;
+      }
+      
+      &:hover::after,
+      &.active::after {
+        width: 4px;
+      }
+      
+      .mobile-nav-icon {
+        transition: all 0.3s ease;
+      }
+      
+      &:hover .mobile-nav-icon {
+        transform: scale(1.1) translateX(4px);
+        color: var(--text-accent);
+      }
+    }
+  }
+}
+
+// Responsive Enhancements
+@media (max-width: 768px) {
+  .header-enhanced {
+    .header-content {
+      padding: 0 1rem;
+    }
+    
+    .nav-enhanced {
+      display: none;
+    }
+  }
+}
+
+// Animation Keyframes
+@keyframes headerGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+  }
+}
+
+// Performance Optimizations
+.header-enhanced {
+  will-change: transform, background-color;
+  contain: layout style paint;
+  
+  * {
+    will-change: auto;
+  }
+  
+  .logo-enhanced,
+  .nav-enhanced,
+  .theme-toggle-enhanced {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
 }
 
 .header-v2 {

@@ -9,7 +9,7 @@ import {
 import useIsMobile from "hooks/Mobile/useIsMobile";
 import useVisibility from "hooks/Visibility/useVisibility";
 
-function HomeIndex() {
+function HomeIndexs() {
   const { isMobile } = useIsMobile();
   const [statsRef, showStats] = useVisibility({
     threshold: isMobile ? 0.2 : 0.1,
@@ -77,4 +77,4 @@ function HomeIndex() {
   );
 }
 
-export default HomeIndex;
+export default HomeIndexs;

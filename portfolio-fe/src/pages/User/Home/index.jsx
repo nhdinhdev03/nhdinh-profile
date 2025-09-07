@@ -1,10 +1,10 @@
 import React from "react";
-import QuantumHome from "./QuantumHome";
+import HomeIndexs from "./sssssss";
 
 
 function HomeIndex() {
   
-  return <QuantumHome />;
+  return < HomeIndexs/>;
 }
 
 export default HomeIndex;

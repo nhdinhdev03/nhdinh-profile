@@ -5,6 +5,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useResponsive } from 'utils/responsive';
 import './QuantumHome.scss';
+import { Skills } from '..';
 
 const QuantumHome = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -531,8 +532,6 @@ const QuantumHome = () => {
           </div>
         </section>
 
-        {/* Skills Marquee */}
-      
       </main>
     </div>
   );

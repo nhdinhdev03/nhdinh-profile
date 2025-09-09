@@ -938,17 +938,7 @@ const ContactManagement = () => {
         title="Quản lý Liên hệ"
         subtitle="Quản lý tin nhắn và phản hồi từ khách hàng"
         icon={MailOutlined}
-        actions={
-          <div className="flex items-center space-x-3">
-            <Button
-              icon={<ReloadOutlined />}
-              onClick={fetchContacts}
-              loading={loading}
-            >
-              Làm mới
-            </Button>
-          </div>
-        }
+      
       />
 
       {/* Enhanced Statistics Cards */}

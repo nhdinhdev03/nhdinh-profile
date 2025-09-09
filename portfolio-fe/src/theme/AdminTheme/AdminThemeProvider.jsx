@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { createThemeConfig, generateCSSVariables } from './antdTheme';
 import "./AdminStyles.scss";
 import "../ThemeTransitions.scss";
+import "../../styles/admin/AdminGlobalStyles.scss";
 
 const AdminThemeCtx = createContext({
   light: true,

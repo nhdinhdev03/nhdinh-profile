@@ -1,12 +1,12 @@
 [build]
   base = "portfolio-fe"
   command = "npm run build"
-  publish = "portfolio-fe/dist"
+  publish = "dist"
   
 
   [build.environment]
   NODE_VERSION = "22.19.0"
-  
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

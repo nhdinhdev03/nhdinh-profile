@@ -8,6 +8,7 @@ import LoadingFallback from "components/Loading/LoadingFallback";
 import PageTransition from "components/PageTransition/PageTransition";
 import ScrollToTop from "components/Scroll/ScrollToTop/ScrollToTop";
 import ScrollToTopOnNavigate from "components/Scroll/ScrollToTopOnNavigate/ScrollToTopOnNavigate";
+import NotFound from "pages/NotFound/NotFound";
 
 import "styles/App.scss";
 
@@ -41,6 +42,7 @@ const App = memo(() => {
               />
             );
           })}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </Router>

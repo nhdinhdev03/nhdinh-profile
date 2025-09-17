@@ -14,7 +14,8 @@ import "styles/App.scss";
 
 
 import "./i18n";
-import NotFound from "./Pages/NotFound";
+import NotFound from "./Pages/NotFound/NotFound";
+
 
 const App = memo(() => {
   // Không cần truyền initialTheme vì useTheme đã tự động đọc từ document/localStorage

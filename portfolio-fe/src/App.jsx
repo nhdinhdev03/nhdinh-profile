@@ -13,8 +13,8 @@ import "styles/App.scss";
 
 
 
+import NotFound from "pages/NotFound/NotFound.jsx";
 import "./i18n";
-import NotFound from "./Pages/NotFound/NotFound";
 
 
 const App = memo(() => {

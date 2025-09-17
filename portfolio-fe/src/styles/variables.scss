@@ -1,0 +1,549 @@
+// Enhanced Color Palette
+:root {
+  // Primary Colors - Modern indigo/violet gradient
+  --primary-light: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-darker: #3730a3;
+  --secondary-light: #10b981;
+  --secondary-dark: #059669;
+  --accent-light: #f59e0b;
+  --accent-dark: #d97706;
+
+  // Background Colors - Enhanced depth
+  --bg-primary-light: #ffffff;
+  --bg-secondary-light: #f8fafc;
+  --bg-tertiary-light: #f1f5f9;
+  --bg-quaternary-light: #e2e8f0;
+
+  --bg-primary-dark: #0f172a;
+  --bg-secondary-dark: #1e293b;
+  --bg-tertiary-dark: #334155;
+  --bg-quaternary-dark: #475569;
+
+  // Text Colors
+  --text-primary-light: #1e293b;
+  --text-secondary-light: #64748b;
+  --text-tertiary-light: #94a3b8;
+
+  --text-primary-dark: #f8fafc;
+  --text-secondary-dark: #cbd5e1;
+  --text-tertiary-dark: #94a3b8;
+
+  // Border Colors
+  --border-light: #e2e8f0;
+  --border-dark: #475569;
+
+  // Shadow Colors
+  --shadow-light: rgba(15, 23, 42, 0.1);
+  --shadow-dark: rgba(0, 0, 0, 0.3);
+
+  // Enhanced Gradient Colors
+  --gradient-primary: linear-gradient(
+    135deg,
+    #6366f1 0%,
+    #8b5cf6 50%,
+    #ec4899 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    #10b981 0%,
+    #06b6d4 50%,
+    #3b82f6 100%
+  );
+  --gradient-accent: linear-gradient(
+    135deg,
+    #f59e0b 0%,
+    #ef4444 50%,
+    #ec4899 100%
+  );
+  --gradient-dark: linear-gradient(
+    135deg,
+    #1e293b 0%,
+    #334155 50%,
+    #475569 100%
+  );
+  --gradient-rainbow: linear-gradient(
+    135deg,
+    #6366f1 0%,
+    #8b5cf6 25%,
+    #ec4899 50%,
+    #f59e0b 75%,
+    #10b981 100%
+  );
+
+  // Glass morphism gradients
+  --glass-gradient-light: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  --glass-gradient-dark: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+}
+
+// Theme Variables
+[data-theme="light"] {
+  --bg-primary: var(--bg-primary-light);
+  --bg-secondary: var(--bg-secondary-light);
+  --bg-tertiary: var(--bg-tertiary-light);
+  --text-primary: var(--text-primary-light);
+  --text-secondary: var(--text-secondary-light);
+  --text-tertiary: var(--text-tertiary-light);
+  --border-color: var(--border-light);
+  --shadow-color: var(--shadow-light);
+}
+
+[data-theme="dark"] {
+  --bg-primary: var(--bg-primary-dark);
+  --bg-secondary: var(--bg-secondary-dark);
+  --bg-tertiary: var(--bg-tertiary-dark);
+  --text-primary: var(--text-primary-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --text-tertiary: var(--text-tertiary-dark);
+  --border-color: var(--border-dark);
+  --shadow-color: var(--shadow-dark);
+}
+
+// Typography
+$font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+  sans-serif;
+$font-mono: "JetBrains Mono", "Monaco", "Cascadia Code", monospace;
+
+// Font Sizes - Responsive scale with clamp()
+$font-xs: clamp(0.7rem, 0.5vw + 0.6rem, 0.75rem); // 11px - 12px
+$font-sm: clamp(0.8rem, 0.7vw + 0.7rem, 0.875rem); // 13px - 14px
+$font-base: clamp(0.9rem, 1vw + 0.8rem, 1rem); // 14px - 16px
+$font-lg: clamp(1rem, 1.2vw + 0.9rem, 1.125rem); // 16px - 18px
+$font-xl: clamp(1.1rem, 1.5vw + 1rem, 1.25rem); // 18px - 20px
+$font-2xl: clamp(1.3rem, 2vw + 1.1rem, 1.5rem); // 21px - 24px
+$font-3xl: clamp(1.6rem, 2.5vw + 1.3rem, 1.875rem); // 26px - 30px
+$font-4xl: clamp(1.9rem, 3vw + 1.5rem, 2.25rem); // 30px - 36px
+$font-5xl: clamp(2.4rem, 4vw + 2rem, 3rem); // 38px - 48px
+$font-6xl: clamp(3rem, 5vw + 2.5rem, 3.75rem); // 48px - 60px
+
+// Font Weights - Consistent naming
+$font-light: 300;
+$font-normal: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+$font-extrabold: 800;
+
+// Line Heights - Consistent scale
+$leading-none: 1;
+$leading-tight: 1.1;
+$leading-snug: 1.2;
+$leading-normal: 1.4;
+$leading-relaxed: 1.6;
+$leading-loose: 1.7;
+
+// Spacing - Enhanced with micro spacing for mobile
+$spacing-xxs: 0.125rem;  // 2px
+$spacing-xs: 0.25rem;    // 4px
+$spacing-sm: 0.5rem;     // 8px
+$spacing-md: 0.75rem;    // 12px
+$spacing-base: 1rem;     // 16px
+$spacing-lg: 1.25rem;    // 20px
+$spacing-xl: 1.5rem;     // 24px
+$spacing-2xl: 2rem;      // 32px
+$spacing-3xl: 2.5rem;    // 40px
+$spacing-4xl: 3rem;      // 48px
+$spacing-5xl: 4rem;      // 64px
+$spacing-6xl: 5rem;      // 80px
+
+// Enhanced Breakpoints - Optimized for all target devices
+$breakpoint-xxs: 320px;  // Very small mobile (iPhone SE, old Android)
+$breakpoint-xs: 375px;   // Standard mobile (iPhone, Android phones)
+$breakpoint-sm: 480px;   // Large mobile (iPhone Plus, large Android)
+$breakpoint-md: 768px;   // Tablet portrait (iPad, Android tablets)
+$breakpoint-lg: 1024px;  // Tablet landscape / Small laptop
+$breakpoint-xl: 1280px;  // Standard laptop
+$breakpoint-2xl: 1440px; // Large laptop / Small desktop
+$breakpoint-3xl: 1920px; // Desktop / Large monitor
+$breakpoint-4xl: 2560px; // Ultra-wide / 4K monitors
+
+// Device-specific breakpoints for better targeting
+$mobile-portrait: 479px;    // Mobile portrait max
+$mobile-landscape: 768px;   // Mobile landscape max  
+$tablet-portrait: 1023px;   // Tablet portrait max
+$tablet-landscape: 1279px;  // Tablet landscape max
+$laptop-small: 1439px;      // Small laptop max
+$desktop-standard: 1919px;  // Standard desktop max
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin hover-scale($scale: 1.05) {
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale($scale);
+  }
+}
+
+@mixin glass-effect {
+  background: var(--glass-gradient-light);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+// Advanced animation mixins
+@mixin float-animation($duration: 6s, $distance: 20px) {
+  animation: float #{$duration} ease-in-out infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-#{$distance});
+    }
+  }
+}
+
+// Container Queries - Modern responsive approach
+@mixin container-xs {
+  @container (min-width: 320px) {
+    @content;
+  }
+}
+
+@mixin container-sm {
+  @container (min-width: 640px) {
+    @content;
+  }
+}
+
+@mixin container-md {
+  @container (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin container-lg {
+  @container (min-width: 1024px) {
+    @content;
+  }
+}
+
+// Responsive container setup
+.responsive-container {
+  container-type: inline-size;
+  container-name: responsive-section;
+}
+
+// Typography mixins for consistency with responsive font sizing
+@mixin heading-style($size: $font-2xl, $weight: $font-bold) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $leading-snug;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+@mixin body-text($size: $font-base, $weight: $font-normal) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $leading-relaxed;
+  color: var(--text-secondary);
+}
+
+@mixin button-text($size: $font-sm, $weight: $font-medium) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $leading-none;
+  letter-spacing: 0.025em;
+}
+
+@mixin label-text($size: $font-xs, $weight: $font-medium) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $leading-normal;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+@mixin pulse-glow($color: var(--primary-light)) {
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+
+  @keyframes pulse-glow {
+    from {
+      box-shadow: 0 0 5px #{$color};
+    }
+    to {
+      box-shadow: 0 0 20px #{$color}, 0 0 30px #{$color};
+    }
+  }
+}
+
+@mixin gradient-text($gradient: var(--gradient-primary)) {
+  background: #{$gradient};
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+// Enhanced Responsive Mixins - Optimized for all devices
+@mixin mobile-xxs-only {
+  @media (max-width: #{$breakpoint-xxs - 1px}) {
+    @content;
+  }
+}
+
+@mixin mobile-xs-only {
+  @media (max-width: #{$breakpoint-xs - 1px}) {
+    @content;
+  }
+}
+
+@mixin mobile-sm-only {
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    @content;
+  }
+}
+
+@mixin mobile-only {
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin mobile-xs-up {
+  @media (min-width: $breakpoint-xs) {
+    @content;
+  }
+}
+
+@mixin mobile-sm-up {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin tablet-landscape-up {
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin laptop-up {
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: $breakpoint-2xl) {
+    @content;
+  }
+}
+
+@mixin large-desktop-up {
+  @media (min-width: $breakpoint-3xl) {
+    @content;
+  }
+}
+
+// Device-specific mixins
+@mixin mobile-portrait {
+  @media (max-width: $mobile-portrait) and (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin mobile-landscape {
+  @media (max-width: $mobile-landscape) and (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin tablet-portrait {
+  @media (min-width: $breakpoint-md) and (max-width: $tablet-portrait) and (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin tablet-landscape {
+  @media (min-width: $breakpoint-lg) and (max-width: $tablet-landscape) and (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin laptop-small {
+  @media (min-width: $breakpoint-xl) and (max-width: $laptop-small) {
+    @content;
+  }
+}
+
+@mixin desktop-standard {
+  @media (min-width: $breakpoint-2xl) and (max-width: $desktop-standard) {
+    @content;
+  }
+}
+
+@mixin touch-device {
+  @media (hover: none), (pointer: coarse) {
+    @content;
+  }
+}
+
+@mixin hover-device {
+  @media (hover: hover) and (pointer: fine) {
+    @content;
+  }
+}
+
+@mixin mobile-touch-target($size: 44px) {
+  min-width: $size;
+  min-height: $size;
+  padding: $spacing-sm;
+
+  // Enhanced touch targets for different device sizes
+  @include mobile-xxs-only {
+    min-width: 48px;
+    min-height: 48px;
+    padding: $spacing-md;
+  }
+
+  @include mobile-xs-up {
+    min-width: 44px;
+    min-height: 44px;
+    padding: $spacing-sm;
+  }
+
+  @include tablet-up {
+    min-width: 40px;
+    min-height: 40px;
+    padding: $spacing-xs;
+  }
+
+  // Ensure proper spacing for accessibility
+  margin: $spacing-xs;
+
+  // Improve tap response on touch devices
+  @include touch-device {
+    &:active {
+      transform: scale(0.95);
+      transition: transform 0.1s ease;
+    }
+
+    // Remove hover effects on touch devices
+    &:hover {
+      transform: none;
+    }
+  }
+
+  // Enhanced hover effects for devices with hover capability
+  @include hover-device {
+    &:hover {
+      transform: translateY(-1px);
+      transition: transform 0.2s ease;
+    }
+  }
+}
+
+@mixin mobile-scroll-snap {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+
+  > * {
+    scroll-snap-align: start;
+  }
+}
+
+@mixin morphing-border($color: var(--primary-light)) {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: #{$color};
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+@mixin card-shadow {
+  box-shadow: 0 4px 6px -1px var(--shadow-color),
+    0 2px 4px -1px var(--shadow-color);
+}
+
+// Animations
+@mixin fadeInUp($delay: 0s) {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s ease-out #{$delay} forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@mixin slideInLeft($delay: 0s) {
+  opacity: 0;
+  transform: translateX(-30px);
+  animation: slideInLeft 0.6s ease-out #{$delay} forwards;
+}
+
+@keyframes slideInLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@mixin slideInRight($delay: 0s) {
+  opacity: 0;
+  transform: translateX(30px);
+  animation: slideInRight 0.6s ease-out #{$delay} forwards;
+}
+
+@keyframes slideInRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

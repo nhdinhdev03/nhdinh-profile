@@ -1,0 +1,263 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "hello": "Hello",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "download": "Download",
+    "upload": "Upload",
+    "search": "Search"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact",
+    "blog": "Blog",
+    "admin": "Admin",
+    "experience": "Experience",
+    "menu": "Navigation",
+    "choose_destination": "Choose your destination"
+  },
+  "header": {
+    "brand_name": "Nhdinh",
+    "brand_title": "Web Developer",
+    "theme_toggle_dark": "Switch to dark theme",
+    "theme_toggle_light": "Switch to light theme",
+    "menu_toggle": "Toggle menu",
+    "switch_to_light": "Switch to Light Mode",
+    "switch_to_dark": "Switch to Dark Mode",
+    "logo_aria_label": "Go to homepage"
+  },
+  "language": {
+    "title": "Language",
+    "current": "Current language",
+    "switch_to": "Switch to",
+    "vietnamese": "Tiếng Việt",
+    "english": "English"
+  },
+  "hero": {
+    "title": "Professional Portfolio",
+    "subtitle": "Full Stack Developer",
+    "description": "Passionate about creating innovative solutions and building amazing user experiences",
+    "cta": "View My Work",
+    "contact_me": "Contact Me",
+    "download_cv": "Download CV",
+    "view_portfolio": "View Portfolio",
+    "greeting": "Hello! 👋 I'm",
+    "role_label": "I am a",
+    "contact_button": "Contact me",
+    "download_cv_button": "Download CV"
+  },
+  "experience": {
+    "subtitle": "Learning and development journey",
+    "title": "Experience & Learning",
+    "description": "From basic HTML/CSS/JS to Java Swing and modern Web Development"
+  },
+  "testimonials": {
+    "subtitle": "Loved by the community",
+    "title": "What People Say",
+    "description": "Trusted by developers and companies worldwide",
+    "join_community": "Join the community of satisfied clients"
+  },
+  "about": {
+    "title": "About Me",
+    "description": "I am a passionate developer with expertise in modern web technologies",
+    "experience": "Experience",
+    "education": "Education",
+    "skills": "Skills",
+    "connect_title": "Connect With Me",
+    "connect_description": "I'm always ready to discuss new opportunities and exciting projects. Get in touch if you want to collaborate or just connect!",
+    "dark_mode_active": "🌙 Dark Mode Active",
+    "light_mode_active": "☀️ Light Mode",
+    "job_title": "Developer & Software Engineer",
+    "description_line1": "Turning ideas into refined products",
+    "description_line1_highlight": "full-stack web application development",
+    "description_line1_end": "system performance optimization",
+    "description_line2": "Passionate about learning new technologies",
+    "description_line2_highlight": "optimizing user experience",
+    "description_line3": "When not coding, I explore system design",
+    "default_bio": "Experienced with React, Node.js and cloud technologies with a passion for clean, scalable code.",
+    "badge_available": "Available for Work",
+    "badge_learning": "Always Learning",
+    "badge_coffee": "Coffee Lover",
+    "email": "Email",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "specializing_in": "— specializing in",
+    "and": "and",
+    "connect_devops": ", clean architecture design and",
+    "devops_learning": " and improving DevOps skills. ",
+    "badge_web_dev": "Web Developer",
+    "badge_system_design": "System Design",
+    "contact_action": "Contact",
+    "download_cv": "Download CV",
+    "view_projects": "View Projects"
+  },
+  "projects": {
+    "title": "Featured Projects",
+    "subtitle": "Explore the products I've created",
+    "description": "A showcase of representative projects I've developed, from web applications to mobile apps.",
+    "filters": {
+      "featured": "Featured",
+      "all": "All",
+      "fullstack": "Full Stack",
+      "frontend": "Frontend",
+      "mobile": "Mobile",
+      "backend": "Backend"
+    },
+    "view_modes": {
+      "grid": "Grid view",
+      "list": "List view"
+    },
+    "status": {
+      "completed": "Completed",
+      "in_progress": "In Progress",
+      "planned": "Planned"
+    },
+    "actions": {
+      "view_demo": "View demo",
+      "view_code": "View code",
+      "visit_site": "Visit site",
+      "view_details": "View details",
+      "live_demo": "Live demo",
+      "source_code": "Source code"
+    },
+    "empty_state": {
+      "title": "No projects found",
+      "description": "No projects match the current filter.",
+      "suggestion": "Please try another category."
+    },
+    "featured_badge": "Featured",
+    "try_another_category": "Please try another category.",
+    "view_details": "View Details",
+    "live_demo": "Live Demo",
+    "source_code": "Source Code",
+    "start_project": "Start Project",
+    "cta_title": "Have an exciting idea?",
+    "cta_description": "Let's bring your ideas to life with the latest technology!",
+    "view_reviews": "View Reviews",
+    "no_projects": "No projects found with this filter."
+  },
+  "contact": {
+    "title": "Contact & Collaboration",
+    "subtitle": "Let's work together!",
+    "description": "I'm always ready to discuss new projects and collaboration opportunities",
+    "form_title": "Send a message",
+    "info_title": "Contact Information",
+    "info_description": "Feel free to reach out through the channels below!",
+    "name": "Your name",
+    "name_required": "Your name *",
+    "email": "Your email",
+    "email_required": "Email *",
+    "subject": "Subject",
+    "subject_required": "Subject *",
+    "project_type": "Project type",
+    "project_type_placeholder": "Select project type",
+    "budget": "Estimated budget",
+    "budget_placeholder": "Select budget",
+    "timeline": "Completion time",
+    "timeline_placeholder": "Select timeline",
+    "message": "Your message",
+    "message_required": "Project details *",
+    "character_count": "characters",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success_message": "Thank you for getting in touch! I'll get back to you soon.",
+    "error_message": "Please try again later or contact me directly via email.",
+    "get_in_touch": "Get In Touch",
+    "phone": "Phone",
+    "location": "Location",
+    "timelines": "Timelines",
+    "appointment_schedule": "Appointment Schedule",
+    "book": "Book a consultation",
+    "schedule a consultation": "Free 30-minute consultation",
+    "quick_contact": "Or reach out quickly via:",
+    "availability": "Available for new projects",
+    "response_time": "I commit to respond within 24 hours",
+    "response_commitment": "Response within 24h"
+  },
+  "footer": {
+    "brand_name": "Hoang Dinh",
+    "brand_title": "Full Stack Developer",
+    "description": "Creating amazing web experiences with modern technology and creative thinking.",
+    "download_cv": "Download CV",
+    "hire_me": "Hire Me",
+    "quick_links": "Quick Links",
+    "contact_info": "Contact Info",
+    "social_media": "Social Media",
+    "copyright": "All rights reserved",
+    "designed_by": "Designed and developed with",
+    "love": "love",
+    "email": "hoangdinh@example.com",
+    "phone": "+84 123 456 789",
+    "location": "Hau Giang, Vietnam"
+  },
+  "skills": {
+    "title": "Professional Skills",
+    "subtitle": "Technologies & Skills",
+    "description": "A comprehensive overview of technologies and skills I use to create high-quality products",
+    "expertise_title": "Areas of Expertise",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Database",
+    "tools": "Tools",
+    "others": "Others",
+    "categories": {
+      "frontend": {
+        "title": "Frontend Development",
+        "description": "Building modern and responsive user interfaces"
+      },
+      "backend": {
+        "title": "Backend Development",
+        "description": "Developing APIs and server-side logic"
+      },
+      "database": {
+        "title": "Database & Storage",
+        "description": "Managing and optimizing databases"
+      },
+      "tools": {
+        "title": "Tools & DevOps",
+        "description": "Development and deployment tools"
+      },
+      "mobile": {
+        "title": "Mobile Development",
+        "description": "Cross-platform mobile application development"
+      }
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Insights",
+    "description": "Sharing knowledge, experiences and the latest trends in programming",
+    "read_more": "Read more",
+    "published_on": "Published on",
+    "by_author": "by",
+    "categories": "Categories",
+    "tags": "Tags",
+    "recent_posts": "Recent Posts",
+    "filters": {
+      "all": "All",
+      "react": "React",
+      "css": "CSS",
+      "nodejs": "Node.js",
+      "typescript": "TypeScript",
+      "performance": "Performance"
+    },
+    "search_placeholder": "Search articles...",
+    "no_posts": "No matching articles found",
+    "load_more": "Load more"
+  }
+}

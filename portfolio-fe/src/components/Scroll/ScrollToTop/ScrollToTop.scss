@@ -1,0 +1,97 @@
+@use 'styles/variables' as *;
+
+.scroll-to-top {
+  position: fixed;
+  bottom: $spacing-2xl;
+  right: $spacing-2xl;
+  width: 50px;
+  height: 50px;
+  @include flex-center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  color: var(--primary-light);
+  font-size: $font-lg;
+  cursor: pointer;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  z-index: 998;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  
+  // Performance optimizations
+  will-change: transform, opacity;
+  transform: translateZ(0); // Force hardware acceleration
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+
+
+  &__progress {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+    
+    // Hardware acceleration for smooth progress bar
+    transform: translateZ(0);
+
+  
+  }
+}
+
+// Mobile optimizations
+@media (max-width: $breakpoint-sm) {
+  .scroll-to-top {
+    bottom: $spacing-xl;
+    right: $spacing-xl;
+    width: 45px;
+    height: 45px;
+    font-size: $font-base;
+    
+    // Reduce backdrop-filter on mobile for better performance
+    backdrop-filter: blur(5px);
+    
+    &:hover {
+      // Minimal scale on mobile to prevent layout issues
+      transform: translateZ(0) scale(1.02);
+    }
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .scroll-to-top {
+    border-width: 2px;
+  }
+}
+
+// Reduced motion - completely disable animations
+@media (prefers-reduced-motion: reduce) {
+  .scroll-to-top {
+    transition: none;
+    will-change: auto;
+    
+    &:hover {
+      transform: none;
+    }
+    
+    &__progress-bar {
+      will-change: auto;
+    }
+  }
+}
+
+// Low-end device optimizations
+@media (max-resolution: 120dpi) {
+  .scroll-to-top {
+    backdrop-filter: none;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    
+    &:hover {
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+  }
+}

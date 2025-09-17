@@ -1,95 +1,53 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { publicRoutes, privateRoutes } from "./router";
+import { useTheme } from "hooks/useTheme";
+import MainLayout from "layouts/MainLayout";
+import { memo, Suspense } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { publicRoutes } from "router";
+
+import LoadingFallback from "components/Loading/LoadingFallback";
+import PageTransition from "components/PageTransition/PageTransition";
+import ScrollToTop from "components/Scroll/ScrollToTop/ScrollToTop";
+import ScrollToTopOnNavigate from "components/Scroll/ScrollToTopOnNavigate/ScrollToTopOnNavigate";
 import NotFound from "pages/NotFound";
-import ScrollToTop from "router/ScrollToHash";
-import {
-  NotificationContextProvider,
-  PageTransition,
-  ProtectedRoute,
-} from "components";
-import { AuthProvider } from "contexts/AuthContext";
-import { AUTH_LOGIN } from "router/routeConstants";
+import "styles/App.scss";
 
+// Import i18n configuration
+import "./i18n";
 
-function App() {
+const App = memo(() => {
+  // Không cần truyền initialTheme vì useTheme đã tự động đọc từ document/localStorage
+  const [theme, toggleTheme] = useTheme();
 
   return (
-    <AuthProvider>
-      <NotificationContextProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            {publicRoutes.map(
-              ({ path, component: Component, layout: Layout }) => (
-                <Route
-                  key={path}
-                  path={path}
-                  element={
-                    <Layout>
-                      <PageTransition>
-                        <Component />
-                      </PageTransition>
-                    </Layout>
-                  }
-                />
-              )
-            )}
-
-            {privateRoutes.map(
-              ({ path, component: Component, layout: Layout }) => {
-                // Login page doesn't need protection
-                if (path === AUTH_LOGIN) {
-                  return (
-                    <Route
-                      key={path}
-                      path={path}
-                      element={
-                        Layout ? (
-                          <Layout>
-                            <PageTransition>
-                              <Component />
-                            </PageTransition>
-                          </Layout>
-                        ) : (
-                          <PageTransition>
-                            <Component />
-                          </PageTransition>
-                        )
-                      }
-                    />
-                  );
+    <Router>
+      <ScrollToTopOnNavigate />
+      <ScrollToTop />
+      <Suspense fallback={<LoadingFallback theme={theme} />}>
+        <Routes>
+          {publicRoutes.map((route, index) => {
+            const Page = route.component;
+            const LayoutComponent = route.layout ?? MainLayout; // fallback
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  <LayoutComponent theme={theme} toggleTheme={toggleTheme}>
+                    <PageTransition>
+                      <Page />
+                    </PageTransition>
+                  </LayoutComponent>
                 }
-
-                // All other admin routes need protection
-                return (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={
-                      <ProtectedRoute>
-                        {Layout ? (
-                          <Layout>
-                            <PageTransition>
-                              <Component />
-                            </PageTransition>
-                          </Layout>
-                        ) : (
-                          <PageTransition>
-                            <Component />
-                          </PageTransition>
-                        )}
-                      </ProtectedRoute>
-                    }
-                  />
-                );
-              }
-            )}
-
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </NotificationContextProvider>
-    </AuthProvider>
+              />
+            );
+          })}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </Router>
   );
-}
+});
+
+App.displayName = 'App';
+
 export default App;

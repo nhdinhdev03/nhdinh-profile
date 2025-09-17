@@ -1,0 +1,601 @@
+@use 'styles/variables' as *;
+
+// Keyframe animations for smooth transitions
+@keyframes filterActivate {
+  0% {
+    transform: translateY(-2px) scale(1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.05);
+  }
+  100% {
+    transform: translateY(-2px) scale(1);
+  }
+}
+
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.projects {
+  padding: $spacing-6xl 0;
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $spacing-base;
+
+    @media (max-width: $breakpoint-md) {
+      padding: 0 $spacing-lg;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      padding: 0 $spacing-base;
+    }
+  }
+
+  // Header Section
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-5xl;
+
+    @media (max-width: $breakpoint-md) {
+      margin-bottom: $spacing-4xl;
+    }
+  }
+
+  &__title-section {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    font-size: clamp($font-3xl, 5vw, $font-5xl);
+    font-weight: $font-bold;
+    color: var(--text-primary);
+    margin-bottom: $spacing-lg;
+    line-height: 1.2;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-3xl;
+    }
+  }
+
+  &__subtitle {
+    font-size: clamp($font-lg, 2.5vw, $font-xl);
+    color: var(--primary-light);
+    margin-bottom: $spacing-base;
+    font-weight: $font-medium;
+  }
+
+  &__description {
+    font-size: $font-base;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-sm;
+    }
+  }
+
+  // Filters Section
+  &__filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-4xl;
+    gap: $spacing-lg;
+    flex-wrap: wrap;
+
+    @media (max-width: $breakpoint-lg) {
+      flex-direction: column;
+      gap: $spacing-xl;
+    }
+  }
+
+  &__filter-group {
+    display: flex;
+    align-items: center;
+    gap: $spacing-base;
+    flex-wrap: wrap;
+
+    @media (max-width: $breakpoint-md) {
+      justify-content: center;
+    }
+  }
+
+  &__filter-icon {
+    color: var(--text-tertiary);
+    font-size: $font-lg;
+    margin-right: $spacing-sm;
+
+    @media (max-width: $breakpoint-sm) {
+      display: none;
+    }
+  }
+
+  &__filter-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-lg;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    color: var(--text-secondary);
+    font-weight: $font-medium;
+    font-size: $font-sm;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-xs $spacing-base;
+      font-size: $font-xs;
+    }
+
+    // Smooth glow effect on hover
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--gradient-primary);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover {
+      border-color: var(--primary-light);
+      color: var(--text-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.15);
+
+      &::before {
+        opacity: 0.1;
+      }
+    }
+
+    &.active {
+      background: var(--gradient-primary);
+      border-color: transparent;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(var(--primary-rgb), 0.3);
+      animation: filterActivate 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+      &::before {
+        opacity: 1;
+      }
+
+      .projects__filter-count {
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+        backdrop-filter: blur(10px);
+      }
+    }
+  }
+
+  &__filter-count {
+    background: var(--bg-tertiary);
+    color: var(--text-tertiary);
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 15px;
+    font-size: $font-xs;
+    font-weight: $font-semibold;
+    min-width: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  &__view-toggle {
+    display: flex;
+    gap: $spacing-xs;
+    background: var(--bg-secondary);
+    padding: $spacing-xs;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+  }
+
+  &__view-btn {
+    width: 40px;
+    height: 40px;
+    @include flex-center;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-tertiary);
+    font-size: $font-lg;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      background: var(--primary-light);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &:hover {
+      color: var(--text-primary);
+      transform: translateY(-1px);
+
+      &::before {
+        opacity: 0.1;
+        transform: scale(1);
+      }
+    }
+
+    &.active {
+      background: var(--primary-light);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+
+      &::before {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  }
+
+  // Grid Section
+  &__grid {
+    display: grid;
+    gap: $spacing-3xl;
+    margin-bottom: $spacing-4xl;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+
+    @media (max-width: $breakpoint-lg) {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: $spacing-2xl;
+    }
+
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: $spacing-xl;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      grid-template-columns: 1fr;
+      gap: $spacing-lg;
+    }
+
+    &--list {
+      grid-template-columns: 1fr;
+      gap: $spacing-xl;
+      max-width: 900px;
+      margin: 0 auto $spacing-4xl;
+    }
+  }
+
+  // Project Cards
+  &__card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+
+    @media (max-width: $breakpoint-sm) {
+      border-radius: 16px;
+    }
+
+    // Enhanced glow effect
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: var(--gradient-primary);
+      border-radius: 22px;
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.4s ease;
+    }
+
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(var(--primary-rgb), 0.1);
+      border-color: var(--primary-light);
+
+      &::before {
+        opacity: 0.1;
+      }
+
+      .projects__card-overlay {
+        opacity: 1;
+      }
+
+      .projects__card-image img {
+        transform: scale(1.05);
+      }
+
+      .projects__tech-tag {
+        transform: translateY(-1px);
+      }
+    }
+
+    // Staggered animation entrance
+    animation: cardEntrance 0.6s ease-out;
+  }
+
+  &__card-image {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+
+    @media (max-width: $breakpoint-sm) {
+      height: 200px;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+  }
+
+  &__card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    @include flex-center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &__card-actions {
+    display: flex;
+    gap: $spacing-base;
+  }
+
+  &__action-btn {
+    width: 48px;
+    height: 48px;
+    @include flex-center;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    font-size: $font-lg;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+  }
+
+  &__featured-badge {
+    position: absolute;
+    top: $spacing-base;
+    right: $spacing-base;
+    background: var(--gradient-accent);
+    color: white;
+    padding: $spacing-xs $spacing-base;
+    border-radius: 20px;
+    font-size: $font-xs;
+    font-weight: $font-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__card-content {
+    padding: $spacing-xl;
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-lg;
+    }
+  }
+
+  &__card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-base;
+    gap: $spacing-base;
+  }
+
+  &__card-year {
+    background: var(--bg-tertiary);
+    color: var(--text-tertiary);
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 12px;
+    font-size: $font-xs;
+    font-weight: $font-medium;
+  }
+
+  &__card-status {
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 15px;
+    font-size: $font-xs;
+    font-weight: $font-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &--completed {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--secondary-light);
+      border: 1px solid var(--secondary-light);
+    }
+
+    &--in-progress {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--accent-light);
+      border: 1px solid var(--accent-light);
+    }
+  }
+
+  &__card-title {
+    font-size: $font-xl;
+    font-weight: $font-semibold;
+    color: var(--text-primary);
+    margin-bottom: $spacing-sm;
+    line-height: 1.3;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-lg;
+    }
+  }
+
+  &__card-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: $spacing-lg;
+    font-size: $font-base;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-sm;
+    }
+  }
+
+  &__card-tech {
+    display: flex;
+    gap: $spacing-sm;
+    flex-wrap: wrap;
+  }
+
+  &__tech-tag {
+    padding: $spacing-xs $spacing-base;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-radius: 15px;
+    font-size: $font-xs;
+    font-weight: $font-medium;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gradient-primary);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover {
+      color: white;
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    // Ensure text stays above background
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  // Empty State
+  &__empty {
+    text-align: center;
+    padding: $spacing-4xl;
+    color: var(--text-secondary);
+    font-size: $font-lg;
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-2xl;
+      font-size: $font-base;
+    }
+  }
+}
+
+// Dark theme enhancements
+[data-theme="dark"] {
+  .projects {
+    &__card {
+      &:hover {
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    &__action-btn {
+      background: rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.1);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.5);
+      }
+    }
+  }
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+  .projects {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+
+    &__card:hover {
+      transform: none !important;
+    }
+
+    &__card-image img:hover {
+      transform: none !important;
+    }
+  }
+}
+
+// Focus styles for accessibility
+.projects__filter-btn:focus,
+.projects__view-btn:focus,
+.projects__action-btn:focus {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+}
+
+// Print styles
+@media print {
+  .projects__filters,
+  .projects__card-overlay {
+    display: none;
+  }
+
+  .projects__card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}

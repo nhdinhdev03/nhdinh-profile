@@ -1,0 +1,641 @@
+@use 'variables' as *;
+
+
+// Enhanced CSS Reset & Base Styles with Complete Responsive Support
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: clamp(14px, 1.75vw, 18px); // Enhanced responsive base font size
+  line-height: $leading-relaxed;
+  /* Enhanced header height with device-specific optimization */
+  --header-height: 70px;
+  scroll-padding-top: calc(var(--header-height) + env(safe-area-inset-top, 0px));
+  
+  // Enhanced scroll performance for all devices
+  overscroll-behavior: contain;
+  scroll-snap-type: y proximity;
+  -webkit-overflow-scrolling: touch;
+  
+  // Device-specific optimizations
+  @include mobile-xxs-only {
+    font-size: clamp(12px, 3vw, 14px);
+    --header-height: 52px;
+  }
+  
+  @include mobile-xs-only {
+    font-size: clamp(13px, 2.5vw, 15px);
+    --header-height: 56px;
+  }
+  
+  @include mobile-sm-only {
+    font-size: clamp(14px, 2vw, 16px);
+    --header-height: 60px;
+  }
+  
+  @include tablet-up {
+    font-size: clamp(15px, 1.5vw, 17px);
+    --header-height: 70px;
+  }
+  
+  @include desktop-up {
+    font-size: clamp(16px, 1.25vw, 18px);
+    --header-height: 75px;
+  }
+}
+
+body {
+  font-family: $font-primary;
+  font-weight: $font-normal;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  
+  // Optimize smooth scroll
+  &.no-scroll {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+  
+  // Improve scroll performance on mobile
+  -webkit-overflow-scrolling: touch;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-weight: $font-semibold;
+  line-height: $leading-snug;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: clamp($font-3xl, 4vw, $font-6xl);
+  font-weight: $font-bold;
+  
+  @include mobile-only {
+    font-size: clamp($font-2xl, 8vw, $font-4xl);
+    line-height: 1.1;
+  }
+}
+
+h2 {
+  font-size: clamp($font-2xl, 3vw, $font-5xl);
+  
+  @include mobile-only {
+    font-size: clamp($font-xl, 6vw, $font-3xl);
+    line-height: 1.2;
+  }
+}
+
+h3 {
+  font-size: clamp($font-xl, 2.5vw, $font-4xl);
+  
+  @include mobile-only {
+    font-size: clamp($font-lg, 5vw, $font-2xl);
+  }
+}
+
+h4 {
+  font-size: clamp($font-lg, 2vw, $font-3xl);
+  
+  @include mobile-only {
+    font-size: clamp($font-base, 4vw, $font-xl);
+  }
+}
+
+h5 {
+  font-size: clamp($font-base, 1.5vw, $font-2xl);
+  
+  @include mobile-only {
+    font-size: clamp($font-sm, 3vw, $font-lg);
+  }
+}
+
+h6 {
+  font-size: clamp($font-sm, 1.2vw, $font-xl);
+  
+  @include mobile-only {
+    font-size: clamp($font-xs, 2.5vw, $font-base);
+  }
+}
+
+p {
+  color: var(--text-secondary);
+  margin-bottom: $spacing-base;
+  font-size: clamp($font-sm, 1.1vw, $font-lg);
+  
+  @include mobile-only {
+    font-size: $font-sm;
+    line-height: 1.6;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+a {
+  color: var(--primary-light);
+  text-decoration: none;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: var(--primary-dark);
+  }
+}
+
+// Utility Classes
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 $spacing-base;
+
+  @include mobile-only {
+    padding: 0 $spacing-sm;
+    max-width: 100%;
+  }
+
+  @media (min-width: $breakpoint-sm) {
+    padding: 0 $spacing-2xl;
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    padding: 0 $spacing-3xl;
+  }
+}
+
+.section {
+  padding: $spacing-5xl 0;
+
+  @include mobile-only {
+    padding: $spacing-3xl 0;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    padding: $spacing-6xl 0;
+  }
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: $spacing-4xl;
+  
+  h2 {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: $spacing-base;
+  }
+
+  p {
+    font-size: $font-lg;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: $font-primary;
+  font-size: $font-base;
+  font-weight: $font-medium;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  @include mobile-only {
+    @include mobile-touch-target(48px);
+    padding: $spacing-base $spacing-lg;
+    font-size: $font-sm;
+    border-radius: 0.75rem;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  // Disable hover effects on touch devices
+  @include touch-device {
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    
+    &:active {
+      transform: scale(0.95);
+      transition: transform 0.1s ease;
+    }
+  }
+
+  &.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    }
+  }
+
+  &.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+
+    &:hover {
+      background: var(--bg-tertiary);
+      transform: translateY(-2px);
+    }
+  }
+
+  &.btn-outline {
+    background: transparent;
+    color: var(--primary-light);
+    border: 2px solid var(--primary-light);
+    
+    // Mobile-specific optimizations
+    @include mobile-only {
+      border-width: 1.5px;
+      min-width: 140px;
+      padding: calc(#{$spacing-base} + 2px) calc(#{$spacing-lg} + 4px);
+      font-weight: 500;
+      
+      // Better visual feedback on mobile
+      &:active {
+        background: rgba(99, 102, 241, 0.1);
+        border-color: var(--primary);
+        transform: scale(0.98);
+        transition: all 0.15s ease;
+      }
+    }
+
+    &:hover {
+      background: var(--primary-light);
+      color: white;
+      
+      // Disable hover on touch devices
+      @include touch-device {
+        background: transparent;
+        color: var(--primary-light);
+      }
+    }
+    
+    // Enhanced focus state for accessibility
+    &:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+      background: rgba(99, 102, 241, 0.05);
+    }
+  }
+}
+
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: $spacing-2xl;
+  @include card-shadow;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  @include mobile-only {
+    padding: $spacing-lg;
+    border-radius: 0.75rem;
+    margin-bottom: $spacing-base;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px var(--shadow-color);
+
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+
+  // Mobile touch interactions
+  @include mobile-only {
+    &:hover {
+      transform: none;
+    }
+    
+    &:active {
+      transform: scale(0.98);
+      transition: transform 0.1s ease;
+    }
+  }
+}
+
+.grid {
+  display: grid;
+  gap: $spacing-2xl;
+
+  &.grid-2 {
+    @media (min-width: $breakpoint-md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &.grid-3 {
+    @media (min-width: $breakpoint-sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &.grid-4 {
+    @media (min-width: $breakpoint-sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}
+
+// Scrollbar Styling
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--primary-dark);
+  }
+}
+
+// Selection Styling
+::selection {
+  background: var(--primary-light);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--primary-light);
+  color: white;
+}
+
+// Focus Styles - Enhanced for responsive accessibility
+*:focus {
+  // outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+// Mobile Performance Optimizations
+@include mobile-only {
+  // Disable complex animations and optimize performance
+  * {
+    animation-duration: 0.3s !important;
+    transition-duration: 0.3s !important;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  
+  // Disable hover effects that can cause performance issues
+  *:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  // Optimize images for mobile
+  img {
+    max-width: 100%;
+    height: auto;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  
+  // Improve touch scrolling
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
+
+// Touch device optimizations
+@include touch-device {
+  // Improve touch targets
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  // Disable text selection on interactive elements
+  button, a {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  
+  // Improve tap highlighting
+  * {
+    -webkit-tap-highlight-color: rgba(99, 102, 241, 0.1);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  // Disable parallax and complex animations
+  .parallax, .floating, .morphing {
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+// Responsive Image Utilities
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  
+  // Lazy loading optimization
+  &[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    &.loaded {
+      opacity: 1;
+    }
+  }
+  
+  // Aspect ratio containers
+  &.aspect-video {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  
+  &.aspect-square {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+  
+  &.aspect-portrait {
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+  }
+}
+
+// Responsive video
+.responsive-video {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+// Responsive iframe (for embeds)
+.responsive-iframe {
+  width: 100%;
+  border: none;
+  aspect-ratio: 16 / 9;
+}
+
+// Responsive grid utilities
+.responsive-grid {
+  display: grid;
+  gap: $spacing-base;
+  grid-template-columns: 1fr;
+  
+  @include mobile-xs-up {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @include tablet-up {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-lg;
+  }
+  
+  @include desktop-up {
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-xl;
+  }
+}
+
+// Responsive flexbox utilities
+.responsive-flex {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-base;
+  
+  @include tablet-up {
+    flex-direction: row;
+    gap: $spacing-lg;
+  }
+}
+
+// Responsive text alignment
+.text-responsive {
+  text-align: center;
+  
+  @include tablet-up {
+    text-align: left;
+  }
+}
+
+// Accessibility Improvements for Responsive Design
+// Improve contrast for better readability
+@media (prefers-contrast: high) {
+  :root {
+    --text-primary-light: #000000;
+    --text-secondary-light: #333333;
+    --bg-primary-light: #ffffff;
+    --border-light: #000000;
+  }
+  
+  [data-theme="dark"] {
+    --text-primary-dark: #ffffff;
+    --text-secondary-dark: #cccccc;
+    --bg-primary-dark: #000000;
+    --border-dark: #ffffff;
+  }
+}
+
+// Large text mode support
+@media (prefers-contrast: high) and (min-resolution: 192dpi) {
+  html {
+    font-size: clamp(18px, 3vw, 20px);
+  }
+  
+  .btn {
+    min-height: 56px;
+    padding: $spacing-lg $spacing-2xl;
+    font-size: $font-lg;
+  }
+}
+
+// Responsive spacing utilities
+.spacing-responsive {
+  padding: $spacing-base;
+  
+  @include mobile-xs-up {
+    padding: $spacing-lg;
+  }
+  
+  @include tablet-up {
+    padding: $spacing-xl;
+  }
+  
+  @include desktop-up {
+    padding: $spacing-2xl;
+  }
+}

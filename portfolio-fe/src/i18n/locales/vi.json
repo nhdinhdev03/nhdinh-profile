@@ -1,0 +1,263 @@
+{
+  "common": {
+    "welcome": "Chào mừng",
+    "hello": "Xin chào",
+    "loading": "Đang tải...",
+    "error": "Đã xảy ra lỗi",
+    "success": "Thành công",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "save": "Lưu",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "view": "Xem",
+    "close": "Đóng",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước đó",
+    "download": "Tải xuống",
+    "upload": "Tải lên",
+    "search": "Tìm kiếm"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "about": "Giới thiệu",
+    "projects": "Dự án",
+    "skills": "Kỹ năng",
+    "contact": "Liên hệ",
+    "blog": "Blog",
+    "admin": "Quản trị",
+    "experience": "Kinh nghiệm",
+    "menu": "Menu",
+    "choose_destination": "Chọn điểm đến của bạn"
+  },
+  "header": {
+    "brand_name": "Nhdinh",
+    "brand_title": "Web Developer",
+    "theme_toggle_dark": "Chuyển sang giao diện tối",
+    "theme_toggle_light": "Chuyển sang giao diện sáng",
+    "menu_toggle": "Mở/Đóng menu",
+    "switch_to_light": "Chuyển sang Giao diện Sáng",
+    "switch_to_dark": "Chuyển sang Giao diện Tối",
+    "logo_aria_label": "Về trang chủ"
+  },
+  "language": {
+    "title": "Ngôn ngữ",
+    "current": "Ngôn ngữ hiện tại",
+    "switch_to": "Chuyển sang",
+    "vietnamese": "Tiếng Việt",
+    "english": "English"
+  },
+  "hero": {
+    "title": "Hồ Sơ Chuyên Nghiệp",
+    "subtitle": "Lập Trình Viên Full Stack",
+    "description": "Đam mê tạo ra các giải pháp sáng tạo và xây dựng những trải nghiệm người dùng tuyệt vời",
+    "cta": "Xem Công Việc Của Tôi",
+    "contact_me": "Liên Hệ Với Tôi",
+    "download_cv": "Tải CV",
+    "view_portfolio": "Xem Portfolio",
+    "greeting": "Xin chào! 👋 Tôi là",
+    "role_label": "Tôi là một",
+    "contact_button": "Liên hệ với tôi",
+    "download_cv_button": "Tải CV"
+  },
+  "experience": {
+    "subtitle": "Hành trình học tập và phát triển",
+    "title": "Kinh Nghiệm & Học Tập",
+    "description": "Từ HTML/CSS/JS cơ bản đến Java Swing và Web Development hiện đại"
+  },
+  "testimonials": {
+    "subtitle": "Được yêu thích bởi cộng đồng",
+    "title": "Mọi người nói gì",
+    "description": "Được tin tưởng bởi các nhà phát triển và công ty trên toàn thế giới",
+    "join_community": "Tham gia cộng đồng các khách hàng hài lòng"
+  },
+  "about": {
+    "title": "Về Tôi",
+    "description": "Tôi là một lập trình viên đam mê với chuyên môn về các công nghệ web hiện đại",
+    "experience": "Kinh Nghiệm",
+    "education": "Học Vấn",
+    "skills": "Kỹ Năng",
+    "connect_title": "Kết Nối Với Tôi",
+    "connect_description": "Tôi luôn sẵn sàng thảo luận về những cơ hội mới và các dự án thú vị. Hãy liên hệ nếu bạn muốn hợp tác hoặc đơn giản chỉ muốn kết nối!",
+    "dark_mode_active": "🌙 Chế Độ Tối Đang Hoạt Động",
+    "light_mode_active": "☀️ Chế Độ Sáng",
+    "job_title": "Lập Trình Viên & Kỹ Thuật Phần Mềm",
+    "description_line1": "Biến ý tưởng thành những sản phẩm tinh xảo",
+    "description_line1_highlight": "phát triển ứng dụng web full-stack",
+    "description_line1_end": "tối ưu hóa hiệu suất hệ thống",
+    "description_line2": "Đam mê học công nghệ mới",
+    "description_line2_highlight": "tối ưu hóa trải nghiệm người dùng",
+    "description_line3": "Khi không lập trình, tôi khám phá thiết kế hệ thống",
+    "default_bio": "Có kinh nghiệm với React, Node.js và công nghệ đám mây với tâm huyết về code sạch và có thể mở rộng.",
+    "badge_available": "Sẵn Sàng Làm Việc",
+    "badge_learning": "Luôn Học Hỏi",
+    "badge_coffee": "Yêu Thích Cà Phê",
+    "email": "Email",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "specializing_in": "— chuyên về",
+    "and": "và",
+    "connect_devops": ", thiết kế kiến trúc sạch và",
+    "devops_learning": " và cải thiện kỹ năng DevOps. ",
+    "badge_web_dev": "Web Developer",
+    "badge_system_design": "System Design",
+    "contact_action": "Liên hệ",
+    "download_cv": "Tải CV",
+    "view_projects": "Xem dự án"
+  },
+  "projects": {
+    "title": "Dự Án Nổi Bật",
+    "subtitle": "Khám phá các sản phẩm tôi đã tạo ra",
+    "description": "Tổng hợp các dự án tiêu biểu mà tôi đã phát triển, từ ứng dụng web đến mobile app.",
+    "filters": {
+      "featured": "Nổi bật",
+      "all": "Tất cả",
+      "fullstack": "Full Stack",
+      "frontend": "Frontend",
+      "mobile": "Mobile",
+      "backend": "Backend"
+    },
+    "view_modes": {
+      "grid": "Dạng lưới",
+      "list": "Dạng danh sách"
+    },
+    "status": {
+      "completed": "Hoàn thành",
+      "in_progress": "Đang phát triển",
+      "planned": "Lên kế hoạch"
+    },
+    "actions": {
+      "view_demo": "Xem demo",
+      "view_code": "Xem code",
+      "visit_site": "Truy cập",
+      "view_details": "Xem chi tiết",
+      "live_demo": "Demo trực tiếp",
+      "source_code": "Mã nguồn"
+    },
+    "empty_state": {
+      "title": "Không tìm thấy dự án nào",
+      "description": "Không có dự án nào phù hợp với bộ lọc này.",
+      "suggestion": "Hãy thử chọn danh mục khác."
+    },
+    "featured_badge": "Nổi bật",
+    "try_another_category": "Hãy chọn danh mục khác.",
+    "view_details": "Xem Chi Tiết",
+    "live_demo": "Demo Trực Tiếp",
+    "source_code": "Mã Nguồn",
+    "start_project": "Bắt Đầu Dự Án",
+    "cta_title": "Bạn có ý tưởng thú vị?",
+    "cta_description": "Hãy cùng nhau biến ý tưởng của bạn thành hiện thực với công nghệ hiện đại nhất!",
+    "view_reviews": "Xem Đánh Giá",
+    "no_projects": "Không tìm thấy dự án nào với bộ lọc này."
+  },
+  "contact": {
+    "title": "Liên Hệ & Hợp Tác",
+    "subtitle": "Hãy cùng làm việc nhé!",
+    "description": "Tôi luôn sẵn sàng thảo luận về các dự án mới và cơ hội hợp tác",
+    "form_title": "Gửi tin nhắn",
+    "info_title": "Thông Tin Liên Hệ",
+    "info_description": "Hãy liên hệ với tôi qua các kênh bên dưới!",
+    "name": "Tên của bạn",
+    "name_required": "Tên của bạn *",
+    "email": "Email của bạn",
+    "email_required": "Email *",
+    "subject": "Chủ đề",
+    "subject_required": "Chủ đề *",
+    "project_type": "Loại dự án",
+    "project_type_placeholder": "Chọn loại dự án",
+    "budget": "Ngân sách dự kiến",
+    "budget_placeholder": "Chọn ngân sách",
+    "timeline": "Thời gian hoàn thành",
+    "timeline_placeholder": "Chọn thời gian",
+    "message": "Tin nhắn của bạn",
+    "message_required": "Chi tiết dự án *",
+    "character_count": "ký tự",
+    "send": "Gửi Tin Nhắn",
+    "sending": "Đang gửi...",
+    "success_message": "Cảm ơn bạn đã liên hệ! Tôi sẽ phản hồi sớm nhất có thể.",
+    "error_message": "Vui lòng thử lại sau hoặc liên hệ trực tiếp qua email.",
+    "get_in_touch": "Liên Hệ Với Tôi",
+    "phone": "Điện thoại",
+    "location": "Địa chỉ",
+    "appointment_schedule": "Lịch hẹn",
+    "book": "Đăt lịch tư vấn",
+    "schedule a consultation": "Tư vấn miễn phí 30 phút",
+    "timelines": "Thời gian hoạt động",
+    "quick_contact": "Hoặc liên hệ nhanh qua:",
+    "availability": "Sẵn sàng cho dự án mới",
+    "response_time": "Tôi cam kết phản hồi trong vòng 24 giờ",
+    "response_commitment": "Phản hồi trong 24h"
+  },
+  "footer": {
+    "brand_name": "Hoang Dinh",
+    "brand_title": "Full Stack Developer",
+    "description": "Tạo ra những trải nghiệm web tuyệt vời với công nghệ hiện đại và tư duy sáng tạo.",
+    "download_cv": "Tải CV",
+    "hire_me": "Thuê Tôi",
+    "quick_links": "Liên Kết Nhanh",
+    "contact_info": "Thông Tin Liên Hệ",
+    "social_media": "Mạng Xã Hội",
+    "copyright": "Tất cả quyền được bảo lưu",
+    "designed_by": "Được thiết kế và phát triển với",
+    "love": "tình yêu",
+    "email": "hoangdinh@example.com",
+    "phone": "+84 123 456 789",
+    "location": "Hậu Giang, Việt Nam"
+  },
+  "skills": {
+    "title": "Kỹ Năng Chuyên Môn",
+    "subtitle": "Công nghệ & Kỹ năng",
+    "description": "Tổng hợp các công nghệ và kỹ năng tôi sử dụng để tạo ra những sản phẩm chất lượng cao",
+    "expertise_title": "Lĩnh Vực Chuyên Môn",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Cơ sở dữ liệu",
+    "tools": "Công cụ",
+    "others": "Khác",
+    "categories": {
+      "frontend": {
+        "title": "Frontend Development",
+        "description": "Xây dựng giao diện người dùng hiện đại và responsive"
+      },
+      "backend": {
+        "title": "Backend Development",
+        "description": "Phát triển API và xử lý logic phía server"
+      },
+      "database": {
+        "title": "Database & Storage",
+        "description": "Quản lý và tối ưu hóa cơ sở dữ liệu"
+      },
+      "tools": {
+        "title": "Tools & DevOps",
+        "description": "Công cụ phát triển và triển khai ứng dụng"
+      },
+      "mobile": {
+        "title": "Mobile Development",
+        "description": "Phát triển ứng dụng di động đa nền tảng"
+      }
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Insights",
+    "description": "Chia sẻ kiến thức, kinh nghiệm và những xu hướng mới nhất trong lập trình",
+    "read_more": "Đọc thêm",
+    "published_on": "Xuất bản vào",
+    "by_author": "bởi",
+    "categories": "Danh mục",
+    "tags": "Tags",
+    "recent_posts": "Bài viết gần đây",
+    "filters": {
+      "all": "Tất cả",
+      "react": "React",
+      "css": "CSS",
+      "nodejs": "Node.js",
+      "typescript": "TypeScript",
+      "performance": "Performance"
+    },
+    "search_placeholder": "Tìm kiếm bài viết...",
+    "no_posts": "Không tìm thấy bài viết phù hợp",
+    "load_more": "Tải thêm"
+  }
+}

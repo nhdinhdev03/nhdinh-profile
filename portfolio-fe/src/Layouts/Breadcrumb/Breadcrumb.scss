@@ -1,0 +1,284 @@
+@use "styles/variables.scss" as *;
+
+.breadcrumb {
+  padding: $spacing-sm $spacing-base;
+  position: sticky;
+  top: calc(var(--header-height, 70px));
+  z-index: 100;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  
+  // Mobile optimizations
+  @include mobile-only {
+    top: calc(var(--header-height, 60px));
+    padding: $spacing-xs $spacing-sm;
+    padding-left: max($spacing-sm, env(safe-area-inset-left, 0));
+    padding-right: max($spacing-sm, env(safe-area-inset-right, 0));
+  }
+
+  @include mobile-xxs-only {
+    top: calc(var(--header-height, 56px));
+    padding: $spacing-xs;
+  }
+
+  &__list {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: $spacing-xs;
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1324px;
+    
+    // Mobile scroll optimization
+    @include mobile-only {
+      gap: $spacing-xxs;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      
+      // Simplified scroll indicator
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 12px;
+        height: 100%;
+        background: linear-gradient(to left, var(--bg-primary), transparent);
+        pointer-events: none;
+        opacity: 0;
+      }
+      
+      &.scrollable::after {
+        opacity: 1;
+      }
+    }
+    
+    @include mobile-xxs-only {
+      padding: 0 $spacing-xs;
+    }
+  }
+
+  &__list-item {
+    @include flex-center;
+    gap: $spacing-xs;
+    white-space: nowrap;
+    
+    @include mobile-only {
+      flex-shrink: 0;
+      min-width: fit-content;
+    }
+    
+    @include mobile-xxs-only {
+      gap: 2px;
+    }
+  }
+
+  &__link {
+    text-decoration: none;
+    border-radius: 8px;
+    display: block;
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-light);
+      outline-offset: 2px;
+    }
+  }
+
+  &__item {
+    @include flex-center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    
+    // Improved touch targets for mobile
+    @include mobile-touch-target(40px);
+    
+    @include mobile-only {
+      padding: $spacing-xs $spacing-sm;
+      gap: $spacing-xs;
+      min-height: 40px;
+      min-width: 40px;
+    }
+    
+    @include mobile-xxs-only {
+      padding: 2px $spacing-xs;
+      gap: 2px;
+      min-height: 36px;
+      min-width: 36px;
+      border-radius: 6px;
+    }
+
+    &:hover {
+      background: var(--bg-tertiary);
+      
+      @include touch-device {
+        background: var(--bg-secondary);
+      }
+    }
+
+    &--active {
+      color: var(--text-primary);
+      cursor: default;
+
+      &:hover {
+        background: var(--bg-tertiary);
+      }
+    }
+  }
+
+  &__icon-wrapper {
+    @include flex-center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: transparent;
+    
+    @include mobile-only {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+    }
+    
+    @include mobile-xxs-only {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+    }
+
+    .breadcrumb__item:hover & {
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .breadcrumb__item--active & {
+      background: rgba(99, 102, 241, 0.15);
+    }
+  }
+
+  &__icon {
+    font-size: $font-base;
+    color: var(--primary-light);
+    
+    @include mobile-only {
+      font-size: $font-sm;
+    }
+    
+    @include mobile-xxs-only {
+      font-size: 12px;
+    }
+
+    .breadcrumb__item--active & {
+      color: var(--primary-dark);
+    }
+    
+    .breadcrumb__item:hover & {
+      color: var(--primary-dark);
+    }
+  }
+
+  &__label {
+    font-size: $font-sm;
+    font-weight: $font-medium;
+    color: var(--text-secondary);
+    line-height: 1.2;
+    
+    @include mobile-only {
+      font-size: $font-xs;
+    }
+    
+    // Progressive disclosure - hide labels on smaller screens
+    @include mobile-xxs-only {
+      display: none;
+    }
+    
+    // Show only for active item on very small screens
+    @media (max-width: 400px) {
+      display: none;
+      
+      .breadcrumb__item--active & {
+        display: block;
+        font-size: 10px;
+        font-weight: $font-bold;
+      }
+    }
+
+    .breadcrumb__item:hover & {
+      color: var(--text-primary);
+    }
+
+    .breadcrumb__item--active & {
+      color: var(--text-primary);
+      font-weight: $font-semibold;
+    }
+  }
+
+  &__separator {
+    @include flex-center;
+    color: var(--text-tertiary);
+    font-size: $font-sm;
+    margin: 0 $spacing-xs;
+    opacity: 0.6;
+    
+    @include mobile-only {
+      font-size: $font-xs;
+      margin: 0 2px;
+    }
+    
+    @include mobile-xxs-only {
+      font-size: 10px;
+      margin: 0 1px;
+    }
+  }
+
+  &__active-indicator {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+
+    border-radius: 1px;
+
+    @media (max-width: $breakpoint-sm) {
+      width: 16px;
+      height: 2px;
+    }
+  }
+
+  // Responsive enhancements
+  @media (max-width: $breakpoint-md) {
+    &__item {
+      padding: $spacing-xs;
+    }
+
+    &__icon-wrapper {
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  // High contrast mode support
+  @media (prefers-contrast: high) {
+    border-width: 2px;
+    
+    &__item {
+      border: 1px solid var(--border-color);
+      
+      &--active {
+        border-color: var(--primary-light);
+        border-width: 2px;
+      }
+    }
+  }
+}
+

@@ -1,0 +1,790 @@
+@use 'variables' as *;
+
+// Enhanced Responsive Design System - Optimized for all devices
+// Mobile: 320px-767px, Tablet: 768px-1023px, Laptop: 1024px-1439px, Desktop: 1440px+
+
+// ===== LAYOUT UTILITIES =====
+
+// Enhanced responsive containers
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 $spacing-sm;
+  
+  // Mobile portrait (320px-374px)
+  @include mobile-xxs-only {
+    padding: 0 $spacing-xs;
+    max-width: 100%;
+  }
+  
+  // Mobile standard (375px-479px)
+  @include mobile-xs-up {
+    padding: 0 $spacing-base;
+  }
+  
+  // Mobile large (480px-767px)
+  @include mobile-sm-up {
+    padding: 0 $spacing-lg;
+  }
+  
+  // Tablet portrait (768px-1023px)
+  @include tablet-up {
+    padding: 0 $spacing-xl;
+    max-width: 1200px;
+  }
+  
+  // Laptop (1024px-1439px)
+  @include tablet-landscape-up {
+    padding: 0 $spacing-2xl;
+    max-width: 1300px;
+  }
+  
+  // Desktop (1440px+)
+  @include desktop-up {
+    padding: 0 $spacing-3xl;
+    max-width: 1400px;
+  }
+}
+
+.container-fluid {
+  width: 100%;
+  padding: 0 $spacing-sm;
+  
+  @include mobile-xs-up {
+    padding: 0 $spacing-base;
+  }
+  
+  @include mobile-sm-up {
+    padding: 0 $spacing-lg;
+  }
+  
+  @include tablet-up {
+    padding: 0 $spacing-xl;
+  }
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 $spacing-base;
+  
+  @include tablet-up {
+    padding: 0 $spacing-xl;
+  }
+}
+
+.container-wide {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 $spacing-base;
+  
+  @include desktop-up {
+    padding: 0 $spacing-4xl;
+  }
+}
+
+// ===== ENHANCED DISPLAY UTILITIES =====
+
+// Device-specific visibility classes
+.mobile-only {
+  @include tablet-up {
+    display: none !important;
+  }
+}
+
+.mobile-xs-only {
+  @include mobile-sm-up {
+    display: none !important;
+  }
+}
+
+.mobile-sm-and-up {
+  @include mobile-sm-only {
+    display: none !important;
+  }
+}
+
+.tablet-only {
+  @include mobile-only {
+    display: none !important;
+  }
+  @include tablet-landscape-up {
+    display: none !important;
+  }
+}
+
+.tablet-and-up {
+  @include mobile-only {
+    display: none !important;
+  }
+}
+
+.laptop-only {
+  @include tablet-portrait {
+    display: none !important;
+  }
+  @include desktop-up {
+    display: none !important;
+  }
+}
+
+.laptop-and-up {
+  @include tablet-portrait {
+    display: none !important;
+  }
+}
+
+.desktop-only {
+  @include laptop-small {
+    display: none !important;
+  }
+}
+
+.desktop-and-up {
+  @include laptop-small {
+    display: none !important;
+  }
+}
+
+// Orientation-specific visibility
+.portrait-only {
+  @media (orientation: landscape) {
+    display: none !important;
+  }
+}
+
+.landscape-only {
+  @media (orientation: portrait) {
+    display: none !important;
+  }
+}
+
+// ===== ENHANCED SPACING UTILITIES =====
+
+// Responsive margins with device-specific scaling
+.m-responsive {
+  margin: $spacing-xs;
+  
+  @include mobile-xs-up {
+    margin: $spacing-sm;
+  }
+  
+  @include mobile-sm-up {
+    margin: $spacing-base;
+  }
+  
+  @include tablet-up {
+    margin: $spacing-lg;
+  }
+  
+  @include tablet-landscape-up {
+    margin: $spacing-xl;
+  }
+  
+  @include desktop-up {
+    margin: $spacing-2xl;
+  }
+}
+
+// Responsive padding with device-specific scaling
+.p-responsive {
+  padding: $spacing-xs;
+  
+  @include mobile-xs-up {
+    padding: $spacing-sm;
+  }
+  
+  @include mobile-sm-up {
+    padding: $spacing-base;
+  }
+  
+  @include tablet-up {
+    padding: $spacing-lg;
+  }
+  
+  @include tablet-landscape-up {
+    padding: $spacing-xl;
+  }
+  
+  @include desktop-up {
+    padding: $spacing-2xl;
+  }
+}
+
+// Device-specific spacing utilities
+.spacing-mobile {
+  padding: $spacing-sm;
+  margin: $spacing-sm 0;
+  
+  @include tablet-up {
+    padding: $spacing-lg;
+    margin: $spacing-lg 0;
+  }
+  
+  @include desktop-up {
+    padding: $spacing-xl;
+    margin: $spacing-xl 0;
+  }
+}
+
+.spacing-section {
+  padding: $spacing-2xl 0;
+  
+  @include mobile-only {
+    padding: $spacing-xl 0;
+  }
+  
+  @include tablet-up {
+    padding: $spacing-3xl 0;
+  }
+  
+  @include desktop-up {
+    padding: $spacing-4xl 0;
+  }
+}
+
+// ===== ENHANCED TYPOGRAPHY UTILITIES =====
+
+// Responsive headings with improved scaling
+.heading-responsive {
+  font-size: clamp(1.25rem, 3vw + 0.75rem, 2.5rem);
+  font-weight: $font-bold;
+  line-height: $leading-tight;
+  color: var(--text-primary);
+  
+  @include mobile-xxs-only {
+    font-size: clamp(1rem, 4vw + 0.5rem, 1.5rem);
+    line-height: $leading-snug;
+  }
+  
+  @include tablet-up {
+    font-size: clamp(1.5rem, 2.5vw + 1rem, 3rem);
+  }
+  
+  @include desktop-up {
+    font-size: clamp(2rem, 1.5vw + 1.5rem, 3.5rem);
+  }
+}
+
+.heading-large-responsive {
+  font-size: clamp(1.75rem, 5vw + 1rem, 4rem);
+  font-weight: $font-bold;
+  line-height: $leading-tight;
+  color: var(--text-primary);
+  
+  @include mobile-xxs-only {
+    font-size: clamp(1.25rem, 6vw + 0.75rem, 2rem);
+  }
+  
+  @include tablet-up {
+    font-size: clamp(2.25rem, 4vw + 1.5rem, 4.5rem);
+  }
+  
+  @include desktop-up {
+    font-size: clamp(3rem, 2.5vw + 2rem, 5rem);
+  }
+}
+
+.subheading-responsive {
+  font-size: clamp(1rem, 2vw + 0.75rem, 1.25rem);
+  font-weight: $font-semibold;
+  line-height: $leading-snug;
+  color: var(--text-secondary);
+  
+  @include tablet-up {
+    font-size: clamp(1.125rem, 1.5vw + 0.875rem, 1.5rem);
+  }
+  
+  @include desktop-up {
+    font-size: clamp(1.25rem, 1vw + 1rem, 1.75rem);
+  }
+}
+
+.body-responsive {
+  font-size: clamp(0.875rem, 1.25vw + 0.75rem, 1rem);
+  line-height: $leading-relaxed;
+  color: var(--text-secondary);
+  
+  @include tablet-up {
+    font-size: clamp(1rem, 1vw + 0.875rem, 1.125rem);
+  }
+  
+  @include desktop-up {
+    font-size: clamp(1.125rem, 0.5vw + 1rem, 1.25rem);
+  }
+}
+
+.text-small-responsive {
+  font-size: clamp(0.75rem, 1vw + 0.625rem, 0.875rem);
+  line-height: $leading-normal;
+  color: var(--text-tertiary);
+  
+  @include tablet-up {
+    font-size: clamp(0.875rem, 0.75vw + 0.75rem, 1rem);
+  }
+}
+
+// ===== ENHANCED FLEXBOX UTILITIES =====
+
+.flex-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-base;
+  
+  &.reverse-mobile {
+    @include mobile-only {
+      flex-direction: column-reverse;
+    }
+  }
+  
+  @include mobile-sm-up {
+    gap: $spacing-lg;
+  }
+  
+  @include tablet-up {
+    flex-direction: row;
+    gap: $spacing-xl;
+    
+    &.reverse-tablet {
+      flex-direction: row-reverse;
+    }
+  }
+  
+  @include desktop-up {
+    gap: $spacing-2xl;
+  }
+}
+
+.flex-center-responsive {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  @include tablet-up {
+    justify-content: flex-start;
+    text-align: left;
+  }
+}
+
+.flex-wrap-responsive {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  
+  @include mobile-sm-up {
+    gap: $spacing-base;
+  }
+  
+  @include tablet-up {
+    gap: $spacing-lg;
+  }
+  
+  > * {
+    flex: 1 1 auto;
+    min-width: 0; // Allow items to shrink below their content size
+  }
+}
+
+// ===== ENHANCED GRID UTILITIES =====
+
+.grid-responsive {
+  display: grid;
+  gap: $spacing-base;
+  grid-template-columns: 1fr;
+  
+  // 2 columns grid
+  &.cols-2 {
+    @include mobile-xs-up {
+      grid-template-columns: repeat(2, 1fr);
+      gap: $spacing-sm;
+    }
+    
+    @include tablet-up {
+      gap: $spacing-lg;
+    }
+  }
+  
+  // 3 columns grid
+  &.cols-3 {
+    @include mobile-sm-up {
+      grid-template-columns: repeat(2, 1fr);
+      gap: $spacing-sm;
+    }
+    
+    @include tablet-up {
+      grid-template-columns: repeat(3, 1fr);
+      gap: $spacing-lg;
+    }
+    
+    @include desktop-up {
+      gap: $spacing-xl;
+    }
+  }
+  
+  // 4 columns grid
+  &.cols-4 {
+    @include mobile-sm-up {
+      grid-template-columns: repeat(2, 1fr);
+      gap: $spacing-sm;
+    }
+    
+    @include tablet-up {
+      grid-template-columns: repeat(3, 1fr);
+      gap: $spacing-lg;
+    }
+    
+    @include tablet-landscape-up {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    @include desktop-up {
+      gap: $spacing-xl;
+    }
+  }
+  
+  // 6 columns grid
+  &.cols-6 {
+    @include mobile-sm-up {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @include tablet-up {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    @include tablet-landscape-up {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    @include desktop-up {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+  
+  @include tablet-up {
+    gap: $spacing-lg;
+  }
+}
+
+// Enhanced auto-fit grid for responsive cards
+.grid-auto-fit {
+  display: grid;
+  gap: $spacing-base;
+  grid-template-columns: 1fr;
+  
+  @include mobile-sm-up {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
+  }
+  
+  @include tablet-up {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: $spacing-xl;
+  }
+  
+  @include desktop-up {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: $spacing-2xl;
+  }
+}
+
+// Masonry-style grid
+.grid-masonry {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-base;
+  
+  @include mobile-sm-up {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-lg;
+  }
+  
+  @include tablet-up {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  @include desktop-up {
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-xl;
+  }
+}
+
+// ===== ENHANCED BUTTON RESPONSIVE UTILITIES =====
+
+.btn-responsive {
+  @include mobile-touch-target();
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-base;
+  font-size: $font-sm;
+  font-weight: $font-semibold;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  
+  // Mobile extra small
+  @include mobile-xxs-only {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-xs;
+    border-radius: 8px;
+    min-height: 48px;
+  }
+  
+  // Mobile standard
+  @include mobile-xs-up {
+    width: auto;
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-sm;
+    gap: $spacing-sm;
+  }
+  
+  // Mobile large
+  @include mobile-sm-up {
+    padding: $spacing-base $spacing-xl;
+    font-size: $font-base;
+    border-radius: 8px;
+  }
+  
+  // Tablet
+  @include tablet-up {
+    padding: $spacing-lg $spacing-2xl;
+    font-size: $font-base;
+    border-radius: 10px;
+    min-height: 44px;
+  }
+  
+  // Desktop
+  @include desktop-up {
+    padding: $spacing-lg $spacing-3xl;
+    font-size: $font-lg;
+    border-radius: 12px;
+  }
+  
+  // Full width variants
+  &.mobile-full {
+    @include mobile-only {
+      width: 100%;
+    }
+  }
+  
+  &.tablet-full {
+    @include tablet-portrait {
+      width: 100%;
+    }
+  }
+  
+  // Size variants
+  &.btn-small {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-xs;
+    
+    @include tablet-up {
+      padding: $spacing-sm $spacing-base;
+      font-size: $font-sm;
+    }
+  }
+  
+  &.btn-large {
+    padding: $spacing-base $spacing-xl;
+    font-size: $font-base;
+    
+    @include tablet-up {
+      padding: $spacing-xl $spacing-3xl;
+      font-size: $font-lg;
+    }
+    
+    @include desktop-up {
+      padding: $spacing-xl $spacing-4xl;
+      font-size: $font-xl;
+    }
+  }
+}
+
+// Enhanced form controls
+.form-control-responsive {
+  width: 100%;
+  padding: $spacing-md;
+  font-size: $font-sm;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  
+  @include mobile-touch-target(44px);
+  
+  @include mobile-sm-up {
+    padding: $spacing-base;
+    font-size: $font-base;
+    border-radius: 8px;
+  }
+  
+  @include tablet-up {
+    padding: $spacing-lg;
+    border-radius: 10px;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+}
+
+// ===== IMAGE RESPONSIVE UTILITIES =====
+
+.img-responsive {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  
+  &.rounded-responsive {
+    border-radius: 8px;
+    
+    @include tablet-up {
+      border-radius: 12px;
+    }
+    
+    @include desktop-up {
+      border-radius: 16px;
+    }
+  }
+}
+
+// Picture element utility
+.picture-responsive {
+  width: 100%;
+  
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+}
+
+// ===== POSITIONING UTILITIES =====
+
+.position-responsive {
+  position: relative;
+  
+  @include desktop-up {
+    position: sticky;
+    top: calc(var(--header-height) + #{$spacing-base});
+  }
+}
+
+// ===== OVERFLOW UTILITIES =====
+
+.scroll-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 2px;
+  }
+}
+
+// ===== ACCESSIBILITY UTILITIES =====
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.focus-visible-only {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  
+  &:focus-visible {
+    opacity: 1;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .contrast-border {
+    border: 2px solid var(--text-primary);
+  }
+  
+  .contrast-bg {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .motion-reduce {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Print styles
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  .print-break-before {
+    page-break-before: always;
+  }
+  
+  .print-break-after {
+    page-break-after: always;
+  }
+  
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  a {
+    text-decoration: underline;
+    
+    &:after {
+      content: " (" attr(href) ")";
+    }
+  }
+  
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+}

@@ -1,0 +1,371 @@
+@use 'variables' as *;
+@use 'performance.scss' as *;
+@use 'responsive.scss' as *;
+@use 'typography.scss' as *;
+
+// Theme transition optimization - prevent FOUC
+html.theme-transitioning {
+  visibility: hidden;
+}
+
+html:not(.theme-transitioning) {
+  visibility: visible;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.App {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow-x: hidden;
+  
+  // Performance optimizations
+
+  // Add smooth transition when switching views
+  &.transitioning {
+    pointer-events: none;
+    
+    main {
+      transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      opacity: 0.95;
+    }
+  }
+
+
+  // Global route transition styles
+  &.route-transitioning {
+    main {
+      opacity: 0.95;
+    }
+  }
+
+  // Animated background elements
+  &::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle at 20% 20%,
+      rgba(99, 102, 241, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(16, 185, 129, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 40%,
+      rgba(139, 92, 246, 0.1) 0%,
+      transparent 50%
+    );
+    animation: backgroundFloat 30s ease-in-out infinite;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    /* Prevent content being hidden under fixed header; include safe area */
+    padding-top: calc(var(--header-height, 80px) + env(safe-area-inset-top, 0px));
+    
+    // Responsive padding for content
+    padding-left: clamp($spacing-base, 2vw, $spacing-xl);
+    padding-right: clamp($spacing-base, 2vw, $spacing-xl);
+    padding-bottom: $spacing-2xl;
+    
+    // Optimize scroll behavior
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    
+    // Mobile specific adjustments
+    @include mobile-only {
+      padding-top: calc(var(--header-height, 60px) + env(safe-area-inset-top, 0px));
+      padding-left: $spacing-sm;
+      padding-right: $spacing-sm;
+      padding-bottom: $spacing-xl;
+    }
+    
+    @include mobile-xxs-only {
+      padding-top: calc(var(--header-height, 56px) + env(safe-area-inset-top, 0px));
+      padding-left: $spacing-xs;
+      padding-right: $spacing-xs;
+      padding-bottom: $spacing-lg;
+    }
+  }
+}
+
+
+
+@keyframes backgroundFloat {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, -30px) rotate(120deg);
+  }
+  66% {
+    transform: translate(-20px, 20px) rotate(240deg);
+  }
+}
+
+// Smooth transitions for theme switching
+* {
+  transition: background-color 0.3s ease,
+              border-color 0.3s ease,
+              color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+// Enhanced scrollbar styling
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-light) var(--bg-secondary);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 10px;
+  
+  &:hover {
+    background: var(--primary-dark);
+  }
+}
+
+// Particle effect for background
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+
+  .particle {
+    position: absolute;
+    background: var(--primary-light);
+    border-radius: 50%;
+    opacity: 0.1;
+    animation: particleFloat 20s infinite linear;
+
+    &:nth-child(odd) {
+      animation-delay: -7.5s;
+    }
+  }
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) scale(0);
+  }
+  10% {
+    transform: translateY(90vh) scale(1);
+  }
+  90% {
+    transform: translateY(-10vh) scale(1);
+  }
+  100% {
+    transform: translateY(-20vh) scale(0);
+  }
+}
+
+// Mobile optimizations
+@include mobile-only {
+  .App {
+    // Disable complex background animations on mobile
+    &::before {
+      display: none;
+    }
+    
+    // Optimize main content padding
+    main {
+      padding-top: calc(var(--header-height, 60px) + env(safe-area-inset-top, 0px));
+    }
+  }
+  
+  // Hide particles on mobile for better performance
+  .particles {
+    display: none;
+  }
+  
+  // Optimize button sizes for touch
+  .btn {
+    @include mobile-touch-target(48px);
+    padding: $spacing-base $spacing-lg;
+    font-size: $font-base;
+    min-height: 48px;
+    
+    // Optimize for very small screens
+    @include mobile-xxs-only {
+      min-height: 52px;
+      padding: $spacing-lg $spacing-xl;
+      font-size: $font-lg;
+      border-radius: 12px;
+    }
+    
+    // Disable hover effects on touch devices
+    @include touch-device {
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+      
+      &:active {
+        transform: scale(0.95);
+        transition: transform 0.1s ease;
+      }
+    }
+  }
+  
+  // Optimize glass card for mobile
+  .glass-card {
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    
+    // Reduce complexity on mobile
+    &::before {
+      display: none;
+    }
+  }
+}
+
+// Tablet optimizations
+@include tablet-up {
+  .App {
+    &::before {
+      animation-duration: 25s;
+    }
+  }
+}
+
+// Desktop optimizations
+@include desktop-up {
+  .App {
+    &::before {
+      animation-duration: 20s;
+    }
+  }
+}
+
+// Enhanced glass morphism effect
+.glass-card {
+  background: var(--glass-gradient-light);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  }
+}
+
+[data-theme="dark"] .glass-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// Enhanced button styles
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  border-radius: 50px;
+  font-weight: $font-semibold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: 2px solid transparent;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary-light);
+  border: 2px solid var(--primary-light);
+  
+  &:hover {
+    background: var(--primary-light);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+  }
+}
+
+.btn-secondary {
+  background: var(--gradient-secondary);
+  color: white;
+  border: 2px solid transparent;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .App {
+    &::before {
+      animation: none;
+    }
+  }
+
+  .particles {
+    display: none;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

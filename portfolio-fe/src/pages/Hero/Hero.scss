@@ -1,0 +1,1206 @@
+@use "styles/variables" as *;
+
+.hero {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  perspective: 2000px;
+  transform-style: preserve-3d;
+  -webkit-tap-highlight-color: transparent; // remove gray tap highlight on mobile
+  touch-action: manipulation; // hint for better tap behavior
+  
+  &__particles, 
+  &__morphing-shapes,
+  &__background {
+    pointer-events: none; // Prevent background elements from blocking interactions
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-4xl;
+    align-items: center;
+    z-index: 2;
+    width: 100%;
+
+    @media (min-width: $breakpoint-2xl) {
+      grid-template-columns: 1.2fr 1fr;
+      gap: $spacing-6xl;
+    }
+  }
+
+  &__content {
+    text-align: center;
+
+    @media (min-width: $breakpoint-lg) {
+      margin-right: 100px;
+      text-align: left;
+    }
+  }
+
+  &__greeting {
+    margin-bottom: $spacing-base;
+
+    &-text {
+      font-size: $font-lg;
+      color: var(--text-secondary);
+      font-weight: $font-medium;
+    }
+  }
+
+  &__name {
+    margin-bottom: $spacing-lg;
+    line-height: 1.1;
+
+    &-text {
+      display: block;
+      font-size: clamp($font-4xl, 6vw, $font-6xl);
+      font-weight: $font-bold;
+      color: var(--text-primary);
+    }
+
+    &-highlight {
+      display: block;
+      font-size: clamp($font-4xl, 6vw, $font-6xl);
+      font-weight: $font-bold;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+
+    
+    }
+  }
+
+  &__role {
+    font-size: clamp($font-xl, 2.5vw, $font-2xl);
+    font-weight: $font-medium;
+    margin-bottom: $spacing-xl;
+    height: 50px;
+    @include flex-center;
+
+    @media (min-width: $breakpoint-lg) {
+      justify-content: flex-start;
+    }
+
+    &-label {
+      color: var(--text-secondary);
+    }
+
+    &-dynamic {
+      color: var(--primary-light);
+      font-weight: $font-semibold;
+      margin-left: $spacing-sm;
+      position: relative;
+    }
+  }
+
+  &__cursor {
+    font-weight: $font-light;
+    animation: blink 1s infinite;
+    color: var(--primary-light);
+  }
+
+  &__description {
+    max-width: 500px;
+    margin: 0 auto $spacing-xl auto;
+    line-height: 1.7;
+    color: var(--text-secondary);
+
+    @media (min-width: $breakpoint-lg) {
+      margin: 0 0 $spacing-xl 0;
+    }
+  }
+
+  &__location {
+    @include flex-center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-2xl;
+    color: var(--text-tertiary);
+    font-size: $font-sm;
+
+    @media (min-width: $breakpoint-lg) {
+      justify-content: flex-start;
+    }
+
+    &-icon {
+      font-size: $font-base;
+      color: var(--primary-light);
+    }
+  }
+
+  &__actions {
+    @include flex-center;
+    gap: $spacing-base;
+    margin-bottom: $spacing-2xl;
+    flex-wrap: wrap;
+    z-index: 10; // Ensure buttons are clickable
+
+    @media (min-width: $breakpoint-lg) {
+      justify-content: flex-start;
+    }
+
+    // Mobile optimizations for action buttons
+    @include mobile-only {
+      gap: $spacing-sm;
+      margin-bottom: $spacing-xl;
+      width: 100%;
+      
+      // Stack buttons vertically on small screens
+      @media (max-width: 360px) {
+        flex-direction: column;
+        align-items: stretch;
+        
+        a {
+          width: 80%;
+          text-align: center;
+        }
+      }
+    }
+
+    a {
+      position: relative;
+      z-index: 2;
+      pointer-events: auto; // Explicitly enable pointer events
+      cursor: pointer;
+      
+      // Enhanced mobile touch experience for Download CV button
+      &.btn-outline {
+        @include mobile-only {
+          // Larger touch target for better UX
+          min-height: 50px;
+          padding: calc(#{$spacing-base} + 4px) $spacing-xl;
+          
+          // Better visual feedback
+          transition: all 0.2s ease;
+          
+          &:active {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--primary);
+            transform: scale(0.97);
+          }
+          
+          // Icon spacing optimization
+          svg {
+            margin-right: calc(#{$spacing-xs} + 2px);
+            font-size: 1.1em;
+          }
+        }
+        
+        // Tablet optimization
+        @media (min-width: $breakpoint-sm) and (max-width: $breakpoint-lg) {
+          min-height: 48px;
+          padding: calc(#{$spacing-base} + 2px) calc(#{$spacing-lg} + 4px);
+        }
+      }
+    }
+  }
+
+  &__social {
+    @include flex-center;
+    gap: $spacing-base;
+    z-index: 10; // Ensure social links are clickable
+
+    @media (min-width: $breakpoint-lg) {
+      justify-content: flex-start;
+    }
+
+    &-link {
+      @include flex-center;
+      width: 50px;
+      z-index: 2;
+      pointer-events: auto; // Explicitly enable pointer events
+      height: 50px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      color: var(--text-secondary);
+      font-size: $font-xl;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-primary);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+      }
+
+      &:hover {
+        color: white;
+        border-color: var(--primary-light);
+        box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+
+        &::before {
+          opacity: 1;
+        }
+      }
+
+      // On touch devices, disable hover visual changes
+      @media (hover: none), (pointer: coarse) {
+        &:hover {
+          color: var(--text-secondary);
+          border-color: var(--border-color);
+          box-shadow: none;
+        }
+      }
+    }
+  }
+
+  &__visual {
+    @include flex-center;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: all 0.3s ease;
+  }
+
+  &__avatar {
+    position: relative;
+    z-index: 2;
+    transform-style: preserve-3d;
+
+    &-image {
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid var(--bg-primary);
+      box-shadow: 0 20px 40px var(--shadow-color);
+      position: relative;
+      z-index: 2;
+      transform-style: preserve-3d;
+      transition: all 0.5s ease;
+
+      @media (min-width: $breakpoint-xl) {
+        width: 320px;
+        height: 320px;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(20%);
+        transition: all 0.5s ease;
+
+        &:hover {
+          filter: grayscale(0%) brightness(1.1);
+        }
+      }
+    }
+
+    &-glow {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--primary-light) 20, transparent);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    &-ring {
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+      border: 3px solid var(--primary-light);
+      border-radius: 50%;
+      border-top-color: transparent;
+      border-right-color: transparent;
+      z-index: 1;
+      transform-style: preserve-3d;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        border: 2px solid var(--secondary-light);
+        border-radius: 50%;
+        border-bottom-color: transparent;
+        border-left-color: transparent;
+      }
+    }
+
+    &-orbital-ring {
+      position: absolute;
+      border: 2px solid var(--accent-light);
+      border-radius: 50%;
+      pointer-events: none;
+      transform-style: preserve-3d;
+
+      &--1 {
+        top: -40px;
+        left: -40px;
+        right: -40px;
+        bottom: -40px;
+        border-color: var(--primary-light);
+        opacity: 0.6;
+      }
+
+      &--2 {
+        top: -60px;
+        left: -60px;
+        right: -60px;
+        bottom: -60px;
+        border-color: var(--secondary-light);
+        opacity: 0.4;
+      }
+    }
+  }
+
+  &__tech-stack {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px;
+    height: 450px;
+    z-index: 1;
+    transform-style: preserve-3d;
+
+    @media (min-width: $breakpoint-xl) {
+      width: 500px;
+      height: 500px;
+    }
+  }
+
+  &__tech-icon {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    @include flex-center;
+    background: linear-gradient(
+      135deg,
+      var(--bg-secondary),
+      var(--bg-tertiary)
+    );
+    border: 3px solid var(--border-color);
+    border-radius: 50%;
+    font-size: $font-2xl;
+    color: var(--icon-color);
+    box-shadow: 0 15px 35px var(--shadow-color);
+    cursor: pointer;
+    transition: all 0.5s ease;
+    transform-style: preserve-3d;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: linear-gradient(
+        135deg,
+        var(--bg-primary),
+        var(--bg-secondary)
+      );
+      border-color: var(--icon-color);
+      transform: scale(1.2) translateZ(20px);
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      &:hover {
+        background: linear-gradient(
+          135deg,
+          var(--bg-secondary),
+          var(--bg-tertiary)
+        );
+        border-color: var(--border-color);
+        transform: none;
+      }
+    }
+
+    &-glow {
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    // Static circular positioning (6 icons)
+    &:nth-child(1) {
+      // React - top
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &:nth-child(2) {
+      // TypeScript - top right
+      top: 25%;
+      right: 15%;
+    }
+
+    &:nth-child(3) {
+      // Node.js - bottom right
+      bottom: 25%;
+      right: 15%;
+    }
+
+    &:nth-child(4) {
+      // Python - bottom
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &:nth-child(5) {
+      // TailwindCSS - bottom left
+      bottom: 25%;
+      left: 15%;
+    }
+
+    &:nth-child(6) {
+      // JavaScript - top left
+      top: 25%;
+      left: 15%;
+    }
+
+    @media (min-width: $breakpoint-xl) {
+      &:nth-child(1) {
+        top: 8%;
+      }
+
+      &:nth-child(2) {
+        top: 20%;
+        right: 12%;
+      }
+
+      &:nth-child(3) {
+        bottom: 20%;
+        right: 12%;
+      }
+
+      &:nth-child(4) {
+        bottom: 8%;
+      }
+
+      &:nth-child(5) {
+        bottom: 20%;
+        left: 12%;
+      }
+
+      &:nth-child(6) {
+        top: 20%;
+        left: 12%;
+      }
+    }
+  }
+
+  // Advanced particle and shape systems
+  &__particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    transform-style: preserve-3d;
+    
+    // Mobile performance optimization
+    @media (max-width: $breakpoint-md) {
+      will-change: transform;
+      transform: translateZ(0); // Force GPU acceleration
+    }
+  }
+
+  &__particle {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform, opacity;
+    
+    // Mobile optimization
+    @media (max-width: $breakpoint-md) {
+      backface-visibility: hidden;
+      transform: translateZ(0);
+    }
+  }
+
+  &__morphing-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    transform-style: preserve-3d;
+    
+    // Mobile performance optimization
+    @media (max-width: $breakpoint-md) {
+      will-change: transform;
+      transform: translateZ(0);
+    }
+  }
+
+  &__morphing-shape {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform, border-radius;
+    
+    // Mobile optimization
+    @media (max-width: $breakpoint-md) {
+      backface-visibility: hidden;
+      transform: translateZ(0);
+    }
+  }
+
+  &__floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    transform-style: preserve-3d;
+  }
+
+  &__floating-element {
+    position: absolute;
+    transition: all 0.3s ease;
+    will-change: transform;
+
+    &:hover {
+      filter: drop-shadow(0 10px 20px rgba(99, 102, 241, 0.3));
+    }
+  }
+
+  &__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    transform-style: preserve-3d;
+
+    &-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      opacity: 0.15;
+      filter: blur(60px);
+      transform-style: preserve-3d;
+
+      &--1 {
+        width: 400px;
+        height: 400px;
+        top: 15%;
+        left: -15%;
+      }
+
+      &--2 {
+        width: 300px;
+        height: 300px;
+        top: 50%;
+        right: -10%;
+        background: var(--gradient-secondary);
+      }
+
+      &--3 {
+        width: 250px;
+        height: 250px;
+        bottom: 15%;
+        left: 15%;
+        background: var(--gradient-accent);
+      }
+    }
+
+    &-mesh {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+          90deg,
+          transparent 49%,
+          var(--primary-light) 10 50%,
+          transparent 51%
+        ),
+        linear-gradient(
+          0deg,
+          transparent 49%,
+          var(--secondary-light) 10 50%,
+          transparent 51%
+        );
+      background-size: 100px 100px;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+  }
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes rotateRing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes floatCircle {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+  50% {
+    transform: translateY(0) translateX(20px);
+  }
+  75% {
+    transform: translateY(20px) translateX(10px);
+  }
+}
+
+// Advanced 3D animations
+@keyframes float3D {
+  0%,
+  100% {
+    transform: translateY(0px) translateZ(0px) rotateX(0deg);
+  }
+  25% {
+    transform: translateY(-15px) translateZ(10px) rotateX(5deg);
+  }
+  50% {
+    transform: translateY(-30px) translateZ(20px) rotateX(10deg);
+  }
+  75% {
+    transform: translateY(-15px) translateZ(10px) rotateX(5deg);
+  }
+}
+
+@keyframes morphShape {
+  0%,
+  100% {
+    border-radius: 20%;
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    border-radius: 50%;
+    transform: scale(1.1) rotate(90deg);
+  }
+  50% {
+    border-radius: 30%;
+    transform: scale(0.9) rotate(180deg);
+  }
+  75% {
+    border-radius: 40%;
+    transform: scale(1.05) rotate(270deg);
+  }
+}
+
+@keyframes particleGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+    opacity: 0.6;
+  }
+  50% {
+    box-shadow: 0 0 20px currentColor, 0 0 30px currentColor,
+      0 0 40px currentColor;
+    opacity: 1;
+  }
+}
+
+@keyframes orbitalRotation {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  33% {
+    transform: rotateX(120deg) rotateY(120deg) rotateZ(120deg);
+  }
+  66% {
+    transform: rotateX(240deg) rotateY(240deg) rotateZ(240deg);
+  }
+  100% {
+    transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+  }
+}
+
+// Mobile optimizations
+@media (max-width: $breakpoint-md) {
+  .hero {
+    min-height: 70vh; // Changed from 105vh to reduce scrolling
+    padding: $spacing-xl 0; // Add vertical padding
+
+    &__grid {
+      gap: $spacing-2xl; // Reduced gap for mobile
+    }
+
+    &__content {
+      margin-right: 0; // Reset desktop margin
+    }
+
+    &__name {
+      margin-bottom: $spacing-base; // Reduce spacing
+
+      &-text,
+      &-highlight {
+        font-size: clamp($font-2xl, 8vw, $font-4xl); // Smaller on mobile
+        line-height: 1.2;
+      }
+    }
+
+    &__role {
+      font-size: clamp($font-lg, 4vw, $font-xl); // Smaller role text
+      height: auto; // Allow natural height
+      margin-bottom: $spacing-lg;
+    }
+
+    &__description {
+      font-size: $font-sm; // Smaller description
+      margin-bottom: $spacing-lg;
+    }
+
+    &__location {
+      margin-bottom: $spacing-lg; // Reduce spacing
+    }
+
+    &__avatar {
+      &-image {
+        width: 200px; // Smaller avatar on mobile
+        height: 200px;
+      }
+
+      &-ring {
+        top: -10px; // Adjust ring positioning
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+      }
+
+      &-orbital-ring {
+        &--1 {
+          top: -25px; // Smaller orbital rings
+          left: -25px;
+          right: -25px;
+          bottom: -25px;
+        }
+
+        &--2 {
+          top: -35px;
+          left: -35px;
+          right: -35px;
+          bottom: -35px;
+        }
+      }
+    }
+
+    &__tech-stack {
+      width: 280px; // Smaller tech stack
+      height: 280px;
+    }
+
+    &__tech-icon {
+      width: 40px; // Smaller tech icons
+      height: 40px;
+      font-size: $font-base;
+    }
+
+    &__actions {
+      flex-direction: column;
+      gap: $spacing-sm;
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+        padding: $spacing-base $spacing-lg; // Larger touch targets
+        font-size: $font-sm;
+      }
+    }
+
+    &__social {
+      margin-top: $spacing-base;
+      
+      &-link {
+        width: 45px; // Larger touch targets
+        height: 45px;
+        font-size: $font-lg;
+      }
+    }
+
+    // Reduce animation intensity on mobile for better performance
+    &__particles {
+      opacity: 0.7; // Make particles more subtle
+    }
+
+    &__morphing-shapes {
+      opacity: 0.5; // Reduce background shapes opacity
+    }
+
+    &__floating-elements {
+      opacity: 0.8; // Slightly reduce floating elements
+    }
+
+    // Disable 3D transforms on mobile for better performance
+    &__avatar,
+    &__tech-stack,
+    &__visual {
+      transform-style: flat !important;
+    }
+  }
+}
+
+// Additional mobile optimizations for smaller screens
+@media (max-width: $breakpoint-sm) {
+  .hero {
+    min-height: 100vh;
+    padding: $spacing-base 0;
+    
+    &__grid {
+      gap: $spacing-2xl;
+      padding: 0 $spacing-sm;
+    }
+    
+    &__name {
+      margin-bottom: $spacing-base;
+      
+      &-text,
+      &-highlight {
+        font-size: clamp($font-2xl, 10vw, $font-4xl);
+        line-height: 1.1;
+      }
+    }
+
+    &__role {
+      font-size: clamp($font-base, 5vw, $font-xl);
+      margin-bottom: $spacing-lg;
+      min-height: 50px;
+    }
+
+    &__description {
+      font-size: $font-sm;
+      line-height: 1.6;
+      margin-bottom: $spacing-lg;
+      padding: 0;
+    }
+    
+    &__location {
+      margin-bottom: $spacing-lg;
+      font-size: $font-xs;
+    }
+
+    &__visual {
+      margin-bottom: $spacing-xl;
+      
+      .hero__avatar {
+        &-image {
+          width: 160px;
+          height: 160px;
+          border-width: 2px;
+        }
+      }
+    }
+
+    &__actions {
+      margin-bottom: $spacing-lg;
+      
+      .btn {
+        max-width: 280px;
+        padding: $spacing-sm $spacing-lg;
+        font-size: $font-sm;
+        min-height: 44px;
+      }
+    }
+    
+    &__social {
+      gap: $spacing-base;
+      
+      &-link {
+        width: 45px;
+        height: 45px;
+        font-size: $font-lg;
+        min-height: 45px;
+      }
+    }
+  }
+}
+
+// Extra small mobile devices
+@media (max-width: 360px) {
+  .hero {
+    &__grid {
+      padding: 0 $spacing-xs;
+    }
+    
+    &__name {
+      &-text,
+      &-highlight {
+        font-size: clamp($font-xl, 11vw, $font-3xl);
+      }
+    }
+    
+    &__role {
+      font-size: clamp($font-sm, 6vw, $font-lg);
+    }
+    
+    &__description {
+      font-size: $font-xs;
+    }
+    
+    &__visual {
+      .hero__avatar {
+        &-image {
+          width: 140px;
+          height: 140px;
+        }
+      }
+    }
+    
+    &__actions {
+      .btn {
+        max-width: 260px;
+        padding: $spacing-xs $spacing-base;
+        font-size: $font-xs;
+      }
+    }
+  }
+}
+
+// Performance optimizations for low-end devices
+@media (max-width: $breakpoint-md) and (prefers-reduced-motion: no-preference) {
+  .hero {
+    // Reduce animation complexity on mobile
+    &__particle {
+      animation-duration: 12s !important; // Slower animations
+    }
+
+    &__morphing-shape {
+      animation-duration: 8s !important;
+    }
+
+    &__floating-element {
+      animation-duration: 6s !important;
+    }
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .hero {
+    &__name-highlight {
+      -webkit-text-fill-color: var(--primary-light);
+    }
+
+    &__tech-icon {
+      border-width: 3px;
+    }
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    &__cursor {
+      animation: none;
+    }
+
+    &__avatar-ring {
+      animation: none;
+
+      &::after {
+        animation: none;
+      }
+    }
+
+    &__background-circle {
+      animation: none;
+    }
+
+    // Disable all complex animations for accessibility
+    &__particle,
+    &__morphing-shape,
+    &__floating-element {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    &__tech-icon {
+      transform: none !important;
+    }
+  }
+}
+
+// Battery conservation mode
+@media (prefers-reduced-motion: reduce), (max-width: $breakpoint-sm) {
+  .hero {
+    // Disable most animations on small screens or when reduced motion is preferred
+    &__particles,
+    &__morphing-shapes,
+    &__floating-elements {
+      display: none; // Hide complex animations entirely
+    }
+
+    &__avatar-ring,
+    &__background-circle {
+      animation: none;
+      transform: none;
+    }
+  }
+}
+
+// Mobile optimization - Enhanced mobile experience
+@media (max-width: $breakpoint-md) {
+  .hero {
+    min-height: 70vh; // Full viewport height for better mobile experience
+    padding: $spacing-lg 0;
+    
+    // Optimize layout for mobile
+    &__grid {
+      grid-template-columns: 1fr;
+      gap: $spacing-3xl;
+      text-align: center;
+      padding: 0 $spacing-base;
+    }
+    
+    &__content {
+      text-align: center;
+      margin-right: 0;
+      padding: 0;
+      order: 2; // Content comes after visual on mobile
+    }
+    
+    &__visual {
+      // Required: Hide visual section completely on mobile
+      // Previously we reordered and simplified it; now we just hide it
+      display: none !important;
+    }
+    
+    // Optimize spacing for mobile
+    &__name {
+      margin-bottom: $spacing-lg;
+      
+      &-text, &-highlight {
+        font-size: clamp($font-3xl, 9vw, $font-5xl);
+        line-height: 1.1;
+        margin-bottom: $spacing-sm;
+      }
+    }
+    
+    &__role {
+      font-size: clamp($font-lg, 4.5vw, $font-2xl);
+      margin-bottom: $spacing-xl;
+      height: auto;
+      min-height: 60px; // Ensure consistent height
+    }
+    
+    &__description {
+      font-size: $font-base;
+      line-height: 1.6;
+      margin-bottom: $spacing-xl;
+      max-width: 100%;
+      padding: 0 $spacing-sm;
+    }
+    
+    &__location {
+      margin-bottom: $spacing-xl;
+      font-size: $font-sm;
+    }
+    
+    &__actions {
+      flex-direction: column;
+      gap: $spacing-base;
+      align-items: center;
+      margin-bottom: $spacing-xl;
+      
+      .btn {
+        width: 100%;
+        max-width: 200px;
+        padding: $spacing-base $spacing-xl;
+        font-size: $font-base;
+        min-height: 48px; // Better touch target
+      }
+    }
+    
+    &__social {
+      margin-top: $spacing-lg;
+      justify-content: center;
+      gap: $spacing-lg;
+      
+      &-link {
+        width: 50px;
+        height: 50px;
+        font-size: $font-xl;
+        min-height: 50px; // Better touch target
+      }
+    }
+    
+    // Hide complex animations on mobile
+    &__particles,
+    &__morphing-shapes,
+    &__floating-elements,
+    &__background {
+      display: none;
+    }
+  }
+}
+
+// Tablet optimization
+@media (min-width: #{$breakpoint-md + 1px}) and (max-width: $breakpoint-lg) {
+  .hero {
+    &__visual {
+      width: 80%;
+      height: auto;
+    }
+    
+    &__avatar {
+      &-image {
+        width: 240px;
+        height: 240px;
+      }
+    }
+  }
+}
+
+// High performance mode for modern devices
+@media (min-width: $breakpoint-lg) and (prefers-reduced-motion: no-preference) {
+  .hero {
+    // Enable enhanced animations only on larger screens with no motion preference
+    &__particle {
+      animation: particleGlow 4s ease-in-out infinite alternate;
+    }
+
+    &__morphing-shape {
+      animation: morphShape 8s ease-in-out infinite;
+    }
+
+    &__background-circle {
+      animation: floatCircle 20s ease-in-out infinite;
+    }
+  }
+}

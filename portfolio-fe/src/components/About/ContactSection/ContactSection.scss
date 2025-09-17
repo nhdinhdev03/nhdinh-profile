@@ -1,0 +1,135 @@
+@use 'styles/variables' as *;
+
+// Contact Section
+.contact-section {
+  @include glass-effect;
+  padding: $spacing-3xl;
+  border-radius: 24px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  margin: $spacing-4xl 0;
+
+  h3 {
+    font-size: $font-2xl;
+    font-weight: $font-bold;
+    color: var(--text-primary);
+    margin-bottom: $spacing-lg;
+    background: var(--gradient-secondary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: $spacing-2xl;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .contact-actions {
+    @include flex-center;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-2xl;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      gap: $spacing-md;
+    }
+
+    .btn {
+      padding: $spacing-md $spacing-xl;
+      border-radius: 12px;
+      font-size: $font-base;
+      font-weight: $font-semibold;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid;
+      cursor: pointer;
+      min-width: 120px;
+
+      &.btn-primary {
+        background: var(--primary-light);
+        color: white;
+        border-color: var(--primary-light);
+
+        &:hover {
+          background: var(--primary-dark);
+          border-color: var(--primary-dark);
+          transform: translateY(-2px);
+        }
+      }
+
+      &.btn-secondary {
+        background: var(--secondary-light);
+        color: white;
+        border-color: var(--secondary-light);
+
+        &:hover {
+          background: var(--secondary-dark);
+          border-color: var(--secondary-dark);
+          transform: translateY(-2px);
+        }
+      }
+
+      &.btn-outline {
+        background: transparent;
+        color: var(--text-primary);
+        border-color: var(--border-color);
+
+        &:hover {
+          background: var(--bg-tertiary);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+
+  .theme-indicator {
+    padding-top: $spacing-lg;
+    border-top: 1px solid var(--border-color);
+
+    .theme-status {
+      color: var(--text-secondary);
+      font-size: $font-sm;
+      font-weight: $font-medium;
+    }
+  }
+}
+
+// Responsive Design for Contact Section
+@media (max-width: $breakpoint-md) {
+  .contact-section {
+    padding: $spacing-2xl;
+    
+    .contact-actions {
+      flex-direction: column;
+      gap: $spacing-md;
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+      }
+    }
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .contact-section {
+    border-width: 2px;
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .contact-section {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

@@ -1,60 +1,52 @@
-export const API_VERSION = "nhdinh/siuuuuuuuuu";
-export const ADMIN_PREFIX = "/admin/siuuuuuuuuuuu"; // luôn có /
-
-// Đường dẫn login riêng biệt
-export const AUTH_LOGIN = "/nhdinh/auth/login"; // luôn có /
+// File: router/routeConstants.js
+export const API_VERSION = "v1";
 
 export const ROUTES = {
   // User routes
-  HOME: `/`,
+  HOME: "/",
   ABOUT: `/${API_VERSION}/about`,
-  BLOG: `/${API_VERSION}/blog`,
-  CONTACT: `/${API_VERSION}/contact`,
-  PROJECTS: `/${API_VERSION}/projects`,
-  //
   SKILLS: `/${API_VERSION}/skills`,
-  PRIVACY: `/${API_VERSION}/privacy`,
-  TERMS: `/${API_VERSION}/terms`,
-  
-  ADMIN: {
-    // Dashboard
-    DASHBOARD: `${ADMIN_PREFIX}/dashboard`,
+  PROJECTS: `/${API_VERSION}/projects`,
+  BLOG: `/${API_VERSION}/blog`,
+  BLOG_DETAIL: `/${API_VERSION}/blog/:id`,
+  CONTACT: `/${API_VERSION}/contact`,
+};
 
-    // 1. Quản lý Trang chủ / Hero
-    HERO_MANAGEMENT: `${ADMIN_PREFIX}/hero`,
-
-
-    // 2. Quản lý Dự án (Projects)
-    PROJECTS_MANAGEMENT: `${ADMIN_PREFIX}/projects`,
-    PROJECT_CATEGORIES_MANAGEMENT: `${ADMIN_PREFIX}/projects/categories`,
-    PROJECT_TAGS_MANAGEMENT: `${ADMIN_PREFIX}/projects/tags`,
-    PROJECT_TAG_MAP_MANAGEMENT: `${ADMIN_PREFIX}/projects/tag-mapping`,
-
-    // 3. Quản lý Blog
-    BLOG_POSTS_MANAGEMENT: `${ADMIN_PREFIX}/blog/posts`,
-    BLOG_TAGS_MANAGEMENT: `${ADMIN_PREFIX}/blog/tags`,
-    BLOG_TAG_MAP_MANAGEMENT: `${ADMIN_PREFIX}/blog/tag-mapping`,
-
-    // 4. Quản lý Liên hệ
-    CONTACT_MESSAGES_MANAGEMENT: `${ADMIN_PREFIX}/contact/messages`,
-
-    // 5. Quản lý Hồ sơ cá nhân (Profile)
-    PROFILE_INFO_MANAGEMENT: `${ADMIN_PREFIX}/profile/info`,
-    PROFILE_TAGS_MANAGEMENT: `${ADMIN_PREFIX}/profile/tags`,
-    EXPERIENCE_MANAGEMENT: `${ADMIN_PREFIX}/profile/experience`,
-
-    // 6. Quản lý Kỹ năng (Skills)
-    SKILL_CATEGORIES_MANAGEMENT: `${ADMIN_PREFIX}/skills/categories`,
-    SKILLS_MANAGEMENT: `${ADMIN_PREFIX}/skills`,
-
-    // 7. Quản lý Tài khoản Admin
-    ADMIN_USERS_MANAGEMENT: `${ADMIN_PREFIX}/admin-users`,
-
-    // 8. Các chức năng bổ sung cho Admin
-    ANALYTICS: `${ADMIN_PREFIX}/analytics`,
-    HISTORY_LOGS: `${ADMIN_PREFIX}/history`,
-    MEDIA_LIBRARY: `${ADMIN_PREFIX}/media`,
-    SETTINGS: `${ADMIN_PREFIX}/settings`,
-    PROFILE: `${ADMIN_PREFIX}/admin-profile`,
+// Route metadata for breadcrumb and navigation
+export const ROUTE_METADATA = {
+  [ROUTES.HOME]: {
+    title: 'Home',
+    description: 'Welcome to my portfolio',
+    showBreadcrumb: false
+  },
+  [ROUTES.ABOUT]: {
+    title: 'About Me',
+    description: 'Learn more about my background and journey',
+    showBreadcrumb: true
+  },
+  [ROUTES.SKILLS]: {
+    title: 'Skills & Technologies',
+    description: 'My technical skills and expertise',
+    showBreadcrumb: true
+  },
+  [ROUTES.PROJECTS]: {
+    title: 'Projects',
+    description: 'Showcase of my work and projects',
+    showBreadcrumb: true
+  },
+  [ROUTES.BLOG]: {
+    title: 'Blog',
+    description: 'My thoughts and articles',
+    showBreadcrumb: true
+  },
+  [ROUTES.BLOG_DETAIL]: {
+    title: 'Blog Post',
+    description: 'Read the full article',
+    showBreadcrumb: true
+  },
+  [ROUTES.CONTACT]: {
+    title: 'Contact Me',
+    description: 'Get in touch with me',
+    showBreadcrumb: true
   },
 };

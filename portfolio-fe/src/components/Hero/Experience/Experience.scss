@@ -1,0 +1,784 @@
+@use '../../../styles/variables.scss' as *;
+
+.experience {
+  padding: clamp($spacing-4xl, 8vw, $spacing-6xl) 0;
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+  
+  // Modern CSS performance optimizations
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
+
+  // Subtle background pattern
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.03) 0%, transparent 25%),
+      radial-gradient(circle at 75% 75%, rgba(236, 72, 153, 0.03) 0%, transparent 25%);
+    pointer-events: none;
+    will-change: auto;
+  }
+
+  // Performance optimizations for low-end devices
+  &.low-performance {
+    &::before {
+      display: none; // Remove background patterns on low-performance devices
+    }
+    
+    .experience__card {
+      will-change: auto;
+      transition: none;
+      
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+
+  // Loading state styles
+  &.updating {
+    .experience__grid {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+  }
+
+  &__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp($spacing-base, 4vw, $spacing-lg);
+    
+    // CSS containment for better performance
+    contain: layout style;
+  }
+
+  // Section Header - Fully Responsive
+  &__header {
+    text-align: center;
+    margin-bottom: clamp($spacing-4xl, 8vw, $spacing-6xl);
+    max-width: clamp(300px, 90vw, 600px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__subtitle {
+    display: inline-block;
+    color: var(--primary-light);
+    font-size: clamp($font-xs, 2.5vw, $font-sm);
+    font-weight: $font-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: clamp($spacing-xs, 2vw, $spacing-base);
+    padding: clamp($spacing-xs, 1.5vw, $spacing-xs) clamp($spacing-base, 3vw, $spacing-lg);
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 50px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+
+  &__title {
+    font-size: clamp($font-2xl, 6vw, $font-5xl);
+    font-weight: $font-bold;
+    color: var(--text-primary);
+    margin-bottom: clamp($spacing-base, 3vw, $spacing-lg);
+    line-height: 1.2;
+  }
+
+  &__description {
+    font-size: clamp($font-sm, 3vw, $font-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  // Grid Layout - Enhanced Responsive with Container Queries
+  &__grid {
+    display: grid;
+    gap: clamp($spacing-xl, 4vw, $spacing-4xl);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    // Modern container-based responsive design
+    container-type: inline-size;
+    container-name: experience-grid;
+    
+    // Mobile: 1 column
+    grid-template-columns: 1fr;
+    
+    // Tablet: 2 columns for medium screens
+    @media (min-width: $breakpoint-md) {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: clamp($spacing-2xl, 3vw, $spacing-3xl);
+    }
+    
+    // Desktop: Up to 3 columns but flexible
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: $spacing-3xl;
+    }
+    
+    // Large desktop: Ensure cards don't get too wide
+    @media (min-width: $breakpoint-2xl) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    // Container queries for better responsive behavior
+    @container experience-grid (min-width: 600px) {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    @container experience-grid (min-width: 900px) {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    // List items should not have any styling
+    li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  // Experience Cards - Fully Responsive with Modern CSS Features
+  &__card {
+    background: var(--bg-secondary);
+    border-radius: clamp(16px, 2vw, 24px);
+    padding: clamp($spacing-xl, 5vw, $spacing-3xl);
+    border: 1px solid var(--border-color);
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    
+    // Modern CSS optimizations
+    contain: layout style paint;
+    will-change: transform;
+    
+    // Better focus management
+    &:focus-visible {
+      outline: 2px solid var(--primary-light);
+      outline-offset: 2px;
+    }
+
+    // Enhanced mobile optimization
+    &.mobile-optimized {
+      will-change: auto;
+      transition-duration: 0.2s;
+      
+      &:hover {
+        transform: none;
+      }
+    }
+
+    // Subtle gradient overlay
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #6366f1, #ec4899, #06b6d4);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      will-change: opacity;
+    }
+
+    &:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgba(99, 102, 241, 0.05);
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    // Performance optimization for low-end devices
+    &.low-performance {
+      will-change: auto;
+      
+      &::before {
+        display: none;
+      }
+      
+      &:hover {
+        box-shadow: none;
+        transform: none;
+      }
+    }
+  }
+
+  // Card Header - Enhanced Mobile Layout
+  &__card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: clamp($spacing-base, 4vw, $spacing-xl);
+    flex-wrap: wrap;
+    gap: $spacing-base;
+    
+    // Stack on very small screens
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-sm;
+    }
+  }
+
+  &__icon-wrapper {
+    width: clamp(40px, 8vw, 60px);
+    height: clamp(40px, 8vw, 60px);
+    border-radius: clamp(12px, 2vw, 16px);
+    @include flex-center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    font-size: clamp($font-lg, 4vw, $font-2xl);
+    transition: all 0.3s ease;
+  }
+
+  &__period {
+    display: flex;
+    align-items: center;
+    gap: clamp($spacing-xs, 1.5vw, $spacing-sm);
+    color: var(--text-tertiary);
+    font-size: clamp($font-xs, 2.5vw, $font-sm);
+    font-weight: $font-medium;
+    padding: clamp($spacing-xs, 1.5vw, $spacing-sm) clamp($spacing-sm, 2.5vw, $spacing-base);
+    background: var(--bg-primary);
+    border-radius: clamp(8px, 1.5vw, 12px);
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
+  }
+
+  &__period-icon {
+    font-size: clamp($font-xs, 2vw, $font-sm);
+    flex-shrink: 0;
+  }
+
+  // Job Information - Responsive Typography
+  &__job-info {
+    margin-bottom: clamp($spacing-base, 4vw, $spacing-xl);
+  }
+
+  &__job-title {
+    font-size: clamp($font-lg, 4vw, $font-2xl);
+    font-weight: $font-bold;
+    color: var(--text-primary);
+    margin-bottom: clamp($spacing-xs, 2vw, $spacing-base);
+    line-height: 1.3;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  &__company {
+    display: inline-block;
+    color: white;
+    font-size: clamp($font-sm, 3vw, $font-base);
+    font-weight: $font-bold;
+    padding: clamp($spacing-xs, 2vw, $spacing-sm) clamp($spacing-base, 3vw, $spacing-lg);
+    border-radius: clamp(8px, 1.5vw, 12px);
+    margin-bottom: clamp($spacing-xs, 2vw, $spacing-base);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 100%;
+    word-wrap: break-word;
+  }
+
+  &__location {
+    display: flex;
+    align-items: center;
+    gap: clamp($spacing-xs, 1.5vw, $spacing-sm);
+    color: var(--text-tertiary);
+    font-size: clamp($font-xs, 2.5vw, $font-sm);
+    flex-wrap: wrap;
+  }
+
+  &__location-icon {
+    font-size: clamp($font-xs, 2vw, $font-sm);
+    flex-shrink: 0;
+  }
+
+  // Job Description - Optimized Reading
+  &__job-description {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: clamp($spacing-base, 4vw, $spacing-xl);
+    font-size: clamp($font-sm, 3vw, $font-base);
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  // Achievements - Mobile Optimized
+  &__achievements {
+    margin-bottom: clamp($spacing-base, 4vw, $spacing-xl);
+  }
+
+  &__achievements-title {
+    display: flex;
+    align-items: center;
+    gap: clamp($spacing-xs, 2vw, $spacing-sm);
+    font-size: clamp($font-base, 3.5vw, $font-lg);
+    font-weight: $font-bold;
+    color: var(--text-primary);
+    margin-bottom: clamp($spacing-sm, 3vw, $spacing-lg);
+    flex-wrap: wrap;
+  }
+
+  &__achievements-icon {
+    color: var(--primary-light);
+    font-size: clamp($font-sm, 3vw, $font-base);
+    flex-shrink: 0;
+  }
+
+  &__achievements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__achievement {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp($spacing-xs, 2vw, $spacing-sm);
+    margin-bottom: clamp($spacing-xs, 2vw, $spacing-base);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    transition: all 0.3s ease;
+    font-size: clamp($font-sm, 2.8vw, $font-base);
+    word-wrap: break-word;
+    hyphens: auto;
+
+    &:hover {
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__achievement-icon {
+    color: var(--primary-light);
+    margin-top: 2px;
+    flex-shrink: 0;
+    font-size: clamp($font-xs, 2.5vw, $font-sm);
+  }
+
+  // Technologies - Enhanced as fieldset with buttons
+  &__technologies {
+    border: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp($spacing-xs, 1.5vw, $spacing-sm);
+    justify-content: flex-start;
+    
+    legend {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    
+    // Center on very small screens
+    @media (max-width: 320px) {
+      justify-content: center;
+    }
+  }
+
+  &__tech-tag {
+    padding: clamp($spacing-xs, 1.5vw, $spacing-sm) clamp($spacing-sm, 2.5vw, $spacing-base);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: clamp(6px, 1vw, 8px);
+    color: var(--text-secondary);
+    font-size: clamp($font-xs, 2.2vw, $font-xs);
+    font-weight: $font-medium;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    white-space: nowrap;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    
+    // Focus management
+    &:focus-visible {
+      outline: 2px solid var(--primary-light);
+      outline-offset: 1px;
+    }
+
+    &:hover {
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    // Performance optimization
+    .low-performance & {
+      transition: none;
+      
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  // Loading indicator for transitions
+  &__loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background: rgba(var(--bg-primary-rgb), 0.9);
+    padding: $spacing-lg;
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+  }
+
+  &__loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(var(--primary-light-rgb), 0.2);
+    border-top: 3px solid var(--primary-light);
+    border-radius: 50%;
+    animation: experience-spinner 1s linear infinite;
+  }
+
+  // Screen reader only content
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+// Loading spinner animation
+@keyframes experience-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Enhanced Mobile Optimizations with CSS Custom Properties
+@media (max-width: $breakpoint-sm) {
+  .experience {
+    padding: $spacing-3xl 0;
+    
+    // CSS custom properties for dynamic styling
+    --card-padding: #{$spacing-lg};
+    --card-gap: #{$spacing-base};
+    --border-radius: 12px;
+
+    &__content {
+      padding: 0 $spacing-base;
+    }
+
+    &__header {
+      margin-bottom: $spacing-3xl;
+    }
+
+    &__card {
+      padding: var(--card-padding);
+      border-radius: var(--border-radius);
+    }
+
+    &__card-header {
+      margin-bottom: var(--card-gap);
+    }
+
+    &__job-info {
+      margin-bottom: var(--card-gap);
+    }
+
+    &__achievements,
+    &__job-description {
+      margin-bottom: var(--card-gap);
+    }
+
+    &__technologies {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+}
+
+// Extra small devices (phones in portrait, 320px and down)
+@media (max-width: 320px) {
+  .experience {
+    &__title {
+      font-size: $font-xl;
+    }
+
+    &__card {
+      padding: $spacing-base;
+    }
+
+    &__job-title {
+      font-size: $font-base;
+    }
+
+    &__company {
+      font-size: $font-xs;
+      padding: $spacing-xs $spacing-sm;
+    }
+
+    &__icon-wrapper {
+      width: 35px;
+      height: 35px;
+    }
+
+    &__icon {
+      font-size: $font-base;
+    }
+  }
+}
+
+// Tablet Portrait (600px to 768px)
+@media (min-width: 600px) and (max-width: $breakpoint-md) {
+  .experience {
+    &__grid {
+      grid-template-columns: 1fr;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+}
+
+// Large tablets and small laptops (768px to 1024px)
+@media (min-width: $breakpoint-md) and (max-width: $breakpoint-lg) {
+  .experience {
+    &__grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: $spacing-2xl;
+    }
+
+    &__card {
+      max-width: none;
+    }
+  }
+}
+
+// Large screens (1440px and up)
+@media (min-width: 1440px) {
+  .experience {
+    &__content {
+      max-width: 1400px;
+    }
+
+    &__grid {
+      gap: $spacing-4xl;
+    }
+  }
+}
+
+// Ultra-wide screens (1920px and up)
+@media (min-width: 1920px) {
+  .experience {
+    &__content {
+      max-width: 1600px;
+    }
+  }
+}
+
+// Landscape orientation optimizations
+@media (orientation: landscape) and (max-height: 600px) {
+  .experience {
+    padding: $spacing-2xl 0;
+
+    &__header {
+      margin-bottom: $spacing-2xl;
+    }
+
+    &__title {
+      font-size: clamp($font-xl, 4vw, $font-3xl);
+    }
+  }
+}
+
+// High density displays
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .experience {
+    &__card {
+      border-width: 0.5px;
+    }
+
+    &__tech-tag {
+      border-width: 0.5px;
+    }
+  }
+}
+
+// Dark mode enhancements with CSS custom properties
+@media (prefers-color-scheme: dark) {
+  .experience {
+    --shadow-color: rgba(0, 0, 0, 0.25);
+    --shadow-color-light: rgba(0, 0, 0, 0.1);
+    
+    &__card {
+      &:hover {
+        box-shadow: 
+          0 20px 25px -5px var(--shadow-color),
+          0 10px 10px -5px var(--shadow-color-light),
+          0 0 0 1px rgba(99, 102, 241, 0.1);
+      }
+    }
+  }
+}
+
+// Reduced motion support with enhanced accessibility
+@media (prefers-reduced-motion: reduce) {
+  .experience {
+    &__card,
+    &__achievement,
+    &__tech-tag,
+    &__icon-wrapper,
+    &__icon,
+    &__loading-spinner {
+      animation: none !important;
+      transition: none !important;
+    }
+    
+    // Maintain focus indicators without motion
+    &__card:focus-visible,
+    &__tech-tag:focus-visible {
+      transition: outline 0.1s ease;
+    }
+  }
+}
+
+// High contrast mode with better visibility
+@media (prefers-contrast: high) {
+  .experience {
+    --border-width: 2px;
+    --focus-outline-width: 3px;
+    
+    &__card {
+      border-width: var(--border-width);
+      
+      &:focus-visible {
+        outline-width: var(--focus-outline-width);
+      }
+    }
+
+    &__tech-tag {
+      border-width: var(--border-width);
+      
+      &:focus-visible {
+        outline-width: var(--focus-outline-width);
+      }
+    }
+
+    &__subtitle {
+      border-width: var(--border-width);
+    }
+  }
+}
+
+// Performance optimizations for low-end devices
+@media (max-width: 480px) and (max-height: 800px) {
+  .experience {
+    // Reduce visual complexity on small, low-end devices
+    &::before {
+      display: none;
+    }
+    
+    &__card {
+      &::before {
+        display: none;
+      }
+      
+      box-shadow: none !important;
+      transition: none;
+    }
+  }
+}
+
+// Print styles with better structure
+@media print {
+  .experience {
+    &__card {
+      box-shadow: none;
+      border: 2px solid #000;
+      page-break-inside: avoid;
+      margin-bottom: 1rem;
+    }
+
+    &__grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    &__loading,
+    &::before {
+      display: none;
+    }
+    
+    &__tech-tag {
+      border: 1px solid #000;
+      margin: 0.2rem;
+    }
+  }
+}
+
+// Support for viewport units in containers
+@supports (height: 100dvh) {
+  .experience {
+    // Use dynamic viewport height when available
+    min-height: 100dvh;
+  }
+}
+
+// Progressive enhancement for CSS containment
+@supports (contain: layout style paint) {
+  .experience {
+    &__content {
+      contain: layout style paint;
+    }
+    
+    &__card {
+      contain: layout style;
+    }
+  }
+}
+
+// CSS Grid subgrid support (future enhancement)
+@supports (grid-template-rows: subgrid) {
+  .experience {
+    &__grid {
+      // Enhanced grid alignment when subgrid becomes widely supported
+      grid-template-rows: subgrid;
+    }
+  }
+}

@@ -1,0 +1,135 @@
+// Performance optimization styles
+.App {
+  // Optimize rendering performance
+  will-change: auto;
+  
+  // Prevent unnecessary repaints
+  &[data-theme] {
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+}
+
+// Layout optimization
+main {
+  // Optimize compositing
+  isolation: isolate;
+  
+  // Prevent reflow on content changes
+  contain: layout style;
+}
+
+// Critical CSS for above-the-fold content
+.critical-content {
+  // Prioritize rendering of above-the-fold content
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
+}
+
+// Scroll performance
+.smooth-scroll {
+  scroll-behavior: smooth;
+  
+  @media (prefers-reduced-motion: reduce) {
+    scroll-behavior: auto;
+  }
+}
+
+// Image loading optimizations
+img[loading="lazy"] {
+  // Smooth image loading
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  
+  &.loaded {
+    opacity: 1;
+  }
+}
+
+// Performance optimization for low-end devices
+@media (max-width: 768px) {
+  // Disable expensive animations on mobile
+  .btn {
+    // Optimize button animations for mobile
+    will-change: transform;
+    
+    &:active {
+      // Use transform instead of expensive effects
+      transform: scale(0.97);
+      transition: transform 0.15s ease;
+    }
+    
+    // Disable complex hover animations on touch devices
+    @media (hover: none) {
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+  
+  // Optimize outline button performance
+  .btn-outline {
+    // Use GPU acceleration for better performance
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    
+    // Optimize active state for mobile
+    &:active {
+      transform: translateZ(0) scale(0.97);
+      background-color: rgba(99, 102, 241, 0.1);
+    }
+  }
+}
+  .hero__particles,
+  .hero__morphing-shapes,
+  .hero__floating-elements,
+  .parallax-element,
+  .floating-animation,
+  .complex-transform {
+    display: none !important;
+  }
+  
+  // Reduce animation complexity
+  * {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+  }
+
+
+// Further optimizations for very low-end devices
+@media (max-width: 480px) {
+  // Disable all non-essential animations
+  .animated,
+  .fade-in,
+  .slide-in,
+  .bounce,
+  .pulse {
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  // Force hardware acceleration sparingly
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: auto;
+  }
+}
+
+// Optimize for devices with limited hardware concurrency
+@supports (backdrop-filter: blur(10px)) {
+  .glass-effect {
+    backdrop-filter: blur(10px);
+  }
+}
+
+// Memory-conscious particle systems
+.particle-system {
+  // Limit particle count dynamically
+  &[data-count="low"] .particle:nth-child(n+7) {
+    display: none;
+  }
+  
+  &[data-count="medium"] .particle:nth-child(n+16) {
+    display: none;
+  }
+}

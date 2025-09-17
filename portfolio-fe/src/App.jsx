@@ -11,9 +11,6 @@ import ScrollToTopOnNavigate from "components/Scroll/ScrollToTopOnNavigate/Scrol
 
 import "styles/App.scss";
 
-
-
-// import NotFound from "pages/NotFound/NotFound.jsx";
 import "./i18n";
 
 
@@ -44,7 +41,6 @@ const App = memo(() => {
               />
             );
           })}
-          {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
       </Suspense>
     </Router>

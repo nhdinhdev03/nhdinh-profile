@@ -120,5 +120,5 @@ dist-ssr
 
 /jsconfig.json
 
-/netlify.toml
+# /netlify.toml
 

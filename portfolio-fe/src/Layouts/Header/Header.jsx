@@ -213,9 +213,10 @@ const MobileNav = memo(
           navigate(path);
         });
       }
+
     }, [pathname, navigate, setActiveSection, setIsMenuOpen]);
 
-    // Simplified animation variants for better performance
+  
     const overlayVariants = {
       hidden: { opacity: 0 },
       visible: { opacity: 1 },

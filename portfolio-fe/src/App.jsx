@@ -11,7 +11,7 @@ import ScrollToTopOnNavigate from "components/Scroll/ScrollToTopOnNavigate/Scrol
 import NotFound from "pages/NotFound";
 import "styles/App.scss";
 
-// Import i18n configuration
+
 import "./i18n";
 
 const App = memo(() => {

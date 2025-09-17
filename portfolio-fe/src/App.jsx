@@ -12,7 +12,7 @@ import ScrollToTopOnNavigate from "components/Scroll/ScrollToTopOnNavigate/Scrol
 import "styles/App.scss";
 
 
-import NotFound from "pages/NotFound";
+import NotFound from "pages/NotFound/index";
 import "./i18n";
 
 const App = memo(() => {

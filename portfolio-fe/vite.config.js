@@ -12,7 +12,7 @@ export default defineConfig({
       'components': path.resolve(__dirname, './src/components'),
       'hooks': path.resolve(__dirname, './src/hooks'),
       'layouts': path.resolve(__dirname, './src/Layouts'),
-      'pages': path.resolve(__dirname, './src/Pages'),
+      'pages': path.resolve(__dirname, './src/pages'),
       'styles': path.resolve(__dirname, './src/styles')
     }
   },

@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import React, {
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
-  useMemo,
-  useCallback,
 } from "react";
 import "./TechMarquee.scss";
 
@@ -376,10 +376,13 @@ function TechMarquee({
   const [isPaused, setIsPaused] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [idx, setIdx] = useState(0);
-  const SLIDE_DURATION = isMobile ? 1800 : 2500; // Faster slideshow on mobile
+  
+  // Simplified slideshow timing
+  const SLIDE_DURATION = 3500; // Fixed duration for simplicity
+    
   const marqueeItems = useMemo(() => [...LOGOS, ...LOGOS], []); // duplicate only (seamless loop)
 
-  // Intersection Observer for animation trigger
+  // Simple intersection observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -387,10 +390,7 @@ function TechMarquee({
           setIsInView(entry.isIntersecting);
         });
       },
-      {
-        threshold: isMobile ? 0.1 : 0.2,
-        rootMargin: isMobile ? "50px" : "100px",
-      }
+      { threshold: 0.1, rootMargin: "50px" }
     );
 
     if (marqueeRef.current) {
@@ -398,27 +398,25 @@ function TechMarquee({
     }
 
     return () => observer.disconnect();
-  }, [isMobile]);
+  }, []);
 
-  // Adaptive base speed (px/s) if not provided with mobile optimization
-  const speedRef = useRef(isMobile ? 30 : 60); // Reduced default speed
+  // Simple speed calculation
+  const speedRef = useRef(isMobile ? 30 : 50);
   useEffect(() => {
     if (typeof speed === "number" && speed > 0) {
       speedRef.current = speed;
       return;
     }
+    
     const w = window.innerWidth;
-    // More conservative speeds for better performance
-    if (w > 1400) {
-      speedRef.current = 60; // Reduced from 85
-    } else if (w > 1100) {
-      speedRef.current = 50; // Reduced from 70
+    if (w > 1100) {
+      speedRef.current = 50;
     } else if (w > 900) {
-      speedRef.current = 40; // Reduced from 60
+      speedRef.current = 40;
     } else if (w > 600) {
-      speedRef.current = 35; // Reduced from 50
+      speedRef.current = 35;
     } else {
-      speedRef.current = 25; // Reduced from 35
+      speedRef.current = 25;
     }
   }, [speed, isMobile]);
 

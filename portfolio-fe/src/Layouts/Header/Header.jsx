@@ -495,21 +495,42 @@ const useRouteActiveSection = (
   return [activeSection, setActiveSection];
 };
 
-// Optimized scroll spy with better performance - chỉ hoạt động trên trang Home
+// Optimized scroll spy with better performance và scroll direction detection
 const useScrollSpy = (
   isScrolling,
   setIsScrolled,
   setActiveSection,
   navItems,
-  pathname // Thêm pathname để kiểm tra trang hiện tại
+  pathname, // Thêm pathname để kiểm tra trang hiện tại
+  setIsHeaderVisible,
+  setLastScrollY
 ) => {
   const rafRef = useRef();
   const lastActiveSection = useRef("home");
+  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
+      const scrollDirection = scrollY > lastScrollYRef.current ? 'down' : 'up';
+      
+      // Update scroll state
       setIsScrolled(scrollY > 50);
+      
+      // Header visibility logic based on scroll direction
+      if (scrollY < 50) {
+        // Always show header at top
+        setIsHeaderVisible(true);
+      } else if (scrollDirection === 'down' && scrollY > lastScrollYRef.current + 5) {
+        // Hide header when scrolling down (with threshold to avoid jitter)
+        setIsHeaderVisible(false);
+      } else if (scrollDirection === 'up' && scrollY < lastScrollYRef.current - 5) {
+        // Show header when scrolling up
+        setIsHeaderVisible(true);
+      }
+      
+      lastScrollYRef.current = scrollY;
+      setLastScrollY(scrollY);
 
       // Chỉ cho phép scroll spy hoạt động trên trang Home
       if (isScrolling || pathname !== ROUTES.HOME) return;
@@ -563,30 +584,37 @@ const useScrollSpy = (
       });
     };
 
-    // Throttle scroll events for better performance
-    let scrollTimeout;
-    const throttledScroll = () => {
-      if (scrollTimeout) return;
-      scrollTimeout = setTimeout(() => {
-        handleScroll();
-        scrollTimeout = null;
-      }, 16); // 60fps
+    // Optimized scroll handling with better throttling
+    let ticking = false;
+    const optimizedScrollHandler = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", throttledScroll, { passive: true });
+    // Use passive listeners for better scroll performance
+    window.addEventListener("scroll", optimizedScrollHandler, { 
+      passive: true,
+      capture: false 
+    });
     
     return () => {
-      window.removeEventListener("scroll", throttledScroll);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
+      window.removeEventListener("scroll", optimizedScrollHandler);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [isScrolling, setIsScrolled, setActiveSection, navItems, pathname]);
+  }, [isScrolling, setIsScrolled, setActiveSection, navItems, pathname, setIsHeaderVisible, setLastScrollY]);
 };
 
 function Header({ theme, toggleTheme }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrolling] = useState(false); // Removed setIsScrolling since it's not used
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const mobileNavRef = useRef(null);
   const menuButtonRef = useRef(null);
   const { t } = useTranslation();
@@ -619,7 +647,7 @@ function Header({ theme, toggleTheme }) {
   );
 
   // Scroll spy - chỉ hoạt động trên trang Home
-  useScrollSpy(isScrolling, setIsScrolled, setActiveSection, navItems, pathname);
+  useScrollSpy(isScrolling, setIsScrolled, setActiveSection, navItems, pathname, setIsHeaderVisible, setLastScrollY);
 
   // Handle link hover for preloading
   const handleLinkHover = useCallback(
@@ -698,7 +726,9 @@ function Header({ theme, toggleTheme }) {
     <header
       className={`header ${isScrolled ? "header--scrolled" : ""} ${
         isMenuOpen ? "header--menu-open" : ""
-      } ${isScrolling ? "header--scrolling" : ""}`}
+      } ${isScrolling ? "header--scrolling" : ""} ${
+        !isHeaderVisible ? "header--hidden" : ""
+      }`}
     >
       <div className="header__container">
         <button

@@ -1,0 +1,478 @@
+@use 'styles/variables' as *;
+
+// Professional Loading Fallback - Gaming Style
+// Inspired by LoL Esports design patterns
+
+// Animation Keyframes
+@keyframes spinner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes particle-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress-pulse {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes decorative-float {
+  0%, 100% {
+    transform: translateX(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(10px) rotate(5deg);
+    opacity: 0.6;
+  }
+}
+
+// CSS Custom Properties for Dynamic Theming
+.loading-fallback {
+  // Dark Theme (Default)
+  --bg-gradient: linear-gradient(135deg, #0a0e27 0%, #1e2328 50%, #010a13 100%);
+  --overlay-color: rgba(0, 0, 0, 0.8);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-accent: #6366f1;
+  --primary-accent: #6366f1;
+  --secondary-accent: #8b5cf6;
+  --tertiary-accent: #06b6d4;
+  --glow-color: #6366f1;
+  --progress-bg: rgba(255, 255, 255, 0.1);
+  --progress-fill: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+  
+  // Light Theme Override
+  &.theme-light {
+    --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+    --overlay-color: rgba(255, 255, 255, 0.9);
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --glow-color: #4338ca;
+    --progress-bg: rgba(0, 0, 0, 0.1);
+  }
+  
+  // Main Container
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: var(--bg-gradient);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  font-family: $font-primary;
+  overflow: hidden;
+  
+  @include mobile-only {
+    padding: $spacing-base;
+  }
+}
+
+// Loading Content Wrapper
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 2;
+  position: relative;
+  
+  animation: slide-in-up 0.8s ease-out;
+  
+  @include mobile-only {
+    max-width: 300px;
+  }
+}
+
+// Brand Section
+.loading-brand {
+  display: flex;
+  align-items: center;
+  gap: $spacing-base;
+  margin-bottom: $spacing-3xl;
+  
+  &__icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+    animation: pulse-glow 2s ease-in-out infinite;
+    
+    &-inner {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      background: var(--overlay-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      span {
+        @include heading-style($font-lg, $font-bold);
+        color: var(--text-accent);
+        letter-spacing: 1px;
+      }
+    }
+  }
+  
+  &__text {
+    h1 {
+      @include heading-style($font-3xl, $font-bold);
+      color: var(--text-primary);
+      margin: 0 0 4px 0;
+      background: linear-gradient(135deg, var(--primary-accent), var(--tertiary-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    p {
+      @include label-text($font-xs, $font-medium);
+      color: var(--text-secondary);
+      margin: 0;
+      letter-spacing: 2px;
+    }
+  }
+  
+  @include mobile-only {
+    gap: $spacing-sm;
+    margin-bottom: $spacing-2xl;
+    
+    &__icon {
+      width: 50px;
+      height: 50px;
+      
+      &-inner {
+        width: 42px;
+        height: 42px;
+        
+        span {
+          font-size: $font-base;
+        }
+      }
+    }
+    
+    &__text {
+      h1 {
+        font-size: $font-2xl;
+      }
+      
+      p {
+        font-size: $font-xs;
+      }
+    }
+  }
+}
+
+// Modern Spinner
+.loading-spinner {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: $spacing-base 0 $spacing-3xl 0;
+  
+  &__outer {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, 
+      var(--primary-accent) 0deg,
+      var(--secondary-accent) 120deg,
+      var(--tertiary-accent) 240deg,
+      var(--primary-accent) 360deg
+    );
+    padding: 4px;
+    animation: spinner-rotate 2s linear infinite;
+    filter: drop-shadow(0 0 20px var(--glow-color));
+  }
+  
+  &__inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--bg-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  &__core {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    animation: pulse-glow 1.5s ease-in-out infinite;
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+  }
+  
+  &__particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  
+  &__particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--text-accent);
+    
+    @for $i from 1 through 8 {
+      &--#{$i} {
+        animation: particle-float #{1.8 + ($i * 0.1)}s ease-in-out infinite #{($i - 1) * 0.3}s;
+      }
+    }
+    
+    &--1 { top: 10%; left: 50%; }
+    &--2 { top: 25%; right: 15%; }
+    &--3 { right: 10%; top: 50%; }
+    &--4 { bottom: 25%; right: 15%; }
+    &--5 { bottom: 10%; left: 50%; }
+    &--6 { bottom: 25%; left: 15%; }
+    &--7 { left: 10%; top: 50%; }
+    &--8 { top: 25%; left: 15%; }
+  }
+  
+  @include mobile-only {
+    width: 100px;
+    height: 100px;
+    margin: $spacing-sm 0 $spacing-2xl 0;
+    
+    &__core {
+      width: 32px;
+      height: 32px;
+    }
+    
+    &__particle {
+      width: 3px;
+      height: 3px;
+    }
+  }
+}
+
+// Loading Text
+.loading-text {
+  margin-bottom: $spacing-2xl;
+  
+  &__main {
+    @include heading-style($font-2xl, $font-semibold);
+    color: var(--text-primary);
+    margin-bottom: $spacing-xs;
+    letter-spacing: 1px;
+    display: block;
+  }
+  
+  &__sub {
+    @include body-text($font-sm, $font-normal);
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    display: block;
+  }
+  
+  @include mobile-only {
+    margin-bottom: $spacing-base;
+    
+    &__main {
+      font-size: $font-xl;
+    }
+    
+    &__sub {
+      font-size: $font-xs;
+    }
+  }
+}
+
+// Progress Section
+.loading-progress {
+  width: 280px;
+  margin-bottom: $spacing-base;
+  
+  &__bar {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--progress-bg);
+    overflow: hidden;
+    position: relative;
+  }
+  
+  &__fill {
+    height: 100%;
+    background: var(--progress-fill);
+    background-size: 200% 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    animation: progress-pulse 2s ease-in-out infinite;
+  }
+  
+  &__text {
+    @include label-text(11px, $font-medium);
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: $spacing-xs;
+    letter-spacing: 1px;
+  }
+  
+  @include mobile-only {
+    width: 240px;
+    
+    &__bar {
+      height: 4px;
+    }
+    
+    &__text {
+      font-size: 10px;
+    }
+  }
+}
+
+// Decorative Elements
+.loading-decorative {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  
+  &__line {
+    position: absolute;
+    background: linear-gradient(90deg, 
+      transparent, 
+      #{rgba(99, 102, 241, 0.25)}, 
+      transparent
+    );
+    animation: decorative-float 4s ease-in-out infinite;
+    
+    &--1 {
+      width: 200px;
+      height: 1px;
+      top: 20%;
+      left: -50px;
+      animation-delay: 0s;
+    }
+    
+    &--2 {
+      width: 150px;
+      height: 1px;
+      bottom: 20%;
+      right: -30px;
+      animation-delay: 2s;
+    }
+  }
+  
+  &__dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #{rgba(99, 102, 241, 0.4)};
+    animation: decorative-float 3s ease-in-out infinite;
+    
+    &--1 {
+      top: 15%;
+      right: 20%;
+      animation-delay: 1s;
+    }
+    
+    &--2 {
+      bottom: 15%;
+      left: 20%;
+      animation-delay: 3s;
+    }
+  }
+  
+  @include mobile-only {
+    &__line {
+      &--1 {
+        width: 120px;
+      }
+      
+      &--2 {
+        width: 100px;
+      }
+    }
+    
+    &__dot {
+      width: 6px;
+      height: 6px;
+    }
+  }
+}
+
+// Performance Optimizations
+@media (prefers-reduced-motion: reduce) {
+  .loading-fallback {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .loading-fallback {
+    --primary-accent: #0066cc;
+    --secondary-accent: #004499;
+    --text-accent: #0066cc;
+    --glow-color: #0066cc;
+  }
+}

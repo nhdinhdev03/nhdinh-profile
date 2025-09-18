@@ -150,7 +150,9 @@ const CommunityTestimonials = memo(() => {
             variants={itemVariants}
           >
             {t('testimonials.description')}
-          </motion.p>          <motion.div 
+          </motion.p>         
+          
+           <motion.div 
             className="community-testimonials__stats"
             variants={itemVariants}
           >
@@ -234,19 +236,6 @@ const CommunityTestimonials = memo(() => {
                 >
                   "{testimonial.content}"
                 </motion.p>
-
-                <motion.div 
-                  className="community-testimonials__card-glow"
-                  animate={{
-                    opacity: [0.3, 0.6, 0.3],
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 3 + index * 0.2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
               </div>
             </motion.div>
           ))}
@@ -263,26 +252,6 @@ const CommunityTestimonials = memo(() => {
             {t('testimonials.join_community')}
           </motion.p>
         </motion.div>
-      </div>
-
-      {/* Background Elements */}
-      <div className="community-testimonials__background">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            className={`community-testimonials__bg-shape community-testimonials__bg-shape--${i + 1}`}
-            animate={{
-              rotate: [0, 360],
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.3, 0.1],
-            }}
-            transition={{
-              duration: 20 + i * 2,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-        ))}
       </div>
     </motion.section>
   );

@@ -12,11 +12,6 @@
 
   // Performance optimizations for low-end devices
   &.low-performance {
-    // Disable background effects
-    .community-testimonials__background {
-      display: none;
-    }
-    
     // Simplify animations
     .community-testimonials__card {
       will-change: auto;
@@ -25,10 +20,6 @@
       &:hover {
         transform: none;
       }
-    }
-    
-    .community-testimonials__card-glow {
-      display: none;
     }
   }
 
@@ -687,70 +678,6 @@
     }
   }
 
-  &__background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    overflow: hidden;
-  }
-
-  &__bg-shape {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.1;
-
-    &--1 {
-      width: 200px;
-      height: 200px;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      top: 10%;
-      left: 5%;
-    }
-
-    &--2 {
-      width: 150px;
-      height: 150px;
-      background: linear-gradient(135deg, #ec4899, #f97316);
-      top: 20%;
-      right: 10%;
-    }
-
-    &--3 {
-      width: 100px;
-      height: 100px;
-      background: linear-gradient(135deg, #10b981, #059669);
-      bottom: 30%;
-      left: 10%;
-    }
-
-    &--4 {
-      width: 180px;
-      height: 180px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      bottom: 10%;
-      right: 5%;
-    }
-
-    &--5 {
-      width: 120px;
-      height: 120px;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    &--6 {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      top: 70%;
-      right: 30%;
-    }
-  }
 }
 
 // Dark theme styles
@@ -888,56 +815,6 @@
         text-shadow: 0 2px 8px rgba(167, 139, 250, 0.3);
       }
     }
-
-    &__bg-shape {
-      &--1 {
-        background: linear-gradient(
-          135deg,
-          rgba(99, 102, 241, 0.15),
-          rgba(139, 92, 246, 0.1)
-        );
-      }
-
-      &--2 {
-        background: linear-gradient(
-          135deg,
-          rgba(236, 72, 153, 0.12),
-          rgba(249, 115, 22, 0.08)
-        );
-      }
-
-      &--3 {
-        background: linear-gradient(
-          135deg,
-          rgba(16, 185, 129, 0.1),
-          rgba(5, 150, 105, 0.08)
-        );
-      }
-
-      &--4 {
-        background: linear-gradient(
-          135deg,
-          rgba(245, 158, 11, 0.12),
-          rgba(217, 119, 6, 0.08)
-        );
-      }
-
-      &--5 {
-        background: linear-gradient(
-          135deg,
-          rgba(59, 130, 246, 0.1),
-          rgba(29, 78, 216, 0.08)
-        );
-      }
-
-      &--6 {
-        background: linear-gradient(
-          135deg,
-          rgba(239, 68, 68, 0.1),
-          rgba(220, 38, 38, 0.08)
-        );
-      }
-    }
   }
 }
 
@@ -1027,20 +904,6 @@
       font-size: 1rem;
       padding: 0.5rem 0;
     }
-
-    // Optimize background shapes for mobile
-    &__bg-shape {
-      &--1,
-      &--2,
-      &--3,
-      &--4,
-      &--5,
-      &--6 {
-        width: 60px !important;
-        height: 60px !important;
-        opacity: 0.05 !important;
-      }
-    }
   }
 }
 
@@ -1048,18 +911,9 @@
 @media (max-width: 480px) and (max-height: 600px) {
   .community-testimonials {
     &__card {
-      &-glow {
-        display: none;
-      }
-
       &:hover {
         transform: none;
       }
-    }
-
-    &__bg-shape {
-      animation: none !important;
-      display: none;
     }
 
     &__badge {
@@ -1246,18 +1100,9 @@
     }
 
     &__card {
-      &-glow {
-        animation: none;
-        opacity: 0.3;
-      }
-
       &:hover {
         transform: none;
       }
-    }
-
-    &__bg-shape {
-      animation: none !important;
     }
   }
 }

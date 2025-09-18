@@ -1,36 +1,33 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
-  motion,
   AnimatePresence,
-  useMotionValue,
-  useSpring,
-  useTransform,
+  motion,
 } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { FiCode, FiDatabase, FiServer, FiTool, FiLayers } from "react-icons/fi";
-import {
-  SiReact,
-  SiJavascript,
-  SiTypescript,
-  SiNodedotjs,
-  SiPython,
-  SiOpenjdk,
-  SiMongodb,
-  SiPostgresql,
-  SiRedis,
-  SiDocker,
-  SiAmazonaws,
-  SiGit,
-  SiTailwindcss,
-  SiSass,
-  SiVuedotjs,
-  SiExpress,
-  SiGraphql,
-  SiMysql,
-  SiMicrosoftsqlserver,
-  SiAngular,
-} from "react-icons/si";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { FiCode, FiDatabase, FiLayers, FiServer, FiTool } from "react-icons/fi";
+import {
+  SiAmazonaws,
+  SiAngular,
+  SiDocker,
+  SiExpress,
+  SiGit,
+  SiGraphql,
+  SiJavascript,
+  SiMicrosoftsqlserver,
+  SiMongodb,
+  SiMysql,
+  SiNodedotjs,
+  SiOpenjdk,
+  SiPostgresql,
+  SiPython,
+  SiReact,
+  SiRedis,
+  SiSass,
+  SiTailwindcss,
+  SiTypescript,
+  SiVuedotjs,
+} from "react-icons/si";
+import { useInView } from "react-intersection-observer";
 
 import "./Skills.scss";
 import TechMarquee from "./TechMarquee/TechMarquee";
@@ -40,26 +37,13 @@ function Skills() {
   const { t } = useTranslation();
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.1,
+    threshold: 0.05, // Giảm threshold để trigger sớm hơn
+    rootMargin: "50px 0px", // Thêm margin để trigger sớm hơn
   });
 
   const [activeCategory, setActiveCategory] = useState("frontend");
-  const [hoveredSkill, setHoveredSkill] = useState(null);
-  const [particles, setParticles] = useState([]);
   const [skillsData, setSkillsData] = useState({});
   const skillsRef = useRef(null);
-
-  // Mouse tracking for interactive effects
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(mouseY, [-300, 300], [5, -5]), {
-    stiffness: 100,
-    damping: 30,
-  });
-  const rotateY = useSpring(useTransform(mouseX, [-300, 300], [-5, 5]), {
-    stiffness: 100,
-    damping: 30,
-  });
 
   // Enhanced skills data with more details
   const skillCategories = useMemo(
@@ -204,49 +188,6 @@ function Skills() {
     [t]
   );
 
-  // Initialize particles for background effect
-  useEffect(() => {
-    const particleCount = 20;
-    const newParticles = [];
-
-    for (let i = 0; i < particleCount; i++) {
-      newParticles.push({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: Math.random() * 6 + 2,
-        speed: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.3 + 0.1,
-        color: ["#61DAFB", "#339933", "#336791", "#FF9900"][
-          Math.floor(Math.random() * 4)
-        ],
-      });
-    }
-
-    setParticles(newParticles);
-  }, []);
-
-  // Mouse move handler for 3D effects
-  useEffect(() => {
-    const handleMouseMove = (event) => {
-      if (skillsRef.current) {
-        const rect = skillsRef.current.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        mouseX.set(event.clientX - centerX);
-        mouseY.set(event.clientY - centerY);
-      }
-    };
-
-    const skillsElement = skillsRef.current;
-    if (skillsElement) {
-      skillsElement.addEventListener("mousemove", handleMouseMove);
-      return () =>
-        skillsElement.removeEventListener("mousemove", handleMouseMove);
-    }
-  }, []);
-
   // Simulate loading skills data
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -260,87 +201,43 @@ function Skills() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
+        staggerChildren: 0.08,
+        delayChildren: 0.1,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { y: 60, opacity: 0, scale: 0.95 },
+    hidden: { y: 30, opacity: 0, scale: 0.98 },
     visible: {
       y: 0,
       opacity: 1,
       scale: 1,
       transition: {
         type: "spring",
-        stiffness: 100,
-        damping: 15,
-        mass: 1,
+        stiffness: 150,
+        damping: 20,
+        mass: 0.8,
       },
     },
   };
 
   const skillVariants = {
-    hidden: { x: -50, opacity: 0, rotateY: -45 },
+    hidden: { x: -20, opacity: 0, rotateY: -15 },
     visible: {
       x: 0,
       opacity: 1,
       rotateY: 0,
       transition: {
         type: "spring",
-        stiffness: 120,
-        damping: 20,
+        stiffness: 180,
+        damping: 25,
       },
     },
   };
 
   return (
     <section id="skills" className="skills section" ref={skillsRef}>
-      {/* Animated Particles Background */}
-      <div className="skills__particles">
-        {particles.map((particle) => (
-          <motion.div
-            key={particle.id}
-            className="skills__particle"
-            initial={{
-              x: `${particle.x}%`,
-              y: `${particle.y}%`,
-              opacity: 0,
-              scale: 0,
-            }}
-            animate={{
-              x: [
-                `${particle.x}%`,
-                `${(particle.x + 20) % 100}%`,
-                `${particle.x}%`,
-              ],
-              y: [
-                `${particle.y}%`,
-                `${(particle.y + 15) % 100}%`,
-                `${particle.y}%`,
-              ],
-              opacity: [0, particle.opacity, 0],
-              scale: [0, 1, 0],
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: particle.speed * 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            style={{
-              width: particle.size,
-              height: particle.size,
-              background: particle.color,
-              borderRadius: "50%",
-              position: "absolute",
-              pointerEvents: "none",
-            }}
-          />
-        ))}
-      </div>
-
       <div className="container">
         <motion.div
           ref={ref}
@@ -348,31 +245,17 @@ function Skills() {
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          style={{
-            perspective: 1000,
-            transformStyle: "preserve-3d",
-          }}
         >
           <motion.div className="section-title" variants={itemVariants}>
-            <motion.h2
-              style={{
-                rotateX,
-                rotateY,
-                transformStyle: "preserve-3d",
-              }}
-            >
+            <h2>
               <span className="skills__title-highlight">
                 {t('skills.title')}
               </span>
-            </motion.h2>
-            <motion.p
-              style={{
-                transform: "translateZ(20px)",
-              }}
-            >
+            </h2>
+            <p>
               Các công nghệ và công cụ tôi sử dụng để tạo ra những sản phẩm
               tuyệt vời
-            </motion.p>
+            </p>
           </motion.div>
 
           {/* Enhanced Tech Marquee */}
@@ -410,15 +293,6 @@ function Skills() {
                   >
                     <motion.div
                       className="skills__category-icon"
-                      animate={{
-                        rotate: activeCategory === key ? [0, 10, -10, 0] : 0,
-                        scale: activeCategory === key ? [1, 1.1, 1] : 1,
-                      }}
-                      transition={{
-                        duration: 0.6,
-                        repeat: activeCategory === key ? Infinity : 0,
-                        repeatDelay: 2,
-                      }}
                     >
                       <IconComponent />
                     </motion.div>
@@ -437,32 +311,19 @@ function Skills() {
           {/* Skills Display */}
           <AnimatePresence mode="wait">
             {skillsData[activeCategory] && (
-              <motion.div
+              <div
                 key={activeCategory}
                 className="skills__display"
-                variants={itemVariants}
-                initial="hidden"
-                animate="visible"
-                exit={{ opacity: 0, y: -30, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
+                style={{
+                  opacity: 1,
+                  transform: "none"
+                }}
               >
                 <div className="skills__display-header">
                   <motion.div
                     className="skills__display-icon"
                     style={{
                       background: skillsData[activeCategory].gradient,
-                    }}
-                    animate={{
-                      boxShadow: [
-                        `0 0 20px ${skillsData[activeCategory].color}40`,
-                        `0 0 40px ${skillsData[activeCategory].color}60`,
-                        `0 0 20px ${skillsData[activeCategory].color}40`,
-                      ],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
                     }}
                   >
                     {React.createElement(skillsData[activeCategory].icon)}
@@ -473,11 +334,12 @@ function Skills() {
                   </div>
                 </div>
 
-                <motion.div
+                <div
                   className="skills__grid"
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
+                  style={{
+                    opacity: 1,
+                    transform: "none"
+                  }}
                 >
                   {skillsData[activeCategory].skills.map((skill, index) => {
                     const IconComponent = skill.icon;
@@ -487,54 +349,29 @@ function Skills() {
                         className="skills__item glass-card"
                         variants={skillVariants}
                         whileHover={{
-                          scale: 1.1,
-                          y: -5,
+                          scale: 1.02,
                           transition: {
-                            type: "spring",
-                            stiffness: 300,
-                            damping: 20,
+                            duration: 0.2,
                           },
                         }}
-                        onMouseEnter={() => setHoveredSkill(skill.name)}
-                        onMouseLeave={() => setHoveredSkill(null)}
                       >
                         {/* Simple Skill Display */}
                         <div className="skills__item-content">
-                          <motion.div
+                          <div
                             className="skills__item-icon"
                             style={{
                               color: skill.color,
                             }}
-                            animate={{
-                              rotate:
-                                hoveredSkill === skill.name ? [0, 360] : 0,
-                              scale:
-                                hoveredSkill === skill.name ? [1, 1.2, 1] : 1,
-                            }}
-                            transition={{
-                              duration: 0.8,
-                              ease: "easeInOut",
-                            }}
                           >
                             <IconComponent />
-                          </motion.div>
+                          </div>
                           <h4 className="skills__item-name">{skill.name}</h4>
                         </div>
-
-                        {/* Hover Effect Overlay */}
-                        <motion.div
-                          className="skills__item-overlay"
-                          initial={{ opacity: 0 }}
-                          whileHover={{ opacity: 1 }}
-                          style={{
-                            background: `linear-gradient(135deg, ${skill.color}10, ${skill.color}20)`,
-                          }}
-                        />
                       </motion.div>
                     );
                   })}
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
             )}
           </AnimatePresence>
         </motion.div>

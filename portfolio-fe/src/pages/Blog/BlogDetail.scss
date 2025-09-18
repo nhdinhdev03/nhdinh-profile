@@ -506,7 +506,7 @@
       margin: $spacing-xl 0;
       border: 1px solid var(--border-color);
       position: relative;
-      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-family: $font-mono;
       line-height: 1.6;
 
       // Copy button for code blocks

@@ -15,10 +15,8 @@
   }
 
   &__title {
-    font-size: 0.75rem;
-    font-weight: 600;
+    @include label-text($font-xs, $font-semibold);
     color: var(--text-secondary);
-    text-transform: uppercase;
     opacity: 0.8;
   }
 
@@ -41,8 +39,7 @@
       background: var(--bg-secondary);
       color: var(--text-primary);
       cursor: pointer;
-      font-size: 0.75rem;
-      font-weight: 500;
+      @include button-text($font-xs, $font-medium);
       min-width: 80px;
       position: relative;
 

@@ -107,7 +107,7 @@
   --shadow-color: var(--shadow-dark);
 }
 
-// Typography - Professional & Modern
+// Typography - Professional & Modern with Performance Optimization
 $font-primary: "Segoe UI", "Roboto", "Helvetica Neue", "Arial", 
                "Noto Sans", "Liberation Sans", "Apple Color Emoji", 
                "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
@@ -258,6 +258,7 @@ $desktop-standard: 1919px;  // Standard desktop max
 
 // Typography mixins for consistency with responsive font sizing
 @mixin heading-style($size: $font-2xl, $weight: $font-bold) {
+  font-family: $font-primary;
   font-size: $size;
   font-weight: $weight;
   line-height: $leading-snug;
@@ -266,6 +267,7 @@ $desktop-standard: 1919px;  // Standard desktop max
 }
 
 @mixin body-text($size: $font-base, $weight: $font-normal) {
+  font-family: $font-primary;
   font-size: $size;
   font-weight: $weight;
   line-height: $leading-relaxed;
@@ -273,6 +275,7 @@ $desktop-standard: 1919px;  // Standard desktop max
 }
 
 @mixin button-text($size: $font-sm, $weight: $font-medium) {
+  font-family: $font-primary;
   font-size: $size;
   font-weight: $weight;
   line-height: $leading-none;
@@ -280,11 +283,20 @@ $desktop-standard: 1919px;  // Standard desktop max
 }
 
 @mixin label-text($size: $font-xs, $weight: $font-medium) {
+  font-family: $font-primary;
   font-size: $size;
   font-weight: $weight;
   line-height: $leading-normal;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+}
+
+@mixin code-text($size: $font-sm, $weight: $font-normal) {
+  font-family: $font-mono;
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $leading-relaxed;
+  font-variant-ligatures: common-ligatures;
 }
 
 @mixin pulse-glow($color: var(--primary-light)) {

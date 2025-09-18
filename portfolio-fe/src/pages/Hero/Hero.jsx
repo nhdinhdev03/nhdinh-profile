@@ -1,43 +1,40 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  memo,
-  Suspense,
-  lazy,
-} from "react";
-import { Link } from "react-router-dom";
 import {
+  AnimatePresence,
   motion,
+  useAnimation,
   useMotionValue,
+  useScroll,
   useSpring,
   useTransform,
-  useAnimation,
-  useScroll,
-  AnimatePresence,
 } from "framer-motion";
+import {
+  memo,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from "react";
+import { useTranslation } from "react-i18next";
+import { FaJsSquare, FaNodeJs, FaPython, FaReact } from "react-icons/fa";
 import {
   FiDownload,
   FiFacebook,
   FiGithub,
-  FiLinkedin,
   FiMail,
   FiMapPin,
   FiStar,
-  FiZap,
+  FiZap
 } from "react-icons/fi";
-import { FaReact, FaJsSquare, FaNodeJs, FaPython } from "react-icons/fa";
-import { SiTypescript, SiTailwindcss } from "react-icons/si";
-import { useTranslation } from "react-i18next";
-import "./Hero.scss";
+import { SiTailwindcss, SiTypescript } from "react-icons/si";
+import { Link } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
+import CommunityTestimonials from "./CommunityTestimonials";
+import { Experience } from "./Experience";
+import "./Hero.scss";
 
 // Lazy load heavy components để tối ưu performance
-const Experience = lazy(() => import("components/Hero/Experience/Experience"));
-const CommunityTestimonials = lazy(() =>
-  import("components/Hero/CommunityTestimonials/CommunityTestimonials")
-);
+
 
 const Hero = memo(() => {
   const { t } = useTranslation();

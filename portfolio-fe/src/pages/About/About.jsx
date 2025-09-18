@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
-import ContactSection from "../../components/About/ContactSection";
-import Education from "../../components/About/Education";
-import ExperienceTimeline from "../../components/About/ExperienceTimeline";
-import ProfileHero from "../../components/About/ProfileHero";
 
 import "./About.scss";
+import ContactSection from "./ContactSection";
+import Education from "./Education";
+import ExperienceTimeline from "./ExperienceTimeline";
+import ProfileHero from "./ProfileHero";
 
 // Optimized GitHub profile hook
 function useGithubProfile() {

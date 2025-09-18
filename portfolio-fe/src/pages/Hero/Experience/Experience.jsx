@@ -12,9 +12,9 @@ import {
 } from 'react-icons/fi'
 import { useInView } from 'react-intersection-observer'
 
-import './Experience.scss'
-import useDeviceCapability from 'hooks/useDeviceCapability'
 import withPerformanceOptimization from 'components/PerformanceOptimization'
+import useDeviceCapability from 'hooks/useDeviceCapability'
+import './Experience.scss'
 
 
 const Experience = memo(() => {

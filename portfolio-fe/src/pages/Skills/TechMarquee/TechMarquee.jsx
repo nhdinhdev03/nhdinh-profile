@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import React, {
-  useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
+  useMemo,
+  useCallback,
 } from "react";
 import "./TechMarquee.scss";
 

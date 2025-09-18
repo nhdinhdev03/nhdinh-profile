@@ -1,13 +1,14 @@
 @use 'variables' as *;
 
 
-// Enhanced CSS Reset & Base Styles with Complete Responsive Support
+// Enhanced CSS Reset & Base Styles with Complete Responsive Support & Font Optimization
 *,
 *::before,
 *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font: inherit; // Ensure consistent font inheritance
 }
 
 html {
@@ -58,6 +59,9 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-variant-ligatures: common-ligatures;
+  font-kerning: auto;
   transition: background-color 0.3s ease, color 0.3s ease;
   
   // Optimize smooth scroll

@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useRef, useCallback, memo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
-import { useTranslation } from "react-i18next";
-import {
-  FiMenu,
-  FiX,
-  FiHome,
-  FiUser,
-  FiCode,
-  FiFolder,
-  FiBookOpen,
-  FiMail,
-  FiSun,
-  FiMoon,
-} from "react-icons/fi";
-import { ROUTES } from "router/routeConstants";
-import { useRoutePreloader } from "hooks/useRoutePreloader";
 import img from "assets/Img";
 import LanguageToggle from "components/LanguageToggle";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRoutePreloader } from "hooks/useRoutePreloader";
+import PropTypes from "prop-types";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  FiBookOpen,
+  FiCode,
+  FiFolder,
+  FiHome,
+  FiMail,
+  FiMenu,
+  FiMoon,
+  FiSun,
+  FiUser,
+  FiX,
+} from "react-icons/fi";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ROUTES } from "router/routeConstants";
 import "./Header.scss";
 
 // Hook to generate nav items with translations
@@ -174,7 +174,7 @@ const DesktopNav = memo(({ activeSection, onLinkHover, pathname }) => {
   );
 });
 
-// Optimized Mobile Navigation with reduced animations
+// Optimized Mobile Navigation with reduced animations and better performance
 const MobileNav = memo(
   ({
     isMenuOpen,
@@ -193,18 +193,28 @@ const MobileNav = memo(
     const [atTop, setAtTop] = useState(true);
     const [atBottom, setAtBottom] = useState(false);
     const scrollContainerRef = useRef(null);
+    
+    // Performance optimization: check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const handleLinkClick = useCallback((e, path) => {
       e.preventDefault();
-      if (navigator.vibrate) {
+      
+      // Haptic feedback for supported devices
+      if (navigator.vibrate && !prefersReducedMotion) {
         navigator.vibrate(10);
       }
+      
       setIsMenuOpen(false);
 
       // Optimize navigation - don't reload if already on the same page
       if (pathname === path) {
         if (path === ROUTES.HOME) {
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          // Use passive scroll for better performance
+          window.scrollTo({ 
+            top: 0, 
+            behavior: prefersReducedMotion ? 'instant' : 'smooth' 
+          });
           setActiveSection("home");
         }
       } else {
@@ -214,13 +224,19 @@ const MobileNav = memo(
         });
       }
 
-    }, [pathname, navigate, setActiveSection, setIsMenuOpen]);
+    }, [pathname, navigate, setActiveSection, setIsMenuOpen, prefersReducedMotion]);
 
   
     const overlayVariants = {
       hidden: { opacity: 0 },
-      visible: { opacity: 1 },
-      exit: { opacity: 0 }
+      visible: { 
+        opacity: 1,
+        transition: { duration: prefersReducedMotion ? 0.01 : 0.2 }
+      },
+      exit: { 
+        opacity: 0,
+        transition: { duration: prefersReducedMotion ? 0.01 : 0.15 }
+      }
     };
 
     const navVariants = {
@@ -230,8 +246,8 @@ const MobileNav = memo(
         opacity: 1,
         transition: {
           type: "tween",
-          duration: 0.2,
-          ease: "easeOut"
+          duration: prefersReducedMotion ? 0.01 : 0.25,
+          ease: prefersReducedMotion ? "linear" : [0.25, 0.46, 0.45, 0.94]
         }
       },
       exit: { 
@@ -239,20 +255,22 @@ const MobileNav = memo(
         opacity: 0,
         transition: {
           type: "tween",
-          duration: 0.15,
-          ease: "easeIn"
+          duration: prefersReducedMotion ? 0.01 : 0.2,
+          ease: prefersReducedMotion ? "linear" : [0.55, 0.055, 0.675, 0.19]
         }
       }
     };
 
     const itemVariants = {
-      hidden: { opacity: 0, x: 20 },
+      hidden: { opacity: 0, x: 15, scale: 0.95 },
       visible: { 
         opacity: 1, 
         x: 0,
+        scale: 1,
         transition: {
-          duration: 0.2,
-          ease: "easeOut"
+          duration: prefersReducedMotion ? 0.01 : 0.3,
+          ease: prefersReducedMotion ? "linear" : [0.25, 0.46, 0.45, 0.94],
+          delay: prefersReducedMotion ? 0 : 0.05
         }
       }
     };
@@ -306,8 +324,27 @@ const MobileNav = memo(
           exit="exit"
         >
           <div className="header__nav-mobile-header">
-            <h2 className="header__nav-mobile-title">{t("navigation.menu")}</h2>
-            <p className="header__nav-mobile-subtitle">{t("navigation.choose_destination")}</p>
+            <div className="header__nav-mobile-brand">
+              <div className="header__nav-mobile-logo">
+                <img
+                  width={32}
+                  height={32}
+                  src={theme === "dark" ? img.Logo2 : img.Logo}
+                  alt="Portfolio Logo"
+                />
+              </div>
+              <div className="header__nav-mobile-text">
+                <h2 className="header__nav-mobile-title">{t("navigation.menu")}</h2>
+                <p className="header__nav-mobile-subtitle">{t("navigation.choose_destination")}</p>
+              </div>
+            </div>
+            <button
+              className="header__nav-mobile-close"
+              onClick={() => setIsMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <FiX />
+            </button>
           </div>
           <div
             className="header__nav-scroll"
@@ -335,10 +372,35 @@ const MobileNav = memo(
                   >
                     <div className="header__nav-icon-wrapper">
                       <Icon className="header__nav-icon" />
+                    {isActive && !prefersReducedMotion && (
+                      <motion.div 
+                        className="header__nav-active-glow"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                      />
+                    )}
                     </div>
-                    <span className="header__nav-text">{item.label}</span>
-                    {isActive && (
-                      <div className="header__nav-active-dot" />
+                    <div className="header__nav-content">
+                      <span className="header__nav-text">{item.label}</span>
+                      <span className="header__nav-description">
+                        {t(`navigation.${item.id}_desc`, item.label)}
+                      </span>
+                    </div>
+                    {isActive && !prefersReducedMotion && (
+                      <motion.div 
+                        className="header__nav-active-indicator"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ duration: 0.4, ease: "backOut" }}
+                      >
+                        <div className="header__nav-active-dot" />
+                      </motion.div>
+                    )}
+                    {isActive && prefersReducedMotion && (
+                      <div className="header__nav-active-indicator">
+                        <div className="header__nav-active-dot" />
+                      </div>
                     )}
                   </Link>
                 </motion.li>
@@ -359,7 +421,7 @@ const MobileNav = memo(
                 <button
                   className="header__mobile-theme-btn"
                   onClick={() => {
-                    if (navigator.vibrate) {
+                    if (navigator.vibrate && !prefersReducedMotion) {
                       navigator.vibrate(10);
                     }
                     toggleTheme();

@@ -5,6 +5,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
+import PropTypes from "prop-types";
 import {
   memo,
   Suspense,
@@ -30,6 +31,133 @@ import { Experience } from "./Experience";
 import "./Hero.scss";
 
 // Lazy load heavy components để tối ưu performance
+
+// Skills Progress Ring Component
+const SkillProgressRing = ({ skill, level, color, delay, icon: IconComponent, index, isMobile, isTouch }) => {
+  const [progress, setProgress] = useState(0);
+  const radius = 35;
+  const strokeWidth = 4;
+  const normalizedRadius = radius - strokeWidth * 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const strokeDasharray = `${circumference} ${circumference}`;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const duration = 2000;
+      const startTime = performance.now();
+
+      const animateProgress = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progressValue = Math.min(elapsed / duration, 1);
+        const easeProgress = 1 - Math.pow(1 - progressValue, 3); // easeOutCubic
+        const currentProgress = easeProgress * level;
+        
+        setProgress(currentProgress);
+
+        if (progressValue < 1) {
+          requestAnimationFrame(animateProgress);
+        }
+      };
+
+      requestAnimationFrame(animateProgress);
+    }, delay * 1000 + 1000);
+
+    return () => clearTimeout(timer);
+  }, [level, delay]);
+
+  const angle = (index * 360) / 6; // 6 total skills
+  const isDesktop = !isMobile && !isTouch;
+
+  return (
+    <motion.div
+      className="hero__skill-ring"
+      style={{
+        "--skill-color": color,
+        "--angle": `${angle}deg`,
+      }}
+      initial={{
+        scale: 0,
+        rotate: -180,
+        opacity: 0,
+      }}
+      animate={{
+        scale: 1,
+        rotate: 0,
+        opacity: 1,
+      }}
+      transition={{
+        delay: 1 + delay,
+        type: "spring",
+        stiffness: 200,
+        damping: 15,
+      }}
+      whileHover={
+        isDesktop
+          ? {
+              scale: 1.15,
+              y: -5,
+              transition: { duration: 0.3 },
+            }
+          : undefined
+      }
+    >
+      <div className="hero__skill-ring-container">
+        <svg
+          className="hero__skill-ring-svg"
+          height={radius * 2}
+          width={radius * 2}
+        >
+          {/* Background circle */}
+          <circle
+            stroke="rgba(255, 255, 255, 0.1)"
+            fill="transparent"
+            strokeWidth={strokeWidth}
+            r={normalizedRadius}
+            cx={radius}
+            cy={radius}
+          />
+          {/* Progress circle */}
+          <circle
+            stroke={color}
+            fill="transparent"
+            strokeWidth={strokeWidth}
+            strokeDasharray={strokeDasharray}
+            style={{
+              strokeDashoffset,
+              transform: 'rotate(-90deg)',
+              transformOrigin: '50% 50%',
+              transition: 'stroke-dashoffset 0.3s ease',
+              filter: `drop-shadow(0 0 8px ${color}40)`,
+            }}
+            strokeLinecap="round"
+            r={normalizedRadius}
+            cx={radius}
+            cy={radius}
+          />
+        </svg>
+        
+        <div className="hero__skill-content">
+          <div className="hero__skill-icon">
+            <IconComponent />
+          </div>
+          <div className="hero__skill-name">{skill}</div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+SkillProgressRing.propTypes = {
+  skill: PropTypes.string.isRequired,
+  level: PropTypes.number.isRequired,
+  color: PropTypes.string.isRequired,
+  delay: PropTypes.number.isRequired,
+  icon: PropTypes.elementType.isRequired,
+  index: PropTypes.number.isRequired,
+  isMobile: PropTypes.bool.isRequired,
+  isTouch: PropTypes.bool.isRequired,
+};
 
 
 const Hero = memo(() => {
@@ -105,12 +233,12 @@ const Hero = memo(() => {
   ];
 
   const techIcons = [
-    { icon: FaReact, color: "#61DAFB", delay: 0 },
-    { icon: FaJsSquare, color: "#F7DF1E", delay: 0.2 },
-    { icon: SiTypescript, color: "#3178C6", delay: 0.4 },
-    { icon: FaNodeJs, color: "#339933", delay: 0.6 },
-    { icon: SiTailwindcss, color: "#06B6D4", delay: 0.8 },
-    { icon: FaPython, color: "#3776AB", delay: 1.0 },
+    { icon: FaReact, color: "#61DAFB", delay: 0, skill: "React", level: 95 },
+    { icon: FaJsSquare, color: "#F7DF1E", delay: 0.2, skill: "JavaScript", level: 90 },
+    { icon: SiTypescript, color: "#3178C6", delay: 0.4, skill: "TypeScript", level: 85 },
+    { icon: FaNodeJs, color: "#339933", delay: 0.6, skill: "Node.js", level: 88 },
+    { icon: SiTailwindcss, color: "#06B6D4", delay: 0.8, skill: "TailwindCSS", level: 92 },
+    { icon: FaPython, color: "#3776AB", delay: 1.0, skill: "Python", level: 80 },
   ];
 
   useEffect(() => {
@@ -895,7 +1023,7 @@ const Hero = memo(() => {
               </motion.div>
 
               <motion.div
-                className="hero__tech-stack"
+                className="hero__skills-showcase"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1, duration: 0.6 }}
@@ -903,100 +1031,19 @@ const Hero = memo(() => {
                   transformStyle: isMobile ? "flat" : "preserve-3d",
                 }}
               >
-                {techIcons.map((tech, index) => {
-                  const IconComponent = tech.icon;
-                  const angle = (index * 360) / techIcons.length;
-                  return (
-                    <motion.div
-                      key={index}
-                      className="hero__tech-icon"
-                      style={{
-                        "--icon-color": tech.color,
-                        "--delay": tech.delay,
-                        "--angle": `${angle}deg`,
-                      }}
-                      initial={{
-                        scale: 0,
-                        rotate: -180,
-                        opacity: 0,
-                        z: -50,
-                      }}
-                      animate={{
-                        scale: 1,
-                        rotate: 0,
-                        opacity: 1,
-                        z: 0,
-                        rotateY: [0, 360],
-                      }}
-                      transition={{
-                        delay: 1 + tech.delay,
-                        type: "spring",
-                        stiffness: 200,
-                        damping: 10,
-                        rotateY: {
-                          duration: 10 + index,
-                          repeat: Infinity,
-                          ease: "linear",
-                        },
-                      }}
-                      whileHover={
-                        isTouch || isMobile
-                          ? undefined
-                          : {
-                              scale: 1.2,
-                              rotate: 180,
-                              z: 15,
-                              boxShadow: `0 8px 20px ${tech.color}30`,
-                              transition: { duration: 0.4 },
-                            }
-                      }
-                    >
-                      <motion.div
-                        style={{
-                          transformStyle: isMobile ? "flat" : "preserve-3d",
-                          transform: isMobile
-                            ? "none"
-                            : `translateZ(${
-                                Math.sin((angle * Math.PI) / 180) * 20
-                              }px)`,
-                        }}
-                        animate={
-                          isMobile
-                            ? {}
-                            : {
-                                rotateZ: [0, 360],
-                              }
-                        }
-                        transition={
-                          isMobile
-                            ? {}
-                            : {
-                                duration: 8 + index * 0.5,
-                                repeat: Infinity,
-                                ease: "linear",
-                              }
-                        }
-                      >
-                        <IconComponent />
-                        <motion.div
-                          className="hero__tech-icon-glow"
-                          animate={{
-                            opacity: [0.3, 0.8, 0.3],
-                            scale: [1, 1.2, 1],
-                          }}
-                          transition={{
-                            duration: 2 + index * 0.1,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                          }}
-                          style={{
-                            background: `radial-gradient(circle, ${tech.color}40, transparent)`,
-                          }}
-                        />
-                      </motion.div>
-                    </motion.div>
-                  );
-                })}
+                {techIcons.map((tech, index) => (
+                  <SkillProgressRing
+                    key={index}
+                    skill={tech.skill}
+                    level={tech.level}
+                    color={tech.color}
+                    delay={tech.delay}
+                    icon={tech.icon}
+                    index={index}
+                    isMobile={isMobile}
+                    isTouch={isTouch}
+                  />
+                ))}
               </motion.div>
             </motion.div>
           </div>

@@ -377,110 +377,113 @@
     }
   }
 
-  &__tech-icon {
+  &__skills-showcase {
     position: absolute;
-    width: 70px;
-    height: 70px;
-    @include flex-center;
-    background: linear-gradient(
-      135deg,
-      var(--bg-secondary),
-      var(--bg-tertiary)
-    );
-    border: 3px solid var(--border-color);
-    border-radius: 50%;
-    font-size: $font-2xl;
-    color: var(--icon-color);
-    box-shadow: 0 15px 35px var(--shadow-color);
-    cursor: pointer;
-    transition: all 0.5s ease;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    z-index: 1;
     transform-style: preserve-3d;
-    backdrop-filter: blur(10px);
 
-    &:hover {
-      background: linear-gradient(
-        135deg,
-        var(--bg-primary),
-        var(--bg-secondary)
-      );
-      border-color: var(--icon-color);
-      transform: scale(1.2) translateZ(20px);
+    @media (min-width: $breakpoint-xl) {
+      width: 550px;
+      height: 550px;
     }
 
-    @media (hover: none), (pointer: coarse) {
-      &:hover {
-        background: linear-gradient(
-          135deg,
-          var(--bg-secondary),
-          var(--bg-tertiary)
-        );
-        border-color: var(--border-color);
-        transform: none;
-      }
+    @media (max-width: $breakpoint-md) {
+      width: 320px;
+      height: 320px;
     }
+  }
 
-    &-glow {
-      position: absolute;
-      top: -5px;
-      left: -5px;
-      right: -5px;
-      bottom: -5px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: -1;
-    }
+  &__skill-ring {
+    position: absolute;
+    cursor: pointer;
+    transition: all 0.3s ease;
 
-    // Static circular positioning (6 icons)
+    // Static circular positioning (6 skills)
     &:nth-child(1) {
       // React - top
-      top: 10%;
+      top: 5%;
       left: 50%;
       transform: translateX(-50%);
     }
 
     &:nth-child(2) {
-      // TypeScript - top right
-      top: 25%;
-      right: 15%;
+      // JavaScript - top right
+      top: 20%;
+      right: 10%;
     }
 
     &:nth-child(3) {
-      // Node.js - bottom right
-      bottom: 25%;
-      right: 15%;
+      // TypeScript - bottom right
+      bottom: 20%;
+      right: 10%;
     }
 
     &:nth-child(4) {
-      // Python - bottom
-      bottom: 10%;
+      // Node.js - bottom
+      bottom: 5%;
       left: 50%;
       transform: translateX(-50%);
     }
 
     &:nth-child(5) {
       // TailwindCSS - bottom left
-      bottom: 25%;
-      left: 15%;
+      bottom: 20%;
+      left: 10%;
     }
 
     &:nth-child(6) {
-      // JavaScript - top left
-      top: 25%;
-      left: 15%;
+      // Python - top left
+      top: 20%;
+      left: 10%;
     }
 
     @media (min-width: $breakpoint-xl) {
+      &:nth-child(1) {
+        top: 2%;
+      }
+
+      &:nth-child(2) {
+        top: 18%;
+        right: 8%;
+      }
+
+      &:nth-child(3) {
+        bottom: 18%;
+        right: 8%;
+      }
+
+      &:nth-child(4) {
+        bottom: 2%;
+      }
+
+      &:nth-child(5) {
+        bottom: 18%;
+        left: 8%;
+      }
+
+      &:nth-child(6) {
+        top: 18%;
+        left: 8%;
+      }
+    }
+
+    @media (max-width: $breakpoint-md) {
       &:nth-child(1) {
         top: 8%;
       }
 
       &:nth-child(2) {
-        top: 20%;
+        top: 25%;
         right: 12%;
       }
 
       &:nth-child(3) {
-        bottom: 20%;
+        bottom: 25%;
         right: 12%;
       }
 
@@ -489,14 +492,115 @@
       }
 
       &:nth-child(5) {
-        bottom: 20%;
+        bottom: 25%;
         left: 12%;
       }
 
       &:nth-child(6) {
-        top: 20%;
+        top: 25%;
         left: 12%;
       }
+    }
+  }
+
+  &__skill-ring-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__skill-ring-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg);
+  }
+
+  &__skill-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(
+      135deg,
+      var(--bg-secondary),
+      var(--bg-tertiary)
+    );
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+    transition: all 0.3s ease;
+
+    @media (max-width: $breakpoint-md) {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  &__skill-icon {
+    font-size: $font-xl;
+    color: var(--skill-color);
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: $font-lg;
+      margin-bottom: 3px;
+    }
+  }
+
+  &__skill-name {
+    font-size: 9px;
+    font-weight: $font-medium;
+    color: var(--text-tertiary);
+    text-align: center;
+    line-height: 1;
+    max-width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: 8px;
+      max-width: 50px;
+    }
+  }
+
+  &__skill-ring:hover &__skill-content {
+    background: linear-gradient(
+      135deg,
+      var(--bg-primary),
+      var(--bg-secondary)
+    );
+    border-color: var(--skill-color);
+    box-shadow: 0 12px 35px var(--shadow-color), 
+                0 0 20px var(--skill-color)20;
+    transform: scale(1.05);
+
+    @media (hover: none), (pointer: coarse) {
+      background: linear-gradient(
+        135deg,
+        var(--bg-secondary),
+        var(--bg-tertiary)
+      );
+      border-color: var(--border-color);
+      box-shadow: 0 8px 25px var(--shadow-color);
+      transform: none;
+    }
+  }
+
+  &__skill-ring:hover &__skill-icon {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px var(--skill-color));
+
+    @media (hover: none), (pointer: coarse) {
+      transform: none;
+      filter: none;
     }
   }
 }
@@ -590,15 +694,22 @@
       }
     }
 
-    &__tech-stack {
-      width: 280px; // Smaller tech stack
+    &__skills-showcase {
+      width: 280px; // Smaller skills showcase
       height: 280px;
     }
 
-    &__tech-icon {
-      width: 40px; // Smaller tech icons
-      height: 40px;
+    &__skill-content {
+      width: 50px; // Smaller skill content
+      height: 50px;
+    }
+
+    &__skill-icon {
       font-size: $font-base;
+    }
+
+    &__skill-name {
+      font-size: 6px;
     }
 
     &__actions {
@@ -625,7 +736,7 @@
 
     // Disable 3D transforms on mobile for better performance
     &__avatar,
-    &__tech-stack,
+    &__skills-showcase,
     &__visual {
       transform-style: flat !important;
     }
@@ -752,7 +863,7 @@
 @media (max-width: $breakpoint-md) and (prefers-reduced-motion: no-preference) {
   .hero {
     // Reduce animation complexity on mobile
-    &__tech-icon {
+    &__skill-ring {
       animation-duration: 8s !important; // Slower animations
     }
   }
@@ -786,7 +897,7 @@
       }
     }
 
-    &__tech-icon {
+    &__skill-ring {
       transform: none !important;
     }
   }

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { FiHeart, FiStar, FiUsers } from "react-icons/fi";
+import { FiHeart, FiStar } from "react-icons/fi";
 
 import "./CommunityTestimonials.scss";
 
@@ -150,28 +150,7 @@ const CommunityTestimonials = memo(() => {
             variants={itemVariants}
           >
             {t('testimonials.description')}
-          </motion.p>         
-          
-           <motion.div 
-            className="community-testimonials__stats"
-            variants={itemVariants}
-          >
-            <div className="community-testimonials__stat">
-              <FiUsers className="stat-icon" />
-              <span className="stat-number">50+</span>
-              <span className="stat-label">Happy Clients</span>
-            </div>
-            <div className="community-testimonials__stat">
-              <FiStar className="stat-icon" />
-              <span className="stat-number">5.0</span>
-              <span className="stat-label">Average Rating</span>
-            </div>
-            <div className="community-testimonials__stat">
-              <FiHeart className="stat-icon" />
-              <span className="stat-number">100%</span>
-              <span className="stat-label">Satisfaction</span>
-            </div>
-          </motion.div>
+          </motion.p>
         </motion.div>
 
         <motion.div 

@@ -166,64 +166,6 @@
     }
   }
 
-  &__stats {
-    display: flex;
-    justify-content: center;
-    gap: clamp(1.5rem, 5vw, 3rem);
-    margin-top: 2rem;
-    flex-wrap: wrap;
-
-    @media (max-width: 768px) {
-      gap: clamp(1rem, 4vw, 2rem);
-      margin-top: 1.5rem;
-    }
-
-    @media (max-width: 480px) {
-      flex-direction: row;
-      gap: 1rem;
-      align-items: center;
-      justify-content: space-around;
-      margin-top: 1rem;
-      padding: 0 $spacing-base;
-    }
-  }
-
-  &__stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    min-width: 0;
-    flex: 0 1 auto;
-
-    @media (max-width: 480px) {
-      flex: 1;
-      min-width: 0;
-      max-width: none;
-      gap: 0.25rem;
-    }
-
-    .stat-icon {
-      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
-      color: #6366f1;
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-number {
-      font-size: clamp(1.5rem, 3vw, 1.8rem);
-      font-weight: 700;
-      color: #1a1a2e;
-      line-height: 1.2;
-    }
-
-    .stat-label {
-      font-size: clamp(0.8rem, 2vw, 0.9rem);
-      color: #6b7280;
-      font-weight: 500;
-      text-align: center;
-    }
-  }
-
   &__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -710,22 +652,6 @@
       color: #9ca3af;
     }
 
-    &__stat {
-      .stat-icon {
-        color: #6366f1;
-        filter: brightness(1.2);
-      }
-
-      .stat-number {
-        color: #f8fafc;
-        text-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
-      }
-
-      .stat-label {
-        color: #9ca3af;
-      }
-    }
-
     &__card {
       background: rgba(30, 41, 59, 0.95);
       border: 1px solid rgba(148, 163, 184, 0.15);
@@ -955,10 +881,6 @@
       margin-left: auto;
       margin-right: auto;
     }
-
-    &__stats {
-      gap: 4rem;
-    }
   }
 }
 
@@ -978,10 +900,6 @@
 
     &__card {
       padding: 1.25rem;
-    }
-
-    &__stats {
-      gap: 2.5rem;
     }
   }
 }
@@ -1013,12 +931,6 @@
       padding: 1rem;
     }
 
-    &__stats {
-      flex-direction: row;
-      gap: 1.5rem;
-      margin-top: 1rem;
-    }
-
     &__badge {
       padding: 0.5rem 1rem;
       font-size: 0.8rem;
@@ -1048,10 +960,6 @@
     &__avatar {
       width: 45px;
       height: 45px;
-    }
-
-    &__stats {
-      gap: 1rem;
     }
   }
 }

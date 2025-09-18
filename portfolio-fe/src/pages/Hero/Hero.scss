@@ -1,7 +1,8 @@
 @use "styles/variables" as *;
 
 .hero {
-  min-height: 90vh;
+
+  min-height: 85vh;
   display: flex;
   align-items: center;
   position: relative;
@@ -10,12 +11,6 @@
   transform-style: preserve-3d;
   -webkit-tap-highlight-color: transparent; // remove gray tap highlight on mobile
   touch-action: manipulation; // hint for better tap behavior
-  
-  &__particles, 
-  &__morphing-shapes,
-  &__background {
-    pointer-events: none; // Prevent background elements from blocking interactions
-  }
 
   &__grid {
     display: grid;
@@ -504,151 +499,6 @@
       }
     }
   }
-
-  // Advanced particle and shape systems
-  &__particles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    pointer-events: none;
-    transform-style: preserve-3d;
-    
-    // Mobile performance optimization
-    @media (max-width: $breakpoint-md) {
-      will-change: transform;
-      transform: translateZ(0); // Force GPU acceleration
-    }
-  }
-
-  &__particle {
-    position: absolute;
-    pointer-events: none;
-    will-change: transform, opacity;
-    
-    // Mobile optimization
-    @media (max-width: $breakpoint-md) {
-      backface-visibility: hidden;
-      transform: translateZ(0);
-    }
-  }
-
-  &__morphing-shapes {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    transform-style: preserve-3d;
-    
-    // Mobile performance optimization
-    @media (max-width: $breakpoint-md) {
-      will-change: transform;
-      transform: translateZ(0);
-    }
-  }
-
-  &__morphing-shape {
-    position: absolute;
-    pointer-events: none;
-    will-change: transform, border-radius;
-    
-    // Mobile optimization
-    @media (max-width: $breakpoint-md) {
-      backface-visibility: hidden;
-      transform: translateZ(0);
-    }
-  }
-
-  &__floating-elements {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    transform-style: preserve-3d;
-  }
-
-  &__floating-element {
-    position: absolute;
-    transition: all 0.3s ease;
-    will-change: transform;
-
-    &:hover {
-      filter: drop-shadow(0 10px 20px rgba(99, 102, 241, 0.3));
-    }
-  }
-
-  &__background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    transform-style: preserve-3d;
-
-    &-circle {
-      position: absolute;
-      border-radius: 50%;
-      background: var(--gradient-primary);
-      opacity: 0.15;
-      filter: blur(60px);
-      transform-style: preserve-3d;
-
-      &--1 {
-        width: 400px;
-        height: 400px;
-        top: 15%;
-        left: -15%;
-      }
-
-      &--2 {
-        width: 300px;
-        height: 300px;
-        top: 50%;
-        right: -10%;
-        background: var(--gradient-secondary);
-      }
-
-      &--3 {
-        width: 250px;
-        height: 250px;
-        bottom: 15%;
-        left: 15%;
-        background: var(--gradient-accent);
-      }
-    }
-
-    &-mesh {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-          90deg,
-          transparent 49%,
-          var(--primary-light) 10 50%,
-          transparent 51%
-        ),
-        linear-gradient(
-          0deg,
-          transparent 49%,
-          var(--secondary-light) 10 50%,
-          transparent 51%
-        );
-      background-size: 100px 100px;
-      opacity: 0.05;
-      pointer-events: none;
-    }
-  }
 }
 
 @keyframes blink {
@@ -668,87 +518,6 @@
   }
   100% {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes floatCircle {
-  0%,
-  100% {
-    transform: translateY(0) translateX(0);
-  }
-  25% {
-    transform: translateY(-20px) translateX(10px);
-  }
-  50% {
-    transform: translateY(0) translateX(20px);
-  }
-  75% {
-    transform: translateY(20px) translateX(10px);
-  }
-}
-
-// Advanced 3D animations
-@keyframes float3D {
-  0%,
-  100% {
-    transform: translateY(0px) translateZ(0px) rotateX(0deg);
-  }
-  25% {
-    transform: translateY(-15px) translateZ(10px) rotateX(5deg);
-  }
-  50% {
-    transform: translateY(-30px) translateZ(20px) rotateX(10deg);
-  }
-  75% {
-    transform: translateY(-15px) translateZ(10px) rotateX(5deg);
-  }
-}
-
-@keyframes morphShape {
-  0%,
-  100% {
-    border-radius: 20%;
-    transform: scale(1) rotate(0deg);
-  }
-  25% {
-    border-radius: 50%;
-    transform: scale(1.1) rotate(90deg);
-  }
-  50% {
-    border-radius: 30%;
-    transform: scale(0.9) rotate(180deg);
-  }
-  75% {
-    border-radius: 40%;
-    transform: scale(1.05) rotate(270deg);
-  }
-}
-
-@keyframes particleGlow {
-  0%,
-  100% {
-    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
-    opacity: 0.6;
-  }
-  50% {
-    box-shadow: 0 0 20px currentColor, 0 0 30px currentColor,
-      0 0 40px currentColor;
-    opacity: 1;
-  }
-}
-
-@keyframes orbitalRotation {
-  0% {
-    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-  }
-  33% {
-    transform: rotateX(120deg) rotateY(120deg) rotateZ(120deg);
-  }
-  66% {
-    transform: rotateX(240deg) rotateY(240deg) rotateZ(240deg);
-  }
-  100% {
-    transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
   }
 }
 
@@ -852,19 +621,6 @@
         height: 45px;
         font-size: $font-lg;
       }
-    }
-
-    // Reduce animation intensity on mobile for better performance
-    &__particles {
-      opacity: 0.7; // Make particles more subtle
-    }
-
-    &__morphing-shapes {
-      opacity: 0.5; // Reduce background shapes opacity
-    }
-
-    &__floating-elements {
-      opacity: 0.8; // Slightly reduce floating elements
     }
 
     // Disable 3D transforms on mobile for better performance
@@ -996,16 +752,8 @@
 @media (max-width: $breakpoint-md) and (prefers-reduced-motion: no-preference) {
   .hero {
     // Reduce animation complexity on mobile
-    &__particle {
-      animation-duration: 12s !important; // Slower animations
-    }
-
-    &__morphing-shape {
-      animation-duration: 8s !important;
-    }
-
-    &__floating-element {
-      animation-duration: 6s !important;
+    &__tech-icon {
+      animation-duration: 8s !important; // Slower animations
     }
   }
 }
@@ -1038,18 +786,6 @@
       }
     }
 
-    &__background-circle {
-      animation: none;
-    }
-
-    // Disable all complex animations for accessibility
-    &__particle,
-    &__morphing-shape,
-    &__floating-element {
-      animation: none !important;
-      transform: none !important;
-    }
-
     &__tech-icon {
       transform: none !important;
     }
@@ -1059,15 +795,8 @@
 // Battery conservation mode
 @media (prefers-reduced-motion: reduce), (max-width: $breakpoint-sm) {
   .hero {
-    // Disable most animations on small screens or when reduced motion is preferred
-    &__particles,
-    &__morphing-shapes,
-    &__floating-elements {
-      display: none; // Hide complex animations entirely
-    }
-
-    &__avatar-ring,
-    &__background-circle {
+    // Optimize for reduced motion and small screens
+    &__avatar-ring {
       animation: none;
       transform: none;
     }
@@ -1159,14 +888,6 @@
         min-height: 50px; // Better touch target
       }
     }
-    
-    // Hide complex animations on mobile
-    &__particles,
-    &__morphing-shapes,
-    &__floating-elements,
-    &__background {
-      display: none;
-    }
   }
 }
 
@@ -1183,24 +904,6 @@
         width: 240px;
         height: 240px;
       }
-    }
-  }
-}
-
-// High performance mode for modern devices
-@media (min-width: $breakpoint-lg) and (prefers-reduced-motion: no-preference) {
-  .hero {
-    // Enable enhanced animations only on larger screens with no motion preference
-    &__particle {
-      animation: particleGlow 4s ease-in-out infinite alternate;
-    }
-
-    &__morphing-shape {
-      animation: morphShape 8s ease-in-out infinite;
-    }
-
-    &__background-circle {
-      animation: floatCircle 20s ease-in-out infinite;
     }
   }
 }

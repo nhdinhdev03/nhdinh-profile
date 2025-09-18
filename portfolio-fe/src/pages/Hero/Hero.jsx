@@ -1,9 +1,7 @@
 import {
-  AnimatePresence,
   motion,
   useAnimation,
   useMotionValue,
-  useScroll,
   useSpring,
   useTransform,
 } from "framer-motion";
@@ -22,9 +20,7 @@ import {
   FiFacebook,
   FiGithub,
   FiMail,
-  FiMapPin,
-  FiStar,
-  FiZap
+  FiMapPin
 } from "react-icons/fi";
 import { SiTailwindcss, SiTypescript } from "react-icons/si";
 import { Link } from "react-router-dom";
@@ -41,9 +37,6 @@ const Hero = memo(() => {
   const [displayText, setDisplayText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [particles, setParticles] = useState([]);
-  const [morphingShapes, setMorphingShapes] = useState([]);
-  const [floatingElements, setFloatingElements] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -71,11 +64,10 @@ const Hero = memo(() => {
       ) ||
       window.innerWidth <= 480;
 
+    // Mobile optimization applied globally
     if (isLowEndDevice) {
-      // Disable complex animations on low-end devices
-      setParticles([]);
-      setMorphingShapes([]);
-      setFloatingElements([]);
+      // Disable complex visual effects on low-end devices
+      console.log('Low-end device detected, optimizations applied');
     }
   }, []);
 
@@ -100,11 +92,6 @@ const Hero = memo(() => {
     stiffness: 100,
     damping: 30,
   });
-
-  // Scroll-based animations
-  const { scrollYProgress } = useScroll();
-  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const parallaxRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
 
   const heroRef = useRef(null);
   const controls = useAnimation();
@@ -170,73 +157,6 @@ const Hero = memo(() => {
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
   }, [displayText, currentIndex, isDeleting, roles]);
-
-  // Initialize gentle particle systems
-  useEffect(() => {
-    // Detect if device is mobile/touch for performance optimization
-    const isMobile = window.innerWidth <= 768;
-    const isLowPerformance =
-      navigator.hardwareConcurrency <= 4 ||
-      /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
-
-    // Significantly reduce particle count for better performance
-    const particleCount = isMobile || isLowPerformance ? 6 : 15; // Reduced from 12:30 to 6:15
-    const newParticles = [];
-
-    for (let i = 0; i < particleCount; i++) {
-      newParticles.push({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: Math.random() * (isMobile ? 2 : 3) + 1, // Reduced size
-        speed: Math.random() * (isMobile ? 1 : 1.5) + 0.5, // Reduced speed
-        opacity: Math.random() * 0.3 + 0.1, // Reduced opacity
-        direction: Math.random() * 360,
-        color: ["#6366f1", "#8b5cf6", "#ec4899"][Math.floor(Math.random() * 3)],
-        rotationSpeed: Math.random() * 0.5 + 0.2, // Reduced rotation speed
-      });
-    }
-
-    setParticles(newParticles);
-
-    // Initialize gentle morphing shapes - significantly reduced
-    const shapeCount = isMobile || isLowPerformance ? 1 : 2; // Reduced from 2:4 to 1:2
-    const newShapes = [];
-
-    for (let i = 0; i < shapeCount; i++) {
-      newShapes.push({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: Math.random() * (isMobile ? 40 : 60) + 30, // Reduced size
-        rotation: Math.random() * 360,
-        morphSpeed: Math.random() * 1 + 0.5, // Reduced morph speed
-        color: ["#6366f1", "#8b5cf6"][Math.floor(Math.random() * 2)],
-      });
-    }
-
-    setMorphingShapes(newShapes);
-
-    // Initialize gentle floating elements - significantly reduced
-    const floatingCount = isMobile || isLowPerformance ? 2 : 3; // Reduced from 3:6 to 2:3
-    const newFloatingElements = [];
-
-    for (let i = 0; i < floatingCount; i++) {
-      newFloatingElements.push({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        icon: [FiStar, FiZap][Math.floor(Math.random() * 2)],
-        size: Math.random() * (isMobile ? 10 : 12) + 10, // Reduced size
-        floatSpeed: Math.random() * 1.5 + 1, // Reduced float speed
-        rotateSpeed: Math.random() * 0.5 + 0.2, // Reduced rotate speed
-      });
-    }
-
-    setFloatingElements(newFloatingElements);
-  }, []);
 
   // Enhanced mouse move handler for advanced 3D effects
   const handleMouseMove = useCallback(
@@ -345,210 +265,6 @@ const Hero = memo(() => {
           transformStyle: "preserve-3d",
         }}
       >
-        {/* Advanced Particle System - Optimized for mobile */}
-        <div className="hero__particles">
-          <AnimatePresence>
-            {particles.map((particle) => (
-              <motion.div
-                key={particle.id}
-                className="hero__particle"
-                initial={{
-                  x: `${particle.x}vw`,
-                  y: `${particle.y}vh`,
-                  opacity: 0,
-                  scale: 0,
-                  rotate: 0,
-                }}
-                animate={
-                  isMobile
-                    ? {
-                        // Simplified animation for mobile
-                        x: [
-                          `${particle.x}vw`,
-                          `${(particle.x + 4) % 100}vw`,
-                          `${particle.x}vw`,
-                        ],
-                        y: [
-                          `${particle.y}vh`,
-                          `${(particle.y + 3) % 100}vh`,
-                          `${particle.y}vh`,
-                        ],
-                        opacity: [0, particle.opacity * 0.8, 0],
-                        scale: [0, 1, 0],
-                      }
-                    : {
-                        // Full animation for desktop
-                        x: [
-                          `${particle.x}vw`,
-                          `${(particle.x + 8) % 100}vw`,
-                          `${particle.x}vw`,
-                        ],
-                        y: [
-                          `${particle.y}vh`,
-                          `${(particle.y + 5) % 100}vh`,
-                          `${particle.y}vh`,
-                        ],
-                        opacity: [
-                          0,
-                          particle.opacity,
-                          particle.opacity * 0.7,
-                          0,
-                        ],
-                        scale: [0, 1, 1.1, 0],
-                        rotate: [0, 180, 360],
-                      }
-                }
-                transition={{
-                  duration: isMobile ? particle.speed * 10 : particle.speed * 8,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  times: isMobile ? [0, 0.5, 1] : [0, 0.4, 0.8, 1],
-                }}
-                style={{
-                  width: particle.size,
-                  height: particle.size,
-                  background: `linear-gradient(45deg, ${particle.color}, ${particle.color}80)`,
-                  borderRadius: "50%",
-                  position: "absolute",
-                  pointerEvents: "none",
-                  boxShadow: `0 0 ${particle.size * 2}px ${particle.color}40`,
-                  zIndex: 1,
-                }}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* Morphing Background Shapes - Optimized for mobile */}
-        <div className="hero__morphing-shapes">
-          {morphingShapes.map((shape) => (
-            <motion.div
-              key={shape.id}
-              className="hero__morphing-shape"
-              initial={{
-                x: `${shape.x}%`,
-                y: `${shape.y}%`,
-                rotate: shape.rotation,
-                scale: 0,
-              }}
-              animate={
-                isMobile
-                  ? {
-                      // Simplified animation for mobile
-                      x: [
-                        `${shape.x}%`,
-                        `${(shape.x + 5) % 100}%`,
-                        `${shape.x}%`,
-                      ],
-                      y: [
-                        `${shape.y}%`,
-                        `${(shape.y + 4) % 100}%`,
-                        `${shape.y}%`,
-                      ],
-                      rotate: [shape.rotation, shape.rotation + 180],
-                      scale: [0.8, 1],
-                    }
-                  : {
-                      // Full animation for desktop
-                      x: [
-                        `${shape.x}%`,
-                        `${(shape.x + 10) % 100}%`,
-                        `${shape.x}%`,
-                      ],
-                      y: [
-                        `${shape.y}%`,
-                        `${(shape.y + 8) % 100}%`,
-                        `${shape.y}%`,
-                      ],
-                      rotate: [
-                        shape.rotation,
-                        shape.rotation + 90,
-                        shape.rotation + 180,
-                      ],
-                      scale: [0.7, 1, 0.9, 1],
-                      borderRadius: ["30%", "50%", "40%", "30%"],
-                    }
-              }
-              transition={{
-                duration: isMobile
-                  ? shape.morphSpeed * 8
-                  : shape.morphSpeed * 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              style={{
-                width: shape.size,
-                height: shape.size,
-                background: `linear-gradient(45deg, ${shape.color}${
-                  isMobile ? "15" : "20"
-                }, ${shape.color}${isMobile ? "05" : "10"})`,
-                position: "absolute",
-                pointerEvents: "none",
-                filter: isMobile ? "blur(0.5px)" : "blur(1px)",
-                zIndex: 0,
-                opacity: isMobile ? 0.7 : 1,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Floating Interactive Elements */}
-        <div className="hero__floating-elements">
-          {floatingElements.map((element) => {
-            const IconComponent = element.icon;
-            return (
-              <motion.div
-                key={element.id}
-                className="hero__floating-element"
-                initial={{
-                  x: `${element.x}%`,
-                  y: `${element.y}%`,
-                  opacity: 0,
-                }}
-                animate={{
-                  x: [
-                    `${element.x}%`,
-                    `${(element.x + 10) % 100}%`,
-                    `${element.x}%`,
-                  ],
-                  y: [
-                    `${element.y}%`,
-                    `${(element.y - 5) % 100}%`,
-                    `${element.y}%`,
-                  ],
-                  opacity: [0.3, 0.7, 0.3],
-                  rotate: [0, 360],
-                  scale: [0.8, 1.2, 0.8],
-                }}
-                transition={{
-                  duration: element.floatSpeed * 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                whileHover={
-                  isTouch
-                    ? undefined
-                    : {
-                        scale: 1.5,
-                        rotate: 180,
-                        transition: { duration: 0.3 },
-                      }
-                }
-                style={{
-                  position: "absolute",
-                  fontSize: element.size,
-                  color: "var(--primary-light)",
-                  pointerEvents: "auto",
-                  cursor: "pointer",
-                  zIndex: 2,
-                }}
-              >
-                <IconComponent />
-              </motion.div>
-            );
-          })}
-        </div>
-
         <div className="container">
           <div className="hero__grid">
             <motion.div
@@ -601,15 +317,11 @@ const Hero = memo(() => {
                   </motion.button>
                 </Link>
 
-                <motion.a
+                <a
                   href="/resume.pdf"
                   className="btn btn-outline"
-                  whileHover={isTouch ? undefined : { scale: 1.05 }}
-                  whileTap={isTouch ? { scale: 0.97 } : { scale: 0.95 }}
                   download
                   aria-label={`${t("hero.download_cv_button")} - PDF file`}
-                  role="button"
-                  tabIndex={0}
                   onFocus={(e) => {
                     if (!isTouch) {
                       e.target.style.boxShadow =
@@ -622,7 +334,7 @@ const Hero = memo(() => {
                 >
                   <FiDownload aria-hidden="true" />
                   {t("hero.download_cv_button")}
-                </motion.a>
+                </a>
               </motion.div>
 
               <motion.div className="hero__social" variants={itemVariants}>
@@ -1288,86 +1000,6 @@ const Hero = memo(() => {
               </motion.div>
             </motion.div>
           </div>
-
-          {/* Enhanced 3D Background */}
-          <motion.div
-            className="hero__background"
-            style={{
-              transformStyle: "preserve-3d",
-              y: parallaxY,
-              rotate: parallaxRotate,
-            }}
-          >
-            <motion.div
-              className="hero__background-circle hero__background-circle--1"
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 180, 360],
-                x: [0, 50, 0],
-                y: [0, -30, 0],
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              style={{
-                transform: `translateZ(-100px)`,
-              }}
-            />
-            <motion.div
-              className="hero__background-circle hero__background-circle--2"
-              animate={{
-                scale: [1.1, 0.9, 1.1],
-                rotate: [360, 180, 0],
-                x: [0, -40, 0],
-                y: [0, 40, 0],
-              }}
-              transition={{
-                duration: 15,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              style={{
-                transform: `translateZ(-150px)`,
-              }}
-            />
-            <motion.div
-              className="hero__background-circle hero__background-circle--3"
-              animate={{
-                scale: [0.8, 1.3, 0.8],
-                rotate: [0, -270, -540],
-                x: [0, 30, 0],
-                y: [0, -50, 0],
-              }}
-              transition={{
-                duration: 25,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              style={{
-                transform: `translateZ(-200px)`,
-              }}
-            />
-
-            {/* Additional 3D Background Elements */}
-            <motion.div
-              className="hero__background-mesh"
-              animate={{
-                rotateX: [0, 360],
-                rotateY: [0, -360],
-                scale: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: 30,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              style={{
-                transform: `translateZ(-300px)`,
-              }}
-            />
-          </motion.div>
         </div>
       </motion.section>
 

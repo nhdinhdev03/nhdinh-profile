@@ -1,23 +1,23 @@
 import { motion } from 'framer-motion';
-import React, { useDeferredValue, useId, useTransition } from 'react';
+import React, { useDeferredValue, useTransition } from 'react';
 import {
-    FaAward,
-    FaBook,
-    FaCalendarAlt,
-    FaCertificate,
-    FaChevronDown,
-    FaChevronUp,
-    FaExternalLinkAlt,
-    FaGraduationCap,
-    FaMapMarkerAlt,
-    FaMedal
+  FaAward,
+  FaBook,
+  FaCalendarAlt,
+  FaCertificate,
+  FaChevronDown,
+  FaChevronUp,
+  FaExternalLinkAlt,
+  FaGraduationCap,
+  FaMapMarkerAlt,
+  FaMedal
 } from 'react-icons/fa';
 import { useInView } from 'react-intersection-observer';
 
 
-import './Education.scss';
 import withPerformanceOptimization from 'components/PerformanceOptimization';
 import useDeviceCapability from 'hooks/useDeviceCapability';
+import './Education.scss';
 
 const Education = () => {
   const [isPending, startTransition] = useTransition();
@@ -35,43 +35,52 @@ const Education = () => {
     formal: [
       {
         id: 'university-1',
-        degree: 'Bachelor of Computer Science',
-        field: 'Software Engineering',
-        institution: 'University of Technology',
-        location: 'Ho Chi Minh City, Vietnam',
-        period: '2018 - 2022',
-        gpa: '3.8/4.0',
+        degree: 'Cao đẳng Ứng dụng phần mềm',
+        field: 'Web Developer',
+        institution: 'FPT Polytechnic',
+        location: 'Cần Thơ , Vietnam',
+        period: '2022 - 2024',
+        gpa: '3.6/4.0',
         status: 'Completed',
-        description: 'Comprehensive study of software engineering principles, algorithms, data structures, and modern development methodologies. Specialized in web technologies and system design.',
+        description: 'Comprehensive study of web development technologies, software engineering principles, and modern programming methodologies. Specialized in full-stack web development and responsive design.',
         coursework: [
-          'Data Structures & Algorithms',
-          'Software Engineering',
-          'Database Management Systems',
-          'Computer Networks',
-          'Web Development',
-          'Mobile Application Development',
-          'System Analysis & Design',
-          'Artificial Intelligence'
+          'HTML5 & CSS3 Advanced',
+          'JavaScript & ES6+',
+          'React.js & Angular Framework',
+          'Node.js & Express.js',
+          'Database Design & MySQL',
+          'Responsive Web Design',
+          'RESTful API Development',
+          'Version Control with Git',
+          'Web Security & Performance',
+          'UI/UX Design Principles'
         ],
         projects: [
           {
-            name: 'E-commerce Management System',
-            description: 'Full-stack web application with React and Node.js',
-            technologies: ['React', 'Node.js', 'MongoDB', 'Express'],
-            grade: 'A+'
+            name: 'Portfolio Website với Admin Panel',
+            description: 'Responsive portfolio website với CMS quản lý nội dung',
+            technologies: ['HTML5', 'CSS3', 'JavaScript', 'PHP', 'MySQL'],
+            grade: 'Xuất sắc'
           },
           {
-            name: 'Mobile Expense Tracker',
-            description: 'Cross-platform mobile app using React Native',
-            technologies: ['React Native', 'Firebase', 'Redux'],
-            grade: 'A'
+            name: 'E-commerce Web Application',
+            description: 'Ứng dụng thương mại điện tử hoàn chỉnh với giỏ hàng và thanh toán',
+            technologies: ['React', 'Node.js', 'Express', 'MongoDB'],
+            grade: 'Giỏi'
+          },
+          {
+            name: 'Task Management System',
+            description: 'Hệ thống quản lý công việc nhóm với real-time updates',
+            technologies: ['Vue.js', 'Socket.io', 'Firebase'],
+            grade: 'Giỏi'
           }
         ],
         achievements: [
-          'Dean\'s List - 4 semesters',
-          'Outstanding Student Award 2021',
-          'Best Capstone Project Award',
-          'Academic Excellence Scholarship'
+          'Tốt nghiệp loại Giỏi',
+          'Sinh viên xuất sắc năm học 2022-2023',
+          'Giải nhất cuộc thi lập trình Web FPT',
+          'Học bổng khuyến khích học tập',
+          'Hoàn thành thực tập với điểm cao nhất lớp'
         ]
       }
     ],
@@ -488,7 +497,7 @@ const Education = () => {
                 <FaAward />
               </div>
               <div className="stat-content">
-                <span className="stat-number">3.8</span>
+                <span className="stat-number">3.6</span>
                 <span className="stat-label">GPA</span>
               </div>
             </div>

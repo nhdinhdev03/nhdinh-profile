@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { memo, useCallback, useDeferredValue, useId, useState } from "react";
+import { memo, useCallback, useDeferredValue, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FiAward,
@@ -20,9 +20,9 @@ import {
 import { useInView } from "react-intersection-observer";
 
 
-import "./ExperienceTimeline.scss";
-import useDeviceCapability from "hooks/useDeviceCapability";
 import withPerformanceOptimization from "components/PerformanceOptimization";
+import useDeviceCapability from "hooks/useDeviceCapability";
+import "./ExperienceTimeline.scss";
 
 const ExperienceTimeline = memo(() => {
   const { t } = useTranslation();

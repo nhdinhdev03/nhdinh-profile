@@ -2,13 +2,7 @@ import PropTypes from "prop-types";
 import { memo, useEffect, useState } from "react";
 import "./LoadingFallback.scss";
 
-/**
- * Professional Loading Fallback component inspired by LoL Esports
- * @param {Object} props
- * @param {'dark' | 'light'} props.theme - Theme mode for styling
- * @param {string} props.loadingText - Custom loading text
- * @param {number} props.progress - Loading progress (0-100)
- */
+
 const LoadingFallback = memo(({ 
   theme = 'dark', 
   loadingText = "Loading", 

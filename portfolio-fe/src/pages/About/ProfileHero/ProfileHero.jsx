@@ -61,7 +61,7 @@ const ProfileHero = memo(({ profile, light }) => {
   const personalInfo = {
     name: "Nguyễn Hoàng Đình",
     title: t('profile.title', "Full-Stack Developer & UI/UX Enthusiast"),
-    location: t('profile.location', "Ho Chi Minh City, Vietnam"),
+    location: t('profile.location', "Cần Thơ , Vietnam"),
     experience: t('profile.experience', "3+ Years Experience"),
     availability: t('profile.availability', "Available for Projects"),
     languages: [

@@ -26,22 +26,64 @@
   }
 }
 
+// ✨ Enhanced animations for better user experience
+@keyframes logoGlow {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.4);
+  }
+}
+
+@keyframes navItemFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes shimmerEffect {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes rippleEffect {
+  0% {
+    transform: scale(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
 .header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 70px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   z-index: 1000;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  -webkit-backdrop-filter: blur(20px); // Safari support
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -webkit-backdrop-filter: blur(20px) saturate(180%); // Safari support
+  
+  // Professional shadow like gaming websites
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
 
   // Enhanced mobile optimizations
   @include mobile-xxs-only {
-    height: 52px;
+    height: 60px;
     padding: 0 env(safe-area-inset-left, $spacing-xs) 0
       env(safe-area-inset-right, $spacing-xs);
   }
@@ -71,17 +113,52 @@
   }
 
   [data-theme="dark"] & {
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
+    -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
+    
+    &::before {
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.02) 100%
+      );
+    }
   }
 
   &--scrolled {
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(25px);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(30px) saturate(200%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.04);
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+
+    &::before {
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 100%
+      );
+    }
 
     [data-theme="dark"] & {
       background: rgba(15, 23, 42, 0.95);
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(30px) saturate(200%) brightness(1.2);
+      -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.2);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15);
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+      
+      &::before {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0.03) 100%
+        );
+      }
     }
   }
 
@@ -121,7 +198,7 @@
     }
   }
 
-  // Logo Styles
+  // 🎨 Professional Logo Styles - Gaming Inspired
   &__logo-link {
     background: none;
     border: none;
@@ -129,81 +206,78 @@
     margin: 0;
     cursor: pointer;
     text-decoration: none;
-    transition: transform 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     color: inherit;
     font-family: inherit;
+    position: relative;
 
     &:hover {
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      
+      .header__logo-icon {
+        transform: scale(1.05);
+        box-shadow: 
+          0 8px 25px rgba(99, 102, 241, 0.3),
+          0 0 20px rgba(99, 102, 241, 0.2);
+      }
+
+      .header__logo-text {
+        .header__logo-name {
+          color: var(--primary-light);
+        }
+      }
     }
 
     &:focus {
-      outline: 2px solid var(--primary-color);
-      outline-offset: 2px;
-      border-radius: 4px;
+      outline: 2px solid var(--primary-light);
+      outline-offset: 4px;
+      border-radius: 8px;
     }
   }
 
   &__logo {
     @include flex-center;
-    gap: $spacing-sm;
+    gap: $spacing-md;
 
     @include mobile-xxs-only {
-      gap: $spacing-xs;
-    }
-
-    @include mobile-xs-up {
       gap: $spacing-sm;
     }
 
-    @include tablet-up {
+    @include mobile-xs-up {
       gap: $spacing-md;
+    }
+
+    @include tablet-up {
+      gap: $spacing-lg;
     }
   }
 
   &__logo-icon {
     @include flex-center;
-    width: 32px;
-    height: 32px;
-    background: var(--gradient-primary);
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
     border-radius: 8px;
     color: white;
     font-weight: $font-bold;
-    font-size: $font-sm;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    transition: all 0.3s ease;
+    font-size: $font-lg;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
 
     @include mobile-xs-up {
-      width: 36px;
-      height: 36px;
-      font-size: $font-base;
-      border-radius: 10px;
-    }
-
-    @include mobile-sm-up {
-      width: 40px;
-      height: 40px;
-      font-size: $font-lg;
-      border-radius: 12px;
-    }
-
-    @include tablet-up {
       width: 42px;
       height: 42px;
       font-size: $font-lg;
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
-    @include desktop-up {
+    @include tablet-up {
       width: 45px;
       height: 45px;
       font-size: $font-xl;
-      border-radius: 14px;
-    }
-
-    &:hover {
-      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
-      transform: translateY(-1px);
+      border-radius: 12px;
     }
 
     // Override global lazy loading opacity for logo
@@ -234,18 +308,19 @@
   }
 
   &__logo-name {
-    font-size: $font-lg;
+    font-size: $font-xl;
     font-weight: $font-bold;
     color: var(--text-primary);
     line-height: 1.2;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
     @media (max-width: $breakpoint-sm) {
-      font-size: $font-base;
-      font-weight: $font-semibold;
+      font-size: $font-lg;
+      font-weight: $font-bold;
     }
 
     @media (max-width: 480px) {
-      font-size: $font-sm;
+      font-size: $font-base;
       white-space: nowrap;
     }
 
@@ -258,32 +333,33 @@
     font-size: $font-xs;
     color: var(--text-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: $font-medium;
+    letter-spacing: 1px;
+    font-weight: $font-semibold;
     white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
     @media (max-width: $breakpoint-sm) {
       font-size: 10px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
       color: var(--primary-light);
     }
 
     @media (max-width: 480px) {
       font-size: 9px;
-      letter-spacing: 0.2px;
-      font-weight: $font-semibold;
+      letter-spacing: 0.3px;
+      font-weight: $font-bold;
     }
 
     @media (max-width: 360px) {
-      font-size: 10px;
-      letter-spacing: 0.3px;
+      font-size: 11px;
+      letter-spacing: 0.5px;
       // When name is hidden, make Developer more prominent
       color: var(--text-primary);
       font-weight: $font-bold;
     }
   }
 
-  // Navigation Styles
+  // 🚀 Professional Navigation Styles - Riot Games Inspired
   &__nav--desktop {
     @media (max-width: $breakpoint-lg) {
       display: none;
@@ -292,7 +368,7 @@
 
   &__nav-list {
     @include flex-center;
-    gap: $spacing-base;
+    gap: $spacing-xl;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -301,47 +377,118 @@
   &__nav-link {
     @include flex-center;
     gap: $spacing-xs;
-    padding: $spacing-sm $spacing-base;
+    padding: $spacing-md $spacing-lg;
     text-decoration: none;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-size: $font-sm;
-    font-weight: $font-medium;
-    border-radius: 8px;
+    font-weight: $font-semibold;
+    border-radius: 0;
     position: relative;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    overflow: visible;
+    border: none;
+    background: transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 
-    // Improved touch targets
-    @include mobile-touch-target(44px);
-
-    &:hover {
-      color: var(--text-primary);
-      background: var(--bg-secondary);
-      transform: translateY(-1px);
-
-      @include touch-device {
-        transform: none;
-      }
+    // Professional underline effect like Riot Games
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      width: 0;
+      height: 3px;
+      background: linear-gradient(
+        90deg,
+        var(--primary-light) 0%,
+        var(--accent-light) 100%
+      );
+      transform: translateX(-50%);
+      transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      border-radius: 2px;
     }
 
-    &:active {
-      @include touch-device {
-        transform: scale(0.95);
-        transition: transform 0.1s ease;
+    // Hover glow effect
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(
+        circle,
+        rgba(99, 102, 241, 0.1) 0%,
+        transparent 70%
+      );
+      transform: translate(-50%, -50%);
+      transition: all 0.3s ease;
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    &:hover {
+      color: var(--primary-light);
+      transform: translateY(-2px);
+
+      &::after {
+        width: 100%;
+        box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+      }
+
+      &::before {
+        width: 120%;
+        height: 120%;
+      }
+
+      .header__nav-icon {
+        transform: scale(1.1);
+        color: var(--primary-light);
       }
     }
 
     &--active {
-      background: rgba(99, 102, 241, 0.1);
       color: var(--primary-light);
-      font-weight: $font-semibold;
+      font-weight: $font-bold;
+
+      &::after {
+        width: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--primary-light) 0%,
+          var(--secondary-light) 100%
+        );
+        box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+      }
+
+      .header__nav-icon {
+        color: var(--primary-light);
+        transform: scale(1.05);
+      }
+    }
+
+    // Improved touch targets
+    @include mobile-touch-target(44px);
+
+    &:active {
+      @include touch-device {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+      }
     }
   }
 
   &__nav-icon {
     font-size: $font-base;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
   }
 
   &__nav-text {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+    
     @media (max-width: $breakpoint-xl) {
       display: none;
     }
@@ -352,10 +499,11 @@
     bottom: -2px;
     left: 50%;
     transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    background: var(--primary-light);
+    width: 6px;
+    height: 6px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     border-radius: 50%;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
   }
 
   // Actions (Theme Toggle & Menu)
@@ -386,21 +534,69 @@
     }
   }
 
+  // 🌟 Enhanced Theme Toggle with Premium Effects
   &__theme-toggle {
     @include flex-center;
     width: 40px;
     height: 40px;
     background: var(--bg-secondary);
-    border: none;
-    border-radius: 8px;
+    border: 2px solid transparent;
+    border-radius: 12px;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+
+    // ✨ Icon rotation and scaling
+    svg {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: center;
+    }
 
     &:hover {
       background: var(--bg-tertiary);
-      color: var(--text-primary);
-      transform: translateY(-1px);
+      color: var(--primary-color);
+      transform: translateY(-3px) scale(1.05);
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.1),
+        0 0 20px rgba(99, 102, 241, 0.2);
+
+      svg {
+        transform: rotate(15deg) scale(1.2);
+        filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.4));
+      }
+    }
+
+    &:active {
+      transform: translateY(-1px) scale(0.95);
+      
+      svg {
+        transform: rotate(180deg) scale(0.9);
+      }
+    }
+
+    // 🌙 Dark theme specific effects
+    [data-theme="dark"] & {
+      &:hover {
+        box-shadow: 
+          0 8px 25px rgba(0, 0, 0, 0.2),
+          0 0 20px rgba(251, 191, 36, 0.3);
+        
+        svg {
+          color: #fbbf24; // golden sun
+          filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.6));
+        }
+      }
+    }
+
+    // ☀️ Light theme specific effects
+    [data-theme="light"] & {
+      &:hover svg {
+        color: #3b82f6; // blue moon
+        filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.6));
+      }
     }
 
     @media (max-width: $breakpoint-lg) {
@@ -408,16 +604,17 @@
     }
   }
 
+  // 📱 Enhanced Mobile Menu Toggle
   &__menu-toggle {
     @include flex-center;
     width: 44px;
     height: 44px;
     background: var(--bg-secondary);
-    border: none;
-    border-radius: 12px;
+    border: 2px solid transparent;
+    border-radius: 14px;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 
@@ -433,7 +630,7 @@
       min-height: 48px;
     }
 
-    // Ripple effect for touch
+    // ✨ Enhanced ripple effect
     &::before {
       content: "";
       position: absolute;
@@ -442,45 +639,78 @@
       width: 0;
       height: 0;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
+      background: radial-gradient(
+        circle,
+        rgba(99, 102, 241, 0.3) 0%,
+        rgba(139, 92, 246, 0.2) 100%
+      );
       transform: translate(-50%, -50%);
-      transition: width 0.3s ease, height 0.3s ease;
+      transition: all 0.4s ease;
+      z-index: 0;
     }
 
     &:active::before {
-      width: 100%;
-      height: 100%;
+      width: 120%;
+      height: 120%;
     }
 
     &:hover {
       background: var(--bg-tertiary);
-      color: var(--text-primary);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      color: var(--primary-color);
+      transform: translateY(-2px) scale(1.05);
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.1),
+        0 0 15px rgba(99, 102, 241, 0.2);
+
+      svg {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.4));
+      }
+    }
+
+    svg {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+      position: relative;
     }
 
     &--open {
-      background: var(--gradient-primary);
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
       color: white;
-      transform: rotate(180deg);
-      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+      transform: rotate(180deg) scale(1.05);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 
+        0 8px 25px rgba(99, 102, 241, 0.4),
+        0 0 20px rgba(99, 102, 241, 0.3);
 
       &:hover {
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        box-shadow: 
+          0 12px 35px rgba(99, 102, 241, 0.5),
+          0 0 30px rgba(99, 102, 241, 0.4);
+        transform: rotate(180deg) scale(1.1);
+      }
+
+      svg {
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
       }
     }
   }
 
-  // Optimized Mobile Navigation
+  // 🎭 Enhanced Mobile Navigation Overlay
   &__overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: radial-gradient(
+      ellipse at center,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.5) 100%
+    );
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
     z-index: 999;
     pointer-events: all;
     touch-action: none;

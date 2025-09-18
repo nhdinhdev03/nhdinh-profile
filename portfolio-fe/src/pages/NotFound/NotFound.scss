@@ -1,3 +1,5 @@
+@use 'styles/variables' as *;
+
 // Modern 404 Page with Advanced Animations
 .not-found-container {
   position: relative;
@@ -8,7 +10,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Arial', sans-serif;
+  font-family: $font-primary;
   opacity: 0;
   transform: scale(0.9);
   transition: all 1s ease-out;

@@ -1409,6 +1409,24 @@
       box-shadow: 
         0 0 8px rgba(255, 255, 255, 0.6),
         0 0 16px rgba(255, 255, 255, 0.3);
+      
+      // Enhanced dark mode styling
+      [data-theme="dark"] & {
+        background: #ffffff;
+        box-shadow: 
+          0 0 8px rgba(255, 255, 255, 0.8),
+          0 0 16px rgba(255, 255, 255, 0.4),
+          0 0 24px rgba(139, 92, 246, 0.3);
+      }
+      
+      // Enhanced light mode styling
+      [data-theme="light"] & {
+        background: #3b82f6;
+        box-shadow: 
+          0 0 8px rgba(59, 130, 246, 0.6),
+          0 0 16px rgba(59, 130, 246, 0.3),
+          0 0 24px rgba(99, 102, 241, 0.2);
+      }
     }
   }
 

@@ -1,18 +1,21 @@
 import { useTheme } from "hooks/useTheme";
-import MainLayout from "layouts/MainLayout";
+
 import { memo, Suspense } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { publicRoutes } from "router";
+import { privateRoutes, publicRoutes } from "router";
 
 import LoadingFallback from "components/Loading/LoadingFallback";
 import PageTransition from "components/PageTransition/PageTransition";
 import ScrollToTop from "components/Scroll/ScrollToTop/ScrollToTop";
 import ScrollToTopOnNavigate from "components/Scroll/ScrollToTopOnNavigate/ScrollToTopOnNavigate";
-import NotFound from "pages/NotFound/NotFound";
+;
 
 import "styles/App.scss";
 
 import "./i18n";
+import MainLayoutAdmin from "./Layouts/Amin/MainLayoutAdmin";
+import MainLayout from "./Layouts/User/MainLayout";
+import NotFound from "./Pages/NotFound/NotFound";
 
 
 const App = memo(() => {
@@ -25,6 +28,7 @@ const App = memo(() => {
       <ScrollToTop />
       <Suspense fallback={<LoadingFallback theme={theme} />}>
         <Routes>
+          {/* Public routes */}
           {publicRoutes.map((route, index) => {
             const Page = route.component;
             const LayoutComponent = route.layout ?? MainLayout; // fallback
@@ -42,6 +46,25 @@ const App = memo(() => {
               />
             );
           })}
+          
+          {/* Admin routes */}
+          <Route path="/admin/*" element={<MainLayoutAdmin />}>
+            {privateRoutes.map((route, index) => {
+              const Page = route.component;
+              return (
+                <Route
+                  key={index}
+                  path={route.path.replace('/admin/', '')}
+                  element={
+                    <PageTransition>
+                      <Page />
+                    </PageTransition>
+                  }
+                />
+              );
+            })}
+          </Route>
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

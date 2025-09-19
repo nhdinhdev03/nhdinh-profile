@@ -1,8 +1,9 @@
-import Breadcrumb from "layouts/Breadcrumb/Breadcrumb";
-import Footer from "layouts/Footer/Footer";
-import Header from "layouts/Header/Header";
+
 import PropTypes from "prop-types";
 import { memo, useMemo } from "react";
+import Header from "./Header/Header";
+import Footer from "./Footer/Footer";
+import Breadcrumb from "./Breadcrumb/Breadcrumb";
 
 const MainLayout = memo(
   ({ children, theme, toggleTheme, showBreadcrumb = true }) => {

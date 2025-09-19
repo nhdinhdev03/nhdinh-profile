@@ -45,40 +45,62 @@ const HeroSubheadings = () => {
 
   const fetchSubheadings = async () => {
     setLoading(true);
-    // Simulate API call
+    // Enhanced mock data with comprehensive structure
     setTimeout(() => {
       setSubheadings([
         {
-          subId: '1',
-          heroId: '1',
+          subId: '550e8400-e29b-41d4-a716-446655440021',
+          heroId: '550e8400-e29b-41d4-a716-446655440001',
           languageCode: 'vi',
-          text: 'Phát triển ứng dụng web',
+          text: 'Phát triển ứng dụng web hiện đại',
           sortOrder: 1,
-          createdAt: '2024-01-01'
+          createdAt: '2024-01-01T10:30:00Z',
+          updatedAt: null
         },
         {
-          subId: '2',
-          heroId: '1',
+          subId: '550e8400-e29b-41d4-a716-446655440022',
+          heroId: '550e8400-e29b-41d4-a716-446655440001',
           languageCode: 'vi',
-          text: 'Thiết kế giao diện người dùng',
+          text: 'Thiết kế giao diện người dùng trực quan',
           sortOrder: 2,
-          createdAt: '2024-01-01'
+          createdAt: '2024-01-01T10:35:00Z',
+          updatedAt: null
         },
         {
-          subId: '3',
-          heroId: '1',
+          subId: '550e8400-e29b-41d4-a716-446655440023',
+          heroId: '550e8400-e29b-41d4-a716-446655440001',
+          languageCode: 'vi',
+          text: 'Tối ưu hóa hiệu suất ứng dụng',
+          sortOrder: 3,
+          createdAt: '2024-01-01T10:40:00Z',
+          updatedAt: null
+        },
+        {
+          subId: '550e8400-e29b-41d4-a716-446655440024',
+          heroId: '550e8400-e29b-41d4-a716-446655440001',
           languageCode: 'en',
-          text: 'Web Application Development',
+          text: 'Modern Web Application Development',
           sortOrder: 1,
-          createdAt: '2024-01-01'
+          createdAt: '2024-01-01T10:45:00Z',
+          updatedAt: null
         },
         {
-          subId: '4',
-          heroId: '1',
+          subId: '550e8400-e29b-41d4-a716-446655440025',
+          heroId: '550e8400-e29b-41d4-a716-446655440001',
           languageCode: 'en',
-          text: 'User Interface Design',
+          text: 'Intuitive User Interface Design',
           sortOrder: 2,
-          createdAt: '2024-01-01'
+          createdAt: '2024-01-01T10:50:00Z',
+          updatedAt: null
+        },
+        {
+          subId: '550e8400-e29b-41d4-a716-446655440026',
+          heroId: '550e8400-e29b-41d4-a716-446655440001',
+          languageCode: 'en',
+          text: 'Application Performance Optimization',
+          sortOrder: 3,
+          createdAt: '2024-01-01T10:55:00Z',
+          updatedAt: null
         }
       ]);
       setLoading(false);
@@ -86,9 +108,13 @@ const HeroSubheadings = () => {
   };
 
   const fetchHeroes = async () => {
-    // Simulate API call
+    // Enhanced mock data
     setHeroes([
-      { heroId: '1', name: 'Main Hero' }
+      { 
+        heroId: '550e8400-e29b-41d4-a716-446655440001', 
+        name: 'Main Portfolio Hero',
+        isDeleted: false
+      }
     ]);
   };
 
@@ -123,6 +149,7 @@ const HeroSubheadings = () => {
       form.resetFields();
       fetchSubheadings();
     } catch (error) {
+      console.error('Operation failed:', error);
       message.error('Operation failed!');
     }
   };
@@ -133,6 +160,7 @@ const HeroSubheadings = () => {
       message.success('Subheading deleted successfully!');
       fetchSubheadings();
     } catch (error) {
+      console.error('Delete failed:', error);
       message.error('Delete failed!');
     }
   };

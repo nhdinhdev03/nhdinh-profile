@@ -1,0 +1,132 @@
+// package com.nhdinh.nhdinh_profile.auth.security;
+
+// import java.util.Arrays;
+
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
+// import org.springframework.security.authentication.AuthenticationManager;
+// import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+// import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+// import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+// import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+// import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+// import org.springframework.security.config.http.SessionCreationPolicy;
+// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+// import org.springframework.security.crypto.password.PasswordEncoder;
+// import org.springframework.security.web.SecurityFilterChain;
+// import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+// import org.springframework.web.cors.CorsConfiguration;
+// import org.springframework.web.cors.CorsConfigurationSource;
+// import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+// import com.nhdinh.nhdinh_profile.auth.security.jwt.AuthEntryPointJwt;
+// import com.nhdinh.nhdinh_profile.auth.security.jwt.AuthTokenFilter;
+// import com.nhdinh.nhdinh_profile.auth.security.user.service.AdminUserDetailsServiceImpl;
+
+// @Configuration
+// @EnableWebSecurity
+// @EnableMethodSecurity(prePostEnabled = true)
+// public class WebSecurityConfig {
+
+//     @Autowired
+//     AdminUserDetailsServiceImpl userDetailsService;
+
+//     @Autowired
+//     private AuthEntryPointJwt unauthorizedHandler;
+
+//     @Bean
+//     public AuthTokenFilter authenticationJwtTokenFilter() {
+//         return new AuthTokenFilter();
+//     }
+
+//     @Bean
+//     public DaoAuthenticationProvider authenticationProvider() {
+//         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//         authProvider.setUserDetailsService(userDetailsService);
+//         authProvider.setPasswordEncoder(passwordEncoder());
+//         return authProvider;
+//     }
+
+//     @Bean
+//     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+//         return authConfig.getAuthenticationManager();
+//     }
+
+//     @Bean
+//     public PasswordEncoder passwordEncoder() {
+//         return new BCryptPasswordEncoder();
+//     }
+
+//     @Bean
+//     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//         http
+//                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                 .csrf(csrf -> csrf.disable())
+//                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+//                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                 .authorizeHttpRequests(authz -> authz
+//                         // Public endpoints - no authentication required
+//                         .requestMatchers("/api/public/**").permitAll()
+//                         .requestMatchers("/api/hero/**").permitAll()
+//                         .requestMatchers("/api/hero-subheadings/**").permitAll()
+//                         .requestMatchers("/api/profile-info/**").permitAll()
+//                         .requestMatchers("/api/profile-tag/**").permitAll()
+//                         .requestMatchers("/api/experience/**").permitAll()
+//                         .requestMatchers("/api/skill/**").permitAll()
+//                         .requestMatchers("/api/skill-category/**").permitAll()
+//                         .requestMatchers("/api/projects/**").permitAll()
+//                         .requestMatchers("/api/project-categories/**").permitAll()
+//                         .requestMatchers("/api/project-tags/**").permitAll()
+//                         .requestMatchers("/api/project-tags-map/**").permitAll()
+//                         .requestMatchers("/api/blog-post/**").permitAll()
+//                         .requestMatchers("/api/blog-tag/**").permitAll()
+//                         .requestMatchers("/api/blog-tag-map/**").permitAll()
+//                         .requestMatchers("/api/contact-messages/**").permitAll()
+
+//                         // authenticated
+//                         // Admin endpoints - authentication required
+//                         .requestMatchers("/api/admin/**").authenticated()
+//                         .requestMatchers("/api/admin-users/**").authenticated()
+//                         .requestMatchers("/api/hero/admin/**").authenticated()
+//                         .requestMatchers("/api/admin-users/authenticate").permitAll()
+//                         .requestMatchers("/api/hero-subheadings/admin/**").authenticated()
+//                         .requestMatchers("/api/profile-info/admin/**").authenticated()
+//                         .requestMatchers("/api/profile-tag/admin/**").authenticated()
+//                         .requestMatchers("/api/experience/admin/**").authenticated()
+//                         .requestMatchers("/api/skill/admin/**").authenticated()
+//                         .requestMatchers("/api/skill-category/admin/**").authenticated()
+//                         .requestMatchers("/api/project/admin/**").authenticated()
+//                         .requestMatchers("/api/project-category/admin/**").authenticated()
+//                         .requestMatchers("/api/project-tag/admin/**").authenticated()
+//                         .requestMatchers("/api/project-tag-map/admin/**").authenticated()
+//                         .requestMatchers("/api/blog-post/admin/**").authenticated()
+//                         .requestMatchers("/api/blog-tag/admin/**").authenticated()
+//                         .requestMatchers("/api/blog-tag-map/admin/**").authenticated()
+//                         .requestMatchers("/api/contact-message/admin/**").authenticated()
+
+//                         // Authentication endpoints
+//                         .requestMatchers("/api/auth/**").permitAll()
+
+//                         // Default - require authentication
+//                         .anyRequest().authenticated());
+
+//         http.authenticationProvider(authenticationProvider());
+//         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+//         return http.build();
+//     }
+
+//     @Bean
+//     public CorsConfigurationSource corsConfigurationSource() {
+//         CorsConfiguration configuration = new CorsConfiguration();
+//         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+//         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//         configuration.setAllowedHeaders(Arrays.asList("*"));
+//         configuration.setAllowCredentials(true);
+
+//         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//         source.registerCorsConfiguration("/**", configuration);
+//         return source;
+//     }
+// }

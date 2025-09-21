@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.modules.ContactMessage;
+package com.nhdinh.nhdinh_profile.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nhdinh.nhdinh_profile.modules.ContactMessage.ContactMessage;
 import com.nhdinh.nhdinh_profile.repositories.ContactMessageRepository;
 
 @Service

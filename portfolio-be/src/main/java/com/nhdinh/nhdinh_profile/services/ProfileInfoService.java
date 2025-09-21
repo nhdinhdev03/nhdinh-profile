@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.modules.ProfileInfo;
+package com.nhdinh.nhdinh_profile.services;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nhdinh.nhdinh_profile.modules.ProfileInfo.ProfileInfo;
 import com.nhdinh.nhdinh_profile.repositories.ProfileInfoRepository;
 
 @Service

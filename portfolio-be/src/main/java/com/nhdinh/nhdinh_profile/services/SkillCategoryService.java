@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.modules.SkillCategory;
+package com.nhdinh.nhdinh_profile.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nhdinh.nhdinh_profile.modules.SkillCategory.SkillCategory;
 import com.nhdinh.nhdinh_profile.repositories.SkillCategoryRepository;
 
 @Service

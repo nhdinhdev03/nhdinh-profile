@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.modules.Project;
+package com.nhdinh.nhdinh_profile.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nhdinh.nhdinh_profile.modules.Project.Project;
 import com.nhdinh.nhdinh_profile.repositories.ProjectRepository;
 
 @Service

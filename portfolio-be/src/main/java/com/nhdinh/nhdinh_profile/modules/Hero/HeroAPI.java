@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhdinh.nhdinh_profile.request.Hero.HeroCreateRequest;
-import com.nhdinh.nhdinh_profile.request.Hero.HeroUpdateRequest;
 import com.nhdinh.nhdinh_profile.response.Hero.HeroResponse;
-import com.nhdinh.nhdinh_profile.service.Hero.HeroService;
 
 import jakarta.validation.Valid;
 
@@ -30,16 +26,19 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class HeroAPI {
 
-    @Autowired
-    private HeroService heroService;
+    private final HeroService heroService;
+
+    public HeroAPI(HeroService heroService) {
+        this.heroService = heroService;
+    }
 
     /**
      * Lấy tất cả Hero active
      */
     @GetMapping
-    public ResponseEntity<List<HeroResponse>> getAllActiveHeroes() {
+    public ResponseEntity<List<Hero>> getAllActiveHeroes() {
         try {
-            List<HeroResponse> heroes = heroService.getAllActiveHeroes();
+            List<Hero> heroes = heroService.findAllActive();
             return ResponseEntity.ok(heroes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -50,11 +49,11 @@ public class HeroAPI {
      * Lấy Hero đầu tiên
      */
     @GetMapping("/first")
-    public ResponseEntity<HeroResponse> getFirstActiveHero() {
+    public ResponseEntity<Hero> getFirstActiveHero() {
         try {
-            Optional<HeroResponse> hero = heroService.getFirstActiveHero();
+            Optional<Hero> hero = heroService.findFirstActiveWithTranslations();
             return hero.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+                      .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -64,11 +63,11 @@ public class HeroAPI {
      * Lấy Hero theo ID
      */
     @GetMapping("/{id}")
-    public ResponseEntity<HeroResponse> getHeroById(@PathVariable UUID id) {
+    public ResponseEntity<Hero> getHeroById(@PathVariable UUID id) {
         try {
-            Optional<HeroResponse> hero = heroService.getHeroById(id);
+            Optional<Hero> hero = heroService.findByIdWithTranslations(id);
             return hero.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+                      .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -78,9 +77,9 @@ public class HeroAPI {
      * Lấy Hero theo language code
      */
     @GetMapping("/language/{languageCode}")
-    public ResponseEntity<List<HeroResponse>> getHeroesByLanguage(@PathVariable String languageCode) {
+    public ResponseEntity<List<Hero>> getHeroesByLanguage(@PathVariable String languageCode) {
         try {
-            List<HeroResponse> heroes = heroService.getHeroesByLanguage(languageCode);
+            List<Hero> heroes = heroService.findByLanguageCode(languageCode);
             return ResponseEntity.ok(heroes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -91,9 +90,9 @@ public class HeroAPI {
      * Lấy Hero với language parameter
      */
     @GetMapping("/by-language")
-    public ResponseEntity<List<HeroResponse>> getHeroesByLanguageParam(@RequestParam String lang) {
+    public ResponseEntity<List<Hero>> getHeroesByLanguageParam(@RequestParam String lang) {
         try {
-            List<HeroResponse> heroes = heroService.getHeroesByLanguage(lang);
+            List<Hero> heroes = heroService.findByLanguageCode(lang);
             return ResponseEntity.ok(heroes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -104,9 +103,9 @@ public class HeroAPI {
      * Tạo Hero mới
      */
     @PostMapping
-    public ResponseEntity<HeroResponse> createHero(@Valid @RequestBody HeroCreateRequest request) {
+    public ResponseEntity<Hero> createHero(@Valid @RequestBody Hero hero) {
         try {
-            HeroResponse createdHero = heroService.createHero(request);
+            Hero createdHero = heroService.save(hero);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdHero);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -117,12 +116,16 @@ public class HeroAPI {
      * Cập nhật Hero
      */
     @PutMapping("/{id}")
-    public ResponseEntity<HeroResponse> updateHero(@PathVariable UUID id, 
-                                                  @Valid @RequestBody HeroUpdateRequest request) {
+    public ResponseEntity<Hero> updateHero(@PathVariable UUID id, 
+                                          @Valid @RequestBody Hero hero) {
         try {
-            Optional<HeroResponse> updatedHero = heroService.updateHero(id, request);
-            return updatedHero.map(ResponseEntity::ok)
-                             .orElse(ResponseEntity.notFound().build());
+            Optional<Hero> existingHero = heroService.findById(id);
+            if (existingHero.isPresent()) {
+                hero.setHeroId(id);
+                Hero updatedHero = heroService.save(hero);
+                return ResponseEntity.ok(updatedHero);
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -134,9 +137,12 @@ public class HeroAPI {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteHero(@PathVariable UUID id) {
         try {
-            boolean deleted = heroService.deleteHero(id);
-            return deleted ? ResponseEntity.noContent().build() 
-                          : ResponseEntity.notFound().build();
+            Optional<Hero> existingHero = heroService.findById(id);
+            if (existingHero.isPresent()) {
+                heroService.softDeleteById(id);
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

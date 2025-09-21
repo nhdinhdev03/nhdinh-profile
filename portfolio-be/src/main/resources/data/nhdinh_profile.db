@@ -1,0 +1,426 @@
+-- Database
+CREATE DATABASE portfolio_nhdinh;
+GO
+
+USE portfolio_nhdinh;
+GO
+
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
+GO
+
+/* ================================
+   MODULE: Home / Giới thiệu
+================================ */
+
+-- Hero (entity chính, hỗ trợ soft delete)
+CREATE TABLE dbo.Hero (
+    HeroId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_Hero PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    CreatedAt DATETIME2 NOT NULL 
+        CONSTRAINT DF_Hero_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    IsDeleted BIT NOT NULL 
+        CONSTRAINT DF_Hero_IsDeleted DEFAULT 0,
+    RowVer ROWVERSION
+);
+GO
+
+-- HeroTranslation (đa ngôn ngữ cho Hero)
+CREATE TABLE dbo.HeroTranslation (
+    TranslationId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_HeroTranslation PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    HeroId UNIQUEIDENTIFIER NOT NULL,
+    LanguageCode NVARCHAR(10) NOT NULL, -- hỗ trợ 'vi', 'en', 'en-US'
+    PreHeading NVARCHAR(256) NULL,
+    Heading NVARCHAR(256) NOT NULL,
+    IntroHtml NVARCHAR(MAX) NULL,
+    CreatedAt DATETIME2 NOT NULL 
+        CONSTRAINT DF_HeroTranslation_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_HeroTranslation_Hero_Lang UNIQUE (HeroId, LanguageCode),
+    CONSTRAINT FK_HeroTranslation_Hero
+        FOREIGN KEY (HeroId) REFERENCES dbo.Hero(HeroId)
+        ON DELETE CASCADE
+);
+GO
+
+-- HeroSubHeading (nhiều dòng phụ cho hero)
+CREATE TABLE dbo.HeroSubHeading (
+    SubId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_HeroSubHeading PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    HeroId UNIQUEIDENTIFIER NOT NULL,
+    LanguageCode NVARCHAR(10) NOT NULL,
+    Text NVARCHAR(256) NOT NULL,
+    SortOrder INT NOT NULL CONSTRAINT DF_HeroSubHeading_SortOrder DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL 
+        CONSTRAINT DF_HeroSubHeading_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_HeroSubHeading_Hero_Lang_Text UNIQUE (HeroId, LanguageCode, Text),
+    CONSTRAINT FK_HeroSubHeading_Hero
+        FOREIGN KEY (HeroId) REFERENCES dbo.Hero(HeroId)
+        ON DELETE CASCADE
+);
+GO
+
+/* ================================
+   MODULE: Projects / Dự án cá nhân
+================================ */
+
+-- ProjectCategory
+CREATE TABLE dbo.ProjectCategory (
+    CategoryId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_ProjectCategory PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    Name NVARCHAR(50) NOT NULL,
+    CreatedAt DATETIME2 NOT NULL 
+        CONSTRAINT DF_ProjectCategory_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_ProjectCategory_Name UNIQUE (Name)
+);
+GO
+
+-- Project
+CREATE TABLE dbo.Project (
+    ProjectId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_Project PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    CategoryId UNIQUEIDENTIFIER NOT NULL,
+    ImageUrl NVARCHAR(512) NULL,
+    DemoUrl NVARCHAR(512) NULL,
+    SourceUrl NVARCHAR(512) NULL,
+    IsFeatured BIT NOT NULL CONSTRAINT DF_Project_IsFeatured DEFAULT 0,
+    IsPublic BIT NOT NULL CONSTRAINT DF_Project_IsPublic DEFAULT 1,
+    Status NVARCHAR(20) NOT NULL CONSTRAINT DF_Project_Status DEFAULT 'draft',
+    ViewCount BIGINT NOT NULL CONSTRAINT DF_Project_ViewCount DEFAULT 0,
+    SortOrder INT NOT NULL CONSTRAINT DF_Project_SortOrder DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_Project_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    PublishedAt DATETIME2 NULL,
+    IsDeleted BIT NOT NULL CONSTRAINT DF_Project_IsDeleted DEFAULT 0,
+    RowVer ROWVERSION,
+    CONSTRAINT CK_Project_Status CHECK (Status IN (N'draft', N'published', N'archived')),
+    CONSTRAINT FK_Project_ProjectCategory
+        FOREIGN KEY (CategoryId) REFERENCES dbo.ProjectCategory(CategoryId)
+        ON DELETE NO ACTION
+);
+GO
+
+-- ProjectTranslation
+CREATE TABLE dbo.ProjectTranslation (
+    TranslationId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_ProjectTranslation PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    ProjectId UNIQUEIDENTIFIER NOT NULL,
+    LanguageCode NVARCHAR(10) NOT NULL,
+    Title NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500) NULL,
+    MetaTitle NVARCHAR(100) NULL,
+    MetaDescription NVARCHAR(200) NULL,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_ProjectTranslation_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_ProjectTranslation_Project_Lang UNIQUE (ProjectId, LanguageCode),
+    CONSTRAINT FK_ProjectTranslation_Project
+        FOREIGN KEY (ProjectId) REFERENCES dbo.Project(ProjectId)
+        ON DELETE CASCADE
+);
+GO
+
+-- ProjectTag
+CREATE TABLE dbo.ProjectTag (
+    TagId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_ProjectTag PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    Name NVARCHAR(50) NOT NULL,
+    Description NVARCHAR(255) NULL,
+    Color NVARCHAR(7) NULL, -- #RRGGBB
+    Icon NVARCHAR(50) NULL,
+    Category NVARCHAR(30) NULL,
+    IsActive BIT NOT NULL CONSTRAINT DF_ProjectTag_IsActive DEFAULT 1,
+    UsageCount INT NOT NULL CONSTRAINT DF_ProjectTag_UsageCount DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_ProjectTag_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_ProjectTag_Name UNIQUE (Name)
+);
+GO
+
+-- ProjectTagMap (n-n)
+CREATE TABLE dbo.ProjectTagMap (
+    ProjectId UNIQUEIDENTIFIER NOT NULL,
+    TagId UNIQUEIDENTIFIER NOT NULL,
+    SortOrder INT NOT NULL CONSTRAINT DF_ProjectTagMap_SortOrder DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_ProjectTagMap_CreatedAt DEFAULT SYSUTCDATETIME(),
+    CreatedBy NVARCHAR(50) NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT PK_ProjectTagMap PRIMARY KEY (ProjectId, TagId),
+    CONSTRAINT FK_ProjectTagMap_Project
+        FOREIGN KEY (ProjectId) REFERENCES dbo.Project(ProjectId)
+        ON DELETE CASCADE,
+    CONSTRAINT FK_ProjectTagMap_ProjectTag
+        FOREIGN KEY (TagId) REFERENCES dbo.ProjectTag(TagId)
+        ON DELETE CASCADE
+);
+GO
+
+/* ================================
+   MODULE: Blog / Bài viết kỹ thuật
+================================ */
+
+-- BlogPost
+CREATE TABLE dbo.BlogPost (
+    BlogId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_BlogPost PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    Slug NVARCHAR(200) NOT NULL,
+    Thumbnail NVARCHAR(512) NULL,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_BlogPost_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    IsDeleted BIT NOT NULL CONSTRAINT DF_BlogPost_IsDeleted DEFAULT 0,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_BlogPost_Slug UNIQUE (Slug)
+);
+GO
+
+-- BlogPostTranslation
+CREATE TABLE dbo.BlogPostTranslation (
+    TranslationId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_BlogPostTranslation PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    BlogId UNIQUEIDENTIFIER NOT NULL,
+    LanguageCode NVARCHAR(10) NOT NULL,
+    Title NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(300) NULL,
+    Content NVARCHAR(MAX) NULL,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_BlogPostTranslation_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_BlogPostTranslation_Blog_Lang UNIQUE (BlogId, LanguageCode),
+    CONSTRAINT FK_BlogPostTranslation_BlogPost
+        FOREIGN KEY (BlogId) REFERENCES dbo.BlogPost(BlogId)
+        ON DELETE CASCADE
+);
+GO
+
+-- BlogTag
+CREATE TABLE dbo.BlogTag (
+    TagId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_BlogTag PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    Name NVARCHAR(50) NOT NULL,
+    IsActive BIT NOT NULL CONSTRAINT DF_BlogTag_IsActive DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_BlogTag_CreatedAt DEFAULT SYSUTCDATETIME(),
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_BlogTag_Name UNIQUE (Name)
+);
+GO
+
+-- BlogTagMap (n-n)
+CREATE TABLE dbo.BlogTagMap (
+    BlogId UNIQUEIDENTIFIER NOT NULL,
+    TagId UNIQUEIDENTIFIER NOT NULL,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_BlogTagMap_CreatedAt DEFAULT SYSUTCDATETIME(),
+    RowVer ROWVERSION,
+    CONSTRAINT PK_BlogTagMap PRIMARY KEY (BlogId, TagId),
+    CONSTRAINT FK_BlogTagMap_BlogPost
+        FOREIGN KEY (BlogId) REFERENCES dbo.BlogPost(BlogId)
+        ON DELETE CASCADE,
+    CONSTRAINT FK_BlogTagMap_BlogTag
+        FOREIGN KEY (TagId) REFERENCES dbo.BlogTag(TagId)
+        ON DELETE CASCADE
+);
+GO
+
+/* ================================
+   MODULE: Contact / Liên hệ
+================================ */
+
+CREATE TABLE dbo.ContactMessage (
+    MessageId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_ContactMessage PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    FullName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(256) NOT NULL,
+    Subject NVARCHAR(200) NULL,
+    Content NVARCHAR(MAX) NOT NULL,
+    IsReplied BIT NOT NULL CONSTRAINT DF_ContactMessage_IsReplied DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_ContactMessage_CreatedAt DEFAULT SYSUTCDATETIME(),
+    RowVer ROWVERSION
+);
+GO
+
+/* ================================
+   MODULE: Admin / Quản trị
+================================ */
+
+CREATE TABLE dbo.AdminUser (
+    UserId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_AdminUser PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    PhoneNumber NVARCHAR(20) NOT NULL,
+    Username NVARCHAR(50) NULL,
+    PasswordHash NVARCHAR(256) NOT NULL,
+    FullName NVARCHAR(100) NULL,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_AdminUser_CreatedAt DEFAULT SYSUTCDATETIME(),
+    IsActive BIT NOT NULL CONSTRAINT DF_AdminUser_IsActive DEFAULT 1,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_AdminUser_Phone UNIQUE (PhoneNumber),
+    CONSTRAINT UQ_AdminUser_Username UNIQUE (Username)
+);
+GO
+
+/* ================================
+   MODULE: Profile / Hồ sơ cá nhân
+================================ */
+
+-- ProfileInfo
+CREATE TABLE dbo.ProfileInfo (
+    ProfileId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_ProfileInfo PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    AvatarUrl NVARCHAR(512) NULL,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_ProfileInfo_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION
+);
+GO
+
+-- ProfileTranslation
+CREATE TABLE dbo.ProfileTranslation (
+    TranslationId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_ProfileTranslation PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    ProfileId UNIQUEIDENTIFIER NOT NULL,
+    LanguageCode NVARCHAR(10) NOT NULL,
+    FullName NVARCHAR(100) NULL,
+    Title NVARCHAR(100) NULL,
+    Bio NVARCHAR(MAX) NULL,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_ProfileTranslation_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_ProfileTranslation_Profile_Lang UNIQUE (ProfileId, LanguageCode),
+    CONSTRAINT FK_ProfileTranslation_ProfileInfo
+        FOREIGN KEY (ProfileId) REFERENCES dbo.ProfileInfo(ProfileId)
+        ON DELETE CASCADE
+);
+GO
+
+-- ProfileTag
+CREATE TABLE dbo.ProfileTag (
+    TagId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_ProfileTag PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    ProfileId UNIQUEIDENTIFIER NOT NULL,
+    Label NVARCHAR(100) NOT NULL,
+    SortOrder INT NOT NULL CONSTRAINT DF_ProfileTag_SortOrder DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_ProfileTag_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT FK_ProfileTag_ProfileInfo
+        FOREIGN KEY (ProfileId) REFERENCES dbo.ProfileInfo(ProfileId)
+        ON DELETE CASCADE
+);
+GO
+
+-- Experience
+CREATE TABLE dbo.Experience (
+    ExpId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_Experience PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    ProfileId UNIQUEIDENTIFIER NOT NULL,
+    Position NVARCHAR(100) NULL,
+    Company NVARCHAR(100) NULL,
+    Description NVARCHAR(MAX) NULL,
+    StartYear INT NULL,
+    EndYear INT NULL,
+    IsCurrent BIT NOT NULL CONSTRAINT DF_Experience_IsCurrent DEFAULT 0,
+    SortOrder INT NOT NULL CONSTRAINT DF_Experience_SortOrder DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_Experience_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT FK_Experience_ProfileInfo
+        FOREIGN KEY (ProfileId) REFERENCES dbo.ProfileInfo(ProfileId)
+        ON DELETE CASCADE
+);
+GO
+
+/* ================================
+   MODULE: Skills / Kỹ năng
+================================ */
+
+-- SkillCategory
+CREATE TABLE dbo.SkillCategory (
+    CategoryId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_SkillCategory PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    Name NVARCHAR(100) NOT NULL,
+    IconUrl NVARCHAR(255) NULL,
+    SortOrder INT NOT NULL CONSTRAINT DF_SkillCategory_SortOrder DEFAULT 1,
+    IsActive BIT NOT NULL CONSTRAINT DF_SkillCategory_IsActive DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_SkillCategory_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION
+);
+GO
+
+-- Skill
+CREATE TABLE dbo.Skill (
+    SkillId UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_Skill PRIMARY KEY
+        DEFAULT NEWSEQUENTIALID(),
+    CategoryId UNIQUEIDENTIFIER NOT NULL,
+    Name NVARCHAR(100) NOT NULL,
+    SortOrder INT NOT NULL CONSTRAINT DF_Skill_SortOrder DEFAULT 1,
+    IsActive BIT NOT NULL CONSTRAINT DF_Skill_IsActive DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_Skill_CreatedAt DEFAULT SYSUTCDATETIME(),
+    UpdatedAt DATETIME2 NULL,
+    RowVer ROWVERSION,
+    CONSTRAINT UQ_Skill_Category_Name UNIQUE (CategoryId, Name),
+    CONSTRAINT FK_Skill_SkillCategory
+        FOREIGN KEY (CategoryId) REFERENCES dbo.SkillCategory(CategoryId)
+        ON DELETE CASCADE
+);
+GO
+
+/* ================================
+   INDEXES / NONCLUSTERED INDEXES
+================================ */
+
+-- Translation tables - tra cứu ngôn ngữ
+CREATE INDEX IX_HeroTranslation_LanguageCode
+    ON dbo.HeroTranslation (LanguageCode);
+CREATE INDEX IX_HeroSubHeading_LanguageCode
+    ON dbo.HeroSubHeading (LanguageCode);
+CREATE INDEX IX_ProjectTranslation_LanguageCode
+    ON dbo.ProjectTranslation (LanguageCode);
+CREATE INDEX IX_BlogPostTranslation_LanguageCode
+    ON dbo.BlogPostTranslation (LanguageCode);
+CREATE INDEX IX_ProfileTranslation_LanguageCode
+    ON dbo.ProfileTranslation (LanguageCode);
+GO
+
+-- Foreign key lookup
+CREATE INDEX IX_Project_CategoryId ON dbo.Project (CategoryId);
+CREATE INDEX IX_Skill_CategoryId ON dbo.Skill (CategoryId);
+GO
+
+-- Project filtering
+CREATE INDEX IX_Project_IsPublic_IsFeatured ON dbo.Project (IsPublic, IsFeatured);
+CREATE INDEX IX_Project_IsDeleted ON dbo.Project (IsDeleted);
+GO
+
+-- BlogPost lookup
+CREATE INDEX IX_BlogPost_IsDeleted ON dbo.BlogPost (IsDeleted);
+GO
+
+-- Mapping tables reverse lookups
+CREATE INDEX IX_ProjectTagMap_TagId ON dbo.ProjectTagMap (TagId);
+CREATE INDEX IX_BlogTagMap_TagId ON dbo.BlogTagMap (TagId);
+GO

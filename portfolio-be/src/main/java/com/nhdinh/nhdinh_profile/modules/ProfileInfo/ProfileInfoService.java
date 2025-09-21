@@ -42,8 +42,8 @@ public class ProfileInfoService {
     /**
      * Find active profile with all related data
      */
-    public Optional<ProfileInfo> findActiveProfileWithAllData() {
-        return profileInfoRepository.findActiveProfileWithAllData();
+    public Optional<ProfileInfo> getActiveProfileWithAllData() {
+        return profileInfoRepository.findActiveProfile();
     }
     
     /**
@@ -56,14 +56,14 @@ public class ProfileInfoService {
     /**
      * Tìm ProfileInfo theo ID
      */
-    public Optional<ProfileInfo> findById(UUID profileId) {
-        return profileInfoRepository.findById(profileId);
+    public Optional<ProfileInfo> findById(UUID id) {
+        return profileInfoRepository.findById(id);
     }
     
     /**
      * Xóa ProfileInfo theo ID
      */
-    public void deleteById(UUID profileId) {
-        profileInfoRepository.deleteById(profileId);
+    public void deleteById(UUID id) {
+        profileInfoRepository.deleteById(id);
     }
 }

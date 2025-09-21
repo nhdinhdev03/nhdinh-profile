@@ -29,18 +29,8 @@ public interface ProfileInfoRepository extends JpaRepository<ProfileInfo, UUID> 
     boolean existsAnyProfile();
 
     /**
-     * Find profile with translations
+     * Find profile by ID
      */
-    @Query("SELECT p FROM ProfileInfo p LEFT JOIN FETCH p.translations WHERE p.profileId = :profileId")
+    @Query("SELECT p FROM ProfileInfo p WHERE p.profileId = :profileId")
     Optional<ProfileInfo> findByIdWithTranslations(@Param("profileId") UUID profileId);
-
-    /**
-     * Find active profile with all related data
-     */
-    @Query("SELECT p FROM ProfileInfo p " +
-           "LEFT JOIN FETCH p.translations " +
-           "LEFT JOIN FETCH p.tags " +
-           "LEFT JOIN FETCH p.experiences " +
-           "ORDER BY p.createdAt ASC")
-    Optional<ProfileInfo> findActiveProfileWithAllData();
 }

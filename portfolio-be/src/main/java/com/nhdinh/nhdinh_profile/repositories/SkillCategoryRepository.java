@@ -36,14 +36,14 @@ public interface SkillCategoryRepository extends JpaRepository<SkillCategory, UU
     boolean existsByName(@Param("name") String name);
     
     /**
-     * Lấy categories có skills
+     * Lấy categories có skills - sử dụng subquery thay vì JOIN
      */
-    @Query("SELECT DISTINCT sc FROM SkillCategory sc INNER JOIN sc.skills s WHERE sc.isActive = true AND s.isActive = true ORDER BY sc.sortOrder ASC")
+    @Query("SELECT DISTINCT sc FROM SkillCategory sc WHERE sc.isActive = true AND EXISTS (SELECT 1 FROM Skill s WHERE s.skillCategory = sc AND s.isActive = true) ORDER BY sc.sortOrder ASC")
     List<SkillCategory> findCategoriesWithActiveSkills();
     
     /**
      * Đếm số skills trong category
      */
-    @Query("SELECT COUNT(s) FROM Skill s WHERE s.category.categoryId = :categoryId AND s.isActive = true")
+    @Query("SELECT COUNT(s) FROM Skill s WHERE s.skillCategory.categoryId = :categoryId AND s.isActive = true")
     Long countActiveSkillsInCategory(@Param("categoryId") UUID categoryId);
 }

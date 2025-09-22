@@ -3,11 +3,14 @@ package com.nhdinh.nhdinh_profile.services;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUser;
 import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUserDAO;
+import com.nhdinh.nhdinh_profile.modules.BlogPost.BlogPost;
 
 
 @Service
@@ -18,6 +21,9 @@ public class AdminUserService {
     
     public AdminUserService(AdminUserDAO adminUserDAO) {
         this.adminUserDAO = adminUserDAO;
+    }
+       public Page<AdminUser> findAllActiveWithPagination(Pageable pageable) {
+        return adminUserDAO.findAllActiveWithPagination(pageable);
     }
     
     /**

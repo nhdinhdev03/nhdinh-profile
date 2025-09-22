@@ -3,6 +3,8 @@ package com.nhdinh.nhdinh_profile.modules.AdminUser;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,6 +37,16 @@ public class AdminUserAPI {
         this.adminUserService = adminUserService;
     }
 
+
+    @GetMapping
+    public ResponseEntity<Page<AdminUser>> getAllActiveAdminUsers(Pageable pageable) {
+        try {
+            Page<AdminUser> adminUsers = adminUserService.findAllActiveWithPagination(pageable);
+            return ResponseEntity.ok(adminUsers);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     /**
      * Lấy admin user theo phone number
      */

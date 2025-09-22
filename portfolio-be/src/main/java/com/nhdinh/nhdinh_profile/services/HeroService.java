@@ -8,78 +8,81 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nhdinh.nhdinh_profile.modules.Hero.Hero;
-import com.nhdinh.nhdinh_profile.repositories.HeroRepository;
+import com.nhdinh.nhdinh_profile.modules.Hero.HeroDAO;
 
 @Service
 @Transactional
 public class HeroService {
     
-    private final HeroRepository heroRepository;
+    private final HeroDAO heroDAO;
     
-    public HeroService(HeroRepository heroRepository) {
-        this.heroRepository = heroRepository;
+    public HeroService(HeroDAO heroDAO) {
+        this.heroDAO = heroDAO;
     }
     
     /**
      * Lấy tất cả Hero chưa bị xóa
      */
     public List<Hero> findAllActive() {
-        return heroRepository.findAllActive();
+        return heroDAO.findAllActive();
     }
     
     /**
      * Lấy Hero đầu tiên chưa bị xóa với translations
      */
     public Optional<Hero> findFirstActiveWithTranslations() {
-        return heroRepository.findFirstActiveWithTranslations();
+        return heroDAO.findFirstActiveWithTranslations();
     }
     
     /**
      * Lấy Hero theo ID với translations và subheadings
      */
     public Optional<Hero> findByIdWithTranslations(UUID heroId) {
-        return heroRepository.findByIdWithTranslations(heroId);
+        return heroDAO.findByIdWithTranslations(heroId);
     }
     
     /**
      * Soft delete Hero
      */
     public void softDeleteById(UUID heroId) {
-        heroRepository.softDeleteById(heroId);
+        heroDAO.softDeleteById(heroId);
     }
     
     /**
      * Lấy Hero theo translation language
      */
     public List<Hero> findByLanguageCode(String languageCode) {
-        return heroRepository.findByLanguageCode(languageCode);
+        return heroDAO.findByLanguageCode(languageCode);
     }
     
     /**
      * Lưu Hero
      */
     public Hero save(Hero hero) {
-        return heroRepository.save(hero);
+        return heroDAO.save(hero);
     }
     
     /**
      * Tìm Hero theo ID
      */
     public Optional<Hero> findById(UUID heroId) {
-        return heroRepository.findById(heroId);
+        return heroDAO.findById(heroId);
     }
     
     /**
      * Xóa Hero theo ID
      */
     public void deleteById(UUID heroId) {
-        heroRepository.deleteById(heroId);
+        heroDAO.deleteById(heroId);
     }
     
     /**
      * Lấy tất cả Heroes
      */
     public List<Hero> findAll() {
-        return heroRepository.findAll();
+        return heroDAO.findAll();
     }
 }
+
+
+

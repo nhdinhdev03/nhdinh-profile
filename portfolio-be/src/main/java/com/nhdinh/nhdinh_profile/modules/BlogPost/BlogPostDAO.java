@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.BlogPost;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,13 +12,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.BlogPost.BlogPost;
-
 /**
  * JpaRepository interface for BlogPost entity
  */
 @Repository
-public interface BlogPostRepository extends JpaRepository<BlogPost, UUID> {
+public interface BlogPostDAO extends JpaRepository<BlogPost, UUID> {
     
     /**
      * Lấy tất cả blog posts active

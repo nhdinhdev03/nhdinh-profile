@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.ProjectTranslation;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,13 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.ProjectTranslation.ProjectTranslation;
-
 /**
  * JpaRepository interface for ProjectTranslation entity
  */
 @Repository
-public interface ProjectTranslationRepository extends JpaRepository<ProjectTranslation, UUID> {
+public interface ProjectTranslationDAO extends JpaRepository<ProjectTranslation, UUID> {
 
     /**
      * Lấy tất cả translations của một Project
@@ -51,3 +49,5 @@ public interface ProjectTranslationRepository extends JpaRepository<ProjectTrans
             "ORDER BY pt.createdAt DESC")
     List<ProjectTranslation> searchByTitle(@Param("keyword") String keyword);
 }
+
+

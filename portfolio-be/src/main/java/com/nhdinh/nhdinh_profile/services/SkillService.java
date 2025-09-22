@@ -8,85 +8,88 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nhdinh.nhdinh_profile.modules.Skill.Skill;
-import com.nhdinh.nhdinh_profile.repositories.SkillRepository;
+import com.nhdinh.nhdinh_profile.modules.Skill.SkillDAO;
 
 @Service
 @Transactional
 public class SkillService {
     
-    private final SkillRepository skillRepository;
+    private final SkillDAO skillDAO;
     
-    public SkillService(SkillRepository skillRepository) {
-        this.skillRepository = skillRepository;
+    public SkillService(SkillDAO skillDAO) {
+        this.skillDAO = skillDAO;
     }
     
     /**
      * Lấy tất cả skills active
      */
     public List<Skill> findAllActive() {
-        return skillRepository.findAllActive();
+        return skillDAO.findAllActive();
     }
     
     /**
      * Lấy skills theo category
      */
     public List<Skill> findByCategoryId(UUID categoryId) {
-        return skillRepository.findByCategoryId(categoryId);
+        return skillDAO.findByCategoryId(categoryId);
     }
     
     /**
      * Tìm skill theo tên trong category
      */
     public Optional<Skill> findByCategoryIdAndName(UUID categoryId, String name) {
-        return skillRepository.findByCategoryIdAndName(categoryId, name);
+        return skillDAO.findByCategoryIdAndName(categoryId, name);
     }
     
     /**
      * Kiểm tra skill có tồn tại trong category
      */
     public boolean existsByCategoryIdAndName(UUID categoryId, String name) {
-        return skillRepository.existsByCategoryIdAndName(categoryId, name);
+        return skillDAO.existsByCategoryIdAndName(categoryId, name);
     }
     
     /**
      * Lấy max sort order trong category
      */
     public Integer findMaxSortOrderByCategoryId(UUID categoryId) {
-        return skillRepository.findMaxSortOrderByCategoryId(categoryId);
+        return skillDAO.findMaxSortOrderByCategoryId(categoryId);
     }
     
     /**
      * Tìm kiếm skills theo tên
      */
     public List<Skill> searchByName(String keyword) {
-        return skillRepository.searchByName(keyword);
+        return skillDAO.searchByName(keyword);
     }
     
     /**
      * Lưu Skill
      */
     public Skill save(Skill skill) {
-        return skillRepository.save(skill);
+        return skillDAO.save(skill);
     }
     
     /**
      * Tìm Skill theo ID
      */
     public Optional<Skill> findById(UUID skillId) {
-        return skillRepository.findById(skillId);
+        return skillDAO.findById(skillId);
     }
     
     /**
      * Xóa Skill theo ID
      */
     public void deleteById(UUID skillId) {
-        skillRepository.deleteById(skillId);
+        skillDAO.deleteById(skillId);
     }
     
     /**
      * Lấy tất cả Skills
      */
     public List<Skill> findAll() {
-        return skillRepository.findAll();
+        return skillDAO.findAll();
     }
 }
+
+
+

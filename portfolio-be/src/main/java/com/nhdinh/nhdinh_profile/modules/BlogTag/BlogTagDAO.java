@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.BlogTag;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,13 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.BlogTag.BlogTag;
-
 /**
  * JpaRepository interface for BlogTag entity
  */
 @Repository
-public interface BlogTagRepository extends JpaRepository<BlogTag, UUID> {
+public interface BlogTagDAO extends JpaRepository<BlogTag, UUID> {
     
     /**
      * Tìm tag theo tên
@@ -54,3 +52,5 @@ public interface BlogTagRepository extends JpaRepository<BlogTag, UUID> {
     @Query("SELECT bt FROM BlogTag bt WHERE bt.isActive = true AND LOWER(bt.name) LIKE LOWER(CONCAT('%', :keyword, '%')) ORDER BY bt.name ASC")
     List<BlogTag> searchByName(@Param("keyword") String keyword);
 }
+
+

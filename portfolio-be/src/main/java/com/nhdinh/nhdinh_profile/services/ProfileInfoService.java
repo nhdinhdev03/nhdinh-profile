@@ -7,64 +7,67 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nhdinh.nhdinh_profile.modules.ProfileInfo.ProfileInfo;
-import com.nhdinh.nhdinh_profile.repositories.ProfileInfoRepository;
+import com.nhdinh.nhdinh_profile.modules.ProfileInfo.ProfileInfoDAO;
 
 @Service
 @Transactional
 public class ProfileInfoService {
     
-    private final ProfileInfoRepository profileInfoRepository;
+    private final ProfileInfoDAO profileInfoDAO;
     
-    public ProfileInfoService(ProfileInfoRepository profileInfoRepository) {
-        this.profileInfoRepository = profileInfoRepository;
+    public ProfileInfoService(ProfileInfoDAO profileInfoDAO) {
+        this.profileInfoDAO = profileInfoDAO;
     }
     
     /**
      * Find the active profile (assuming only one profile exists)
      */
     public Optional<ProfileInfo> findActiveProfile() {
-        return profileInfoRepository.findActiveProfile();
+        return profileInfoDAO.findActiveProfile();
     }
 
     /**
      * Check if any profile exists
      */
     public boolean existsAnyProfile() {
-        return profileInfoRepository.existsAnyProfile();
+        return profileInfoDAO.existsAnyProfile();
     }
 
     /**
      * Find profile with translations
      */
     public Optional<ProfileInfo> findByIdWithTranslations(UUID profileId) {
-        return profileInfoRepository.findByIdWithTranslations(profileId);
+        return profileInfoDAO.findByIdWithTranslations(profileId);
     }
 
     /**
      * Find active profile with all related data
      */
     public Optional<ProfileInfo> getActiveProfileWithAllData() {
-        return profileInfoRepository.findActiveProfile();
+        return profileInfoDAO.findActiveProfile();
     }
     
     /**
      * Lưu ProfileInfo
      */
     public ProfileInfo save(ProfileInfo profileInfo) {
-        return profileInfoRepository.save(profileInfo);
+        return profileInfoDAO.save(profileInfo);
     }
     
     /**
      * Tìm ProfileInfo theo ID
      */
     public Optional<ProfileInfo> findById(UUID id) {
-        return profileInfoRepository.findById(id);
+        return profileInfoDAO.findById(id);
     }
     
     /**
      * Xóa ProfileInfo theo ID
      */
     public void deleteById(UUID id) {
-        profileInfoRepository.deleteById(id);
+        profileInfoDAO.deleteById(id);
     }
 }
+
+
+

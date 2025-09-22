@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.ProfileInfo;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -8,13 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.ProfileInfo.ProfileInfo;
-
 /**
  * JpaRepository interface for ProfileInfo entity
  */
 @Repository
-public interface ProfileInfoRepository extends JpaRepository<ProfileInfo, UUID> {
+public interface ProfileInfoDAO extends JpaRepository<ProfileInfo, UUID> {
 
     /**
      * Find the active profile (assuming only one profile exists)

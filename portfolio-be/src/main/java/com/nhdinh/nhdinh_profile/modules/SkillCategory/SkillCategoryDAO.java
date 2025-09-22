@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.SkillCategory;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,13 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.SkillCategory.SkillCategory;
-
 /**
  * JpaRepository interface for SkillCategory entity
  */
 @Repository
-public interface SkillCategoryRepository extends JpaRepository<SkillCategory, UUID> {
+public interface SkillCategoryDAO extends JpaRepository<SkillCategory, UUID> {
     
     /**
      * Lấy tất cả categories active

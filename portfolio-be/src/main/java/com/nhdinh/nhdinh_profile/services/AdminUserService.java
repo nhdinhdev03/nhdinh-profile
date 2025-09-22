@@ -7,71 +7,75 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUser;
-import com.nhdinh.nhdinh_profile.repositories.AdminUserRepository;
+import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUserDAO;
+
 
 @Service
 @Transactional
 public class AdminUserService {
     
-    private final AdminUserRepository adminUserRepository;
+    private final AdminUserDAO adminUserDAO;
     
-    public AdminUserService(AdminUserRepository adminUserRepository) {
-        this.adminUserRepository = adminUserRepository;
+    public AdminUserService(AdminUserDAO adminUserDAO) {
+        this.adminUserDAO = adminUserDAO;
     }
     
     /**
      * Tìm admin theo phone number
      */
     public Optional<AdminUser> findByPhoneNumber(String phoneNumber) {
-        return adminUserRepository.findByPhoneNumber(phoneNumber);
+        return adminUserDAO.findByPhoneNumber(phoneNumber);
     }
     
     /**
      * Tìm admin theo username
      */
     public Optional<AdminUser> findByUsername(String username) {
-        return adminUserRepository.findByUsername(username);
+        return adminUserDAO.findByUsername(username);
     }
     
     /**
      * Kiểm tra phone number có tồn tại
      */
     public boolean existsByPhoneNumber(String phoneNumber) {
-        return adminUserRepository.existsByPhoneNumber(phoneNumber);
+        return adminUserDAO.existsByPhoneNumber(phoneNumber);
     }
     
     /**
      * Kiểm tra username có tồn tại
      */
     public boolean existsByUsername(String username) {
-        return adminUserRepository.existsByUsername(username);
+        return adminUserDAO.existsByUsername(username);
     }
     
     /**
      * Tìm admin active theo phone hoặc username
      */
     public Optional<AdminUser> findActiveByPhoneOrUsername(String identifier) {
-        return adminUserRepository.findActiveByPhoneOrUsername(identifier);
+        return adminUserDAO.findActiveByPhoneOrUsername(identifier);
     }
     
     /**
      * Lưu AdminUser
      */
     public AdminUser save(AdminUser adminUser) {
-        return adminUserRepository.save(adminUser);
+        return adminUserDAO.save(adminUser);
     }
     
     /**
      * Tìm AdminUser theo ID
      */
     public Optional<AdminUser> findById(UUID userId) {
-        return adminUserRepository.findById(userId);
+        return adminUserDAO.findById(userId);
     }
     
     /**
      * Xóa AdminUser theo ID
      */
     public void deleteById(UUID userId) {
-        adminUserRepository.deleteById(userId);
+        adminUserDAO.deleteById(userId);
     }
 }
+
+
+

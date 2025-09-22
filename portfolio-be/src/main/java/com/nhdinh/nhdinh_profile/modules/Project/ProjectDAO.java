@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.Project;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,13 +13,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.Project.Project;
-
 /**
  * JpaRepository interface for Project entity
  */
 @Repository
-public interface ProjectRepository extends JpaRepository<Project, UUID> {
+public interface ProjectDAO extends JpaRepository<Project, UUID> {
     
     /**
      * Lấy tất cả projects active

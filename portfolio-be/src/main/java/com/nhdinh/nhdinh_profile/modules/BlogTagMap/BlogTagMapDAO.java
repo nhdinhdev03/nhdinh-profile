@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.BlogTagMap;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,14 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.BlogTagMap.BlogTagMap;
-import com.nhdinh.nhdinh_profile.modules.BlogTagMap.BlogTagMapId;
-
 /**
  * JpaRepository interface for BlogTagMap entity
  */
 @Repository
-public interface BlogTagMapRepository extends JpaRepository<BlogTagMap, BlogTagMapId> {
+public interface BlogTagMapDAO extends JpaRepository<BlogTagMap, BlogTagMapId> {
     
     /**
      * Lấy tất cả tag maps của một blog post
@@ -56,3 +53,5 @@ public interface BlogTagMapRepository extends JpaRepository<BlogTagMap, BlogTagM
     @Query("SELECT COUNT(btm) FROM BlogTagMap btm WHERE btm.tag.tagId = :tagId")
     Long countByTagId(@Param("tagId") UUID tagId);
 }
+
+

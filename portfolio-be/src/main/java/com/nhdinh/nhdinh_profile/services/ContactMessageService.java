@@ -10,85 +10,88 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nhdinh.nhdinh_profile.modules.ContactMessage.ContactMessage;
-import com.nhdinh.nhdinh_profile.repositories.ContactMessageRepository;
+import com.nhdinh.nhdinh_profile.modules.ContactMessage.ContactMessageDAO;
 
 @Service
 @Transactional
 public class ContactMessageService {
     
-    private final ContactMessageRepository contactMessageRepository;
+    private final ContactMessageDAO contactMessageDAO;
     
-    public ContactMessageService(ContactMessageRepository contactMessageRepository) {
-        this.contactMessageRepository = contactMessageRepository;
+    public ContactMessageService(ContactMessageDAO contactMessageDAO) {
+        this.contactMessageDAO = contactMessageDAO;
     }
     
     /**
      * Lấy tất cả messages chưa reply
      */
     public List<ContactMessage> findUnrepliedMessages() {
-        return contactMessageRepository.findUnrepliedMessages();
+        return contactMessageDAO.findUnrepliedMessages();
     }
     
     /**
      * Lấy messages đã reply
      */
     public List<ContactMessage> findRepliedMessages() {
-        return contactMessageRepository.findRepliedMessages();
+        return contactMessageDAO.findRepliedMessages();
     }
     
     /**
      * Lấy messages theo email
      */
     public List<ContactMessage> findByEmail(String email) {
-        return contactMessageRepository.findByEmail(email);
+        return contactMessageDAO.findByEmail(email);
     }
     
     /**
      * Lấy messages với phân trang
      */
     public Page<ContactMessage> findAllWithPagination(Pageable pageable) {
-        return contactMessageRepository.findAllWithPagination(pageable);
+        return contactMessageDAO.findAllWithPagination(pageable);
     }
     
     /**
      * Tìm kiếm messages theo content hoặc subject
      */
     public List<ContactMessage> searchMessages(String keyword) {
-        return contactMessageRepository.searchMessages(keyword);
+        return contactMessageDAO.searchMessages(keyword);
     }
     
     /**
      * Đếm messages chưa reply
      */
     public Long countUnrepliedMessages() {
-        return contactMessageRepository.countUnrepliedMessages();
+        return contactMessageDAO.countUnrepliedMessages();
     }
     
     /**
      * Lưu ContactMessage
      */
     public ContactMessage save(ContactMessage contactMessage) {
-        return contactMessageRepository.save(contactMessage);
+        return contactMessageDAO.save(contactMessage);
     }
     
     /**
      * Tìm ContactMessage theo ID
      */
     public Optional<ContactMessage> findById(UUID messageId) {
-        return contactMessageRepository.findById(messageId);
+        return contactMessageDAO.findById(messageId);
     }
     
     /**
      * Xóa ContactMessage theo ID
      */
     public void deleteById(UUID messageId) {
-        contactMessageRepository.deleteById(messageId);
+        contactMessageDAO.deleteById(messageId);
     }
     
     /**
      * Lấy tất cả ContactMessages
      */
     public List<ContactMessage> findAll() {
-        return contactMessageRepository.findAll();
+        return contactMessageDAO.findAll();
     }
 }
+
+
+

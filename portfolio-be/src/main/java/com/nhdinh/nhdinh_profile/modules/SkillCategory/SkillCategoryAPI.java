@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.api;
+package com.nhdinh.nhdinh_profile.modules.SkillCategory;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhdinh.nhdinh_profile.modules.SkillCategory.SkillCategory;
 import com.nhdinh.nhdinh_profile.services.SkillCategoryService;
 
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.HeroTranslation;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,13 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.HeroTranslation.HeroTranslation;
-
 /**
  * JpaRepository interface for HeroTranslation entity
  */
 @Repository
-public interface HeroTranslationRepository extends JpaRepository<HeroTranslation, UUID> {
+public interface HeroTranslationDAO extends JpaRepository<HeroTranslation, UUID> {
     
     /**
      * Lấy tất cả translations của một Hero

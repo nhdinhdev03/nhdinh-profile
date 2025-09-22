@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.AdminUser;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -8,13 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUser;
-
 /**
  * JpaRepository interface for AdminUser entity
  */
 @Repository
-public interface AdminUserRepository extends JpaRepository<AdminUser, UUID> {
+public interface AdminUserDAO extends JpaRepository<AdminUser, UUID> {
     
     /**
      * Tìm admin theo phone number

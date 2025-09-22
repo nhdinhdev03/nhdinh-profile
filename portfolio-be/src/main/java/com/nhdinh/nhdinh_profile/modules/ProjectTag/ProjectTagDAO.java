@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.ProjectTag;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,13 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.ProjectTag.ProjectTag;
-
 /**
  * JpaRepository interface for ProjectTag entity
  */
 @Repository
-public interface ProjectTagRepository extends JpaRepository<ProjectTag, UUID> {
+public interface ProjectTagDAO extends JpaRepository<ProjectTag, UUID> {
     
     /**
      * Tìm tag theo tên
@@ -68,3 +66,5 @@ public interface ProjectTagRepository extends JpaRepository<ProjectTag, UUID> {
     @Query("SELECT COUNT(pm) FROM ProjectTagMap pm WHERE pm.tag.tagId = :tagId AND pm.project.isDeleted = false AND pm.project.isPublic = true")
     Long countProjectsUsingTag(@Param("tagId") UUID tagId);
 }
+
+

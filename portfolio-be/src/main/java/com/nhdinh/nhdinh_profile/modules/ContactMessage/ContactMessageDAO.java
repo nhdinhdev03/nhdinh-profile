@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.ContactMessage;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,13 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.ContactMessage.ContactMessage;
-
 /**
  * JpaRepository interface for ContactMessage entity
  */
 @Repository
-public interface ContactMessageRepository extends JpaRepository<ContactMessage, UUID> {
+public interface ContactMessageDAO extends JpaRepository<ContactMessage, UUID> {
     
     /**
      * Lấy tất cả messages chưa reply

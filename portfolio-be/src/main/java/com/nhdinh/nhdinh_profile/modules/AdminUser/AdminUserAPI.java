@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.api;
+package com.nhdinh.nhdinh_profile.modules.AdminUser;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUser;
 import com.nhdinh.nhdinh_profile.services.AdminUserService;
 
 import jakarta.validation.Valid;

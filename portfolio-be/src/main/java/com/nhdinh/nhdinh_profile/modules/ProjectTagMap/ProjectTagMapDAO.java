@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.ProjectTagMap;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,14 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.ProjectTagMap.ProjectTagMap;
-import com.nhdinh.nhdinh_profile.modules.ProjectTagMap.ProjectTagMapId;
-
 /**
  * JpaRepository interface for ProjectTagMap entity
  */
 @Repository
-public interface ProjectTagMapRepository extends JpaRepository<ProjectTagMap, ProjectTagMapId> {
+public interface ProjectTagMapDAO extends JpaRepository<ProjectTagMap, ProjectTagMapId> {
     
     /**
      * Lấy tất cả tag maps của một project

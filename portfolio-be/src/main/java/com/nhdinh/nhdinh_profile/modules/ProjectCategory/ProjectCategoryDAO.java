@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.ProjectCategory;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,13 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.ProjectCategory.ProjectCategory;
-
 /**
  * JpaRepository interface for ProjectCategory entity
  */
 @Repository
-public interface ProjectCategoryRepository extends JpaRepository<ProjectCategory, UUID> {
+public interface ProjectCategoryDAO extends JpaRepository<ProjectCategory, UUID> {
     
     /**
      * Tìm category theo tên
@@ -47,3 +45,5 @@ public interface ProjectCategoryRepository extends JpaRepository<ProjectCategory
     @Query("SELECT COUNT(p) FROM Project p WHERE p.category.categoryId = :categoryId AND p.isDeleted = false AND p.isPublic = true")
     Long countProjectsInCategory(@Param("categoryId") UUID categoryId);
 }
+
+

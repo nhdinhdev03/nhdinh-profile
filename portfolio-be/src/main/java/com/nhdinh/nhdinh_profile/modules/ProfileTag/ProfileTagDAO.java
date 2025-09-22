@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.ProfileTag;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,13 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.ProfileTag.ProfileTag;
-
 /**
  * JpaRepository interface for ProfileTag entity
  */
 @Repository
-public interface ProfileTagRepository extends JpaRepository<ProfileTag, UUID> {
+public interface ProfileTagDAO extends JpaRepository<ProfileTag, UUID> {
     
     /**
      * Lấy tất cả tags của một profile
@@ -40,3 +38,5 @@ public interface ProfileTagRepository extends JpaRepository<ProfileTag, UUID> {
     @Query("SELECT pt FROM ProfileTag pt WHERE pt.profileInfo.profileId = :profileId AND pt.label = :label")
     List<ProfileTag> findByProfileIdAndLabel(@Param("profileId") UUID profileId, @Param("label") String label);
 }
+
+

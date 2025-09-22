@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.HeroSubHeading;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,13 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.HeroSubHeading.HeroSubHeading;
-
 /**
  * JpaRepository interface for HeroSubHeading entity
  */
 @Repository
-public interface HeroSubHeadingRepository extends JpaRepository<HeroSubHeading, UUID> {
+public interface HeroSubHeadingDAO extends JpaRepository<HeroSubHeading, UUID> {
     
     /**
      * Lấy tất cả sub headings của một Hero
@@ -34,3 +32,5 @@ public interface HeroSubHeadingRepository extends JpaRepository<HeroSubHeading, 
     @Query("SELECT COALESCE(MAX(hsh.sortOrder), 0) FROM HeroSubHeading hsh WHERE hsh.hero.heroId = :heroId AND hsh.languageCode = :languageCode")
     Integer findMaxSortOrderByHeroIdAndLanguageCode(@Param("heroId") UUID heroId, @Param("languageCode") String languageCode);
 }
+
+

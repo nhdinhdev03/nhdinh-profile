@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.ProfileTranslation;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,13 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.ProfileTranslation.ProfileTranslation;
-
 /**
  * JpaRepository interface for ProfileTranslation entity
  */
 @Repository
-public interface ProfileTranslationRepository extends JpaRepository<ProfileTranslation, UUID> {
+public interface ProfileTranslationDAO extends JpaRepository<ProfileTranslation, UUID> {
     
     /**
      * Lấy tất cả translations của một Profile
@@ -41,3 +39,5 @@ public interface ProfileTranslationRepository extends JpaRepository<ProfileTrans
     @Query("SELECT DISTINCT pt.languageCode FROM ProfileTranslation pt WHERE pt.profileInfo.profileId = :profileId ORDER BY pt.languageCode")
     List<String> findLanguageCodesByProfileId(@Param("profileId") UUID profileId);
 }
+
+

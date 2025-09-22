@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.repositories;
+package com.nhdinh.nhdinh_profile.modules.Hero;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,14 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.Hero.Hero;
-
 /**
  * JpaRepository interface for Hero entity
  * Provides basic CRUD operations and custom queries
  */
 @Repository
-public interface HeroRepository extends JpaRepository<Hero, UUID> {
+public interface HeroDAO extends JpaRepository<Hero, UUID> {
     
     /**
      * Lấy tất cả Hero chưa bị xóa

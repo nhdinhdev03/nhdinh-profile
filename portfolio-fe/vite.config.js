@@ -12,7 +12,7 @@ export default defineConfig({
       components: path.resolve(__dirname, "./src/components"),
       hooks: path.resolve(__dirname, "./src/hooks"),
       layouts: path.resolve(__dirname, "./src/Layouts"),
-      pages: path.resolve(__dirname, "./src/pages"),
+      pages: path.resolve(__dirname, "./src/Pages"),
       styles: path.resolve(__dirname, "./src/styles"),
       i18n: path.resolve(__dirname, "./src/i18n"),
       config: path.resolve(__dirname, "./src/config"),

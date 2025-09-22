@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useCallback, memo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import { FiExternalLink, FiGithub, FiEye, FiFilter, FiGrid, FiList } from 'react-icons/fi';
+import { AnimatePresence, motion } from 'framer-motion';
 import useSaveScrollPosition from 'hooks/useSaveScrollPosition';
+import { memo, useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { FiExternalLink, FiEye, FiFilter, FiGithub, FiGrid, FiList } from 'react-icons/fi';
 import './Projects.scss';
 
 const Projects = memo(function Projects() {
@@ -13,6 +13,17 @@ const Projects = memo(function Projects() {
   
   const [filter, setFilter] = useState('featured');
   const [viewMode, setViewMode] = useState('grid');
+
+  // Helper function to get fallback image
+  const getFallbackImage = useCallback((category, title) => {
+    const fallbackImages = {
+      'fullstack': 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&h=400&fit=crop',
+      'frontend': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=400&fit=crop',
+      'mobile': 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&h=400&fit=crop',
+      'backend': 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop'
+    };
+    return fallbackImages[category] || `https://via.placeholder.com/600x400/f0f0f0/666?text=${encodeURIComponent(title)}`;
+  }, []);
 
   // Helper function to get localized description
   const getLocalizedDescription = useCallback((project) => {
@@ -26,7 +37,7 @@ const Projects = memo(function Projects() {
       title: 'E-Commerce Platform',
       description: 'Nền tảng thương mại điện tử hoàn chỉnh với tính năng thanh toán, quản lý đơn hàng và dashboard admin.',
       descriptionEn: 'Complete e-commerce platform with payment features, order management and admin dashboard.',
-      image: '/api/placeholder/600/400',
+      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHds9LFZNeDyd0p0nvQOwDQvGvo4Aua0sEsw&s',
       technologies: ['React', 'Node.js', 'MongoDB', 'Stripe'],
       liveUrl: 'https://example.com',
       githubUrl: 'https://github.com',
@@ -40,7 +51,7 @@ const Projects = memo(function Projects() {
       title: 'Task Management App',
       description: 'Ứng dụng quản lý công việc với tính năng real-time collaboration và notification system.',
       descriptionEn: 'Task management application with real-time collaboration and notification system.',
-      image: '/api/placeholder/600/400',
+      image: 'https://vtiacademy.edu.vn/upload/images/front-end-hoc-gi-nhung-ky-nang-can-thiet-cho-lap-trinh-vien-front-end-.png',
       technologies: ['Vue.js', 'Express.js', 'Socket.io', 'PostgreSQL'],
       liveUrl: 'https://example.com',
       githubUrl: 'https://github.com',
@@ -54,7 +65,7 @@ const Projects = memo(function Projects() {
       title: 'Portfolio Website',
       description: 'Website portfolio responsive với animations đẹp mắt và performance tối ưu.',
       descriptionEn: 'Responsive portfolio website with beautiful animations and optimized performance.',
-      image: '/api/placeholder/600/400',
+      image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=600&h=400&fit=crop&crop=center',
       technologies: ['React', 'Framer Motion', 'SCSS'],
       liveUrl: 'https://example.com',
       githubUrl: 'https://github.com',
@@ -68,7 +79,7 @@ const Projects = memo(function Projects() {
       title: 'Weather Dashboard',
       description: 'Dashboard thời tiết với charts tương tác và dự báo 7 ngày sử dụng API.',
       descriptionEn: 'Weather dashboard with interactive charts and 7-day forecast using API.',
-      image: '/api/placeholder/600/400',
+      image: 'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=600&h=400&fit=crop&crop=center',
       technologies: ['TypeScript', 'Chart.js', 'Weather API'],
       liveUrl: 'https://example.com',
       githubUrl: 'https://github.com',
@@ -82,7 +93,7 @@ const Projects = memo(function Projects() {
       title: 'Social Media App',
       description: 'Ứng dụng mạng xã hội với tính năng chat real-time và upload media.',
       descriptionEn: 'Social media application with real-time chat and media upload features.',
-      image: '/api/placeholder/600/400',
+      image: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?w=600&h=400&fit=crop&crop=center',
       technologies: ['React Native', 'Firebase', 'Node.js'],
       liveUrl: 'https://example.com',
       githubUrl: 'https://github.com',
@@ -96,7 +107,7 @@ const Projects = memo(function Projects() {
       title: 'Learning Platform',
       description: 'Nền tảng học tập trực tuyến với video streaming và quiz tương tác.',
       descriptionEn: 'Online learning platform with video streaming and interactive quizzes.',
-      image: '/api/placeholder/600/400',
+      image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop&crop=center',
       technologies: ['Next.js', 'Prisma', 'PostgreSQL'],
       liveUrl: 'https://example.com',
       githubUrl: 'https://github.com',
@@ -294,11 +305,38 @@ const Projects = memo(function Projects() {
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <div className="projects__card-image">
+                <div 
+                  className="projects__card-image" 
+                  style={{ 
+                    position: 'relative', 
+                    height: '240px', 
+                    overflow: 'hidden',
+                    backgroundImage: `url(${project.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                  }}
+                >
                   <img 
                     src={project.image} 
                     alt={project.title}
                     loading="lazy"
+                    referrerPolicy="no-referrer"
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'cover',
+                      display: 'block',
+                      opacity: 0
+                    }}
+                    onError={(e) => {
+                      console.log('Image failed to load:', project.image);
+                      const fallbackUrl = getFallbackImage(project.category, project.title);
+                      e.target.parentElement.style.backgroundImage = `url(${fallbackUrl})`;
+                    }}
+                    onLoad={() => {
+                      console.log('Image loaded successfully:', project.image);
+                    }}
                   />
                   <div className="projects__card-overlay">
                     <div className="projects__card-actions">

@@ -65,11 +65,11 @@ function Blog() {
       author: "Senior React Engineer",
       date: "2024-01-15",
       readTime: 15,
-      image: "/api/placeholder/600/300",
       tags: ["React 18", "Concurrent Features", "Performance", "useTransition"],
       difficulty: "Advanced",
       views: 12500,
       likes: 890,
+      image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=300&fit=crop&crop=center",
     },
     {
       id: 2,
@@ -580,11 +580,11 @@ function createDynamicGrid(items) {
       author: "CSS Architecture Specialist",
       date: "2024-01-10",
       readTime: 18,
-      image: "/api/placeholder/600/300",
       tags: ["CSS Grid", "Flexbox", "Responsive Design", "Performance"],
       difficulty: "Intermediate",
       views: 15200,
       likes: 1240,
+      image: "https://images.unsplash.com/photo-1523437113738-bbd3cc89fb19?w=600&h=300&fit=crop&crop=center",
     },
     {
       id: 3,
@@ -603,7 +603,7 @@ function createDynamicGrid(items) {
       author: "Professional Developer",
       date: "2024-01-05",
       readTime: 12,
-      image: "/api/placeholder/600/300",
+      image: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&h=300&fit=crop&crop=center",
       tags: ["Node.js", "Performance", "Backend"],
     },
     {
@@ -623,7 +623,7 @@ function createDynamicGrid(items) {
       author: "Professional Developer",
       date: "2023-12-28",
       readTime: 10,
-      image: "/api/placeholder/600/300",
+      image: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?w=600&h=300&fit=crop&crop=center",
       tags: ["TypeScript", "JavaScript", "Type Safety"],
     },
     {
@@ -643,7 +643,7 @@ function createDynamicGrid(items) {
       author: "Professional Developer",
       date: "2023-12-20",
       readTime: 7,
-      image: "/api/placeholder/600/300",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=300&fit=crop&crop=center",
       tags: ["CSS", "Modern CSS", "Responsive"],
     },
     {
@@ -663,7 +663,7 @@ function createDynamicGrid(items) {
       author: "Professional Developer",
       date: "2023-12-15",
       readTime: 9,
-      image: "/api/placeholder/600/300",
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=300&fit=crop&crop=center",
       tags: ["Performance", "Web Vitals", "Optimization"],
     },
   ];

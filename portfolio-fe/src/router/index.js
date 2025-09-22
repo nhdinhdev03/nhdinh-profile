@@ -12,40 +12,40 @@ const Hero = lazy(() => import("pages/Hero/Hero"));
 
 
 // Lazy loading admin components
-const AdminDashboard = lazy(() => import("../Pages/Admin/Dashboard/Dashboard"));
+const AdminDashboard = lazy(() => import("pages/Admin/Dashboard/Dashboard"));
 
 // Hero management
-const HeroManagement = lazy(() => import("../Pages/Admin/Hero/HeroManagement"));
-const HeroTranslations = lazy(() => import("../Pages/Admin/Hero/HeroTranslations"));
-const HeroSubheadings = lazy(() => import("../Pages/Admin/Hero/HeroSubheadings"));
+const HeroManagement = lazy(() => import("pages/Admin/Hero/HeroManagement"));
+const HeroTranslations = lazy(() => import("pages/Admin/Hero/HeroTranslations"));
+const HeroSubheadings = lazy(() => import("pages/Admin/Hero/HeroSubheadings"));
 
 // Project management
-const ProjectManagement = lazy(() => import("../Pages/Admin/Projects/ProjectManagement"));
-const ProjectCategories = lazy(() => import("../Pages/Admin/Projects/ProjectCategories"));
-const ProjectTags = lazy(() => import("../Pages/Admin/Projects/ProjectTags"));
-const ProjectTranslations = lazy(() => import("../Pages/Admin/Projects/ProjectTranslations"));
+const ProjectManagement = lazy(() => import("pages/Admin/Projects/ProjectManagement"));
+const ProjectCategories = lazy(() => import("pages/Admin/Projects/ProjectCategories"));
+const ProjectTags = lazy(() => import("pages/Admin/Projects/ProjectTags"));
+const ProjectTranslations = lazy(() => import("pages/Admin/Projects/ProjectTranslations"));
 
 // Blog management
-const BlogManagement = lazy(() => import("../Pages/Admin/Blog/BlogManagement"));
-const BlogPosts = lazy(() => import("../Pages/Admin/Blog/BlogPosts"));
-const BlogTags = lazy(() => import("../Pages/Admin/Blog/BlogTags"));
-const BlogTranslations = lazy(() => import("../Pages/Admin/Blog/BlogTranslations"));
+const BlogManagement = lazy(() => import("pages/Admin/Blog/BlogManagement"));
+const BlogPosts = lazy(() => import("pages/Admin/Blog/BlogPosts"));
+const BlogTags = lazy(() => import("pages/Admin/Blog/BlogTags"));
+const BlogTranslations = lazy(() => import("pages/Admin/Blog/BlogTranslations"));
 
 // Contact management
-const ContactManagement = lazy(() => import("../Pages/Admin/Contact/ContactManagement"));
-const ContactMessages = lazy(() => import("../Pages/Admin/Contact/ContactMessages"));
+const ContactManagement = lazy(() => import("pages/Admin/Contact/ContactManagement"));
+const ContactMessages = lazy(() => import("pages/Admin/Contact/ContactMessages"));
 
 // Profile management
-const ProfileManagement = lazy(() => import("../Pages/Admin/Profile/ProfileManagement"));
-const ProfileInfo = lazy(() => import("../Pages/Admin/Profile/ProfileInfo"));
-const ProfileExperience = lazy(() => import("../Pages/Admin/Profile/ProfileExperience"));
+const ProfileManagement = lazy(() => import("pages/Admin/Profile/ProfileManagement"));
+const ProfileInfo = lazy(() => import("pages/Admin/Profile/ProfileInfo"));
+const ProfileExperience = lazy(() => import("pages/Admin/Profile/ProfileExperience"));
 
 // Skills management
-const SkillsManagement = lazy(() => import("../Pages/Admin/Skills/SkillsManagement"));
-const SkillCategories = lazy(() => import("../Pages/Admin/Skills/SkillCategories"));
+const SkillsManagement = lazy(() => import("pages/Admin/Skills/SkillsManagement"));
+const SkillCategories = lazy(() => import("pages/Admin/Skills/SkillCategories"));
 
 // Admin users
-const AdminUsers = lazy(() => import("../Pages/Admin/Users/AdminUsers"));
+const AdminUsers = lazy(() => import("pages/Admin/Users/AdminUsers"));
 
 
 export const publicRoutes = [

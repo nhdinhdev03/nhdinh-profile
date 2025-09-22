@@ -17,12 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nhdinh.nhdinh_profile.constants.ApiConstants;
 import com.nhdinh.nhdinh_profile.services.SkillService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v2/skills")
+@RequestMapping(ApiConstants.SKILLS)
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class SkillAPI {
 

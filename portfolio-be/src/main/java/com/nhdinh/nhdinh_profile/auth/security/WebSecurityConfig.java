@@ -23,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.nhdinh.nhdinh_profile.auth.security.jwt.AuthEntryPointJwt;
 import com.nhdinh.nhdinh_profile.auth.security.jwt.AuthTokenFilter;
 import com.nhdinh.nhdinh_profile.auth.security.user.service.AdminUserDetailsServiceImpl;
+import com.nhdinh.nhdinh_profile.constants.ApiConstants;
 
 @Configuration
 @EnableWebSecurity
@@ -67,22 +68,22 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         // Public endpoints - no authentication required (GET only for public access)
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/v2/heroes/**").permitAll()
-                        .requestMatchers("/api/v2/profile/**").permitAll()
-                        .requestMatchers("/api/v2/experiences/**").permitAll()
-                        .requestMatchers("/api/v2/skills/**").permitAll()
-                        .requestMatchers("/api/v2/skill-categories/**").permitAll()
-                        .requestMatchers("/api/v2/projects/**").permitAll()
-                        .requestMatchers("/api/v2/blog-posts/**").permitAll()
-                        .requestMatchers("/api/v2/contact-messages/**").permitAll()
+                        .requestMatchers(ApiConstants.Security.PUBLIC_PATTERN).permitAll()
+                        .requestMatchers(ApiConstants.Security.HEROES_PATTERN).permitAll()
+                        .requestMatchers(ApiConstants.Security.PROFILE_PATTERN).permitAll()
+                        .requestMatchers(ApiConstants.Security.EXPERIENCES_PATTERN).permitAll()
+                        .requestMatchers(ApiConstants.Security.SKILLS_PATTERN).permitAll()
+                        .requestMatchers(ApiConstants.Security.SKILL_CATEGORIES_PATTERN).permitAll()
+                        .requestMatchers(ApiConstants.Security.PROJECTS_PATTERN).permitAll()
+                        .requestMatchers(ApiConstants.Security.BLOG_POSTS_PATTERN).permitAll()
+                        .requestMatchers(ApiConstants.Security.CONTACT_MESSAGES_PATTERN).permitAll()
 
                         // Admin endpoints - authentication required
-                        .requestMatchers("/api/v2/admin/**").authenticated()
-                        .requestMatchers("/api/v2/admin-users/**").authenticated()
+                        .requestMatchers(ApiConstants.Security.ADMIN_PATTERN).authenticated()
+                        .requestMatchers(ApiConstants.Security.ADMIN_USERS_PATTERN).authenticated()
 
                         // Authentication endpoints
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(ApiConstants.Security.AUTH_PATTERN).permitAll()
 
                         // Default - require authentication
                         .anyRequest().authenticated());

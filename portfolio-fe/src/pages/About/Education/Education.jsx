@@ -15,7 +15,7 @@ import {
 import { useInView } from 'react-intersection-observer';
 
 
-import withPerformanceOptimization from 'components/PerformanceOptimization';
+import { withPerformanceOptimization } from 'components/PerformanceOptimization';
 import useDeviceCapability from 'hooks/useDeviceCapability';
 import './Education.scss';
 

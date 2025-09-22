@@ -2,12 +2,12 @@ import { useCallback, useRef } from 'react';
 
 // Route preloading mappings
 const ROUTE_PRELOADERS = {
-  '/': () => import('pages/Hero/Hero'),
-  '/v1/about': () => import('pages/About/About'),
-  '/v1/skills': () => import('pages/Skills/Skills'),
-  '/v1/projects': () => import('pages/Projects/Projects'),
-  '/v1/blog': () => import('pages/Blog/Blog'),
-  '/v1/contact': () => import('pages/Contact/Contact'),
+  '/': () => import('page/Hero/Hero'),
+  '/v1/about': () => import('page/About/About'),
+  '/v1/skills': () => import('page/Skills/Skills'),
+  '/v1/projects': () => import('page/Projects/Projects'),
+  '/v1/blog': () => import('page/Blog/Blog'),
+  '/v1/contact': () => import('page/Contact/Contact'),
 };
 
 export const useRoutePreloader = () => {

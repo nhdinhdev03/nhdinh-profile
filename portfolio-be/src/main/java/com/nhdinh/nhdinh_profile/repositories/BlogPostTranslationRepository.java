@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.BlogPost.BlogPostTranslation;
+import com.nhdinh.nhdinh_profile.modules.BlogPostTranslation.BlogPostTranslation;
 
 /**
  * JpaRepository interface for BlogPostTranslation entity

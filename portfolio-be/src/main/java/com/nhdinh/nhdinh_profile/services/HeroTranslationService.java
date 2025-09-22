@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nhdinh.nhdinh_profile.modules.Hero.HeroTranslation;
+import com.nhdinh.nhdinh_profile.modules.HeroTranslation.HeroTranslation;
 import com.nhdinh.nhdinh_profile.repositories.HeroTranslationRepository;
 
 @Service

@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
 import com.nhdinh.nhdinh_profile.modules.HeroSubHeading.HeroSubHeading;
+import com.nhdinh.nhdinh_profile.modules.HeroTranslation.HeroTranslation;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

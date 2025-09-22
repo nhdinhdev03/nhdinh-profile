@@ -1,10 +1,12 @@
-package com.nhdinh.nhdinh_profile.modules.Hero;
+package com.nhdinh.nhdinh_profile.modules.HeroTranslation;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.nhdinh.nhdinh_profile.modules.Hero.Hero;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

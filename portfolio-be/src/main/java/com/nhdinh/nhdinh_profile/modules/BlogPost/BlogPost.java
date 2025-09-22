@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
+import com.nhdinh.nhdinh_profile.modules.BlogPostTranslation.BlogPostTranslation;
 import com.nhdinh.nhdinh_profile.modules.BlogTagMap.BlogTagMap;
 
 import jakarta.persistence.CascadeType;

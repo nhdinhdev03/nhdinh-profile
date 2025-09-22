@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.nhdinh.nhdinh_profile.modules.Hero.HeroTranslation;
+import com.nhdinh.nhdinh_profile.modules.HeroTranslation.HeroTranslation;
 
 /**
  * JpaRepository interface for HeroTranslation entity

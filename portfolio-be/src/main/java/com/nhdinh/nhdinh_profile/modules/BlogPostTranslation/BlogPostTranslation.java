@@ -1,10 +1,12 @@
-package com.nhdinh.nhdinh_profile.modules.BlogPost;
+package com.nhdinh.nhdinh_profile.modules.BlogPostTranslation;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.nhdinh.nhdinh_profile.modules.BlogPost.BlogPost;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

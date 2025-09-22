@@ -10,6 +10,7 @@ import org.hibernate.annotations.Where;
 
 import com.nhdinh.nhdinh_profile.modules.ProjectCategory.ProjectCategory;
 import com.nhdinh.nhdinh_profile.modules.ProjectTagMap.ProjectTagMap;
+import com.nhdinh.nhdinh_profile.modules.ProjectTranslation.ProjectTranslation;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

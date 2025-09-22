@@ -1,3 +1,6 @@
+// AuthController tạm thời bị disable do thiếu Spring Security dependencies
+// Uncomment khi đã cấu hình Spring Security
+
 // package com.nhdinh.nhdinh_profile.auth.controller;
 
 // import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,7 @@
 // import com.nhdinh.nhdinh_profile.auth.security.jwt.JwtUtils;
 // import com.nhdinh.nhdinh_profile.auth.security.user.service.AdminUserDetailsImpl;
 // import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUser;
-// import com.nhdinh.profile.modules.AdminUser.AdminUserDAO;
+// import com.nhdinh.nhdinh_profile.services.AdminUserService;
 
 // import jakarta.validation.Valid;
 
@@ -42,7 +45,7 @@
 //     private PasswordEncoder passwordEncoder;
 
 //     @Autowired
-//     private AdminUserDAO adminUserDAO;
+//     private AdminUserService adminUserService;
 
 //     @PostMapping("/register")
 //     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

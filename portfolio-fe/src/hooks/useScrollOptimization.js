@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Custom hook để tối ưu scroll events với requestAnimationFrame
@@ -67,17 +67,50 @@ export const useScrollProgress = (callback, threshold = 300) => {
 };
 
 /**
- * Hook để smooth scroll tới top với native browser API
+ * Hook để smooth scroll tới top với custom animation
+ * @param {number} duration - Thời gian animation (ms)
  * @returns {Function} scrollToTop function
  */
-export const useSmoothScrollToTop = () => {
+export const useSmoothScrollToTop = (duration = 800) => {
+  const isScrollingRef = useRef(false);
+
   return useCallback(() => {
-    // Sử dụng native smooth scroll cho performance tốt nhất
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }, []);
+    // Prevent multiple scroll animations
+    if (isScrollingRef.current) return;
+
+    const startPosition = window.pageYOffset;
+    const distance = startPosition;
+    
+    if (distance === 0) return; // Already at top
+
+    isScrollingRef.current = true;
+    let startTime = null;
+
+    const easeInOutCubic = (t) => {
+      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    };
+
+    const animateScroll = (currentTime) => {
+      if (startTime === null) startTime = currentTime;
+      
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      const ease = easeInOutCubic(progress);
+      
+      const currentPosition = startPosition - (distance * ease);
+      window.scrollTo(0, currentPosition);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      } else {
+        // Ensure we end exactly at top
+        window.scrollTo(0, 0);
+        isScrollingRef.current = false;
+      }
+    };
+
+    requestAnimationFrame(animateScroll);
+  }, [duration]);
 };
 
 export default { useScrollProgress, useSmoothScrollToTop };

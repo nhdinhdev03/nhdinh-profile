@@ -12,10 +12,10 @@ import ScrollToTopOnNavigate from "components/Scroll/ScrollToTopOnNavigate/Scrol
 
 import "styles/App.scss";
 
+import MainLayoutAdmin from "layouts/Amin/MainLayoutAdmin";
+import MainLayout from "layouts/User/MainLayout";
+import NotFound from "pages/NotFound/NotFound";
 import "./i18n";
-import MainLayoutAdmin from "./Layouts/Amin/MainLayoutAdmin";
-import MainLayout from "./Layouts/User/MainLayout";
-import NotFound from "./Pages/NotFound/NotFound";
 
 
 const App = memo(() => {

@@ -12,9 +12,9 @@ import ScrollToTopOnNavigate from "components/Scroll/ScrollToTopOnNavigate/Scrol
 
 import "styles/App.scss";
 
-import MainLayoutAdmin from "layout/Admin/MainLayoutAdmin";
-import MainLayout from "layout/User/MainLayout";
-import NotFound from "page/NotFound/NotFound";
+import MainLayoutAdmin from "layouts/Admin/MainLayoutAdmin";
+import MainLayout from "layouts/User/MainLayout";
+import NotFound from "pages/NotFound/NotFound";
 import "./i18n";
 
 

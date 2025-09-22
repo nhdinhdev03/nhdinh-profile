@@ -1,0 +1,134 @@
+@use 'styles/variables' as *;
+
+.about {
+  position: relative;
+  overflow: hidden;
+  
+  // Animated particles background
+  &__particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  &__particle {
+    position: absolute;
+    pointer-events: none;
+    filter: blur(1px);
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Enhanced About page styles
+.about-page {
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  padding: clamp(32px, 6vw, 64px) 0;
+  color: var(--text-primary);
+  font-family: $font-primary;
+  transition: background-color 0.3s ease;
+  isolation: isolate;
+
+  @media (max-width: 768px) {
+    padding: clamp(16px, 4vw, 32px) 0;
+  }
+}
+
+// Enhanced gradient line
+.gradient-line {
+  height: 3px;
+  margin: clamp(1rem, 4vw, 2rem) 0;
+  background: var(--gradient-primary);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
+  @media (max-width: 768px) {
+    margin: clamp(0.5rem, 2vw, 1rem) 0;
+    height: 2px;
+  }
+}
+
+// =====================================
+// Animations
+// =====================================
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+// =====================================
+// Responsive Design
+// =====================================
+@media (max-width: $breakpoint-md) {
+  .about-page {
+    padding: clamp(16px, 4vw, 32px) 0;
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .about {
+    .gradient-line {
+      height: 4px;
+    }
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .about {
+    &__particles {
+      display: none;
+    }
+
+    .gradient-line::before {
+      animation: none;
+    }
+
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

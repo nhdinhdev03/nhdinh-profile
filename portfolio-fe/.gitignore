@@ -118,10 +118,9 @@ ehthumbs.db
 dist-ssr
 *.local
 
-/jsconfig.json
+
 
 /netlify.toml
 
 demo test
 
-portfolio-fes

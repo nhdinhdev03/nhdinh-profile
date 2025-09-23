@@ -33,6 +33,7 @@ import "./Skills.scss";
 import TechMarquee from "./TechMarquee/TechMarquee";
 
 
+
 function Skills() {
   const { t } = useTranslation();
   const [ref, inView] = useInView({

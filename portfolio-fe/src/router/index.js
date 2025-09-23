@@ -2,13 +2,13 @@ import { lazy } from "react";
 import { ROUTES, ROUTE_METADATA } from "router/routeConstants";
 
 // Lazy loading components
-const About = lazy(() => import("pages/About/About"));
-const Skills = lazy(() => import("pages/Skills/Skills"));
-const Projects = lazy(() => import("pages/Projects/Projects"));
-const Blog = lazy(() => import("pages/Blog/Blog"));
-const BlogDetail = lazy(() => import("pages/Blog/BlogDetail"));
-const Contact = lazy(() => import("pages/Contact/Contact"));
-const Hero = lazy(() => import("pages/Hero/Hero"));
+const About = lazy(() => import("pages/User/About/About"));
+const Skills = lazy(() => import("pages/User/Skills/Skills"));
+const Projects = lazy(() => import("pages/User/Projects/Projects"));
+const Blog = lazy(() => import("pages/User/Blog/Blog"));
+const BlogDetail = lazy(() => import("pages/User/Blog/BlogDetail"));
+const Contact = lazy(() => import("pages/User/Contact/Contact"));
+const Hero = lazy(() => import("pages/User/Hero/Hero"));
 
 
 // Lazy loading admin components

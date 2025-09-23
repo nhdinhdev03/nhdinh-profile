@@ -14,7 +14,7 @@ import "styles/App.scss";
 
 import MainLayoutAdmin from "layouts/Admin/MainLayoutAdmin";
 import MainLayout from "layouts/User/MainLayout";
-import NotFound from "pages/NotFound/NotFound";
+import NotFound from "pages/User/NotFound/NotFound";
 import "./i18n";
 
 

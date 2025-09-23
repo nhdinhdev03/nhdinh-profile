@@ -1,21 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import {
+  FiArrowLeft,
+  FiBookmark,
   FiCalendar,
   FiClock,
-  FiUser,
-  FiArrowLeft,
-  FiShare2,
-  FiBookmark,
-  FiThumbsUp,
   FiEye,
   FiHeart,
   FiList,
+  FiShare2,
+  FiThumbsUp,
+  FiUser,
 } from "react-icons/fi";
-import ScrollToTop from "../../components/Scroll/ScrollToTop/ScrollToTop";
-import { ROUTES } from "../../router/routeConstants";
+import { useNavigate, useParams } from "react-router-dom";
+
+
 import "./BlogDetail.scss";
+import { ROUTES } from "router/routeConstants";
+import ScrollToTop from "components/Scroll/ScrollToTop/ScrollToTop";
+
 
 function BlogDetail() {
   const { id } = useParams();

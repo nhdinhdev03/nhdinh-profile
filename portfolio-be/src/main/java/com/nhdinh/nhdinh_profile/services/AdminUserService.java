@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUser;
 import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUserDAO;
-import com.nhdinh.nhdinh_profile.modules.BlogPost.BlogPost;
 
 
 @Service

@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nhdinh.nhdinh_profile.modules.ProjectCategory.ProjectCategory;
 import com.nhdinh.nhdinh_profile.modules.ProjectTagMap.ProjectTagMap;
 import com.nhdinh.nhdinh_profile.modules.ProjectTranslation.ProjectTranslation;
@@ -26,16 +26,13 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Project", schema = "dbo")
-@Where(clause = "IsDeleted = 0")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Project {
     
     @Id
@@ -102,8 +99,10 @@ public class Project {
     
     // Relationships
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
     private List<ProjectTranslation> translations;
     
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
     private List<ProjectTagMap> tagMaps;
 }

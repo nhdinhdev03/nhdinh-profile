@@ -46,11 +46,6 @@ public class ProfileInfo {
     // Default constructor
     public ProfileInfo() {}
 
-    // Constructor with avatarUrl
-    public ProfileInfo(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
     // Getters and Setters
     public UUID getProfileId() {
         return profileId;

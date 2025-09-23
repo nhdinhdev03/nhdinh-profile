@@ -1,13 +1,15 @@
 package com.nhdinh.nhdinh_profile.modules.BlogPost;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nhdinh.nhdinh_profile.modules.BlogPostTranslation.BlogPostTranslation;
 import com.nhdinh.nhdinh_profile.modules.BlogTagMap.BlogTagMap;
 
@@ -25,7 +27,6 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,10 +34,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "BlogPost", schema = "dbo",
        uniqueConstraints = @UniqueConstraint(name = "UQ_BlogPost_Slug", 
                                            columnNames = {"Slug"}))
-@Where(clause = "IsDeleted = 0")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class BlogPost {
     
     @Id
@@ -70,9 +69,13 @@ public class BlogPost {
     private byte[] rowVer;
     
     // Relationships
+    @BatchSize(size = 20)
     @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<BlogPostTranslation> translations;
+    @JsonIgnore
+    private List<BlogPostTranslation> translations = new ArrayList<>();
     
+    @BatchSize(size = 20)
     @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<BlogTagMap> tagMaps;
+    @JsonIgnore
+    private List<BlogTagMap> tagMaps = new ArrayList<>();
 }

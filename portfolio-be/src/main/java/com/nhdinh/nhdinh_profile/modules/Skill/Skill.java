@@ -22,17 +22,21 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity representing individual skills
  * Maps to dbo.Skill table
  */
 @Entity
-@Table(name = "Skill", schema = "dbo",
-       uniqueConstraints = {
-           @UniqueConstraint(name = "UQ_Skill_Category_Name", 
-                           columnNames = {"CategoryId", "Name"})
-       })
+@Table(name = "Skill", schema = "dbo", uniqueConstraints = {
+        @UniqueConstraint(name = "UQ_Skill_Category_Name", columnNames = { "CategoryId", "Name" })
+})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Skill {
 
     @Id
@@ -41,8 +45,7 @@ public class Skill {
     private UUID skillId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "CategoryId", nullable = false,
-                foreignKey = @ForeignKey(name = "FK_Skill_SkillCategory"))
+    @JoinColumn(name = "CategoryId", nullable = false, foreignKey = @ForeignKey(name = "FK_Skill_SkillCategory"))
     private SkillCategory skillCategory;
 
     @NotBlank(message = "Name is required")
@@ -69,108 +72,4 @@ public class Skill {
     @Column(name = "RowVer")
     private byte[] rowVer;
 
-    // Default constructor
-    public Skill() {}
-
-    // Constructor with required fields
-    public Skill(SkillCategory skillCategory, String name) {
-        this.skillCategory = skillCategory;
-        this.name = name;
-    }
-
-    // Constructor with main fields
-    public Skill(SkillCategory skillCategory, String name, Integer sortOrder) {
-        this.skillCategory = skillCategory;
-        this.name = name;
-        this.sortOrder = sortOrder;
-    }
-
-    // Getters and Setters
-    public UUID getSkillId() {
-        return skillId;
-    }
-
-    public void setSkillId(UUID skillId) {
-        this.skillId = skillId;
-    }
-
-    public SkillCategory getSkillCategory() {
-        return skillCategory;
-    }
-
-    public void setSkillCategory(SkillCategory skillCategory) {
-        this.skillCategory = skillCategory;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(Integer sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public byte[] getRowVer() {
-        return rowVer;
-    }
-
-    public void setRowVer(byte[] rowVer) {
-        this.rowVer = rowVer;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Skill)) return false;
-        Skill skill = (Skill) o;
-        return skillId != null && skillId.equals(skill.skillId);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Skill{" +
-                "skillId=" + skillId +
-                ", name='" + name + '\'' +
-                ", sortOrder=" + sortOrder +
-                ", isActive=" + isActive +
-                ", createdAt=" + createdAt +
-                '}';
-    }
 }

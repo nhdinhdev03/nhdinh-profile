@@ -23,6 +23,12 @@ public interface BlogPostDAO extends JpaRepository<BlogPost, UUID> {
      */
     @Query("SELECT bp FROM BlogPost bp WHERE bp.isDeleted = false ORDER BY bp.createdAt DESC")
     List<BlogPost> findAllActive();
+
+    /**
+     * Lấy tất cả blog posts active với translations
+     */
+    @Query("SELECT DISTINCT bp FROM BlogPost bp LEFT JOIN FETCH bp.translations WHERE bp.isDeleted = false ORDER BY bp.createdAt DESC")
+    List<BlogPost> findAllActiveWithTranslations();
     
     /**
      * Lấy blog post theo slug
@@ -43,6 +49,21 @@ public interface BlogPostDAO extends JpaRepository<BlogPost, UUID> {
            "WHERE bp.blogId = :blogId AND bp.isDeleted = false")
     Optional<BlogPost> findByIdWithTranslationsAndTags(@Param("blogId") UUID blogId);
     
+    /**
+     * Lấy blog posts với phân trang và translations
+     */
+    @Query("SELECT DISTINCT bp FROM BlogPost bp LEFT JOIN FETCH bp.translations WHERE bp.isDeleted = false")
+    List<BlogPost> findAllActiveWithTranslationsList();
+
+    @Query(value = "SELECT DISTINCT bp FROM BlogPost bp " +
+           "LEFT JOIN FETCH bp.translations bpt " +
+           "LEFT JOIN FETCH bp.tagMaps tm " +
+           "LEFT JOIN FETCH tm.tag t " +
+           "WHERE bp.isDeleted = false " +
+           "ORDER BY bp.createdAt DESC",
+           countQuery = "SELECT COUNT(DISTINCT bp) FROM BlogPost bp WHERE bp.isDeleted = false")
+    Page<BlogPost> findAllActiveWithPaginationAndTranslations(Pageable pageable);
+
     /**
      * Lấy blog posts với phân trang
      */

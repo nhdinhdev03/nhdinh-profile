@@ -87,17 +87,6 @@ public class Experience {
         this.profileInfo = profileInfo;
     }
 
-    // Constructor with main fields
-    public Experience(ProfileInfo profileInfo, String position, String company, 
-                     Integer startYear, Integer endYear, Boolean isCurrent) {
-        this.profileInfo = profileInfo;
-        this.position = position;
-        this.company = company;
-        this.startYear = startYear;
-        this.endYear = endYear;
-        this.isCurrent = isCurrent;
-    }
-
     // Validation method for year logic
     @PrePersist
     @PreUpdate

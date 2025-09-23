@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nhdinh.nhdinh_profile.modules.BlogPost.BlogPost;
 
 import jakarta.persistence.Column;
@@ -43,6 +44,7 @@ public class BlogPostTranslation {
     @NotNull(message = "BlogPost không được để trống")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BlogId", nullable = false)
+    @JsonIgnoreProperties({"translations", "tagMaps", "hibernateLazyInitializer", "handler"})
     private BlogPost blogPost;
     
     @NotBlank(message = "LanguageCode không được để trống")

@@ -35,12 +35,12 @@ public class BlogPostAPI {
     }
 
     /**
-     * Lấy tất cả blog posts active với pagination
+     * Lấy tất cả blog posts active với pagination và translations
      */
     @GetMapping
     public ResponseEntity<Page<BlogPost>> getAllActiveBlogPosts(Pageable pageable) {
         try {
-            Page<BlogPost> blogPosts = blogPostService.findAllActiveWithPagination(pageable);
+            Page<BlogPost> blogPosts = blogPostService.findAllActiveWithPaginationAndTranslations(pageable);
             return ResponseEntity.ok(blogPosts);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

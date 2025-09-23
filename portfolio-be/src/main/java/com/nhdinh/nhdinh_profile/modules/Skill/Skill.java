@@ -44,7 +44,7 @@ public class Skill {
     @Column(name = "SkillId", nullable = false)
     private UUID skillId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "CategoryId", nullable = false, foreignKey = @ForeignKey(name = "FK_Skill_SkillCategory"))
     private SkillCategory skillCategory;
 

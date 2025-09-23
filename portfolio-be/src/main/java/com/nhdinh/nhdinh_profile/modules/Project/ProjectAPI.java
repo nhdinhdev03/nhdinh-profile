@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,7 @@ public class ProjectAPI {
      * Lấy tất cả projects active
      */
     @GetMapping
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Project>> getAllActiveProjects() {
         try {
             List<Project> projects = projectService.findAllActive();
@@ -52,6 +54,7 @@ public class ProjectAPI {
      * Lấy project theo ID với translations và tags
      */
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     public ResponseEntity<Project> getProjectById(@PathVariable UUID id) {
         try {
             Optional<Project> project = projectService.findByIdWithTranslationsAndTags(id);
@@ -66,6 +69,7 @@ public class ProjectAPI {
      * Lấy featured projects
      */
     @GetMapping("/featured")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Project>> getFeaturedProjects() {
         try {
             List<Project> projects = projectService.findFeaturedProjects();
@@ -79,6 +83,7 @@ public class ProjectAPI {
      * Lấy public projects
      */
     @GetMapping("/public")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Project>> getPublicProjects() {
         try {
             List<Project> projects = projectService.findPublicProjects();
@@ -92,6 +97,7 @@ public class ProjectAPI {
      * Lấy published projects với pagination
      */
     @GetMapping("/published")
+    @Transactional(readOnly = true)
     public ResponseEntity<Page<Project>> getPublishedProjects(Pageable pageable) {
         try {
             Page<Project> projects = projectService.findPublishedProjects(pageable);
@@ -105,6 +111,7 @@ public class ProjectAPI {
      * Lấy projects theo status
      */
     @GetMapping("/status/{status}")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Project>> getProjectsByStatus(@PathVariable String status) {
         try {
             List<Project> projects = projectService.findByStatus(status);
@@ -118,6 +125,7 @@ public class ProjectAPI {
      * Lấy projects theo category
      */
     @GetMapping("/category/{categoryId}")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Project>> getProjectsByCategory(@PathVariable UUID categoryId) {
         try {
             List<Project> projects = projectService.findByCategoryId(categoryId);

@@ -32,12 +32,12 @@ public class ProjectTagMap {
     @EmbeddedId
     private ProjectTagMapId id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("projectId")
     @JoinColumn(name = "ProjectId")
     private Project project;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("tagId")
     @JoinColumn(name = "TagId")
     private ProjectTag tag;

@@ -41,7 +41,7 @@ public class ProjectTranslation {
     private UUID translationId;
     
     @NotNull(message = "Project không được để trống")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ProjectId", nullable = false)
     private Project project;
     

@@ -41,7 +41,7 @@ public class Project {
     private UUID projectId;
     
     @NotNull(message = "Category không được để trống")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "CategoryId", nullable = false)
     private ProjectCategory category;
     

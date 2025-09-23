@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,7 @@ public class AdminUserAPI {
 
 
     @GetMapping
+    @Transactional(readOnly = true)
     public ResponseEntity<Page<AdminUser>> getAllActiveAdminUsers(Pageable pageable) {
         try {
             Page<AdminUser> adminUsers = adminUserService.findAllActiveWithPagination(pageable);
@@ -50,6 +52,7 @@ public class AdminUserAPI {
      * Lấy admin user theo phone number
      */
     @GetMapping("/phone/{phoneNumber}")
+    @Transactional(readOnly = true)
     public ResponseEntity<AdminUser> getAdminUserByPhone(@PathVariable String phoneNumber) {
         try {
             Optional<AdminUser> adminUser = adminUserService.findByPhoneNumber(phoneNumber);
@@ -64,6 +67,7 @@ public class AdminUserAPI {
      * Lấy admin user theo username
      */
     @GetMapping("/username/{username}")
+    @Transactional(readOnly = true)
     public ResponseEntity<AdminUser> getAdminUserByUsername(@PathVariable String username) {
         try {
             Optional<AdminUser> adminUser = adminUserService.findByUsername(username);
@@ -78,6 +82,7 @@ public class AdminUserAPI {
      * Lấy admin user theo ID
      */
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     public ResponseEntity<AdminUser> getAdminUserById(@PathVariable UUID id) {
         try {
             Optional<AdminUser> adminUser = adminUserService.findById(id);

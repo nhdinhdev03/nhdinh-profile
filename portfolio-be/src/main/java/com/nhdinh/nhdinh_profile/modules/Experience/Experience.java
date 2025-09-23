@@ -36,7 +36,7 @@ public class Experience {
     @Column(name = "ExpId", nullable = false)
     private UUID expId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "ProfileId", nullable = false,
                 foreignKey = @ForeignKey(name = "FK_Experience_ProfileInfo"))
     private ProfileInfo profileInfo;

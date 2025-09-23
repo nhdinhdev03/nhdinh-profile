@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhdinh.nhdinh_profile.constants.ApiConstants;
 import com.nhdinh.nhdinh_profile.services.AdminUserService;
 
 import jakarta.validation.Valid;
@@ -27,7 +26,7 @@ import jakarta.validation.Valid;
  * Note: Authentication/Authorization should be implemented with Spring Security
  */
 @RestController
-@RequestMapping(ApiConstants.ADMIN_USERS)
+@RequestMapping("/api/v2/admin-users")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AdminUserAPI {
 

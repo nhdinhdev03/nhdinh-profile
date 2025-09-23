@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,20 @@ public class HeroService {
      */
     public List<Hero> findAllActive() {
         return heroDAO.findAllActive();
+    }
+    
+    /**
+     * Lấy tất cả Hero chưa bị xóa với pagination
+     */
+    public Page<Hero> findAllActiveWithPagination(Pageable pageable) {
+        return heroDAO.findAllActiveWithPagination(pageable);
+    }
+    
+    /**
+     * Lấy tất cả Hero chưa bị xóa với translations và subheadings
+     */
+    public List<Hero> findAllActiveWithTranslations() {
+        return heroDAO.findAllActiveWithTranslations();
     }
     
     /**

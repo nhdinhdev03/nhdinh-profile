@@ -19,13 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhdinh.nhdinh_profile.constants.ApiConstants;
 import com.nhdinh.nhdinh_profile.services.BlogPostService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(ApiConstants.BLOG_POSTS)
+@RequestMapping("/api/v2/blog-posts")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class BlogPostAPI {
 

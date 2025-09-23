@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nhdinh.nhdinh_profile.modules.HeroSubHeading.HeroSubHeading;
 import com.nhdinh.nhdinh_profile.modules.HeroTranslation.HeroTranslation;
 
@@ -28,7 +30,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Hero", schema = "dbo")
-@Where(clause = "IsDeleted = 0")
+@SQLRestriction("IsDeleted = 0")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -57,8 +60,10 @@ public class Hero {
     
     // Relationships
     @OneToMany(mappedBy = "hero", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
     private List<HeroTranslation> translations;
     
     @OneToMany(mappedBy = "hero", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
     private List<HeroSubHeading> subHeadings;
 }

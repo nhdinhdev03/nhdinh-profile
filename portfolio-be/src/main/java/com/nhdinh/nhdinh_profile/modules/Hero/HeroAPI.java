@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,13 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhdinh.nhdinh_profile.constants.ApiConstants;
 import com.nhdinh.nhdinh_profile.services.HeroService;
 
 import jakarta.validation.Valid;
 
+/**
+ * Hero API Controller
+ * Handles all Hero-related operations for portfolio website
+ */
 @RestController
-@RequestMapping(ApiConstants.HEROES)
+@RequestMapping("/api/v2/heroes")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class HeroAPI {
 
@@ -34,12 +39,12 @@ public class HeroAPI {
     }
 
     /**
-     * Lấy tất cả Hero active
+     * Lấy tất cả Hero active với pagination
      */
     @GetMapping
-    public ResponseEntity<List<Hero>> getAllActiveHeroes() {
+    public ResponseEntity<Page<Hero>> getAllActiveHeroes(Pageable pageable) {
         try {
-            List<Hero> heroes = heroService.findAllActive();
+            Page<Hero> heroes = heroService.findAllActiveWithPagination(pageable);
             return ResponseEntity.ok(heroes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -47,26 +52,26 @@ public class HeroAPI {
     }
 
     /**
-     * Lấy Hero đầu tiên
+     * Lấy tất cả Hero active (không phân trang)
      */
-    @GetMapping("/first")
-    public ResponseEntity<Hero> getFirstActiveHero() {
+    @GetMapping("/all")
+    public ResponseEntity<List<Hero>> getAllActiveHeroesList() {
         try {
-            Optional<Hero> hero = heroService.findFirstActiveWithTranslations();
-            return hero.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            List<Hero> heroes = heroService.findAllActive();
+            return ResponseEntity.ok(heroes);
         } catch (Exception e) {
+            e.printStackTrace(); // Log error for debugging
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     /**
-     * Lấy Hero theo ID
+     * Lấy Hero đầu tiên active với translations
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<Hero> getHeroById(@PathVariable UUID id) {
+    @GetMapping("/first")
+    public ResponseEntity<Hero> getFirstActiveHero() {
         try {
-            Optional<Hero> hero = heroService.findByIdWithTranslations(id);
+            Optional<Hero> hero = heroService.findFirstActiveWithTranslations();
             return hero.map(ResponseEntity::ok)
                       .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (Exception e) {
@@ -95,6 +100,20 @@ public class HeroAPI {
         try {
             List<Hero> heroes = heroService.findByLanguageCode(lang);
             return ResponseEntity.ok(heroes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Lấy Hero theo ID với translations
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Hero> getHeroById(@PathVariable UUID id) {
+        try {
+            Optional<Hero> hero = heroService.findByIdWithTranslations(id);
+            return hero.map(ResponseEntity::ok)
+                      .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

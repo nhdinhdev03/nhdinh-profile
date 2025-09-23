@@ -20,13 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nhdinh.nhdinh_profile.constants.ApiConstants;
 import com.nhdinh.nhdinh_profile.services.ProjectService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(ApiConstants.PROJECTS)
+@RequestMapping("/api/v2/projects")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class ProjectAPI {
 

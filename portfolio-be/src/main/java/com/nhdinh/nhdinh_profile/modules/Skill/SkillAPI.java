@@ -35,7 +35,7 @@ public class SkillAPI {
     /**
      * Lấy tất cả skills active
      */
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<Skill>> getAllActiveSkills() {
         try {
             List<Skill> skills = skillService.findAllActive();

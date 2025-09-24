@@ -39,7 +39,7 @@ public class ProjectAPI {
     /**
      * Lấy tất cả projects active
      */
-    @GetMapping
+    @GetMapping("/all")
     @Transactional(readOnly = true)
     public ResponseEntity<List<Project>> getAllActiveProjects() {
         try {

@@ -33,6 +33,19 @@ public class ExperienceAPI {
     }
 
     /**
+     * Lấy tất cả experiences
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<Experience>> getAllExperiences() {
+        try {
+            List<Experience> experiences = experienceService.findAll();
+            return ResponseEntity.ok(experiences);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
      * Lấy experience theo ID
      */
     @GetMapping("/{id}")

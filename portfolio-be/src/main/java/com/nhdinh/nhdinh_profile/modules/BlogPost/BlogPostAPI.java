@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,18 +32,7 @@ public class BlogPostAPI {
         this.blogPostService = blogPostService;
     }
 
-    /**
-     * Lấy tất cả blog posts active với pagination và translations
-     */
-    @GetMapping
-    public ResponseEntity<Page<BlogPost>> getAllActiveBlogPosts(Pageable pageable) {
-        try {
-            Page<BlogPost> blogPosts = blogPostService.findAllActiveWithPaginationAndTranslations(pageable);
-            return ResponseEntity.ok(blogPosts);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+ 
 
     /**
      * Lấy tất cả blog posts active (không phân trang)

@@ -93,6 +93,14 @@
       <optional>true</optional>
     </dependency>
 
+    <!-- Spring Boot DevTools for auto-reload -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+
     <!-- H2 Database for Testing -->
     <dependency>
       <groupId>com.h2database</groupId>

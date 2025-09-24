@@ -68,10 +68,10 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // Public endpoints - không cần authentication
                         .requestMatchers("/api/public/**").permitAll()
-                        
+
                         // Auth endpoints - login, signup, etc.
                         .requestMatchers("/api/auth/**").permitAll()
-                        
+
                         // Core portfolio endpoints - public read access
                         .requestMatchers("/api/v2/heroes/**").permitAll()
                         .requestMatchers("/api/v2/profile/**").permitAll()
@@ -80,23 +80,23 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v2/skill-categories/**").permitAll()
                         .requestMatchers("/api/v2/projects/**").permitAll()
                         .requestMatchers("/api/v2/blog-posts/**").permitAll()
-                        
+
                         // Contact messages - allow POST for public contact form
                         .requestMatchers("/api/v2/contact-messages/**").permitAll()
                         .requestMatchers("/api/v2/contact-messages/send").permitAll()
-                        
+
                         // Admin endpoints - require authentication
                         .requestMatchers("/api/v2/admin/**").authenticated()
                         .requestMatchers("/api/v2/admin-users/**").authenticated()
-                        
+
                         // Contact messages admin operations - require authentication
                         // .requestMatchers("/api/v2/contact-messages/**").authenticated()
-                        
+
                         // Static resources and error pages
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
-                        
+                        // .requestMatchers("/actuator/health").permitAll()
+
                         // Default - permit all for now, can be changed to authenticated() later
                         .anyRequest().permitAll());
 

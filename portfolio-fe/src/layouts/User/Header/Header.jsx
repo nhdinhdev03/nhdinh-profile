@@ -3,7 +3,7 @@ import LanguageToggle from "components/LanguageToggle";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRoutePreloader } from "hooks/useRoutePreloader";
 import PropTypes from "prop-types";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FiBookOpen,
@@ -20,6 +20,49 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
 import "./Header.scss";
+
+// Hook to detect touch device and optimize accordingly
+const useTouchDevice = () => {
+  return useMemo(() => {
+    return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  }, []);
+};
+
+// Hook to optimize touch response and eliminate delays
+const useTouchOptimization = () => {
+  useEffect(() => {
+    // Disable double-tap zoom on mobile for instant response
+    let lastTouchEnd = 0;
+    const preventDoubleTapZoom = (event) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    };
+
+    // Add touch optimization event listeners
+    document.addEventListener("touchend", preventDoubleTapZoom, {
+      passive: false,
+    });
+
+    // Prevent context menu on long press for better UX
+    document.addEventListener(
+      "contextmenu",
+      (e) => {
+        if (e.target.closest(".header")) {
+          e.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+
+    return () => {
+      document.removeEventListener("touchend", preventDoubleTapZoom);
+      document.removeEventListener("contextmenu", () => {});
+    };
+  }, []);
+};
 
 // Hook to generate nav items with translations
 const useNavItems = () => {
@@ -174,7 +217,7 @@ const DesktopNav = memo(({ activeSection, onLinkHover, pathname }) => {
   );
 });
 
-// Optimized Mobile Navigation with reduced animations and better performance
+// Optimized Mobile Navigation with enhanced performance and smoother animations
 const MobileNav = memo(
   ({
     isMenuOpen,
@@ -193,109 +236,209 @@ const MobileNav = memo(
     const [atTop, setAtTop] = useState(true);
     const [atBottom, setAtBottom] = useState(false);
     const scrollContainerRef = useRef(null);
-    
-    // Performance optimization: check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const handleLinkClick = useCallback((e, path) => {
-      e.preventDefault();
-      
-      // Haptic feedback for supported devices
-      if (navigator.vibrate && !prefersReducedMotion) {
-        navigator.vibrate(10);
-      }
-      
-      setIsMenuOpen(false);
+    // Enhanced performance optimization: check for reduced motion and low-end device
+    const prefersReducedMotion = useMemo(
+      () =>
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        // Detect low-end devices
+        (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) ||
+        (navigator.deviceMemory && navigator.deviceMemory <= 2),
+      []
+    );
 
-      // Optimize navigation - don't reload if already on the same page
-      if (pathname === path) {
-        if (path === ROUTES.HOME) {
-          // Use passive scroll for better performance
-          window.scrollTo({ 
-            top: 0, 
-            behavior: prefersReducedMotion ? 'instant' : 'smooth' 
-          });
-          setActiveSection("home");
+    const handleLinkClick = useCallback(
+      (e, path) => {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent event bubbling for better performance
+
+        // Ultra-fast menu close - no delay
+        setIsMenuOpen(false);
+
+        // Instant haptic feedback (non-blocking)
+        if (
+          navigator.vibrate &&
+          !prefersReducedMotion &&
+          "ontouchstart" in window
+        ) {
+          // Use setTimeout to make it non-blocking
+          setTimeout(() => navigator.vibrate(6), 0);
         }
-      } else {
-        // Use requestAnimationFrame for smoother navigation
-        requestAnimationFrame(() => {
+
+        // Ultra-fast navigation - prioritize immediate response
+        if (pathname === path) {
+          if (path === ROUTES.HOME) {
+            setActiveSection("home");
+            // Instant scroll for touch devices, smooth for others
+            const isTouchDevice = "ontouchstart" in window;
+            window.scrollTo({
+              top: 0,
+              behavior:
+                isTouchDevice || prefersReducedMotion ? "instant" : "smooth",
+            });
+          }
+        } else {
+          // Immediate navigation - no delays
           navigate(path);
-        });
-      }
-
-    }, [pathname, navigate, setActiveSection, setIsMenuOpen, prefersReducedMotion]);
-
-  
-    const overlayVariants = {
-      hidden: { opacity: 0 },
-      visible: { 
-        opacity: 1,
-        transition: { duration: prefersReducedMotion ? 0.01 : 0.2 }
-      },
-      exit: { 
-        opacity: 0,
-        transition: { duration: prefersReducedMotion ? 0.01 : 0.15 }
-      }
-    };
-
-    const navVariants = {
-      hidden: { x: "100%", opacity: 0 },
-      visible: { 
-        x: 0, 
-        opacity: 1,
-        transition: {
-          type: "tween",
-          duration: prefersReducedMotion ? 0.01 : 0.25,
-          ease: prefersReducedMotion ? "linear" : [0.25, 0.46, 0.45, 0.94]
         }
       },
-      exit: { 
-        x: "100%", 
-        opacity: 0,
-        transition: {
-          type: "tween",
-          duration: prefersReducedMotion ? 0.01 : 0.2,
-          ease: prefersReducedMotion ? "linear" : [0.55, 0.055, 0.675, 0.19]
-        }
-      }
-    };
+      [
+        pathname,
+        navigate,
+        setActiveSection,
+        setIsMenuOpen,
+        prefersReducedMotion,
+      ]
+    );
 
-    const itemVariants = {
-      hidden: { opacity: 0, x: 15, scale: 0.95 },
-      visible: { 
-        opacity: 1, 
-        x: 0,
-        scale: 1,
-        transition: {
-          duration: prefersReducedMotion ? 0.01 : 0.3,
-          ease: prefersReducedMotion ? "linear" : [0.25, 0.46, 0.45, 0.94],
-          delay: prefersReducedMotion ? 0 : 0.05
-        }
-      }
-    };
+    // Ultra-fast animation variants optimized for touch devices
+    const isTouchDevice = useMemo(() => "ontouchstart" in window, []);
 
-    // Evaluate scrollability when menu opens or window resizes
+    const overlayVariants = useMemo(
+      () => ({
+        hidden: {
+          opacity: 0,
+          // Remove backdrop filter for instant performance on touch
+          backdropFilter: isTouchDevice ? "none" : "blur(0px)",
+        },
+        visible: {
+          opacity: 1,
+          backdropFilter: isTouchDevice ? "none" : "blur(6px)",
+          transition: {
+            duration: prefersReducedMotion || isTouchDevice ? 0.01 : 0.12,
+            ease: "easeOut",
+          },
+        },
+        exit: {
+          opacity: 0,
+          backdropFilter: isTouchDevice ? "none" : "blur(0px)",
+          transition: {
+            duration: prefersReducedMotion || isTouchDevice ? 0.01 : 0.08,
+            ease: "easeIn",
+          },
+        },
+      }),
+      [prefersReducedMotion, isTouchDevice]
+    );
+
+    const navVariants = useMemo(
+      () => ({
+        hidden: {
+          x: "100%",
+          opacity: 0,
+          scale: isTouchDevice ? 1 : 0.98, // Reduce scale animation on touch
+          // Force hardware acceleration
+          transform: isTouchDevice
+            ? "translate3d(100%, 0, 0)"
+            : "translate3d(100%, 0, 0) scale3d(0.98, 0.98, 1)",
+        },
+        visible: {
+          x: 0,
+          opacity: 1,
+          scale: 1,
+          transform: "translate3d(0, 0, 0) scale3d(1, 1, 1)",
+          transition: {
+            type: "tween",
+            duration: prefersReducedMotion ? 0.01 : isTouchDevice ? 0.15 : 0.22,
+            ease: prefersReducedMotion
+              ? "linear"
+              : isTouchDevice
+              ? "easeOut"
+              : [0.25, 0.46, 0.45, 0.94],
+          },
+        },
+        exit: {
+          x: "100%",
+          opacity: 0,
+          scale: isTouchDevice ? 1 : 0.99,
+          transform: isTouchDevice
+            ? "translate3d(100%, 0, 0)"
+            : "translate3d(100%, 0, 0) scale3d(0.99, 0.99, 1)",
+          transition: {
+            type: "tween",
+            duration: prefersReducedMotion ? 0.01 : isTouchDevice ? 0.12 : 0.18,
+            ease: prefersReducedMotion ? "linear" : "easeIn",
+          },
+        },
+      }),
+      [prefersReducedMotion, isTouchDevice]
+    );
+
+    const itemVariants = useMemo(
+      () => ({
+        hidden: {
+          opacity: 0,
+          x: 12,
+          scale: 0.97,
+          transform: "translate3d(12px, 0, 0) scale3d(0.97, 0.97, 1)",
+        },
+        visible: (index) => ({
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          transform: "translate3d(0, 0, 0) scale3d(1, 1, 1)",
+          transition: {
+            type: "tween",
+            duration: prefersReducedMotion ? 0.01 : 0.25,
+            ease: prefersReducedMotion ? "linear" : [0.25, 0.46, 0.45, 0.94],
+            delay: prefersReducedMotion ? 0 : Math.min(index * 0.03, 0.15), // Stagger with cap
+          },
+        }),
+        exit: {
+          opacity: 0,
+          x: 8,
+          scale: 0.98,
+          transform: "translate3d(8px, 0, 0) scale3d(0.98, 0.98, 1)",
+          transition: {
+            duration: prefersReducedMotion ? 0.01 : 0.15,
+            ease: "easeIn",
+          },
+        },
+      }),
+      [prefersReducedMotion]
+    );
+
+    // Optimized scrollability detection with debouncing
     useEffect(() => {
       if (!isMenuOpen) return;
+
       const el = scrollContainerRef.current;
       if (!el) return;
-      const check = () => {
-        if (!el) return;
-        const scrollable = el.scrollHeight > el.clientHeight + 2; // tolerance
-        setIsScrollable(scrollable);
-        setAtTop(el.scrollTop <= 0);
-        setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 1);
+
+      let timeoutId;
+      const debouncedCheck = () => {
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (!el) return;
+          const scrollable = el.scrollHeight > el.clientHeight + 2;
+          setIsScrollable(scrollable);
+          setAtTop(el.scrollTop <= 1);
+          setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 2);
+        }, 16); // ~60fps
       };
-      check();
-      const handle = () => {
-        check();
+
+      // Initial check
+      debouncedCheck();
+
+      // Optimized scroll handler with RAF throttling
+      let rafId;
+      const scrollHandler = () => {
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+          debouncedCheck();
+          rafId = null;
+        });
       };
-      el.addEventListener('scroll', handle, { passive: true });
-      window.addEventListener('resize', check);
+
+      // Use passive listeners for better performance
+      el.addEventListener("scroll", scrollHandler, { passive: true });
+      window.addEventListener("resize", debouncedCheck, { passive: true });
+
       return () => {
-        el.removeEventListener('scroll', handle);
-        window.removeEventListener('resize', check);
+        if (timeoutId) clearTimeout(timeoutId);
+        if (rafId) cancelAnimationFrame(rafId);
+        el.removeEventListener("scroll", scrollHandler);
+        window.removeEventListener("resize", debouncedCheck);
       };
     }, [isMenuOpen]);
 
@@ -315,7 +458,11 @@ const MobileNav = memo(
         <motion.nav
           key="mobile-nav"
           id="mobile-navigation"
-          className={`header__nav header__nav--mobile ${isScrollable ? 'header__nav--scrollable' : ''} ${atTop ? 'header__nav--at-top' : ''} ${atBottom ? 'header__nav--at-bottom' : ''}`}
+          className={`header__nav header__nav--mobile ${
+            isScrollable ? "header__nav--scrollable" : ""
+          } ${atTop ? "header__nav--at-top" : ""} ${
+            atBottom ? "header__nav--at-bottom" : ""
+          }`}
           aria-label="Mobile navigation"
           ref={mobileNavRef}
           variants={navVariants}
@@ -334,8 +481,12 @@ const MobileNav = memo(
                 />
               </div>
               <div className="header__nav-mobile-text">
-                <h2 className="header__nav-mobile-title">{t("navigation.menu")}</h2>
-                <p className="header__nav-mobile-subtitle">{t("navigation.choose_destination")}</p>
+                <h2 className="header__nav-mobile-title">
+                  {t("navigation.menu")}
+                </h2>
+                <p className="header__nav-mobile-subtitle">
+                  {t("navigation.choose_destination")}
+                </p>
               </div>
             </div>
             <button
@@ -349,99 +500,145 @@ const MobileNav = memo(
           <div
             className="header__nav-scroll"
             ref={scrollContainerRef}
-            aria-label={t('navigation.menu_scrollable')}
+            aria-label={t("navigation.menu_scrollable")}
           >
-          <ul className="header__nav-list header__nav-list--mobile">
-            {navItems.map((item, index) => {
-              const Icon = item.icon;
-              const isActive = activeSection === item.id;
-              return (
-                <motion.li
-                  key={item.id}
-                  className="header__nav-item"
-                  variants={itemVariants}
-                  custom={index}
-                >
-                  <Link
-                    to={item.path}
-                    className={`header__nav-link ${
-                      isActive ? "header__nav-link--active" : ""
-                    }`}
-                    onClick={(e) => handleLinkClick(e, item.path)}
-                    tabIndex={0}
+            <ul className="header__nav-list header__nav-list--mobile">
+              {navItems.map((item, index) => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.id;
+                return (
+                  <motion.li
+                    key={item.id}
+                    className="header__nav-item"
+                    variants={itemVariants}
+                    custom={index}
+                    // Performance optimization: contain layout shifts
+                    style={{ contain: "layout style" }}
                   >
-                    <div className="header__nav-icon-wrapper">
-                      <Icon className="header__nav-icon" />
-                    {isActive && !prefersReducedMotion && (
-                      <motion.div 
-                        className="header__nav-active-glow"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
-                      />
-                    )}
-                    </div>
-                    <div className="header__nav-content">
-                      <span className="header__nav-text">{item.label}</span>
-                      <span className="header__nav-description">
-                        {t(`navigation.${item.id}_desc`, item.label)}
-                      </span>
-                    </div>
-                    {isActive && !prefersReducedMotion && (
-                      <motion.div 
-                        className="header__nav-active-indicator"
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ duration: 0.4, ease: "backOut" }}
-                      >
-                        <div className="header__nav-active-dot" />
-                      </motion.div>
-                    )}
-                    {isActive && prefersReducedMotion && (
-                      <div className="header__nav-active-indicator">
-                        <div className="header__nav-active-dot" />
+                    <Link
+                      to={item.path}
+                      className={`header__nav-link ${
+                        isActive ? "header__nav-link--active" : ""
+                      }`}
+                      onClick={(e) => handleLinkClick(e, item.path)}
+                      tabIndex={0}
+                      // Prefetch on hover for better perceived performance
+                      onMouseEnter={() => {
+                        if (!("ontouchstart" in window)) {
+                          // Only prefetch on desktop
+                          const link = document.createElement("link");
+                          link.rel = "prefetch";
+                          link.href = item.path;
+                          document.head.appendChild(link);
+                        }
+                      }}
+                    >
+                      <div className="header__nav-icon-wrapper">
+                        <Icon className="header__nav-icon" />
+                        {isActive && !prefersReducedMotion && (
+                          <motion.div
+                            className="header__nav-active-glow"
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            transition={{
+                              duration: 0.25,
+                              ease: "easeOut",
+                              type: "tween",
+                            }}
+                            // Force hardware acceleration
+                            style={{
+                              transform: "translate3d(0, 0, 0)",
+                              willChange: "transform, opacity",
+                            }}
+                          />
+                        )}
                       </div>
-                    )}
-                  </Link>
-                </motion.li>
-              );
-            })}
+                      <div className="header__nav-content">
+                        <span className="header__nav-text">{item.label}</span>
+                        <span className="header__nav-description">
+                          {t(`navigation.${item.id}_desc`, item.label)}
+                        </span>
+                      </div>
+                      {isActive && (
+                        <div className="header__nav-active-indicator">
+                          {!prefersReducedMotion ? (
+                            <motion.div
+                              className="header__nav-active-dot"
+                              initial={{ scale: 0, rotate: -90 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              exit={{ scale: 0, rotate: 90 }}
+                              transition={{
+                                duration: 0.3,
+                                ease: [0.34, 1.56, 0.64, 1],
+                                type: "tween",
+                              }}
+                              style={{
+                                transform: "translate3d(0, 0, 0)",
+                                willChange: "transform",
+                              }}
+                            />
+                          ) : (
+                            <div className="header__nav-active-dot" />
+                          )}
+                        </div>
+                      )}
+                    </Link>
+                  </motion.li>
+                );
+              })}
 
-            <motion.li
-              className="header__nav-item header__nav-item--theme"
-              variants={itemVariants}
-              custom={navItems.length}
-            >
-              <div className="header__mobile-controls">
-                <LanguageToggle 
-                  className="header__mobile-language-toggle" 
-                  variant="compact"
-                />
+              <motion.li
+                className="header__nav-item header__nav-item--theme"
+                variants={itemVariants}
+                custom={navItems.length}
+                style={{ contain: "layout style" }}
+              >
+                <div className="header__mobile-controls">
+                  <LanguageToggle
+                    className="header__mobile-language-toggle"
+                    variant="compact"
+                  />
 
-                <button
-                  className="header__mobile-theme-btn"
-                  onClick={() => {
-                    if (navigator.vibrate && !prefersReducedMotion) {
-                      navigator.vibrate(10);
-                    }
-                    toggleTheme();
-                  }}
-                  aria-label={`Switch to ${
-                    theme === "dark" ? "light" : "dark"
-                  } theme`}
-                >
-                  <div className="header__theme-icon-wrapper">
-                    {theme === "dark" ? <FiMoon /> : <FiSun />}
-                  </div>
-                  <span>
-                    {theme === "dark"
-                      ? t("header.switch_to_light")
-                      : t("header.switch_to_dark")}
-                  </span>
-                </button>
-              </div>
-            </motion.li>
-          </ul>
+                  <button
+                    className="header__mobile-theme-btn"
+                    onClick={() => {
+                      // Optimized haptic feedback
+                      if (
+                        navigator.vibrate &&
+                        !prefersReducedMotion &&
+                        "ontouchstart" in window
+                      ) {
+                        navigator.vibrate(8);
+                      }
+
+                      // Use requestAnimationFrame for smoother theme transition
+                      requestAnimationFrame(() => {
+                        toggleTheme();
+                      });
+                    }}
+                    aria-label={`Switch to ${
+                      theme === "dark" ? "light" : "dark"
+                    } theme`}
+                    // Prevent layout shift during theme toggle
+                    style={{ contain: "layout" }}
+                  >
+                    <div className="header__theme-icon-wrapper">
+                      {theme === "dark" ? (
+                        <FiMoon key="moon" />
+                      ) : (
+                        <FiSun key="sun" />
+                      )}
+                    </div>
+                    <span>
+                      {theme === "dark"
+                        ? t("header.switch_to_light")
+                        : t("header.switch_to_dark")}
+                    </span>
+                  </button>
+                </div>
+              </motion.li>
+            </ul>
           </div>
         </motion.nav>
       </AnimatePresence>
@@ -467,7 +664,7 @@ MobileNav.propTypes = {
   navigate: PropTypes.func.isRequired,
 };
 
-// Hook: derive active section from route changes
+// Enhanced hook: derive active section from route changes with performance optimizations
 const useRouteActiveSection = (
   pathname,
   getActiveSectionFromPath,
@@ -476,34 +673,52 @@ const useRouteActiveSection = (
   const [activeSection, setActiveSection] = useState(
     getActiveSectionFromPath(pathname)
   );
-  
+
   useEffect(() => {
-    // Cập nhật activeSection ngay lập tức khi route thay đổi
+    // Optimized route change handling
     const newActiveSection = getActiveSectionFromPath(pathname);
+
+    // Close menu immediately for better UX
+    setIsMenuOpen(false);
+
+    // Update active section
     setActiveSection(newActiveSection);
-    setIsMenuOpen(false); // close menu on navigation
-    
-    // Đảm bảo rằng scroll spy không override ngay lập tức
-    // bằng cách delay một chút để DOM render xong
-    if (pathname !== '/') {
-      setTimeout(() => {
-        setActiveSection(newActiveSection);
-      }, 100);
+
+    // Only use timeout for non-home pages to prevent scroll spy conflicts
+    if (pathname !== ROUTES.HOME) {
+      // Use requestIdleCallback if available for better performance
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(
+          () => {
+            setActiveSection(newActiveSection);
+          },
+          { timeout: 150 }
+        );
+      } else {
+        // Fallback to setTimeout
+        const timeoutId = setTimeout(() => {
+          setActiveSection(newActiveSection);
+        }, 100);
+
+        return () => clearTimeout(timeoutId);
+      }
     }
   }, [pathname, getActiveSectionFromPath, setIsMenuOpen]);
-  
+
   return [activeSection, setActiveSection];
 };
 
-// Optimized scroll spy with better performance và scroll direction detection
+// Highly optimized scroll spy - minimal complexity for mobile
 const useScrollSpy = (
   isScrolling,
   setIsScrolled,
   setActiveSection,
   navItems,
-  pathname, // Thêm pathname để kiểm tra trang hiện tại
+  pathname,
   setIsHeaderVisible,
-  setLastScrollY
+  setLastScrollY,
+  isMobile,
+  isMenuOpen
 ) => {
   const rafRef = useRef();
   const lastActiveSection = useRef("home");
@@ -512,23 +727,43 @@ const useScrollSpy = (
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const scrollDirection = scrollY > lastScrollYRef.current ? 'down' : 'up';
-      
-      // Update scroll state
-      setIsScrolled(scrollY > 50);
-      
-      // Header visibility logic based on scroll direction
-      if (scrollY < 50) {
-        // Always show header at top
+      const scrollDirection = scrollY > lastScrollYRef.current ? "down" : "up";
+
+      // Update scroll state with simpler threshold
+      setIsScrolled(scrollY > 30);
+
+      // Ultra-simplified header visibility logic
+      if (isMobile && isMenuOpen) {
+        // Never hide header on mobile when menu is open
         setIsHeaderVisible(true);
-      } else if (scrollDirection === 'down' && scrollY > lastScrollYRef.current + 5) {
-        // Hide header when scrolling down (with threshold to avoid jitter)
-        setIsHeaderVisible(false);
-      } else if (scrollDirection === 'up' && scrollY < lastScrollYRef.current - 5) {
-        // Show header when scrolling up
-        setIsHeaderVisible(true);
+      } else if (isMobile) {
+        // Mobile: minimal hiding - only hide on fast downward scroll
+        if (scrollY < 30) {
+          setIsHeaderVisible(true);
+        } else if (
+          scrollDirection === "down" &&
+          scrollY > lastScrollYRef.current + 20
+        ) {
+          // Only hide on significant fast downward scroll
+          setIsHeaderVisible(false);
+        } else if (scrollDirection === "up") {
+          // Instantly show on any upward scroll
+          setIsHeaderVisible(true);
+        }
+      } else {
+        // Desktop: simplified logic
+        if (scrollY < 50) {
+          setIsHeaderVisible(true);
+        } else if (
+          scrollDirection === "down" &&
+          scrollY > lastScrollYRef.current + 10
+        ) {
+          setIsHeaderVisible(false);
+        } else if (scrollDirection === "up") {
+          setIsHeaderVisible(true);
+        }
       }
-      
+
       lastScrollYRef.current = scrollY;
       setLastScrollY(scrollY);
 
@@ -564,12 +799,16 @@ const useScrollSpy = (
           const visibleTop = Math.max(elementTop, viewTop);
           const visibleBottom = Math.min(elementBottom, viewBottom);
           const visibleArea = Math.max(0, visibleBottom - visibleTop);
-          
+
           // Simplified calculation for better performance
           const distanceFromTop = Math.abs(elementTop - viewTop);
-          const topProximityBonus = Math.max(0, (viewHeight * 0.3 - distanceFromTop) / (viewHeight * 0.3));
-          const adjustedVisibleArea = visibleArea * (1 + topProximityBonus * 0.2);
-          
+          const topProximityBonus = Math.max(
+            0,
+            (viewHeight * 0.3 - distanceFromTop) / (viewHeight * 0.3)
+          );
+          const adjustedVisibleArea =
+            visibleArea * (1 + topProximityBonus * 0.2);
+
           if (adjustedVisibleArea > maxVisibleArea) {
             maxVisibleArea = adjustedVisibleArea;
             current = id;
@@ -597,26 +836,44 @@ const useScrollSpy = (
     };
 
     // Use passive listeners for better scroll performance
-    window.addEventListener("scroll", optimizedScrollHandler, { 
+    window.addEventListener("scroll", optimizedScrollHandler, {
       passive: true,
-      capture: false 
+      capture: false,
     });
-    
+
     return () => {
       window.removeEventListener("scroll", optimizedScrollHandler);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [isScrolling, setIsScrolled, setActiveSection, navItems, pathname, setIsHeaderVisible, setLastScrollY]);
+  }, [
+    isScrolling,
+    setIsScrolled,
+    setActiveSection,
+    navItems,
+    pathname,
+    setIsHeaderVisible,
+    setLastScrollY,
+    isMobile,
+    isMenuOpen,
+  ]);
 };
 
 function Header({ theme, toggleTheme }) {
+  // Simplified state management - removed unnecessary complexity
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isScrolling] = useState(false); // Removed setIsScrolling since it's not used
+  const [isScrolling] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Detect mobile for optimized behavior
+  const isMobile = useMemo(() => window.innerWidth <= 768, []);
+
+  // Performance optimization: use refs to prevent unnecessary re-renders
   const mobileNavRef = useRef(null);
   const menuButtonRef = useRef(null);
+  const headerRef = useRef(null);
+
   const { t } = useTranslation();
 
   // Route preloading hook
@@ -646,8 +903,18 @@ function Header({ theme, toggleTheme }) {
     setIsMenuOpen
   );
 
-  // Scroll spy - chỉ hoạt động trên trang Home
-  useScrollSpy(isScrolling, setIsScrolled, setActiveSection, navItems, pathname, setIsHeaderVisible, setLastScrollY);
+  // Simplified scroll spy - disabled header hiding on mobile when menu is open
+  useScrollSpy(
+    isScrolling,
+    setIsScrolled,
+    setActiveSection,
+    navItems,
+    pathname,
+    setIsHeaderVisible,
+    setLastScrollY,
+    isMobile,
+    isMenuOpen
+  );
 
   // Handle link hover for preloading
   const handleLinkHover = useCallback(
@@ -681,14 +948,50 @@ function Header({ theme, toggleTheme }) {
 
   // (Removed inline scroll spy effect - replaced by custom hook)
 
-  // Body scroll lock when menu open (mobile)
+  // Enhanced body scroll lock with performance optimizations
   useEffect(() => {
     if (isMenuOpen) {
+      // Enhanced scroll prevention for mobile
       document.body.classList.add("no-scroll");
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+
+      // Prevent iOS bounce scroll
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${window.scrollY}px`;
+        document.body.style.width = "100%";
+      }
     } else {
+      // Restore scroll with performance optimization
       document.body.classList.remove("no-scroll");
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+
+      // Restore iOS scroll position
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        const scrollY = document.body.style.top;
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        window.scrollTo(
+          0,
+          parseInt(scrollY.replace("-", "").replace("px", "")) || 0
+        );
+      }
     }
-    return () => document.body.classList.remove("no-scroll");
+
+    return () => {
+      // Cleanup on unmount
+      document.body.classList.remove("no-scroll");
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+      }
+    };
   }, [isMenuOpen]);
 
   // ESC close & focus trap
@@ -724,11 +1027,23 @@ function Header({ theme, toggleTheme }) {
 
   return (
     <header
+      ref={headerRef}
       className={`header ${isScrolled ? "header--scrolled" : ""} ${
         isMenuOpen ? "header--menu-open" : ""
       } ${isScrolling ? "header--scrolling" : ""} ${
         !isHeaderVisible ? "header--hidden" : ""
       }`}
+      // Optimized performance - reduced GPU load on mobile
+      style={{
+        willChange: isMobile
+          ? isMenuOpen
+            ? "transform"
+            : "auto" // Mobile: minimal GPU usage
+          : isMenuOpen || isScrolling
+          ? "transform, background-color, backdrop-filter"
+          : "auto", // Desktop: full effects
+        contain: "layout style",
+      }}
     >
       <div className="header__container">
         <button
@@ -764,9 +1079,9 @@ function Header({ theme, toggleTheme }) {
         />
 
         <div className="header__actions">
-          <LanguageToggle 
-            className="header__language-toggle" 
-            variant="dropdown" 
+          <LanguageToggle
+            className="header__language-toggle"
+            variant="dropdown"
           />
 
           <button

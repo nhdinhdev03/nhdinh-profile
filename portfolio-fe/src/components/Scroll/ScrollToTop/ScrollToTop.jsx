@@ -1,14 +1,17 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { memo } from 'react'
-import { FiArrowUp } from 'react-icons/fi'
+import { AnimatePresence, motion } from "framer-motion";
+import { memo } from "react";
+import { FiArrowUp } from "react-icons/fi";
 
-import { useScrollProgress, useSmoothScrollToTop } from '../../../hooks/useScrollOptimization'
-import './ScrollToTop.scss'
+import {
+  useScrollProgress,
+  useSmoothScrollToTop,
+} from "hooks/useScrollOptimization";
+import "./ScrollToTop.scss";
 
 const ScrollToTop = memo(() => {
   // Use optimized scroll hooks with custom duration for smoother animation
-  const { isVisible, scrollProgress } = useScrollProgress()
-  const scrollToTop = useSmoothScrollToTop(600) // Reduced duration for faster, smoother scroll
+  const { isVisible, scrollProgress } = useScrollProgress();
+  const scrollToTop = useSmoothScrollToTop(600); // Reduced duration for faster, smoother scroll
 
   return (
     <AnimatePresence>
@@ -23,7 +26,7 @@ const ScrollToTop = memo(() => {
           whileTap={{ scale: 0.95 }}
           transition={{
             duration: 0.3,
-            ease: [0.25, 0.46, 0.45, 0.94] // Custom bezier for smoother transition
+            ease: [0.25, 0.46, 0.45, 0.94], // Custom bezier for smoother transition
           }}
           aria-label="Cuộn lên đầu trang"
         >
@@ -32,16 +35,16 @@ const ScrollToTop = memo(() => {
             <div
               className="scroll-to-top__progress-bar"
               style={{
-                transform: `scaleY(${scrollProgress})`
+                transform: `scaleY(${scrollProgress})`,
               }}
             />
           </div>
         </motion.button>
       )}
     </AnimatePresence>
-  )
-})
+  );
+});
 
-ScrollToTop.displayName = 'ScrollToTop'
+ScrollToTop.displayName = "ScrollToTop";
 
-export default ScrollToTop
+export default ScrollToTop;

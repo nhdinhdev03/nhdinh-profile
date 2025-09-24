@@ -28,16 +28,19 @@
 
 // ✨ Enhanced animations for better user experience
 @keyframes logoGlow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
   }
   50% {
-    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6),
+      0 0 20px rgba(99, 102, 241, 0.4);
   }
 }
 
 @keyframes navItemFloat {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -77,37 +80,56 @@
   z-index: 1000;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   -webkit-backdrop-filter: blur(20px) saturate(180%); // Safari support
-  
+
+  // Mobile: reduced backdrop blur for better performance
+  @include mobile-only {
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    transition: all 0.2s ease-out;
+  }
+
   // Performance optimizations for smooth scrolling
   will-change: background-color, backdrop-filter, box-shadow, border-color;
   transform: translateZ(0); // Force hardware acceleration
   contain: layout style; // CSS containment for performance
-  
-  // Professional shadow like gaming websites
+
+  // Professional shadow - simplified on mobile
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
 
-  // Header hide/show animation for scroll direction
+  // Mobile: reduced shadow for better performance
+  @include mobile-only {
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  // Simplified header hide/show animation - optimized for mobile
   &--hidden {
     transform: translateY(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.25s ease-out;
+
+    // Mobile: faster, simpler animation
+    @include mobile-only {
+      transition: transform 0.2s ease-out;
+    }
   }
 
-  // Ensure header reappears smoothly
+  // Smooth header reappear
   &:not(.header--hidden) {
     transform: translateY(0);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.25s ease-out;
+
+    // Mobile: instant reappear for better UX
+    @include mobile-only {
+      transition: transform 0.15s ease-out;
+    }
   }
 
-  // Reduced motion preferences for accessibility
+  // Accessibility: reduced motion support
   @media (prefers-reduced-motion: reduce) {
-    &--hidden {
-      transition: transform 0.1s ease !important;
-    }
-    
+    &--hidden,
     &:not(.header--hidden) {
       transition: transform 0.1s ease !important;
     }
-    
+
     * {
       transition-duration: 0.1s !important;
       animation-duration: 0.1s !important;
@@ -158,7 +180,7 @@
     background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
     -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
-    
+
     &::before {
       background: linear-gradient(
         180deg,
@@ -172,13 +194,17 @@
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(30px) saturate(200%);
     -webkit-backdrop-filter: blur(30px) saturate(200%);
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.08),
-      0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
     border-bottom-color: rgba(255, 255, 255, 0.2);
-    
-    // Optimize transition timing for scroll states
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    // Mobile: simplified scrolled state
+    @include mobile-only {
+      backdrop-filter: blur(12px) saturate(130%);
+      -webkit-backdrop-filter: blur(12px) saturate(130%);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.15s ease-out;
+    }
 
     &::before {
       background: linear-gradient(
@@ -192,11 +218,9 @@
       background: rgba(15, 23, 42, 0.95);
       backdrop-filter: blur(30px) saturate(200%) brightness(1.2);
       -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.2);
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.25),
-        0 2px 8px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
       border-bottom-color: rgba(255, 255, 255, 0.1);
-      
+
       &::before {
         background: linear-gradient(
           180deg,
@@ -258,11 +282,10 @@
 
     &:hover {
       transform: translateY(-2px);
-      
+
       .header__logo-icon {
         transform: scale(1.05);
-        box-shadow: 
-          0 8px 25px rgba(99, 102, 241, 0.3),
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3),
           0 0 20px rgba(99, 102, 241, 0.2);
       }
 
@@ -301,7 +324,11 @@
     @include flex-center;
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--primary-light) 0%,
+      var(--secondary-light) 100%
+    );
     border-radius: 8px;
     color: white;
     font-weight: $font-bold;
@@ -438,7 +465,7 @@
 
     // Professional underline effect like Riot Games
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       bottom: -8px;
       left: 50%;
@@ -456,7 +483,7 @@
 
     // Hover glow effect
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       top: 50%;
       left: 50%;
@@ -533,7 +560,7 @@
   &__nav-text {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
-    
+
     @media (max-width: $breakpoint-xl) {
       display: none;
     }
@@ -546,7 +573,11 @@
     transform: translateX(-50%);
     width: 6px;
     height: 6px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(
+      135deg,
+      var(--primary-color),
+      var(--secondary-color)
+    );
     border-radius: 50%;
     box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
   }
@@ -604,8 +635,7 @@
       color: var(--primary-color);
       transform: translateY(-3px) scale(1.05);
       border-color: rgba(99, 102, 241, 0.3);
-      box-shadow: 
-        0 8px 25px rgba(0, 0, 0, 0.1),
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1),
         0 0 20px rgba(99, 102, 241, 0.2);
 
       svg {
@@ -616,7 +646,7 @@
 
     &:active {
       transform: translateY(-1px) scale(0.95);
-      
+
       svg {
         transform: rotate(180deg) scale(0.9);
       }
@@ -625,10 +655,9 @@
     // 🌙 Dark theme specific effects
     [data-theme="dark"] & {
       &:hover {
-        box-shadow: 
-          0 8px 25px rgba(0, 0, 0, 0.2),
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2),
           0 0 20px rgba(251, 191, 36, 0.3);
-        
+
         svg {
           color: #fbbf24; // golden sun
           filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.6));
@@ -704,8 +733,7 @@
       color: var(--primary-color);
       transform: translateY(-2px) scale(1.05);
       border-color: rgba(99, 102, 241, 0.3);
-      box-shadow: 
-        0 8px 20px rgba(0, 0, 0, 0.1),
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1),
         0 0 15px rgba(99, 102, 241, 0.2);
 
       svg {
@@ -721,17 +749,19 @@
     }
 
     &--open {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--secondary-color) 100%
+      );
       color: white;
       transform: rotate(180deg) scale(1.05);
       border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: 
-        0 8px 25px rgba(99, 102, 241, 0.4),
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4),
         0 0 20px rgba(99, 102, 241, 0.3);
 
       &:hover {
-        box-shadow: 
-          0 12px 35px rgba(99, 102, 241, 0.5),
+        box-shadow: 0 12px 35px rgba(99, 102, 241, 0.5),
           0 0 30px rgba(99, 102, 241, 0.4);
         transform: rotate(180deg) scale(1.1);
       }
@@ -742,37 +772,76 @@
     }
   }
 
-  // 🎭 Enhanced Mobile Navigation Overlay
+  // 🎭 Ultra-Performance Mobile Navigation Overlay
   &__overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
+    height: 100vh; // Use vh for better mobile compatibility
+    height: 100dvh; // Use dynamic viewport height when supported
     background: radial-gradient(
       ellipse at center,
-      rgba(0, 0, 0, 0.7) 0%,
-      rgba(0, 0, 0, 0.5) 100%
+      rgba(0, 0, 0, 0.65) 0%,
+      rgba(0, 0, 0, 0.45) 100%
     );
     backdrop-filter: blur(8px) saturate(120%);
     -webkit-backdrop-filter: blur(8px) saturate(120%);
     z-index: 999;
     pointer-events: all;
     touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 
-    // Hardware acceleration for smooth animations
-    will-change: opacity;
-    transform: translateZ(0);
-    
-    // Enhanced dark mode overlay
+    // Enhanced hardware acceleration for ultra-smooth animations
+    will-change: opacity, backdrop-filter;
+    transform: translate3d(0, 0, 0); // Force hardware acceleration
+    contain: strict; // CSS containment for performance isolation
+    isolation: isolate; // Create new stacking context
+
+    // Optimize for mobile touch performance
+    @media (hover: none) and (pointer: coarse) {
+      // Reduce blur on mobile for better performance
+      backdrop-filter: blur(6px) saturate(110%);
+      -webkit-backdrop-filter: blur(6px) saturate(110%);
+    }
+
+    // Performance optimization for reduced motion
+    @media (prefers-reduced-motion: reduce) {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(0, 0, 0, 0.8) !important;
+      will-change: opacity !important;
+    }
+
+    // Fallback for browsers without backdrop-filter support
+    @supports not (backdrop-filter: blur(8px)) {
+      background: rgba(0, 0, 0, 0.85);
+    }
+
+    // Enhanced dark mode overlay with better performance
     [data-theme="dark"] & {
       background: radial-gradient(
         ellipse at center,
-        rgba(0, 0, 0, 0.85) 0%,
-        rgba(0, 0, 0, 0.7) 100%
+        rgba(0, 0, 0, 0.8) 0%,
+        rgba(0, 0, 0, 0.6) 100%
       );
-      backdrop-filter: blur(12px) saturate(150%);
-      -webkit-backdrop-filter: blur(12px) saturate(150%);
+      backdrop-filter: blur(10px) saturate(140%);
+      -webkit-backdrop-filter: blur(10px) saturate(140%);
+
+      @media (hover: none) and (pointer: coarse) {
+        backdrop-filter: blur(8px) saturate(130%);
+        -webkit-backdrop-filter: blur(8px) saturate(130%);
+      }
+
+      @supports not (backdrop-filter: blur(10px)) {
+        background: rgba(0, 0, 0, 0.9);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        background: rgba(0, 0, 0, 0.9) !important;
+      }
     }
   }
 
@@ -781,28 +850,52 @@
     top: 0;
     right: 0;
     width: min(380px, 90vw);
-    // Use dynamic viewport height for mobile browsers (iOS Safari, etc.)
+    // Enhanced viewport height for mobile browsers (iOS Safari dynamic viewport)
     height: 100vh;
-    height: 100dvh;
+    height: 100dvh; // Dynamic viewport height for mobile browsers
     background: var(--bg-primary);
     border-left: 1px solid var(--border-color);
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    overflow: hidden; // internal scroll container
+    overflow: hidden; // internal scroll container handles scrolling
     -webkit-overflow-scrolling: touch;
-    isolation: isolate;
+    isolation: isolate; // Create new stacking context
     pointer-events: all;
 
-    // Hardware acceleration for smooth animations
+    // Enhanced safe area support for modern mobile devices
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+
+    // Ultra-performance hardware acceleration
     will-change: transform, opacity;
-    transform: translateZ(0);
+    transform: translate3d(0, 0, 0); // Enhanced hardware acceleration
+    backface-visibility: hidden; // Prevent flickering during animations
 
-    // Optimize scrolling performance
-    contain: layout style paint;
+    // Enhanced CSS containment for maximum performance
+    contain: layout style paint size; // Full containment
 
-    // Reduce repaints during scroll
+    // Performance optimization for mobile devices
+    @media (max-width: 768px) {
+      // Optimize for mobile performance
+      contain: layout style paint;
+      width: min(
+        360px,
+        85vw
+      ); // Slightly smaller on mobile for better performance
+
+      // Reduce shadow complexity on mobile for better performance
+      box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+    }
+
+    // Ultra-small mobile devices optimization
+    @media (max-width: 360px) {
+      width: min(320px, 90vw);
+      box-shadow: -6px 0 20px rgba(0, 0, 0, 0.06);
+    }
+
+    // Optimize scrollbar for performance
     &::-webkit-scrollbar {
-      width: 4px;
+      width: 3px; // Thinner for mobile
     }
 
     &::-webkit-scrollbar-track {
@@ -812,6 +905,16 @@
     &::-webkit-scrollbar-thumb {
       background: var(--border-color);
       border-radius: 2px;
+
+      &:hover {
+        background: var(--text-secondary);
+      }
+    }
+
+    // Enhanced scroll performance
+    @supports (scrollbar-width: thin) {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
     }
 
     // Enhanced dark mode styling
@@ -819,61 +922,106 @@
       background: rgba(15, 15, 23, 0.95);
       backdrop-filter: blur(25px) saturate(180%);
       border-left: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 
-        -15px 0 40px rgba(0, 0, 0, 0.6),
-        -5px 0 25px rgba(0, 0, 0, 0.4),
-        inset 1px 0 0 rgba(255, 255, 255, 0.1);
+      box-shadow: -15px 0 40px rgba(0, 0, 0, 0.6),
+        -5px 0 25px rgba(0, 0, 0, 0.4), inset 1px 0 0 rgba(255, 255, 255, 0.1);
     }
 
     &.header__nav--scrollable {
       // Add subtle inset shadow to indicate scrollability
-      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1), inset 0 8px 12px -8px rgba(0,0,0,0.08), inset 0 -8px 12px -8px rgba(0,0,0,0.06);
-      
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1),
+        inset 0 8px 12px -8px rgba(0, 0, 0, 0.08),
+        inset 0 -8px 12px -8px rgba(0, 0, 0, 0.06);
+
       [data-theme="dark"] & {
-        box-shadow: 
-          -15px 0 40px rgba(0, 0, 0, 0.6),
-          -5px 0 25px rgba(0, 0, 0, 0.4),
-          inset 1px 0 0 rgba(255, 255, 255, 0.1),
-          inset 0 8px 12px -8px rgba(0,0,0,0.5), 
-          inset 0 -8px 12px -8px rgba(0,0,0,0.4);
+        box-shadow: -15px 0 40px rgba(0, 0, 0, 0.6),
+          -5px 0 25px rgba(0, 0, 0, 0.4), inset 1px 0 0 rgba(255, 255, 255, 0.1),
+          inset 0 8px 12px -8px rgba(0, 0, 0, 0.5),
+          inset 0 -8px 12px -8px rgba(0, 0, 0, 0.4);
       }
     }
 
     &.header__nav--at-top {
-      .header__nav-scroll::before { opacity: 0; }
+      .header__nav-scroll::before {
+        opacity: 0;
+      }
     }
 
     &.header__nav--at-bottom {
-      .header__nav-scroll::after { opacity: 0; }
+      .header__nav-scroll::after {
+        opacity: 0;
+      }
     }
   }
 
-  // Scroll wrapper inside mobile nav
+  // Ultra-Performance Mobile Navigation Scroll Container
   &__nav-scroll {
     position: relative;
-    height: calc(100% - 140px); // subtract approx header area (adjust if design changes)
+    height: calc(100% - 140px); // subtract header area
     overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden; // Prevent horizontal scroll
+    overscroll-behavior: contain; // Prevent body scroll on overscroll
+    -webkit-overflow-scrolling: touch; // iOS momentum scrolling
     padding-bottom: $spacing-3xl;
     scroll-behavior: smooth;
 
-    // Hide default scrollbar visually but keep functional
+    // Enhanced performance optimizations
+    will-change: scroll-position;
+    transform: translate3d(0, 0, 0); // Hardware acceleration
+    contain: layout style; // CSS containment for better performance
+
+    // Enhanced scrollbar styling for better UX
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
-    &::-webkit-scrollbar { width: 6px; }
-    &::-webkit-scrollbar-track { background: transparent; }
-    &::-webkit-scrollbar-thumb { 
-      background: var(--border-color); 
-      border-radius: 3px; 
-      
+
+    &::-webkit-scrollbar {
+      width: 4px; // Thinner for mobile
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 2px;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: var(--text-secondary);
+      }
+
+      &:active {
+        background: var(--primary-color);
+      }
+
       // Enhanced dark mode scrollbar
       [data-theme="dark"] & {
-        background: rgba(255, 255, 255, 0.3);
-        
+        background: rgba(255, 255, 255, 0.25);
+
         &:hover {
-          background: rgba(255, 255, 255, 0.5);
+          background: rgba(255, 255, 255, 0.4);
         }
+
+        &:active {
+          background: rgba(99, 102, 241, 0.8);
+        }
+      }
+    }
+
+    // Performance optimization for reduced motion
+    @media (prefers-reduced-motion: reduce) {
+      scroll-behavior: auto !important;
+    }
+
+    // Mobile-specific optimizations
+    @media (max-width: 768px) {
+      // Slightly reduce padding on mobile for more content space
+      padding-bottom: $spacing-2xl;
+
+      &::-webkit-scrollbar {
+        width: 3px; // Even thinner on small screens
       }
     }
 
@@ -892,12 +1040,17 @@
     &::before {
       top: 0;
       margin-top: -4px; // overlap
-      background: linear-gradient(to bottom, var(--bg-primary) 0%, rgba(var(--bg-primary-rgb),0) 100%);
-      
+      background: linear-gradient(
+        to bottom,
+        var(--bg-primary) 0%,
+        rgba(var(--bg-primary-rgb), 0) 100%
+      );
+
       // Enhanced dark mode gradient
       [data-theme="dark"] & {
-        background: linear-gradient(to bottom, 
-          rgba(15, 15, 23, 0.95) 0%, 
+        background: linear-gradient(
+          to bottom,
+          rgba(15, 15, 23, 0.95) 0%,
           rgba(15, 15, 23, 0) 100%
         );
       }
@@ -905,12 +1058,17 @@
     &::after {
       bottom: 0;
       margin-bottom: -4px;
-      background: linear-gradient(to top, var(--bg-primary) 0%, rgba(var(--bg-primary-rgb),0) 100%);
-      
+      background: linear-gradient(
+        to top,
+        var(--bg-primary) 0%,
+        rgba(var(--bg-primary-rgb), 0) 100%
+      );
+
       // Enhanced dark mode gradient
       [data-theme="dark"] & {
-        background: linear-gradient(to top, 
-          rgba(15, 15, 23, 0.95) 0%, 
+        background: linear-gradient(
+          to top,
+          rgba(15, 15, 23, 0.95) 0%,
           rgba(15, 15, 23, 0) 100%
         );
       }
@@ -931,7 +1089,7 @@
     justify-content: space-between;
     gap: $spacing-base;
     position: relative;
-    
+
     // Gaming-style glow effect
     &::before {
       content: "";
@@ -940,16 +1098,17 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: linear-gradient(90deg, 
-        transparent 0%, 
-        var(--primary-color) 20%, 
-        var(--secondary-color) 50%, 
-        var(--primary-color) 80%, 
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--primary-color) 20%,
+        var(--secondary-color) 50%,
+        var(--primary-color) 80%,
         transparent 100%
       );
       opacity: 0.6;
     }
-    
+
     // Enhanced dark mode styling
     [data-theme="dark"] & {
       background: linear-gradient(
@@ -959,13 +1118,14 @@
         rgba(35, 35, 45, 0.7) 100%
       );
       border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-      
+
       &::before {
-        background: linear-gradient(90deg, 
-          transparent 0%, 
-          rgba(99, 102, 241, 0.8) 20%, 
-          rgba(139, 92, 246, 0.8) 50%, 
-          rgba(99, 102, 241, 0.8) 80%, 
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(99, 102, 241, 0.8) 20%,
+          rgba(139, 92, 246, 0.8) 50%,
+          rgba(99, 102, 241, 0.8) 80%,
           transparent 100%
         );
         opacity: 0.8;
@@ -985,12 +1145,16 @@
     height: 32px;
     border-radius: 8px;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(
+      135deg,
+      var(--primary-color),
+      var(--secondary-color)
+    );
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.3);
-    
+
     img {
       width: 100%;
       height: 100%;
@@ -1013,54 +1177,50 @@
     cursor: pointer;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
-    
+
     &:hover {
       background: rgba(255, 0, 0, 0.1);
       border-color: rgba(255, 0, 0, 0.3);
       color: #ff6b6b;
       transform: scale(1.05);
     }
-    
+
     svg {
       font-size: $font-lg;
     }
-    
+
     // Enhanced light mode styling
     [data-theme="light"] & {
       background: rgba(0, 0, 0, 0.05);
       border-color: rgba(0, 0, 0, 0.1);
       color: #4a5568;
       backdrop-filter: blur(8px);
-      box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.05),
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
-      
+
       &:hover {
         background: rgba(255, 107, 107, 0.1);
         border-color: rgba(255, 107, 107, 0.3);
         color: #e53e3e;
-        box-shadow: 
-          0 4px 16px rgba(255, 107, 107, 0.2),
+        box-shadow: 0 4px 16px rgba(255, 107, 107, 0.2),
           inset 0 1px 0 rgba(255, 255, 255, 0.8);
       }
     }
-    
+
     // Enhanced dark mode styling
     [data-theme="dark"] & {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.15);
       color: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(15px);
-      box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.3),
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      
+
       &:hover {
         background: rgba(255, 107, 107, 0.15);
         border-color: rgba(255, 107, 107, 0.4);
         color: #ff8a8a;
-        box-shadow: 
-          0 4px 16px rgba(255, 107, 107, 0.3),
+        box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3),
           inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
     }
@@ -1072,7 +1232,7 @@
     color: var(--text-primary);
     margin-bottom: 2px;
     line-height: 1.2;
-    
+
     // Enhanced contrast for light mode
     [data-theme="light"] & {
       color: #1a1a1a;
@@ -1087,7 +1247,7 @@
     font-weight: $font-medium;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    
+
     // Enhanced contrast for light mode
     [data-theme="light"] & {
       color: #4a5568;
@@ -1102,16 +1262,38 @@
     display: flex;
     flex-direction: column;
 
-    // Optimize for performance
-    contain: layout style;
+    // Enhanced performance optimizations
+    contain: layout style paint; // Full containment for better performance
     will-change: transform;
+    transform: translate3d(0, 0, 0); // Hardware acceleration
+
+    // Mobile-specific optimizations
+    @media (max-width: 768px) {
+      padding: $spacing-xl $spacing-lg;
+      gap: $spacing-xs;
+    }
+
+    @media (max-width: 360px) {
+      padding: $spacing-lg $spacing-md;
+    }
 
     .header__nav-item {
       width: 100%;
       margin-bottom: $spacing-xs;
 
-      // Reduce repaints
-      contain: layout style;
+      // Enhanced performance optimizations
+      contain: layout style paint; // Full containment
+      will-change: transform; // Optimize for animations
+      transform: translate3d(0, 0, 0); // Hardware acceleration
+
+      // Mobile performance optimization
+      @media (max-width: 768px) {
+        margin-bottom: $spacing-xs;
+      }
+
+      @media (max-width: 360px) {
+        margin-bottom: 6px; // Tighter spacing on very small screens
+      }
     }
 
     .header__nav-link {
@@ -1129,110 +1311,195 @@
       border: 1px solid transparent;
       margin-bottom: $spacing-sm;
 
-      // Gaming-style gradient border effect
+      // Ultra-performance optimizations
+      will-change: transform, background-color, border-color;
+      transform: translate3d(0, 0, 0); // Enhanced hardware acceleration
+      backface-visibility: hidden; // Prevent flickering
+      contain: layout style; // CSS containment for performance
+
+      // Enhanced mobile touch targets
+      @media (max-width: 768px) {
+        padding: $spacing-base $spacing-lg;
+        gap: $spacing-base;
+        border-radius: 12px;
+        min-height: 52px; // Ensure proper touch target size
+      }
+
+      @media (max-width: 360px) {
+        padding: $spacing-sm $spacing-base;
+        gap: $spacing-sm;
+        border-radius: 10px;
+        min-height: 48px;
+      }
+
+      // Optimized gradient border effect for performance
       &::before {
         content: "";
         position: absolute;
         inset: -1px;
-        background: linear-gradient(135deg, 
-          var(--primary-color) 0%, 
-          var(--secondary-color) 50%, 
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--secondary-color) 50%,
           var(--primary-color) 100%
         );
         border-radius: inherit;
         z-index: -1;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.25s ease; // Slightly faster for better perceived performance
+        will-change: opacity;
+        transform: translate3d(0, 0, 0); // Hardware acceleration
       }
 
-      // Simplified transitions for better performance
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      // Optimized transitions for better mobile performance
+      transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        background-color 0.2s ease, border-color 0.2s ease,
+        box-shadow 0.25s ease;
 
-      // Hardware acceleration
-      will-change: transform, background-color;
-      transform: translateZ(0);
+      // Performance optimization for reduced motion
+      @media (prefers-reduced-motion: reduce) {
+        transition: none !important;
 
-      // Enhanced hover with gaming aesthetics
+        &::before {
+          transition: none !important;
+        }
+      }
+
+      // Enhanced hover with optimized performance
       &:hover {
         background: var(--bg-tertiary);
-        transform: translateY(-2px);
-        box-shadow: 
-          0 8px 25px rgba(0, 0, 0, 0.15),
-          0 0 20px rgba(var(--primary-color-rgb), 0.1);
-          
+        transform: translate3d(
+          0,
+          -2px,
+          0
+        ); // Use translate3d for hardware acceleration
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12),
+          0 0 15px rgba(var(--primary-color-rgb), 0.08);
+
         &::before {
-          opacity: 0.2;
+          opacity: 0.15; // Slightly reduced for better performance
         }
-        
+
         .header__nav-icon-wrapper {
-          transform: scale(1.1);
-          box-shadow: 0 4px 16px rgba(var(--primary-color-rgb), 0.25);
+          transform: translate3d(0, 0, 0) scale(1.08); // Hardware accelerated
+          box-shadow: 0 3px 12px rgba(var(--primary-color-rgb), 0.2);
+        }
+      }
+
+      // Enhanced touch feedback for mobile devices
+      @media (hover: none) and (pointer: coarse) {
+        // Remove hover effects on touch devices
+        &:hover {
+          background: var(--bg-secondary);
+          transform: translate3d(0, 0, 0);
+          box-shadow: none;
+
+          &::before {
+            opacity: 0;
+          }
+
+          .header__nav-icon-wrapper {
+            transform: translate3d(0, 0, 0) scale(1);
+            box-shadow: none;
+          }
+        }
+
+        // Enhanced active state for touch
+        &:active {
+          background: var(--bg-tertiary);
+          transform: translate3d(0, 0, 0) scale(0.98);
+          transition: transform 0.1s ease, background-color 0.1s ease;
+
+          .header__nav-icon-wrapper {
+            transform: translate3d(0, 0, 0) scale(0.95);
+          }
         }
       }
 
       &--active {
-        background: linear-gradient(135deg, 
-          var(--primary-color) 0%, 
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
           var(--secondary-color) 100%
         );
         color: white;
-        box-shadow: 
-          0 8px 25px rgba(var(--primary-color-rgb), 0.4),
-          0 0 30px rgba(var(--primary-color-rgb), 0.3);
+        box-shadow: 0 6px 20px rgba(var(--primary-color-rgb), 0.35),
+          0 0 25px rgba(var(--primary-color-rgb), 0.25);
         border-color: rgba(255, 255, 255, 0.2);
-        
+
+        // Enhanced performance
+        will-change: transform, box-shadow;
+
         &::before {
           opacity: 0;
         }
 
         &:hover {
-          transform: translateY(-1px) scale(1.02);
-          box-shadow: 
-            0 12px 35px rgba(var(--primary-color-rgb), 0.5),
-            0 0 40px rgba(var(--primary-color-rgb), 0.4);
+          transform: translate3d(0, -1px, 0) scale(1.01); // Hardware accelerated
+          box-shadow: 0 8px 28px rgba(var(--primary-color-rgb), 0.45),
+            0 0 35px rgba(var(--primary-color-rgb), 0.35);
         }
-        
+
+        // Enhanced touch feedback for active items
+        @media (hover: none) and (pointer: coarse) {
+          &:hover {
+            transform: translate3d(0, 0, 0) scale(1);
+            box-shadow: 0 6px 20px rgba(var(--primary-color-rgb), 0.35),
+              0 0 25px rgba(var(--primary-color-rgb), 0.25);
+          }
+
+          &:active {
+            transform: translate3d(0, 0, 0) scale(0.98);
+            box-shadow: 0 4px 16px rgba(var(--primary-color-rgb), 0.4),
+              0 0 20px rgba(var(--primary-color-rgb), 0.3);
+          }
+        }
+
         .header__nav-icon-wrapper {
           background: rgba(255, 255, 255, 0.2);
           border-color: rgba(255, 255, 255, 0.3);
+
+          // Enhanced dark mode active icon
+          [data-theme="dark"] & {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+          }
         }
-        
+
         .header__nav-text {
           font-weight: $font-bold;
         }
-        
+
         .header__nav-description {
           color: rgba(255, 255, 255, 0.8);
         }
-        
+
         // Enhanced light mode active state
         [data-theme="light"] & {
-          background: linear-gradient(135deg, 
-            rgba(59, 130, 246, 0.95) 0%, 
+          background: linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.95) 0%,
             rgba(99, 102, 241, 0.9) 100%
           );
           color: white;
-          box-shadow: 
-            0 8px 25px rgba(59, 130, 246, 0.4),
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4),
             0 2px 12px rgba(99, 102, 241, 0.3),
             inset 0 1px 0 rgba(255, 255, 255, 0.3),
             0 0 0 1px rgba(59, 130, 246, 0.2);
           border-color: rgba(255, 255, 255, 0.4);
-          
+
           &:hover {
-            box-shadow: 
-              0 12px 35px rgba(59, 130, 246, 0.5),
+            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5),
               0 4px 20px rgba(99, 102, 241, 0.4),
               inset 0 1px 0 rgba(255, 255, 255, 0.4),
               0 0 0 1px rgba(59, 130, 246, 0.3);
           }
-          
+
           .header__nav-text {
-            
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
           }
-         
-          
+
           .header__nav-icon-wrapper {
             background: rgba(255, 255, 255, 0.25);
             border-color: rgba(255, 255, 255, 0.4);
@@ -1242,66 +1509,59 @@
 
         // Enhanced dark mode active state
         [data-theme="dark"] & {
-          background: linear-gradient(135deg, 
-            rgba(99, 102, 241, 0.9) 0%, 
+          background: linear-gradient(
+            135deg,
+            rgba(99, 102, 241, 0.9) 0%,
             rgba(139, 92, 246, 0.8) 100%
           );
-          box-shadow: 
-            0 8px 25px rgba(99, 102, 241, 0.6),
+          box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6),
             0 0 30px rgba(139, 92, 246, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
           border-color: rgba(255, 255, 255, 0.3);
-          
+
           &:hover {
-            box-shadow: 
-              0 12px 35px rgba(99, 102, 241, 0.7),
+            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.7),
               0 0 40px rgba(139, 92, 246, 0.5),
               inset 0 1px 0 rgba(255, 255, 255, 0.3);
           }
         }
       }
-      
+
       // Enhanced dark mode styling
       [data-theme="dark"] & {
         background: rgba(255, 255, 255, 0.05);
         border-color: rgba(255, 255, 255, 0.1);
-        
+
         &:hover {
           background: rgba(255, 255, 255, 0.1);
-          box-shadow: 
-            0 8px 25px rgba(0, 0, 0, 0.3),
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3),
             0 0 20px rgba(99, 102, 241, 0.2);
-            
+
           .header__nav-icon-wrapper {
             background: rgba(99, 102, 241, 0.2);
             border-color: rgba(99, 102, 241, 0.3);
           }
         }
-        
-        
       }
-      
+
       // Enhanced light mode styling
       [data-theme="light"] & {
         background: rgba(0, 0, 0, 0.03);
         border-color: rgba(0, 0, 0, 0.08);
         color: #2d3748;
-        
+
         &:hover {
           background: rgba(59, 130, 246, 0.08);
-          box-shadow: 
-            0 8px 25px rgba(59, 130, 246, 0.15),
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15),
             0 2px 12px rgba(99, 102, 241, 0.1),
             0 0 0 1px rgba(59, 130, 246, 0.1);
-            
+
           .header__nav-icon-wrapper {
             background: rgba(59, 130, 246, 0.15);
             border-color: rgba(59, 130, 246, 0.25);
             box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
           }
         }
-        
-       
       }
 
       // Touch device optimizations
@@ -1330,21 +1590,21 @@
       font-size: $font-base;
       font-weight: $font-semibold;
       line-height: 1.2;
-      
+
       // Enhanced contrast for light mode
       [data-theme="light"] & {
         color: #2d3748;
         font-weight: $font-bold;
       }
     }
-    
+
     .header__nav-description {
       font-size: $font-xs;
       color: var(--text-secondary);
       opacity: 0.7;
       font-weight: $font-normal;
       line-height: 1.3;
-      
+
       // Enhanced contrast for light mode
       [data-theme="light"] & {
         color: #4a5568;
@@ -1374,18 +1634,17 @@
         background: rgba(var(--primary-color-rgb), 0.15);
         transform: scale(1.05) rotate(5deg);
       }
-      
+
       // Enhanced dark mode styling
       [data-theme="dark"] & {
         background: rgba(99, 102, 241, 0.15);
         border-color: rgba(99, 102, 241, 0.25);
         backdrop-filter: blur(15px);
-        
+
         .header__nav-link--active & {
           background: rgba(255, 255, 255, 0.2);
           border-color: rgba(255, 255, 255, 0.35);
-          box-shadow: 
-            0 4px 16px rgba(99, 102, 241, 0.4),
+          box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
@@ -1395,18 +1654,17 @@
           box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
         }
       }
-      
+
       // Enhanced light mode styling
       [data-theme="light"] & {
         background: rgba(99, 102, 241, 0.08);
         border-color: rgba(99, 102, 241, 0.15);
         backdrop-filter: blur(10px);
-        
+
         .header__nav-link--active & {
           background: rgba(255, 255, 255, 0.9);
           border-color: rgba(99, 102, 241, 0.3);
-          box-shadow: 
-            0 4px 16px rgba(99, 102, 241, 0.2),
+          box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2),
             inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
@@ -1423,12 +1681,13 @@
       z-index: 1;
       position: relative;
     }
-    
+
     .header__nav-active-glow {
       position: absolute;
       inset: -4px;
-      background: radial-gradient(circle, 
-        rgba(var(--primary-color-rgb), 0.4) 0%, 
+      background: radial-gradient(
+        circle,
+        rgba(var(--primary-color-rgb), 0.4) 0%,
         rgba(var(--secondary-color-rgb), 0.2) 50%,
         transparent 100%
       );
@@ -1451,26 +1710,21 @@
       height: 8px;
       background: white;
       border-radius: 50%;
-      box-shadow: 
-        0 0 8px rgba(255, 255, 255, 0.6),
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.6),
         0 0 16px rgba(255, 255, 255, 0.3);
-      
+
       // Enhanced dark mode styling
       [data-theme="dark"] & {
         background: #ffffff;
-        box-shadow: 
-          0 0 8px rgba(255, 255, 255, 0.8),
-          0 0 16px rgba(255, 255, 255, 0.4),
-          0 0 24px rgba(139, 92, 246, 0.3);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.8),
+          0 0 16px rgba(255, 255, 255, 0.4), 0 0 24px rgba(139, 92, 246, 0.3);
       }
-      
+
       // Enhanced light mode styling
       [data-theme="light"] & {
         background: #3b82f6;
-        box-shadow: 
-          0 0 8px rgba(59, 130, 246, 0.6),
-          0 0 16px rgba(59, 130, 246, 0.3),
-          0 0 24px rgba(99, 102, 241, 0.2);
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.6),
+          0 0 16px rgba(59, 130, 246, 0.3), 0 0 24px rgba(99, 102, 241, 0.2);
       }
     }
   }
@@ -1490,31 +1744,29 @@
     background: var(--bg-tertiary);
     border-radius: 12px;
     backdrop-filter: blur(10px);
-    
+
     // Enhanced mobile responsiveness
     @media (max-width: 375px) {
       gap: $spacing-sm;
       padding: $spacing-xs $spacing-sm;
       border-radius: 8px;
     }
-    
+
     // Enhanced light mode styling
     [data-theme="light"] & {
       background: rgba(0, 0, 0, 0.02);
       border: 1px solid rgba(0, 0, 0, 0.06);
       backdrop-filter: blur(8px);
-      box-shadow: 
-        0 4px 16px rgba(0, 0, 0, 0.05),
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05),
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
-    
+
     // Enhanced dark mode styling
     [data-theme="dark"] & {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(15px);
-      box-shadow: 
-        0 4px 16px rgba(0, 0, 0, 0.3),
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
   }
@@ -1531,7 +1783,7 @@
           font-size: $font-xs;
           font-weight: $font-semibold;
           letter-spacing: 0.5px;
-          
+
           @media (max-width: 375px) {
             font-size: 0.6rem;
           }
@@ -1541,7 +1793,7 @@
       .language-selector {
         gap: $spacing-sm;
         justify-content: center;
-        
+
         @media (max-width: 375px) {
           gap: $spacing-xs;
         }
@@ -1567,24 +1819,24 @@
         &.active {
           background: var(--primary-color);
           box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.3);
-          
+
           .check-indicator {
             display: flex;
             animation: checkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
           }
         }
-        
+
         // Enhanced touch feedback
         @media (hover: none) and (pointer: coarse) {
           &:hover {
             transform: none;
           }
-          
+
           &:active {
             background: var(--bg-tertiary);
             transform: scale(0.95);
           }
-          
+
           &.active:active {
             background: var(--primary-color);
           }
@@ -1645,16 +1897,15 @@
     &:active {
       transform: translateY(-1px) scale(0.98);
     }
-    
+
     // Enhanced light mode styling
     [data-theme="light"] & {
       background: rgba(0, 0, 0, 0.03);
       border-color: rgba(0, 0, 0, 0.08);
       color: #2d3748;
-      box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.08),
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
-      
+
       &::before {
         background: linear-gradient(
           90deg,
@@ -1667,29 +1918,26 @@
       &:hover {
         background: rgba(0, 0, 0, 0.05);
         border-color: rgba(99, 102, 241, 0.3);
-        box-shadow: 
-          0 8px 25px rgba(0, 0, 0, 0.1),
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1),
           0 0 20px rgba(99, 102, 241, 0.15);
 
         .header__theme-icon-wrapper {
           background: rgba(99, 102, 241, 0.12);
           border-color: rgba(99, 102, 241, 0.25);
-          box-shadow: 
-            0 4px 12px rgba(99, 102, 241, 0.2),
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2),
             inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
       }
     }
-    
+
     // Enhanced dark mode styling
     [data-theme="dark"] & {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.15);
       color: var(--text-primary);
-      box-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.3),
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      
+
       &::before {
         background: linear-gradient(
           90deg,
@@ -1702,15 +1950,13 @@
       &:hover {
         background: rgba(255, 255, 255, 0.12);
         border-color: rgba(99, 102, 241, 0.5);
-        box-shadow: 
-          0 8px 25px rgba(0, 0, 0, 0.4),
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4),
           0 0 20px rgba(99, 102, 241, 0.3);
 
         .header__theme-icon-wrapper {
           background: rgba(99, 102, 241, 0.2);
           border-color: rgba(99, 102, 241, 0.4);
-          box-shadow: 
-            0 4px 12px rgba(99, 102, 241, 0.4),
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
       }
@@ -1721,21 +1967,25 @@
     @include flex-center;
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    background: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.1),
+      rgba(139, 92, 246, 0.1)
+    );
     border-radius: 12px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(99, 102, 241, 0.1);
-    
+
     // Enhanced dark mode styling
     [data-theme="dark"] & {
-      background: linear-gradient(135deg, 
-        rgba(99, 102, 241, 0.2), 
+      background: linear-gradient(
+        135deg,
+        rgba(99, 102, 241, 0.2),
         rgba(139, 92, 246, 0.2)
       );
       border-color: rgba(99, 102, 241, 0.3);
       backdrop-filter: blur(10px);
-      box-shadow: 
-        0 2px 8px rgba(99, 102, 241, 0.2),
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
   }
@@ -1748,80 +1998,202 @@
   -webkit-overflow-scrolling: none;
 }
 
-// Mobile performance optimizations
+// Ultra-Performance Mobile Optimizations
 @media (max-width: $breakpoint-md) {
   .header {
-    // GPU acceleration for better mobile performance
-    transform: translateZ(0);
+    // Enhanced GPU acceleration for mobile
+    transform: translate3d(0, 0, 0);
     will-change: transform;
-    
-    // Reduce animations on lower-end devices
+    contain: layout style paint; // Full CSS containment
+    isolation: isolate; // Create stacking context
+
+    // Performance optimization for low-end devices
     @media (prefers-reduced-motion: reduce) {
       * {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+        will-change: auto !important;
+        transform: none !important;
+      }
+
+      // Disable all backdrop filters for better performance
+      &__overlay,
+      &__nav--mobile {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
       }
     }
 
-    // Optimize for touch devices
+    // Battery saving mode optimization
+    @media (prefers-color-scheme: dark) and (prefers-reduced-motion: reduce) {
+      * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+        filter: none !important;
+      }
+    }
+
+    // Ultra-Fast Touch Response Optimizations
     @media (hover: none) and (pointer: coarse) {
-      // Remove hover states that don't work on touch
+      // Instant touch response - eliminate all delays
+      * {
+        touch-action: manipulation !important; // Prevent 300ms click delay
+        -webkit-tap-highlight-color: transparent !important; // Remove iOS tap highlight
+        -webkit-touch-callout: none !important; // Disable iOS callout
+        user-select: none !important; // Prevent text selection during touch
+      }
+
+      // Disable all hover effects that don't work on touch
       &__nav-link:hover,
       &__theme-toggle:hover,
       &__menu-toggle:hover,
-      &__mobile-theme-btn:hover {
-        transform: none;
-        box-shadow: initial;
-        background: initial;
+      &__mobile-theme-btn:hover,
+      &__logo-link:hover {
+        transform: translate3d(0, 0, 0) !important;
+        box-shadow: none !important;
+        background: var(--bg-secondary) !important;
+        border-color: transparent !important;
+        opacity: 1 !important;
       }
 
-      // Enhanced touch feedback
-      &__nav-link:active,
-      &__theme-toggle:active,
-      &__menu-toggle:active,
-      &__mobile-theme-btn:active {
-        transform: scale(0.96);
-        opacity: 0.8;
-        transition: transform 0.1s ease, opacity 0.1s ease;
-      }
-      
-      // Larger touch targets for mobile
+      // Enhanced accessibility touch targets with instant feedback
       &__nav-link {
-        min-height: 56px; // 56px minimum for accessibility
+        min-height: 56px; // WCAG AAA standard
         padding: $spacing-lg $spacing-xl;
+
+        // Instant active state for nav links
+        &:active {
+          transform: translate3d(0, 0, 0) scale(0.96) !important;
+          transition: transform 0.05s ease-out !important;
+          background: var(--bg-tertiary) !important;
+        }
+
+        @media (max-width: 360px) {
+          min-height: 52px;
+          padding: $spacing-base $spacing-lg;
+        }
       }
-      
+
       &__menu-toggle {
         min-width: 48px;
         min-height: 48px;
+
+        // Ultra-fast menu toggle response
+        &:active {
+          transform: translate3d(0, 0, 0) scale(0.9) !important;
+          transition: transform 0.05s ease-out !important;
+          background: var(--primary-color) !important;
+          color: white !important;
+        }
+
+        @media (max-width: 360px) {
+          min-width: 44px;
+          min-height: 44px;
+        }
       }
-    }
-    
-    // Optimize scrolling performance  
-    &__nav--mobile {
-      // Enable hardware acceleration
-      transform: translate3d(0, 0, 0);
-      backface-visibility: hidden;
-      perspective: 1000px;
-      
-      // Improve scrolling on mobile
-      &__nav-scroll {
-        transform: translateZ(0);
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: contain;
-        
-        // Reduce layout shifts during scroll
-        contain: layout style paint;
+
+      &__theme-toggle {
+        min-width: 44px;
+        min-height: 44px;
+
+        // Instant theme toggle feedback
+        &:active {
+          transform: translate3d(0, 0, 0) scale(0.96) !important;
+          transition: transform 0.05s ease-out !important;
+          background: var(--bg-tertiary) !important;
+        }
       }
-    }
-    
-    // Memory optimization for large screens
-    @media (min-width: $breakpoint-lg) {
-      &__nav--mobile,
+
+      &__logo-link {
+        // Instant logo feedback
+        &:active {
+          transform: translate3d(0, 0, 0) scale(0.96) !important;
+          transition: transform 0.05s ease-out !important;
+        }
+      }
+
+      // Mobile nav optimizations for instant response
+      &__nav--mobile {
+        // Remove complex effects for better performance
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15) !important;
+
+        // Ultra-smooth scrolling
+        .header__nav-scroll {
+          scroll-behavior: auto !important; // Instant scrolling
+        }
+
+        // Instant nav item response
+        .header__nav-link {
+          &:active {
+            transform: translate3d(0, 0, 0) scale(0.96) !important;
+            background: var(--bg-tertiary) !important;
+            transition: transform 0.05s ease-out,
+              background-color 0.05s ease-out !important;
+          }
+
+          &--active:active {
+            transform: translate3d(0, 0, 0) scale(0.98) !important;
+          }
+        }
+
+        // Instant mobile theme button
+        .header__mobile-theme-btn:active {
+          transform: translate3d(0, 0, 0) scale(0.95) !important;
+          background: var(--bg-tertiary) !important;
+          transition: transform 0.05s ease-out, background-color 0.05s ease-out !important;
+        }
+      }
+
+      // Simplified overlay for instant performance
       &__overlay {
-        display: none !important;
+        background: rgba(0, 0, 0, 0.7) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+    }
+
+    // Ultra-mobile optimizations for very small screens
+    @media (max-width: 360px) {
+      // Reduce complexity for better performance
+      &__overlay {
+        background: rgba(0, 0, 0, 0.8) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      &__nav--mobile {
+        width: min(300px, 85vw);
+        box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
+
+        [data-theme="dark"] & {
+          box-shadow: -6px 0 20px rgba(0, 0, 0, 0.3);
+        }
+      }
+
+      // Reduce animations for better performance
+      * {
+        transition-duration: 0.15s !important;
+        animation-duration: 0.15s !important;
+      }
+    }
+
+    // Network-aware optimizations (if supported)
+    @media (prefers-reduced-data: reduce) {
+      // Disable complex effects on slow connections
+      &__overlay,
+      &__nav--mobile {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      * {
+        background-image: none !important;
+        box-shadow: none !important;
       }
     }
   }
@@ -1833,24 +2205,24 @@
     // Support for devices with notches (iPhone X+, etc.)
     padding-left: env(safe-area-inset-left, 0);
     padding-right: env(safe-area-inset-right, 0);
-    
+
     &__container {
       padding-left: max(env(safe-area-inset-left, 0), $spacing-base);
       padding-right: max(env(safe-area-inset-right, 0), $spacing-base);
     }
-    
+
     &__nav--mobile {
       padding-left: env(safe-area-inset-left, 0);
       padding-right: env(safe-area-inset-right, 0);
       padding-top: env(safe-area-inset-top, 0);
-      
+
       // Account for safe areas in mobile menu
       .header__nav-mobile-header {
         padding-left: max(env(safe-area-inset-left, 0), $spacing-xl);
         padding-right: max(env(safe-area-inset-right, 0), $spacing-xl);
         padding-top: max(env(safe-area-inset-top, 0), $spacing-2xl);
       }
-      
+
       .header__nav-list--mobile {
         padding-left: max(env(safe-area-inset-left, 0), $spacing-xl);
         padding-right: max(env(safe-area-inset-right, 0), $spacing-xl);
@@ -1866,24 +2238,24 @@
     &__logo-text .header__logo-name {
       display: none; // Hide name on very small screens
     }
-    
+
     &__nav--mobile {
       width: 100vw; // Full width on very small screens
     }
-    
+
     &__nav-list--mobile .header__nav-link {
       padding: $spacing-base $spacing-lg;
       gap: $spacing-base;
-      
+
       .header__nav-icon-wrapper {
         width: 40px;
         height: 40px;
       }
-      
+
       .header__nav-text {
         font-size: $font-sm;
       }
-      
+
       .header__nav-description {
         font-size: 10px;
       }
@@ -1904,14 +2276,14 @@
   .header {
     // Medium mobile devices
     &__nav--mobile {
-          width: 100%;
+      width: 100%;
     }
-    
+
     &__nav-list--mobile .header__nav-link {
       .header__nav-content {
         gap: 4px;
       }
-      
+
       .header__nav-description {
         display: block; // Show descriptions on larger mobile screens
       }
@@ -1936,23 +2308,23 @@
         padding-top: $spacing-lg;
         padding-bottom: $spacing-base;
       }
-      
+
       .header__nav-scroll {
         height: calc(100vh - 80px); // Adjust for landscape
       }
-      
+
       .header__nav-list--mobile .header__nav-link {
         padding: $spacing-sm $spacing-lg;
-        
+
         .header__nav-icon-wrapper {
           width: 36px;
           height: 36px;
         }
-        
+
         .header__nav-text {
           font-size: $font-sm;
         }
-        
+
         .header__nav-description {
           display: none; // Hide descriptions in landscape
         }

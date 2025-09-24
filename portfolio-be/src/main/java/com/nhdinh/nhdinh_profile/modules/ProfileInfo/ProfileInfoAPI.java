@@ -3,8 +3,11 @@ package com.nhdinh.nhdinh_profile.modules.ProfileInfo;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +34,25 @@ public class ProfileInfoAPI {
     }
 
     /**
-     * Lấy profile active (thông tin chính của user)
+     * Lấy tất cả profiles với phân trang
      */
     @GetMapping("/all")
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<ProfileInfo>> getAllProfiles(Pageable pageable) {
+        try {
+            Page<ProfileInfo> profiles = profileInfoService.findAllWithPagination(pageable);
+            return ResponseEntity.ok(profiles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+  
+
+    /**
+     * Lấy profile active (thông tin chính của user)
+     */
+    @GetMapping("/active")
     public ResponseEntity<ProfileInfo> getActiveProfile() {
         try {
             Optional<ProfileInfo> profile = profileInfoService.findActiveProfile();

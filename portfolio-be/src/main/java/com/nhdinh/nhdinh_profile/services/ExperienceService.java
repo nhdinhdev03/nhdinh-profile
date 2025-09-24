@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,6 +90,13 @@ public class ExperienceService {
      */
     public List<Experience> findAll() {
         return experienceDAO.findAll();
+    }
+    
+    /**
+     * Lấy tất cả Experiences với phân trang
+     */
+    public Page<Experience> findAllWithPagination(Pageable pageable) {
+        return experienceDAO.findAllWithPagination(pageable);
     }
 }
 

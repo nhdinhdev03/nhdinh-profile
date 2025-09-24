@@ -37,11 +37,25 @@ public class ProjectAPI {
     }
 
     /**
-     * Lấy tất cả projects active
+     * Lấy tất cả projects active với phân trang
      */
     @GetMapping("/all")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Project>> getAllActiveProjects() {
+    public ResponseEntity<Page<Project>> getAllActiveProjects(Pageable pageable) {
+        try {
+            Page<Project> projects = projectService.findAllActiveWithPagination(pageable);
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Lấy tất cả projects active (không phân trang) - deprecated, sử dụng /all với pagination
+     */
+    @GetMapping("/list")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<Project>> getAllActiveProjectsList() {
         try {
             List<Project> projects = projectService.findAllActive();
             return ResponseEntity.ok(projects);
@@ -60,48 +74,6 @@ public class ProjectAPI {
             Optional<Project> project = projectService.findByIdWithTranslationsAndTags(id);
             return project.map(ResponseEntity::ok)
                           .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    /**
-     * Lấy featured projects
-     */
-    @GetMapping("/featured")
-    @Transactional(readOnly = true)
-    public ResponseEntity<List<Project>> getFeaturedProjects() {
-        try {
-            List<Project> projects = projectService.findFeaturedProjects();
-            return ResponseEntity.ok(projects);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    /**
-     * Lấy public projects
-     */
-    @GetMapping("/public")
-    @Transactional(readOnly = true)
-    public ResponseEntity<List<Project>> getPublicProjects() {
-        try {
-            List<Project> projects = projectService.findPublicProjects();
-            return ResponseEntity.ok(projects);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    /**
-     * Lấy published projects với pagination
-     */
-    @GetMapping("/published")
-    @Transactional(readOnly = true)
-    public ResponseEntity<Page<Project>> getPublishedProjects(Pageable pageable) {
-        try {
-            Page<Project> projects = projectService.findPublishedProjects(pageable);
-            return ResponseEntity.ok(projects);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

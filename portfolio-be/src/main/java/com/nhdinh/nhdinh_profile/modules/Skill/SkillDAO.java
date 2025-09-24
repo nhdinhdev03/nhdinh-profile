@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +22,12 @@ public interface SkillDAO extends JpaRepository<Skill, UUID> {
      */
     @Query("SELECT s FROM Skill s WHERE s.isActive = true ORDER BY s.skillCategory.sortOrder ASC, s.sortOrder ASC, s.name ASC")
     List<Skill> findAllActive();
+    
+    /**
+     * Lấy tất cả skills active với phân trang
+     */
+    @Query("SELECT s FROM Skill s WHERE s.isActive = true ORDER BY s.skillCategory.sortOrder ASC, s.sortOrder ASC, s.name ASC")
+    Page<Skill> findAllActiveWithPagination(Pageable pageable);
     
     /**
      * Lấy skills theo category

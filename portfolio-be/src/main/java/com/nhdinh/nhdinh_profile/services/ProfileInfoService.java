@@ -3,6 +3,8 @@ package com.nhdinh.nhdinh_profile.services;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +68,14 @@ public class ProfileInfoService {
      */
     public void deleteById(UUID id) {
         profileInfoDAO.deleteById(id);
+    }
+    
+  
+    /**
+     * Lấy tất cả ProfileInfo với phân trang
+     */
+    public Page<ProfileInfo> findAllWithPagination(Pageable pageable) {
+        return profileInfoDAO.findAllWithPagination(pageable);
     }
 }
 

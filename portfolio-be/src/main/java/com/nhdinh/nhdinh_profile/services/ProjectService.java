@@ -31,25 +31,20 @@ public class ProjectService {
     }
     
     /**
+     * Lấy tất cả projects active với phân trang
+     */
+    public Page<Project> findAllActiveWithPagination(Pageable pageable) {
+        return projectDAO.findAllActiveWithPagination(pageable);
+    }
+    
+    /**
      * Lấy projects theo status
      */
     public List<Project> findByStatus(String status) {
         return projectDAO.findByStatus(status);
     }
     
-    /**
-     * Lấy featured projects
-     */
-    public List<Project> findFeaturedProjects() {
-        return projectDAO.findFeaturedProjects();
-    }
-    
-    /**
-     * Lấy public projects
-     */
-    public List<Project> findPublicProjects() {
-        return projectDAO.findPublicProjects();
-    }
+ 
     
     /**
      * Lấy projects theo category

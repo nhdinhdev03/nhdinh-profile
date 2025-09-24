@@ -26,22 +26,18 @@ public interface ProjectDAO extends JpaRepository<Project, UUID> {
     List<Project> findAllActive();
     
     /**
+     * Lấy tất cả projects active với phân trang
+     */
+    @Query("SELECT p FROM Project p WHERE p.isDeleted = false ORDER BY p.sortOrder ASC, p.createdAt DESC")
+    Page<Project> findAllActiveWithPagination(Pageable pageable);
+    
+    /**
      * Lấy projects theo status
      */
     @Query("SELECT p FROM Project p WHERE p.isDeleted = false AND p.status = :status ORDER BY p.sortOrder ASC")
     List<Project> findByStatus(@Param("status") String status);
     
-    /**
-     * Lấy featured projects
-     */
-    @Query("SELECT p FROM Project p WHERE p.isDeleted = false AND p.isFeatured = true AND p.isPublic = true ORDER BY p.sortOrder ASC")
-    List<Project> findFeaturedProjects();
-    
-    /**
-     * Lấy public projects
-     */
-    @Query("SELECT p FROM Project p WHERE p.isDeleted = false AND p.isPublic = true ORDER BY p.sortOrder ASC, p.createdAt DESC")
-    List<Project> findPublicProjects();
+   
     
     /**
      * Lấy projects theo category

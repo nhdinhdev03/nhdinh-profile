@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,10 +36,24 @@ public class SkillAPI {
     }
 
     /**
-     * Lấy tất cả skills active
+     * Lấy tất cả skills active với phân trang
      */
     @GetMapping("/all")
-    public ResponseEntity<List<Skill>> getAllActiveSkills() {
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<Skill>> getAllActiveSkills(Pageable pageable) {
+        try {
+            Page<Skill> skills = skillService.findAllActiveWithPagination(pageable);
+            return ResponseEntity.ok(skills);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Lấy tất cả skills active (không phân trang) - deprecated, sử dụng /all với pagination
+     */
+    @GetMapping("/list")
+    public ResponseEntity<List<Skill>> getAllActiveSkillsList() {
         try {
             List<Skill> skills = skillService.findAllActive();
             return ResponseEntity.ok(skills);

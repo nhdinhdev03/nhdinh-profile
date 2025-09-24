@@ -3,6 +3,8 @@ package com.nhdinh.nhdinh_profile.modules.Experience;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -49,4 +51,10 @@ public interface ExperienceDAO extends JpaRepository<Experience, UUID> {
      */
     @Query("SELECT COUNT(e) FROM Experience e WHERE e.profileInfo.profileId = :profileId")
     Long countByProfileId(@Param("profileId") UUID profileId);
+    
+    /**
+     * Lấy tất cả experiences với phân trang
+     */
+    @Query("SELECT e FROM Experience e ORDER BY e.startYear DESC, e.sortOrder ASC")
+    Page<Experience> findAllWithPagination(Pageable pageable);
 }

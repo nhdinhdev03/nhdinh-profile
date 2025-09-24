@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +38,23 @@ public class BlogPostAPI {
  
 
     /**
-     * Lấy tất cả blog posts active (không phân trang)
+     * Lấy tất cả blog posts active với phân trang
      */
     @GetMapping("/all")
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<BlogPost>> getAllActiveBlogPosts(Pageable pageable) {
+        try {
+            Page<BlogPost> blogPosts = blogPostService.findAllActiveWithPagination(pageable);
+            return ResponseEntity.ok(blogPosts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Lấy tất cả blog posts active (không phân trang) - deprecated, sử dụng /all với pagination
+     */
+    @GetMapping("/list")
     public ResponseEntity<List<BlogPost>> getAllActiveBlogPostsList() {
         try {
             List<BlogPost> blogPosts = blogPostService.findAllActive();

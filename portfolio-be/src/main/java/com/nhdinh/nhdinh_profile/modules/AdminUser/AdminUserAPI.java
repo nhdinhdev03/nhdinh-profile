@@ -38,7 +38,7 @@ public class AdminUserAPI {
     }
 
 
-    @GetMapping
+    @GetMapping("/all")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<AdminUser>> getAllActiveAdminUsers(Pageable pageable) {
         try {

@@ -1,4 +1,4 @@
-package com.nhdinh.nhdinh_profile.auth.security.user.service;
+package com.nhdinh.nhdinh_profile.auth.security.service;
 
 import java.util.Collection;
 import java.util.Collections;

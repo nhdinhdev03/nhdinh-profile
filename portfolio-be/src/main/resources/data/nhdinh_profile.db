@@ -424,3 +424,66 @@ GO
 CREATE INDEX IX_ProjectTagMap_TagId ON dbo.ProjectTagMap (TagId);
 CREATE INDEX IX_BlogTagMap_TagId ON dbo.BlogTagMap (TagId);
 GO
+
+
+
+
+server.port=8081
+
+# Sử dụng khi dev
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=portfolio_nhdinh;encrypt=true;trustServerCertificate=true;
+spring.datasource.username=sa
+spring.datasource.password=123
+
+spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.jpa.show-sql=false
+spring.jpa.hibernate.ddl-auto = none
+spring.servlet.multipart.max-file-size=11MB
+
+
+# Spring Data Web Support - Fix PageImpl serialization warning
+spring.data.web.pageable.page-parameter=page
+spring.data.web.pageable.size-parameter=size
+spring.data.web.pageable.default-page-size=20
+spring.data.web.pageable.max-page-size=100
+
+
+
+app.jwtSecret=bezKoderSecretKeysgfsdhn5616derSecretKeysgfsdhn5616derSecretKeysgfsdhn5616derSecretKeysgfsdhn5616
+app.jwtExpirationMs=3600000
+app.jwtRefreshExpirationMs=86400000
+
+
+# otp
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=nhdinh.dev03@gmail.com
+spring.mail.password=hqdv okcw patg atyr
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+
+Email Configuration
+spring.mail.properties.mail.smtp.connectiontimeout=5000
+spring.mail.properties.mail.smtp.timeout=5000
+spring.mail.properties.mail.smtp.writetimeout=5000
+
+# Admin Configuration
+app.admin.email=nhdinh.dev03@gmail.com
+app.admin.name=Nguyen Hoang Dinh
+
+# # Email Template Configuration
+app.email.from-name=Portfolio - Nguyen Hoang Dinh
+app.email.reply-to=nhdinh.dev03@gmail.com
+
+
+
+# Logging Configuration - Disable Hibernate connection pooling logs
+logging.level.org.hibernate.orm.connections.pooling=OFF
+logging.level.org.hibernate.engine.jdbc.connections.internal=OFF
+
+# Spring Boot DevTools Configuration - Enable auto-reload
+spring.devtools.restart.enabled=true
+spring.devtools.livereload.enabled=true
+spring.devtools.restart.additional-paths=src/main/java,src/main/resources
+
+

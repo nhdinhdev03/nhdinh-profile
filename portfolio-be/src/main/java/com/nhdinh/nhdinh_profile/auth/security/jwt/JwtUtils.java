@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.nhdinh.nhdinh_profile.auth.security.user.service.AdminUserDetailsImpl;
+import com.nhdinh.nhdinh_profile.auth.security.service.AdminUserDetailsImpl;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

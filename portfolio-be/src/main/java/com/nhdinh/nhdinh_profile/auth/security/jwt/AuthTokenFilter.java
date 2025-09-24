@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.nhdinh.nhdinh_profile.auth.security.user.service.AdminUserDetailsServiceImpl;
+import com.nhdinh.nhdinh_profile.auth.security.service.AdminUserDetailsServiceImpl;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -21,7 +21,7 @@ import com.nhdinh.nhdinh_profile.auth.payload.request.SignupRequest;
 import com.nhdinh.nhdinh_profile.auth.payload.response.JwtResponse;
 import com.nhdinh.nhdinh_profile.auth.payload.response.MessageResponse;
 import com.nhdinh.nhdinh_profile.auth.security.jwt.JwtUtils;
-import com.nhdinh.nhdinh_profile.auth.security.user.service.AdminUserDetailsImpl;
+import com.nhdinh.nhdinh_profile.auth.security.service.AdminUserDetailsImpl;
 import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUser;
 import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUserDAO;
 import com.nhdinh.nhdinh_profile.services.AdminUserService;

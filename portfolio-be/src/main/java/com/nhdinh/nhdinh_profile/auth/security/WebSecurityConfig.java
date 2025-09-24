@@ -22,7 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.nhdinh.nhdinh_profile.auth.security.jwt.AuthEntryPointJwt;
 import com.nhdinh.nhdinh_profile.auth.security.jwt.AuthTokenFilter;
-import com.nhdinh.nhdinh_profile.auth.security.user.service.AdminUserDetailsServiceImpl;
+import com.nhdinh.nhdinh_profile.auth.security.service.AdminUserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -95,7 +95,7 @@ public class WebSecurityConfig {
                         // Static resources and error pages
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
-                        // .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
 
                         // Default - permit all for now, can be changed to authenticated() later
                         .anyRequest().permitAll());

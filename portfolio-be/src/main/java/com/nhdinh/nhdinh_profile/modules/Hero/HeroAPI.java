@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                           package com.nhdinh.nhdinh_profile.modules.Hero;
+package com.nhdinh.nhdinh_profile.modules.Hero;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +41,7 @@ public class HeroAPI {
     /**
      * Lấy tất cả Hero active với pagination
      */
-       @GetMapping("/all")
+    @GetMapping("/all")
     public ResponseEntity<Page<Hero>> getAllActiveHeroes(Pageable pageable) {
         try {
             Page<Hero> heroes = heroService.findAllActiveWithPagination(pageable);
@@ -51,7 +51,6 @@ public class HeroAPI {
         }
     }
 
-    
     /**
      * Lấy Hero đầu tiên active với translations
      */
@@ -60,7 +59,7 @@ public class HeroAPI {
         try {
             Optional<Hero> hero = heroService.findFirstActiveWithTranslations();
             return hero.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -100,7 +99,7 @@ public class HeroAPI {
         try {
             Optional<Hero> hero = heroService.findByIdWithTranslations(id);
             return hero.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -123,8 +122,8 @@ public class HeroAPI {
      * Cập nhật Hero
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Hero> updateHero(@PathVariable UUID id, 
-                                          @Valid @RequestBody Hero hero) {
+    public ResponseEntity<Hero> updateHero(@PathVariable UUID id,
+            @Valid @RequestBody Hero hero) {
         try {
             Optional<Hero> existingHero = heroService.findById(id);
             if (existingHero.isPresent()) {

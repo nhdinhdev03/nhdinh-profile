@@ -37,7 +37,7 @@ public class ContactMessageAPI {
     /**
      * Lấy tất cả messages với pagination
      */
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<Page<ContactMessage>> getAllMessages(Pageable pageable) {
         try {
             Page<ContactMessage> messages = contactMessageService.findAllWithPagination(pageable);

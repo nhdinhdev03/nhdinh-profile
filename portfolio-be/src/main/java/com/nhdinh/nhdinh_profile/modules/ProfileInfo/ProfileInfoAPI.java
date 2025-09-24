@@ -33,7 +33,7 @@ public class ProfileInfoAPI {
     /**
      * Lấy profile active (thông tin chính của user)
      */
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<ProfileInfo> getActiveProfile() {
         try {
             Optional<ProfileInfo> profile = profileInfoService.findActiveProfile();

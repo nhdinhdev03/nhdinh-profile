@@ -82,7 +82,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v2/blog-posts/**").permitAll()
                         
                         // Contact messages - allow POST for public contact form
-                        .requestMatchers("/api/v2/contact-messages").permitAll()
+                        .requestMatchers("/api/v2/contact-messages/**").permitAll()
                         .requestMatchers("/api/v2/contact-messages/send").permitAll()
                         
                         // Admin endpoints - require authentication
@@ -90,7 +90,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v2/admin-users/**").authenticated()
                         
                         // Contact messages admin operations - require authentication
-                        .requestMatchers("/api/v2/contact-messages/**").authenticated()
+                        // .requestMatchers("/api/v2/contact-messages/**").authenticated()
                         
                         // Static resources and error pages
                         .requestMatchers("/error").permitAll()

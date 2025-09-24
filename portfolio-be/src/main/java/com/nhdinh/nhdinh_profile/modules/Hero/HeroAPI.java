@@ -41,7 +41,7 @@ public class HeroAPI {
     /**
      * Lấy tất cả Hero active với pagination
      */
-    @GetMapping
+       @GetMapping("/all")
     public ResponseEntity<Page<Hero>> getAllActiveHeroes(Pageable pageable) {
         try {
             Page<Hero> heroes = heroService.findAllActiveWithPagination(pageable);
@@ -51,20 +51,7 @@ public class HeroAPI {
         }
     }
 
-    /**
-     * Lấy tất cả Hero active (không phân trang)
-     */
-    @GetMapping("/all")
-    public ResponseEntity<List<Hero>> getAllActiveHeroesList() {
-        try {
-            List<Hero> heroes = heroService.findAllActive();
-            return ResponseEntity.ok(heroes);
-        } catch (Exception e) {
-            e.printStackTrace(); // Log error for debugging
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
+    
     /**
      * Lấy Hero đầu tiên active với translations
      */

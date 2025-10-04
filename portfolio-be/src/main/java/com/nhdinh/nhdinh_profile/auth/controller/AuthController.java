@@ -24,7 +24,6 @@ import com.nhdinh.nhdinh_profile.auth.security.jwt.JwtUtils;
 import com.nhdinh.nhdinh_profile.auth.security.service.AdminUserDetailsImpl;
 import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUser;
 import com.nhdinh.nhdinh_profile.modules.AdminUser.AdminUserDAO;
-import com.nhdinh.nhdinh_profile.services.AdminUserService;
 
 import jakarta.validation.Valid;
 
@@ -43,9 +42,6 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private AdminUserService adminUserService;
-
-     @Autowired
     private AdminUserDAO adminUserDAO;
 
     @PostMapping("/register")
@@ -87,7 +83,7 @@ public class AuthController {
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
-                            loginRequest.getIdentifier(), 
+                            loginRequest.getIdentifier(),
                             loginRequest.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -120,12 +116,12 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication != null && authentication.isAuthenticated() 
-            && !"anonymousUser".equals(authentication.getPrincipal())) {
-            
+
+        if (authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(authentication.getPrincipal())) {
+
             AdminUserDetailsImpl userDetails = (AdminUserDetailsImpl) authentication.getPrincipal();
-            
+
             return ResponseEntity.ok(new JwtResponse(
                     null, // Don't return token in profile response
                     userDetails.getId(),
@@ -134,7 +130,7 @@ public class AuthController {
                     userDetails.getFullName(),
                     "ROLE_ADMIN"));
         }
-        
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new MessageResponse("Error: User not authenticated!"));
     }

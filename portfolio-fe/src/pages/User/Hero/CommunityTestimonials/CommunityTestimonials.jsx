@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
 import { useDeviceCapability } from "hooks/useDeviceCapability";
+import PropTypes from "prop-types";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FiBriefcase,
+  FiChevronDown,
   FiChevronLeft,
   FiChevronRight,
+  FiChevronUp,
   FiMapPin,
   FiStar,
 } from "react-icons/fi";
@@ -99,6 +102,8 @@ const CommunityTestimonials = memo(({ titleVariant, context }) => {
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [showAll, setShowAll] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Get optimized title và content
   const recommendedVariant = useMemo(
@@ -252,16 +257,16 @@ const CommunityTestimonials = memo(({ titleVariant, context }) => {
     []
   );
 
-  // Auto-play functionality
+  // Auto-play functionality - disabled on mobile
   useEffect(() => {
-    if (!isAutoPlay || !inView) return;
+    if (!isAutoPlay || !inView || isMobile) return;
 
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % testimonials.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlay, inView, testimonials.length]);
+  }, [isAutoPlay, inView, testimonials.length, isMobile]);
 
   // Navigation handlers
   const handlePrevSlide = useCallback(() => {
@@ -290,9 +295,25 @@ const CommunityTestimonials = memo(({ titleVariant, context }) => {
     setIsAutoPlay(true);
   }, []);
 
+  // Get top 5 testimonials sorted by rating and content quality
+  const topTestimonials = useMemo(() => {
+    const sortedTestimonials = [...testimonials].sort((a, b) => {
+      // Sort by rating first, then by content length (quality indicator)
+      if (b.rating !== a.rating) return b.rating - a.rating;
+      return b.content.length - a.content.length;
+    });
+    return sortedTestimonials.slice(0, 5);
+  }, [testimonials]);
+
   // Get visible testimonials for current view
   const getVisibleTestimonials = useMemo(() => {
-    const itemsPerView = isMobile ? 1 : 3;
+    if (isMobile) {
+      // On mobile, show top 5 or all if expanded
+      return showAll ? testimonials : topTestimonials;
+    }
+
+    // Desktop: show carousel view
+    const itemsPerView = 3;
     const visibleItems = [];
 
     for (let i = 0; i < itemsPerView; i++) {
@@ -301,7 +322,13 @@ const CommunityTestimonials = memo(({ titleVariant, context }) => {
     }
 
     return visibleItems;
-  }, [currentSlide, testimonials, isMobile]);
+  }, [currentSlide, testimonials, isMobile, showAll, topTestimonials]);
+
+  // Toggle show all testimonials on mobile
+  const handleShowAll = useCallback(() => {
+    setShowAll(!showAll);
+    setIsExpanded(!isExpanded);
+  }, [showAll, isExpanded]);
 
   return (
     <motion.section
@@ -315,7 +342,6 @@ const CommunityTestimonials = memo(({ titleVariant, context }) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       aria-label={optimizedTitle}
-      role="region"
     >
       <div className="community-testimonials__container">
         <motion.div
@@ -344,47 +370,51 @@ const CommunityTestimonials = memo(({ titleVariant, context }) => {
           </motion.p>
         </motion.div>
 
-        {/* Navigation Controls */}
-        <motion.div
-          className="community-testimonials__navigation"
-          variants={itemVariants}
-        >
-          <button
-            className="community-testimonials__nav-btn community-testimonials__nav-btn--prev"
-            onClick={handlePrevSlide}
-            aria-label={t("common.previous")}
-            disabled={isLowPerformance}
+        {/* Navigation Controls - Hide on mobile */}
+        {!isMobile && (
+          <motion.div
+            className="community-testimonials__navigation"
+            variants={itemVariants}
           >
-            <FiChevronLeft />
-          </button>
+            <button
+              className="community-testimonials__nav-btn community-testimonials__nav-btn--prev"
+              onClick={handlePrevSlide}
+              aria-label={t("common.previous")}
+              disabled={isLowPerformance}
+            >
+              <FiChevronLeft />
+            </button>
 
-          <div className="community-testimonials__dots">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                className={`community-testimonials__dot ${
-                  index === currentSlide ? "active" : ""
-                }`}
-                onClick={() => handleDotClick(index)}
-                aria-label={`${t("testimonials.slide")} ${index + 1}`}
-              />
-            ))}
-          </div>
+            <div className="community-testimonials__dots">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  className={`community-testimonials__dot ${
+                    index === currentSlide ? "active" : ""
+                  }`}
+                  onClick={() => handleDotClick(index)}
+                  aria-label={`${t("testimonials.slide")} ${index + 1}`}
+                />
+              ))}
+            </div>
 
-          <button
-            className="community-testimonials__nav-btn community-testimonials__nav-btn--next"
-            onClick={handleNextSlide}
-            aria-label={t("common.next")}
-            disabled={isLowPerformance}
-          >
-            <FiChevronRight />
-          </button>
-        </motion.div>
+            <button
+              className="community-testimonials__nav-btn community-testimonials__nav-btn--next"
+              onClick={handleNextSlide}
+              aria-label={t("common.next")}
+              disabled={isLowPerformance}
+            >
+              <FiChevronRight />
+            </button>
+          </motion.div>
+        )}
 
         <motion.div
-          className="community-testimonials__grid"
+          className={`community-testimonials__grid ${
+            isMobile && isExpanded ? "expanding" : ""
+          } ${isMobile && !showAll && isExpanded ? "collapsing" : ""}`}
           variants={itemVariants}
-          key={currentSlide} // Force re-render on slide change
+          key={isMobile ? `mobile-${showAll}` : currentSlide} // Force re-render on slide/show change
         >
           {getVisibleTestimonials.map((testimonial, index) => (
             <motion.div
@@ -472,6 +502,34 @@ const CommunityTestimonials = memo(({ titleVariant, context }) => {
           ))}
         </motion.div>
 
+        {/* Mobile Show More/Less Button */}
+        {isMobile && testimonials.length > 5 && (
+          <motion.div
+            className="community-testimonials__mobile-actions"
+            variants={itemVariants}
+          >
+            <motion.button
+              className="community-testimonials__show-more-btn"
+              onClick={handleShowAll}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              aria-label={showAll ? "Thu gọn" : "Xem tất cả testimonials"}
+            >
+              {showAll ? (
+                <>
+                  <FiChevronUp />
+                  <span>Thu gọn</span>
+                </>
+              ) : (
+                <>
+                  <span>Xem tất cả ({testimonials.length})</span>
+                  <FiChevronDown />
+                </>
+              )}
+            </motion.button>
+          </motion.div>
+        )}
+
         <motion.div
           className="community-testimonials__footer"
           variants={itemVariants}
@@ -545,6 +603,22 @@ const CommunityTestimonials = memo(({ titleVariant, context }) => {
 CommunityTestimonials.displayName = "CommunityTestimonials";
 
 // PropTypes for better development experience
+CommunityTestimonials.propTypes = {
+  titleVariant: PropTypes.oneOf([
+    "professional",
+    "friendly",
+    "formal",
+    "casual",
+    "startup",
+  ]),
+  context: PropTypes.shape({
+    pageType: PropTypes.string,
+    industry: PropTypes.string,
+    audience: PropTypes.string,
+    goal: PropTypes.string,
+  }),
+};
+
 CommunityTestimonials.defaultProps = {
   titleVariant: null, // Will use recommended variant
   context: {

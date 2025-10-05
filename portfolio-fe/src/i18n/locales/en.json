@@ -83,6 +83,14 @@
       "impact": "Real Results, Real Stories",
       "trust": "Trusted by Industry Leaders",
       "community": "Community Voices"
+    },
+    "subtitle_alternatives": {
+      "professional": "Client Success Stories",
+      "personal": "Community Voices",
+      "business": "5-Star Reviews",
+      "impact": "Proven Results",
+      "trust": "Industry Leaders",
+      "community": "Developer Community"
     }
   },
   "about": {

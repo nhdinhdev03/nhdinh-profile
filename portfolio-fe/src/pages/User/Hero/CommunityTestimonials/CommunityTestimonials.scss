@@ -74,6 +74,66 @@
     contain: layout style;
   }
 
+  &__subtitle-badge {
+    display: inline-block;
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    font-weight: 600;
+    color: #6366f1;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    position: relative;
+    line-height: 1.2;
+
+    // Clean and professional styling similar to Experience component
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: -2rem;
+      transform: translateY(-50%);
+      width: 1.5rem;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #6366f1);
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -2rem;
+      transform: translateY(-50%);
+      width: 1.5rem;
+      height: 1px;
+      background: linear-gradient(90deg, #6366f1, transparent);
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+    }
+
+    // Hover effect
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #4f46e5;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      font-size: clamp(0.8rem, 3vw, 0.9rem);
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+  }
   &__navigation {
     display: flex;
     align-items: center;
@@ -813,6 +873,22 @@
 
     &__subtitle {
       color: #9ca3af;
+    }
+
+    &__subtitle-badge {
+      color: #8b5cf6;
+
+      &::before {
+        background: linear-gradient(90deg, transparent, #8b5cf6);
+      }
+
+      &::after {
+        background: linear-gradient(90deg, #8b5cf6, transparent);
+      }
+
+      &:hover {
+        color: #a78bfa;
+      }
     }
 
     &__card {

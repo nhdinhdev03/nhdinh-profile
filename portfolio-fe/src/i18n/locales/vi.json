@@ -83,6 +83,14 @@
       "impact": "Kết Quả Thực Tế, Câu Chuyện Thực",
       "trust": "Được Tin Tưởng Bởi Các Lãnh Đạo",
       "community": "Tiếng Nói Cộng Đồng"
+    },
+    "subtitle_alternatives": {
+      "professional": "Thành Công Khách Hàng",
+      "personal": "Tiếng Nói Cộng Đồng",
+      "business": "Đánh Giá 5 Sao",
+      "impact": "Kết Quả Đã Chứng Minh",
+      "trust": "Các Lãnh Đạo Ngành",
+      "community": "Cộng Đồng Developer"
     }
   },
   "about": {

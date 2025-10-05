@@ -247,11 +247,12 @@ const CommunityTestimonials = memo(({ titleVariant, context }) => {
           className="community-testimonials__header"
           variants={itemVariants}
         >
-          <motion.div
-            className="community-testimonials__badge"
-            whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
-            transition={{ duration: 0.5 }}
-          ></motion.div>
+          <motion.span
+            className="community-testimonials__subtitle-badge"
+            variants={itemVariants}
+          >
+            {subtitle}
+          </motion.span>
 
           <motion.h2
             className="community-testimonials__title"

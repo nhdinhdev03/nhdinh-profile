@@ -42,32 +42,36 @@ export const useTestimonialsContent = (titleVariant = "professional") => {
     const baseSubtitle = t("testimonials.subtitle");
     const baseDescription = t("testimonials.description");
 
-    // Dynamic content based on title variant
+    // Try to get localized subtitle first
+    const subtitleKey = `testimonials.subtitle_alternatives.${titleVariant}`;
+    const localizedSubtitle = t(subtitleKey, { defaultValue: null });
+
+    // Dynamic content based on title variant - clean subtitles like Experience
     const contentMap = {
       professional: {
-        subtitle: baseSubtitle,
+        subtitle: localizedSubtitle || "Client Success Stories",
         description:
           "Delivering exceptional results for businesses and startups worldwide",
       },
       personal: {
-        subtitle: "Loved by the community",
+        subtitle: localizedSubtitle || "Community Voices",
         description: baseDescription,
       },
       business: {
-        subtitle: "5-star rated developer",
+        subtitle: localizedSubtitle || "5-Star Reviews",
         description: "Proven track record of successful project deliveries",
       },
       impact: {
-        subtitle: "Measurable outcomes",
+        subtitle: localizedSubtitle || "Proven Results",
         description:
           "Projects that drive real business growth and user satisfaction",
       },
       trust: {
-        subtitle: "Industry recognition",
+        subtitle: localizedSubtitle || "Industry Leaders",
         description: "Endorsed by CTOs, Product Managers, and Tech Leaders",
       },
       community: {
-        subtitle: "Community driven",
+        subtitle: localizedSubtitle || "Developer Community",
         description: "Building lasting relationships through quality work",
       },
     };

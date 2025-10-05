@@ -10,13 +10,88 @@ import {
   FiStar,
 } from "react-icons/fi";
 import { useInView } from "react-intersection-observer";
-import {
-  getRecommendedTitleVariant,
-  useTestimonialsContent,
-  useTestimonialsTitle,
-} from "./useTestimonialsTitle";
 
 import "./CommunityTestimonials.scss";
+
+// Consolidated hooks - moved from useTestimonialsTitle.js
+const useTestimonialsTitle = (variant = "professional", fallback = null) => {
+  const { t } = useTranslation();
+
+  return useMemo(() => {
+    const alternativeKey = `testimonials.title_alternatives.${variant}`;
+    const alternativeTitle = t(alternativeKey, { defaultValue: null });
+
+    if (alternativeTitle && alternativeTitle !== alternativeKey) {
+      return alternativeTitle;
+    }
+
+    return fallback || t("testimonials.title");
+  }, [t, variant, fallback]);
+};
+
+const useTestimonialsContent = (titleVariant = "professional") => {
+  const { t } = useTranslation();
+
+  return useMemo(() => {
+    const subtitleKey = `testimonials.subtitle_alternatives.${titleVariant}`;
+    const localizedSubtitle = t(subtitleKey, { defaultValue: null });
+
+    const contentMap = {
+      professional: {
+        subtitle: localizedSubtitle || "Client Success Stories",
+        description:
+          "Delivering exceptional results for businesses and startups worldwide",
+      },
+      personal: {
+        subtitle: localizedSubtitle || "Community Voices",
+        description: t("testimonials.description", {
+          defaultValue: "Real feedback from clients and colleagues",
+        }),
+      },
+      business: {
+        subtitle: localizedSubtitle || "5-Star Reviews",
+        description: "Proven track record of successful project deliveries",
+      },
+      impact: {
+        subtitle: localizedSubtitle || "Proven Results",
+        description:
+          "Projects that drive real business growth and user satisfaction",
+      },
+      trust: {
+        subtitle: localizedSubtitle || "Industry Leaders",
+        description: "Endorsed by CTOs, Product Managers, and Tech Leaders",
+      },
+      community: {
+        subtitle: localizedSubtitle || "Developer Community",
+        description: "Building lasting relationships through quality work",
+      },
+    };
+
+    const selectedContent = contentMap[titleVariant] || contentMap.professional;
+    return {
+      subtitle: selectedContent.subtitle,
+      description: t(selectedContent.description, {
+        defaultValue: selectedContent.description,
+      }),
+    };
+  }, [t, titleVariant]);
+};
+
+const getRecommendedTitleVariant = (context = {}) => {
+  const {
+    pageType = "portfolio",
+    industry = "tech",
+    userType = "client",
+  } = context;
+
+  if (pageType === "business" || industry === "enterprise")
+    return "professional";
+  if (pageType === "portfolio" && userType === "recruiter") return "trust";
+  if (pageType === "about" || userType === "personal") return "personal";
+  if (industry === "startup") return "impact";
+
+  return "professional";
+};
 
 const CommunityTestimonials = memo(({ titleVariant, context }) => {
   const { t } = useTranslation();

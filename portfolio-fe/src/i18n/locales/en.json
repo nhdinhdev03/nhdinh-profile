@@ -70,7 +70,12 @@
     "subtitle": "Loved by the community",
     "title": "What People Say",
     "description": "Trusted by developers and companies worldwide",
-    "join_community": "Join the community of satisfied clients"
+    "join_community": "Join the community of satisfied clients",
+    "project": "Project",
+    "slide": "Go to slide",
+    "satisfied_clients": "Satisfied Clients",
+    "average_rating": "Average Rating",
+    "satisfaction_rate": "Satisfaction Rate"
   },
   "about": {
     "title": "About Me",

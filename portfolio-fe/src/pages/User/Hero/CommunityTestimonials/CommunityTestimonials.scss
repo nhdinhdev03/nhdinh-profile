@@ -1,10 +1,10 @@
-@use 'styles/variables.scss' as *;
+@use "styles/variables.scss" as *;
 
 .community-testimonials {
   position: relative;
   padding: clamp(4rem, 8vw, 6rem) 0;
   overflow: hidden;
-  
+
   // Modern CSS performance optimizations
   contain: layout style paint;
   content-visibility: auto;
@@ -16,7 +16,7 @@
     .community-testimonials__card {
       will-change: auto;
       transition: none;
-      
+
       &:hover {
         transform: none;
       }
@@ -57,7 +57,7 @@
     padding: 0 clamp(1rem, 4vw, 2rem);
     position: relative;
     z-index: 2;
-    
+
     // CSS containment for better performance
     contain: layout style;
 
@@ -69,9 +69,83 @@
   &__header {
     text-align: center;
     margin-bottom: clamp(2.5rem, 6vw, 4rem);
-    
+
     // CSS containment
     contain: layout style;
+  }
+
+  &__navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+
+    @media (max-width: 768px) {
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  &__nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border: 2px solid #6366f1;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+  }
+
+  &__dots {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  &__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: #d1d5db;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.active {
+      background: #6366f1;
+      transform: scale(1.2);
+    }
+
+    &:hover {
+      background: #9ca3af;
+    }
+
+    &.active:hover {
+      background: #4f46e5;
+    }
   }
 
   &__badge {
@@ -91,7 +165,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
-    
+
     // Focus management
     &:focus-visible {
       outline: 2px solid white;
@@ -118,7 +192,7 @@
     &-icon {
       font-size: 1.1rem;
       animation: heartbeat 2s ease-in-out infinite;
-      
+
       // Performance optimization
       .low-performance & {
         animation: none;
@@ -175,11 +249,11 @@
     padding: 0;
     margin-left: 0;
     margin-right: 0;
-    
+
     // Modern container-based responsive design
     container-type: inline-size;
     container-name: testimonials-grid;
-    
+
     // CSS containment for performance
     contain: layout style;
 
@@ -252,11 +326,11 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     overflow: hidden;
-    
+
     // Modern CSS optimizations
     contain: layout style paint;
     will-change: transform;
-    
+
     // Focus management
     &:focus-visible {
       outline: 2px solid #6366f1;
@@ -267,7 +341,7 @@
     &.mobile-optimized {
       will-change: auto;
       transition-duration: 0.2s;
-      
+
       &:hover {
         transform: none;
       }
@@ -301,7 +375,7 @@
     &.low-performance {
       will-change: auto;
       backdrop-filter: none;
-      
+
       &:hover {
         transform: none;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -402,22 +476,22 @@
     flex-shrink: 0;
     transition: all 0.3s ease;
     background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-    
+
     // Performance optimizations
     contain: layout style paint;
     will-change: transform;
-    
+
     // Loading state
     &.loading {
       animation: avatarPulse 1.5s ease-in-out infinite;
       background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
     }
-    
+
     // Error state
     &.error {
       background: linear-gradient(135deg, #fef2f2, #fee2e2);
       border-color: rgba(239, 68, 68, 0.3);
-      
+
       &::after {
         content: "⚠";
         position: absolute;
@@ -428,34 +502,34 @@
         font-size: 20px;
       }
     }
-    
+
     // Success state with gentle scale
     &.loaded {
       animation: avatarLoaded 0.4s ease-out;
     }
-    
+
     // Enhanced mobile optimization
     &.mobile-optimized {
       will-change: auto;
       transition-duration: 0.2s;
     }
-    
+
     // Hover effects
     &:hover {
       transform: scale(1.05);
       box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4),
-                  0 3px 10px rgba(99, 102, 241, 0.2);
+        0 3px 10px rgba(99, 102, 241, 0.2);
     }
-    
+
     // Performance mode
     &.low-performance {
       will-change: auto;
-      
+
       &:hover {
         transform: none;
       }
     }
-    
+
     // Touch devices
     @media (hover: none) {
       &:hover {
@@ -467,7 +541,7 @@
       width: 55px;
       height: 55px;
       border-width: 2px;
-      
+
       &:hover {
         transform: scale(1.03);
       }
@@ -482,10 +556,10 @@
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    
+
     // Performance optimizations
     contain: layout;
-    
+
     // Loading placeholder
     &.loading::before {
       content: "";
@@ -505,7 +579,7 @@
       border-radius: 50%;
       z-index: 1;
     }
-    
+
     @media (max-width: 480px) {
       width: 55px;
       height: 55px;
@@ -547,6 +621,24 @@
     word-wrap: break-word;
   }
 
+  &__role-icon,
+  &__location-icon {
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+    opacity: 0.7;
+  }
+
+  &__location {
+    font-size: clamp(0.7rem, 1.6vw, 0.75rem);
+    color: #9ca3af;
+    font-weight: 400;
+    line-height: 1.4;
+    word-wrap: break-word;
+    display: flex;
+    align-items: center;
+    margin-top: 0.125rem;
+  }
+
   &__rating {
     display: flex;
     gap: 0.25rem;
@@ -569,6 +661,10 @@
         animation: starGlow 2s ease-in-out infinite;
       }
     }
+  }
+
+  &__body {
+    margin-top: auto;
   }
 
   &__content {
@@ -614,12 +710,79 @@
     font-weight: 500;
     cursor: pointer;
     transition: color 0.3s ease;
+    margin-bottom: 2rem;
 
     &:hover {
       color: #6366f1;
     }
   }
 
+  &__project-info {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(99, 102, 241, 0.1);
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: center;
+
+    @media (max-width: 480px) {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+    }
+  }
+
+  &__project-label {
+    font-weight: 500;
+    margin-right: 0.25rem;
+  }
+
+  &__project-type {
+    color: #6366f1;
+    font-weight: 600;
+    margin-right: 0.25rem;
+  }
+
+  &__date {
+    color: #9ca3af;
+    font-size: 0.75rem;
+  }
+
+  &__stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 2rem;
+
+    @media (max-width: 768px) {
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 480px) {
+      gap: 1.5rem;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  &__stat {
+    text-align: center;
+
+    &-number {
+      display: block;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      color: #6366f1;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    &-label {
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      color: #6b7280;
+      font-weight: 500;
+    }
+  }
 }
 
 // Dark theme styles

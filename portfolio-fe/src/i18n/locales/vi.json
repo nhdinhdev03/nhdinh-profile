@@ -69,8 +69,13 @@
   "testimonials": {
     "subtitle": "Được yêu thích bởi cộng đồng",
     "title": "Mọi người nói gì",
-    "description": "Được tin tưởng bởi các nhà phát triển và công ty trên toàn thế giới",
-    "join_community": "Tham gia cộng đồng các khách hàng hài lòng"
+    "description": "Được tin tưởng bởi các nhã phát triển và công ty trên toàn thế giới",
+    "join_community": "Tham gia cộng đồng các khách hàng hài lòng",
+    "project": "Dự án",
+    "slide": "Chuyển đến slide",
+    "satisfied_clients": "Khách hàng hài lòng",
+    "average_rating": "Đánh giá trung bình",
+    "satisfaction_rate": "Tỷ lệ hài lòng"
   },
   "about": {
     "title": "Về Tôi",

@@ -68,14 +68,22 @@
   },
   "testimonials": {
     "subtitle": "Loved by the community",
-    "title": "What People Say",
+    "title": "Client Success Stories",
     "description": "Trusted by developers and companies worldwide",
     "join_community": "Join the community of satisfied clients",
     "project": "Project",
     "slide": "Go to slide",
     "satisfied_clients": "Satisfied Clients",
     "average_rating": "Average Rating",
-    "satisfaction_rate": "Satisfaction Rate"
+    "satisfaction_rate": "Satisfaction Rate",
+    "title_alternatives": {
+      "professional": "Client Success Stories",
+      "personal": "What People Say",
+      "business": "Testimonials & Reviews",
+      "impact": "Real Results, Real Stories",
+      "trust": "Trusted by Industry Leaders",
+      "community": "Community Voices"
+    }
   },
   "about": {
     "title": "About Me",

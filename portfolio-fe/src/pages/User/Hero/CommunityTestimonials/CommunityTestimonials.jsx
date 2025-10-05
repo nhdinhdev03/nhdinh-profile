@@ -10,15 +10,28 @@ import {
   FiStar,
 } from "react-icons/fi";
 import { useInView } from "react-intersection-observer";
+import {
+  getRecommendedTitleVariant,
+  useTestimonialsContent,
+  useTestimonialsTitle,
+} from "./useTestimonialsTitle";
 
 import "./CommunityTestimonials.scss";
 
-const CommunityTestimonials = memo(() => {
+const CommunityTestimonials = memo(({ titleVariant, context }) => {
   const { t } = useTranslation();
   const { isLowPerformance, isMobile } = useDeviceCapability();
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
+
+  // Get optimized title và content
+  const recommendedVariant = useMemo(
+    () => titleVariant || getRecommendedTitleVariant(context),
+    [titleVariant, context]
+  );
+  const optimizedTitle = useTestimonialsTitle(recommendedVariant);
+  const { subtitle, description } = useTestimonialsContent(recommendedVariant);
 
   // Memoize testimonials data với structured data để SEO tốt hơn
   const testimonials = useMemo(
@@ -226,7 +239,7 @@ const CommunityTestimonials = memo(() => {
       animate={inView ? "visible" : "hidden"}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      aria-label={t("testimonials.title")}
+      aria-label={optimizedTitle}
       role="region"
     >
       <div className="community-testimonials__container">
@@ -244,14 +257,14 @@ const CommunityTestimonials = memo(() => {
             className="community-testimonials__title"
             variants={itemVariants}
           >
-            {t("testimonials.title")}
+            {optimizedTitle}
           </motion.h2>
 
           <motion.p
             className="community-testimonials__subtitle"
             variants={itemVariants}
           >
-            {t("testimonials.description")}
+            {description}
           </motion.p>
         </motion.div>
 
@@ -454,5 +467,16 @@ const CommunityTestimonials = memo(() => {
 });
 
 CommunityTestimonials.displayName = "CommunityTestimonials";
+
+// PropTypes for better development experience
+CommunityTestimonials.defaultProps = {
+  titleVariant: null, // Will use recommended variant
+  context: {
+    pageType: "portfolio",
+    industry: "tech",
+    audience: "business",
+    goal: "conversion",
+  },
+};
 
 export default CommunityTestimonials;

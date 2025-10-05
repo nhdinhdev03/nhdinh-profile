@@ -68,14 +68,22 @@
   },
   "testimonials": {
     "subtitle": "Được yêu thích bởi cộng đồng",
-    "title": "Mọi người nói gì",
-    "description": "Được tin tưởng bởi các nhã phát triển và công ty trên toàn thế giới",
+    "title": "Câu Chuyện Thành Công",
+    "description": "Được tin tưởng bởi các nhà phát triển và công ty trên toàn thế giới",
     "join_community": "Tham gia cộng đồng các khách hàng hài lòng",
     "project": "Dự án",
     "slide": "Chuyển đến slide",
     "satisfied_clients": "Khách hàng hài lòng",
     "average_rating": "Đánh giá trung bình",
-    "satisfaction_rate": "Tỷ lệ hài lòng"
+    "satisfaction_rate": "Tỷ lệ hài lòng",
+    "title_alternatives": {
+      "professional": "Câu Chuyện Thành Công",
+      "personal": "Mọi Người Nói Gì",
+      "business": "Đánh Giá & Phản Hồi",
+      "impact": "Kết Quả Thực Tế, Câu Chuyện Thực",
+      "trust": "Được Tin Tưởng Bởi Các Lãnh Đạo",
+      "community": "Tiếng Nói Cộng Đồng"
+    }
   },
   "about": {
     "title": "Về Tôi",

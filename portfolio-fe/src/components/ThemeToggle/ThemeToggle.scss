@@ -1,0 +1,132 @@
+.theme-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .quick-toggle-btn,
+  .theme-selector-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      transform: scale(1.05);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    .anticon {
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+  }
+
+  .quick-toggle-btn:hover .anticon {
+    animation: rotate-sun 0.5s ease;
+  }
+}
+
+@keyframes rotate-sun {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+.theme-dropdown-card {
+  min-width: 200px;
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+
+  .theme-dropdown-header {
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--primary-color);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .anticon {
+      font-size: 16px;
+    }
+  }
+
+  .ant-dropdown-menu {
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .theme-menu-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+      transform: translateX(4px);
+    }
+
+    .theme-color-preview {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    &:hover .theme-color-preview {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .theme-name {
+      font-size: 14px;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .theme-check {
+      color: var(--primary-color);
+      font-size: 16px;
+      animation: check-appear 0.3s ease;
+    }
+  }
+}
+
+@keyframes check-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Dark mode adjustments
+[data-theme="dark"] {
+  .theme-dropdown-card {
+    background: #1f1f1f;
+  }
+
+  .theme-menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .theme-dropdown-header {
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+  }
+}

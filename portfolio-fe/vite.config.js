@@ -5,16 +5,17 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-   alias: {
-      '@': path.resolve(__dirname, './src'),
-      'assets': path.resolve(__dirname, './src/assets'),
-      'router': path.resolve(__dirname, './src/router'),
-      'components': path.resolve(__dirname, './src/components'),
-      'hooks': path.resolve(__dirname, './src/hooks'),
-      'layouts': path.resolve(__dirname, './src/layouts'),
-      'pages': path.resolve(__dirname, './src/pages'),
-      'styles': path.resolve(__dirname, './src/styles')
-    }
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      assets: path.resolve(__dirname, "./src/assets"),
+      router: path.resolve(__dirname, "./src/router"),
+      components: path.resolve(__dirname, "./src/components"),
+      contexts: path.resolve(__dirname, "./src/contexts"),
+      hooks: path.resolve(__dirname, "./src/hooks"),
+      layouts: path.resolve(__dirname, "./src/layouts"),
+      pages: path.resolve(__dirname, "./src/pages"),
+      styles: path.resolve(__dirname, "./src/styles"),
+    },
   },
   server: {
     host: true, // Expose to network

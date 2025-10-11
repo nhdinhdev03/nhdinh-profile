@@ -9,6 +9,7 @@ import {
   MessageOutlined,
   ProjectOutlined,
   QuestionCircleOutlined,
+  RocketOutlined,
   SearchOutlined,
   SettingOutlined,
   StarOutlined,
@@ -25,13 +26,14 @@ import {
   Input,
   Layout,
   Menu,
+  Progress,
   Space,
   Tooltip,
   Typography,
 } from "antd";
 import ThemeToggle from "components/ThemeToggle/ThemeToggle";
 import { useTheme } from "contexts/ThemeContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
 import "./MainLayoutAdmin.scss";
@@ -42,9 +44,19 @@ const { Title, Text } = Typography;
 const MainLayoutAdmin = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDark, currentTheme } = useTheme();
+  const { currentTheme } = useTheme();
+
+  // Scroll detection for header effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Mock notifications
   const notificationCount = 5;
@@ -291,7 +303,7 @@ const MainLayoutAdmin = () => {
           {!collapsed ? (
             <div className="logo-full">
               <div className="logo-icon">
-                <DashboardOutlined />
+                <RocketOutlined />
               </div>
               <div className="logo-text">
                 <Title level={4} className="logo-title">
@@ -302,7 +314,7 @@ const MainLayoutAdmin = () => {
             </div>
           ) : (
             <div className="logo-collapsed">
-              <DashboardOutlined className="logo-icon-collapsed" />
+              <RocketOutlined className="logo-icon-collapsed" />
             </div>
           )}
         </div>
@@ -319,12 +331,36 @@ const MainLayoutAdmin = () => {
           <div className="sider-footer">
             <div className="footer-stats">
               <div className="stat-item">
-                <Text className="stat-label">Total Views</Text>
-                <Text className="stat-value">12.5K</Text>
+                <div className="stat-content">
+                  <Text className="stat-label">Total Views</Text>
+                  <Text className="stat-value">12.5K</Text>
+                </div>
+                <Progress
+                  percent={75}
+                  showInfo={false}
+                  strokeColor={{
+                    "0%": "#667eea",
+                    "100%": "#764ba2",
+                  }}
+                  trailColor="rgba(102, 126, 234, 0.1)"
+                  strokeWidth={4}
+                />
               </div>
               <div className="stat-item">
-                <Text className="stat-label">Projects</Text>
-                <Text className="stat-value">24</Text>
+                <div className="stat-content">
+                  <Text className="stat-label">Projects</Text>
+                  <Text className="stat-value">24</Text>
+                </div>
+                <Progress
+                  percent={60}
+                  showInfo={false}
+                  strokeColor={{
+                    "0%": "#667eea",
+                    "100%": "#764ba2",
+                  }}
+                  trailColor="rgba(102, 126, 234, 0.1)"
+                  strokeWidth={4}
+                />
               </div>
             </div>
           </div>
@@ -332,7 +368,7 @@ const MainLayoutAdmin = () => {
       </Sider>
 
       <Layout className="admin-main-layout">
-        <Header className="admin-header">
+        <Header className={`admin-header ${scrolled ? "scrolled" : ""}`}>
           <div className="header-left">
             <Button
               type="text"

@@ -1,4 +1,5 @@
 import {
+  BellOutlined,
   DashboardOutlined,
   EditOutlined,
   LogoutOutlined,
@@ -7,6 +8,8 @@ import {
   MenuUnfoldOutlined,
   MessageOutlined,
   ProjectOutlined,
+  QuestionCircleOutlined,
+  SearchOutlined,
   SettingOutlined,
   StarOutlined,
   TeamOutlined,
@@ -16,11 +19,14 @@ import {
 } from "@ant-design/icons";
 import {
   Avatar,
+  Badge,
   Button,
   Dropdown,
+  Input,
   Layout,
   Menu,
   Space,
+  Tooltip,
   Typography,
 } from "antd";
 import ThemeToggle from "components/ThemeToggle/ThemeToggle";
@@ -28,15 +34,20 @@ import { useTheme } from "contexts/ThemeContext";
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
+import "./MainLayoutAdmin.scss";
 
 const { Header, Sider, Content } = Layout;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const MainLayoutAdmin = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [searchVisible, setSearchVisible] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDark } = useTheme();
+  const { isDark, currentTheme } = useTheme();
+
+  // Mock notifications
+  const notificationCount = 5;
 
   const menuItems = [
     {
@@ -189,11 +200,43 @@ const MainLayoutAdmin = () => {
     },
   ];
 
+  const notificationItems = [
+    {
+      key: "1",
+      label: (
+        <div className="notification-item">
+          <Text strong>New project created</Text>
+          <Text type="secondary" style={{ fontSize: 12 }}>
+            2 minutes ago
+          </Text>
+        </div>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <div className="notification-item">
+          <Text strong>Blog post published</Text>
+          <Text type="secondary" style={{ fontSize: 12 }}>
+            1 hour ago
+          </Text>
+        </div>
+      ),
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "all",
+      label: "View all notifications",
+    },
+  ];
+
   const userMenuItems = [
     {
       key: "profile",
       icon: <UserOutlined />,
-      label: "Profile",
+      label: "My Profile",
     },
     {
       key: "settings",
@@ -211,6 +254,7 @@ const MainLayoutAdmin = () => {
         // Handle logout
         navigate("/");
       },
+      danger: true,
     },
   ];
 
@@ -230,32 +274,36 @@ const MainLayoutAdmin = () => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout
+      className={`admin-layout theme-${currentTheme}`}
+      style={{ minHeight: "100vh" }}
+    >
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
-        width={250}
-        style={{
-          background: "#fff",
-          boxShadow: "2px 0 8px rgba(0, 0, 0, 0.1)",
-        }}
+        width={260}
+        className="admin-sider"
+        breakpoint="lg"
+        collapsedWidth={80}
       >
-        <div
-          style={{
-            padding: "16px",
-            textAlign: "center",
-            borderBottom: "1px solid #f0f0f0",
-          }}
-        >
+        <div className="sider-logo">
           {!collapsed ? (
-            <Title level={4} style={{ margin: 0, color: "#1890ff" }}>
-              Admin Panel
-            </Title>
+            <div className="logo-full">
+              <div className="logo-icon">
+                <DashboardOutlined />
+              </div>
+              <div className="logo-text">
+                <Title level={4} className="logo-title">
+                  Admin Panel
+                </Title>
+                <Text className="logo-subtitle">Portfolio CMS</Text>
+              </div>
+            </div>
           ) : (
-            <Title level={4} style={{ margin: 0, color: "#1890ff" }}>
-              AP
-            </Title>
+            <div className="logo-collapsed">
+              <DashboardOutlined className="logo-icon-collapsed" />
+            </div>
           )}
         </div>
 
@@ -264,60 +312,117 @@ const MainLayoutAdmin = () => {
           selectedKeys={getSelectedKeys()}
           defaultOpenKeys={getOpenKeys()}
           items={menuItems}
-          style={{ border: "none", paddingTop: "8px" }}
+          className="admin-menu"
         />
+
+        {!collapsed && (
+          <div className="sider-footer">
+            <div className="footer-stats">
+              <div className="stat-item">
+                <Text className="stat-label">Total Views</Text>
+                <Text className="stat-value">12.5K</Text>
+              </div>
+              <div className="stat-item">
+                <Text className="stat-label">Projects</Text>
+                <Text className="stat-value">24</Text>
+              </div>
+            </div>
+          </div>
+        )}
       </Sider>
 
-      <Layout>
-        <Header
-          style={{
-            padding: "0 16px",
-            background: "#fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
-          />
+      <Layout className="admin-main-layout">
+        <Header className="admin-header">
+          <div className="header-left">
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              className="menu-toggle-btn"
+            />
 
-          <Space size="middle">
+            {/* Search Bar */}
+            <div className="header-search">
+              {searchVisible ? (
+                <Input
+                  placeholder="Search anything..."
+                  prefix={<SearchOutlined />}
+                  className="search-input"
+                  autoFocus
+                  onBlur={() => setSearchVisible(false)}
+                />
+              ) : (
+                <Tooltip title="Search (Ctrl+K)">
+                  <Button
+                    type="text"
+                    icon={<SearchOutlined />}
+                    onClick={() => setSearchVisible(true)}
+                    className="search-btn"
+                  />
+                </Tooltip>
+              )}
+            </div>
+          </div>
+
+          <Space size="middle" className="header-actions">
+            {/* Quick Help */}
+            <Tooltip title="Help Center">
+              <Button
+                type="text"
+                icon={<QuestionCircleOutlined />}
+                className="action-btn"
+              />
+            </Tooltip>
+
+            {/* Notifications */}
+            <Dropdown
+              menu={{ items: notificationItems }}
+              placement="bottomRight"
+              trigger={["click"]}
+              overlayClassName="notification-dropdown"
+            >
+              <Badge count={notificationCount} size="small">
+                <Button
+                  type="text"
+                  icon={<BellOutlined />}
+                  className="action-btn notification-btn"
+                />
+              </Badge>
+            </Dropdown>
+
+            {/* Theme Toggle */}
             <ThemeToggle />
 
+            {/* User Menu */}
             <Dropdown
               menu={{ items: userMenuItems }}
               placement="bottomRight"
-              arrow
+              trigger={["click"]}
+              overlayClassName="user-dropdown"
             >
-              <Space style={{ cursor: "pointer" }}>
-                <Avatar size="small" icon={<UserOutlined />} />
-                <span>Admin</span>
+              <Space className="user-info" style={{ cursor: "pointer" }}>
+                <Avatar
+                  size="default"
+                  icon={<UserOutlined />}
+                  className="user-avatar"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  }}
+                />
+                <div className="user-details">
+                  <Text strong className="user-name">
+                    Admin User
+                  </Text>
+                  <Text className="user-role">Administrator</Text>
+                </div>
               </Space>
             </Dropdown>
           </Space>
         </Header>
 
-        <Content
-          style={{
-            margin: "16px",
-            padding: 0,
-            background: "#f5f5f5",
-            borderRadius: "8px",
-            overflow: "auto",
-          }}
-        >
-          <div
-            style={{ padding: "16px", background: "#fff", borderRadius: "8px" }}
-          >
+        <Content className="admin-content">
+          <div className="content-wrapper">
             <Outlet />
           </div>
         </Content>

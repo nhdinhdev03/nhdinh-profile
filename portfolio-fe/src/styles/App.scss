@@ -1,7 +1,7 @@
-@use 'variables' as *;
-@use 'performance.scss' as *;
-@use 'responsive.scss' as *;
-@use 'typography.scss' as *;
+@use "variables" as *;
+@use "performance.scss" as *;
+@use "responsive.scss" as *;
+@use "typography.scss" as *;
 
 // Theme transition optimization - prevent FOUC
 html.theme-transitioning {
@@ -19,19 +19,18 @@ html:not(.theme-transitioning) {
   transition: all 0.3s ease;
   position: relative;
   overflow-x: hidden;
-  
+
   // Performance optimizations
 
   // Add smooth transition when switching views
   &.transitioning {
     pointer-events: none;
-    
+
     main {
       transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       opacity: 0.95;
     }
   }
-
 
   // Global route transition styles
   &.route-transitioning {
@@ -42,27 +41,27 @@ html:not(.theme-transitioning) {
 
   // Animated background elements
   &::before {
-    content: '';
+    content: "";
     position: fixed;
     top: -50%;
     left: -50%;
     width: 200%;
     height: 200%;
     background: radial-gradient(
-      circle at 20% 20%,
-      rgba(99, 102, 241, 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(16, 185, 129, 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 40%,
-      rgba(139, 92, 246, 0.1) 0%,
-      transparent 50%
-    );
+        circle at 20% 20%,
+        rgba(99, 102, 241, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(16, 185, 129, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 40% 40%,
+        rgba(139, 92, 246, 0.1) 0%,
+        transparent 50%
+      );
     animation: backgroundFloat 30s ease-in-out infinite;
     z-index: -1;
     pointer-events: none;
@@ -72,27 +71,33 @@ html:not(.theme-transitioning) {
     position: relative;
     z-index: 1;
     /* Prevent content being hidden under fixed header; include safe area */
-    padding-top: calc(var(--header-height, 80px) + env(safe-area-inset-top, 0px));
-    
+    padding-top: calc(
+      var(--header-height, 80px) + env(safe-area-inset-top, 0px)
+    );
+
     // Responsive padding for content
     padding-left: clamp($spacing-base, 2vw, $spacing-xl);
     padding-right: clamp($spacing-base, 2vw, $spacing-xl);
     padding-bottom: $spacing-2xl;
-    
+
     // Optimize scroll behavior
     scroll-behavior: smooth;
     overscroll-behavior: contain;
-    
+
     // Mobile specific adjustments
     @include mobile-only {
-      padding-top: calc(var(--header-height, 60px) + env(safe-area-inset-top, 0px));
+      padding-top: calc(
+        var(--header-height, 60px) + env(safe-area-inset-top, 0px)
+      );
       padding-left: $spacing-sm;
       padding-right: $spacing-sm;
       padding-bottom: $spacing-xl;
     }
-    
+
     @include mobile-xxs-only {
-      padding-top: calc(var(--header-height, 56px) + env(safe-area-inset-top, 0px));
+      padding-top: calc(
+        var(--header-height, 56px) + env(safe-area-inset-top, 0px)
+      );
       padding-left: $spacing-xs;
       padding-right: $spacing-xs;
       padding-bottom: $spacing-lg;
@@ -100,10 +105,9 @@ html:not(.theme-transitioning) {
   }
 }
 
-
-
 @keyframes backgroundFloat {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) rotate(0deg);
   }
   33% {
@@ -116,10 +120,8 @@ html:not(.theme-transitioning) {
 
 // Smooth transitions for theme switching
 * {
-  transition: background-color 0.3s ease,
-              border-color 0.3s ease,
-              color 0.3s ease,
-              box-shadow 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    color 0.3s ease, box-shadow 0.3s ease;
 }
 
 // Enhanced scrollbar styling
@@ -139,7 +141,7 @@ html {
 ::-webkit-scrollbar-thumb {
   background: var(--primary-light);
   border-radius: 10px;
-  
+
   &:hover {
     background: var(--primary-dark);
   }
@@ -167,7 +169,143 @@ html {
     }
   }
 }
+//////////
+/// hiển thị backend đang thực hiện
+/// //////////
+/// hiển thị backend đang thực hiện
+///hiển thị be đang thực hiện
+/// //////////
+/// hiển thị backend đang thực hiện
+///hiển thị be đang thực hiện
+//////////
+/// hiển thị backend đang thực hiện
+///hiển thị be đang thực hiện
 
+//////////
+/// hiển thị backend đang thực hiện
+///hiển thị be đang thực hiện
+/// hiển thị be đang thực hiện
+///hiển thị be đang thực hiện
+
+.sample-data-banner {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(16px, 4vw, 32px);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  width: min(640px, calc(100vw - 32px));
+  padding: $spacing-md $spacing-lg;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(12px) saturate(140%);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text-primary);
+  z-index: 1050;
+  margin: 0 16px;
+  padding-bottom: max($spacing-md, env(safe-area-inset-bottom, 0px));
+
+  @supports (bottom: env(safe-area-inset-bottom)) {
+    bottom: max(clamp(16px, 4vw, 32px), env(safe-area-inset-bottom));
+  }
+}
+
+.sample-data-banner__content {
+  flex: 1;
+  font-size: clamp($font-sm, 1.9vw, $font-lg);
+  line-height: 1.5;
+}
+
+.sample-data-banner__dismiss {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: $spacing-sm $spacing-lg;
+  background: var(--primary-light);
+  color: #fff;
+  font-weight: $font-semibold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 44px;
+  min-width: 120px;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(99, 102, 241, 0.25);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
+[data-theme="dark"] .sample-data-banner {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(241, 245, 249, 0.96);
+}
+
+[data-theme="dark"] .sample-data-banner__dismiss {
+  background: rgba(99, 102, 241, 0.9);
+}
+
+@media (max-width: 600px) {
+  .sample-data-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: $spacing-md;
+    width: min(520px, calc(100vw - 24px));
+    margin: 0 12px;
+  }
+
+  .sample-data-banner__dismiss {
+    width: 100%;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    font-size: clamp($font-sm, 3.5vw, $font-base);
+  }
+}
+
+@media (max-width: 360px) {
+  .sample-data-banner {
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+  }
+
+  .sample-data-banner__content {
+    font-size: clamp($font-xs, 4vw, $font-base);
+  }
+
+  .sample-data-banner__dismiss {
+    padding: $spacing-sm;
+  }
+}
+//////////
+/// hiển thị backend đang thực hiện
+/// //////////
+/// hiển thị backend đang thực hiện
+///hiển thị be đang thực hiện
+/// //////////
+/// hiển thị backend đang thực hiện
+///hiển thị be đang thực hiện
+//////////
+/// hiển thị backend đang thực hiện
+///hiển thị be đang thực hiện
+
+//////////
+/// hiển thị backend đang thực hiện
+///hiển thị be đang thực hiện
+/// hiển thị be đang thực hiện
+///hiển thị be đang thực hiện
+///hiển thị be đang thực hiện
 @keyframes particleFloat {
   0% {
     transform: translateY(100vh) scale(0);
@@ -190,25 +328,27 @@ html {
     &::before {
       display: none;
     }
-    
+
     // Optimize main content padding
     main {
-      padding-top: calc(var(--header-height, 60px) + env(safe-area-inset-top, 0px));
+      padding-top: calc(
+        var(--header-height, 60px) + env(safe-area-inset-top, 0px)
+      );
     }
   }
-  
+
   // Hide particles on mobile for better performance
   .particles {
     display: none;
   }
-  
+
   // Optimize button sizes for touch
   .btn {
     @include mobile-touch-target(48px);
     padding: $spacing-base $spacing-lg;
     font-size: $font-base;
     min-height: 48px;
-    
+
     // Optimize for very small screens
     @include mobile-xxs-only {
       min-height: 52px;
@@ -216,26 +356,26 @@ html {
       font-size: $font-lg;
       border-radius: 12px;
     }
-    
+
     // Disable hover effects on touch devices
     @include touch-device {
       &:hover {
         transform: none;
         box-shadow: none;
       }
-      
+
       &:active {
         transform: scale(0.95);
         transition: transform 0.1s ease;
       }
     }
   }
-  
+
   // Optimize glass card for mobile
   .glass-card {
     border-radius: 16px;
     backdrop-filter: blur(10px);
-    
+
     // Reduce complexity on mobile
     &::before {
       display: none;
@@ -272,13 +412,18 @@ html {
   overflow: hidden;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
   }
 }
 
@@ -300,18 +445,23 @@ html {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
     transition: left 0.5s ease;
   }
-  
+
   &:hover::before {
     left: 100%;
   }
@@ -321,7 +471,7 @@ html {
   background: var(--gradient-primary);
   color: white;
   border: 2px solid transparent;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
@@ -332,7 +482,7 @@ html {
   background: transparent;
   color: var(--primary-light);
   border: 2px solid var(--primary-light);
-  
+
   &:hover {
     background: var(--primary-light);
     color: white;
@@ -345,7 +495,7 @@ html {
   background: var(--gradient-secondary);
   color: white;
   border: 2px solid transparent;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);

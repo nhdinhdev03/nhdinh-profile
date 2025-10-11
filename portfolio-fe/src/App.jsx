@@ -1,6 +1,6 @@
 import { useTheme } from "hooks/useTheme";
 
-import { memo, Suspense } from "react";
+import { memo, Suspense, useEffect, useRef, useState } from "react";
 import {
   Navigate,
   Route,
@@ -23,14 +23,124 @@ import NotFound from "pages/User/NotFound/NotFound";
 import { ROUTES } from "router/routeConstants";
 import "./i18n";
 
+const NOTICE_STORAGE_KEY = "sampleDataNoticeDismissedAt";
+const DISPLAY_INTERVAL_MS = 5 * 60 * 1000;
+
 const App = memo(() => {
   // Không cần truyền initialTheme vì useTheme đã tự động đọc từ document/localStorage
   const [theme, toggleTheme] = useTheme();
+  const [isNoticeVisible, setIsNoticeVisible] = useState(() => {
+    if (typeof window === "undefined") {
+      return true;
+    }
+
+    try {
+      const storedValue = localStorage.getItem(NOTICE_STORAGE_KEY);
+      if (!storedValue) {
+        return true;
+      }
+
+      const lastDismissedAt = Number(storedValue);
+      if (!Number.isFinite(lastDismissedAt)) {
+        return true;
+      }
+
+      return Date.now() - lastDismissedAt >= DISPLAY_INTERVAL_MS;
+    } catch (error) {
+      console.warn("Failed to read notice state:", error);
+      return true;
+    }
+  });
+  const reDisplayTimerRef = useRef(null);
+
+  useEffect(() => {
+    if (!isNoticeVisible) {
+      try {
+        localStorage.setItem(NOTICE_STORAGE_KEY, Date.now().toString());
+      } catch (error) {
+        console.warn("Failed to persist notice state:", error);
+      }
+    }
+  }, [isNoticeVisible]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const clearExistingTimer = () => {
+      if (reDisplayTimerRef.current) {
+        window.clearTimeout(reDisplayTimerRef.current);
+        reDisplayTimerRef.current = null;
+      }
+    };
+
+    const scheduleReDisplay = () => {
+      try {
+        const storedValue = localStorage.getItem(NOTICE_STORAGE_KEY);
+        const lastDismissedAt = Number(storedValue);
+        const isValidTimestamp =
+          Number.isFinite(lastDismissedAt) && lastDismissedAt > 0;
+        const now = Date.now();
+
+        if (!isValidTimestamp || now - lastDismissedAt >= DISPLAY_INTERVAL_MS) {
+          clearExistingTimer();
+          setIsNoticeVisible(true);
+          return;
+        }
+
+        const timeUntilNextDisplay =
+          DISPLAY_INTERVAL_MS - (now - lastDismissedAt);
+        clearExistingTimer();
+        reDisplayTimerRef.current = window.setTimeout(() => {
+          setIsNoticeVisible(true);
+        }, timeUntilNextDisplay);
+      } catch (error) {
+        console.warn("Failed to schedule notice visibility:", error);
+        clearExistingTimer();
+        setIsNoticeVisible(true);
+      }
+    };
+
+    if (!isNoticeVisible) {
+      scheduleReDisplay();
+    } else {
+      clearExistingTimer();
+    }
+
+    const handleStorage = (event) => {
+      if (event.key === NOTICE_STORAGE_KEY) {
+        scheduleReDisplay();
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      clearExistingTimer();
+    };
+  }, [isNoticeVisible]);
 
   return (
     <Router>
       <ScrollToTopOnNavigate />
       <ScrollToTop />
+      {isNoticeVisible && (
+        <div className="sample-data-banner" role="status" aria-live="polite">
+          <div className="sample-data-banner__content">
+            Backend đang trong quá trình xây dựng nên dữ liệu hiện tại chỉ mang
+            tính minh họa.
+          </div>
+          <button
+            type="button"
+            className="sample-data-banner__dismiss"
+            onClick={() => setIsNoticeVisible(false)}
+          >
+            Đã hiểu
+          </button>
+        </div>
+      )}
       <Suspense fallback={<LoadingFallback theme={theme} />}>
         <Routes>
           {/* Public routes */}

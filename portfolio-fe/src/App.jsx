@@ -74,10 +74,10 @@ const App = memo(() => {
                 />
               );
             })}
-
-            {/* Admin 404 - Must be last */}
-            <Route path="*" element={<AdminNotFound />} />
           </Route>
+
+          {/* Admin 404 - Fullscreen (outside layout) */}
+          <Route path="/admin/*" element={<AdminNotFound />} />
 
           {/* Public 404 - Must be last */}
           <Route path="*" element={<NotFound />} />

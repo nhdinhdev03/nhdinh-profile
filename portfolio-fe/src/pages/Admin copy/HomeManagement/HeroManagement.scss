@@ -1,0 +1,418 @@
+// Enhanced HeroManagement Styles
+.hero-management-container {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  position: relative;
+
+  // Custom scrollbar
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #1890ff, #36cfc9);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: linear-gradient(45deg, #096dd9, #13c2c2);
+    }
+  }
+
+  // Floating Button enhancements
+  .ant-float-btn-group {
+    .ant-float-btn {
+      box-shadow: 0 6px 16px rgba(24, 144, 255, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      &:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 8px 24px rgba(24, 144, 255, 0.4);
+      }
+    }
+  }
+
+  // Card hover effects
+  .ant-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+      border-color: rgba(24, 144, 255, 0.3);
+    }
+
+    .ant-card-head {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  // Table row animations
+  .ant-table-tbody {
+    .ant-table-row {
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #f0f9ff !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(24, 144, 255, 0.1);
+      }
+
+      &.deleted-row {
+        opacity: 0.6;
+        background-color: rgba(255, 77, 79, 0.05);
+
+        &:hover {
+          background-color: rgba(255, 77, 79, 0.1) !important;
+        }
+      }
+    }
+  }
+
+  // Enhanced Button styles
+  .ant-btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover, &:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &.ant-btn-primary {
+      background: linear-gradient(45deg, #1890ff, #36cfc9);
+      border: none;
+
+      &:hover, &:focus {
+        background: linear-gradient(45deg, #096dd9, #13c2c2);
+      }
+    }
+
+    &.ant-btn-danger {
+      background: linear-gradient(45deg, #ff4d4f, #ff7875);
+      border: none;
+
+      &:hover, &:focus {
+        background: linear-gradient(45deg, #d9363e, #ff4d4f);
+      }
+    }
+  }
+
+  // Input and TextArea enhancements
+  .ant-input, .ant-input-search input {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 2px solid #f0f0f0;
+
+    &:focus, &:hover {
+      border-color: #1890ff;
+      box-shadow: 0 0 12px rgba(24, 144, 255, 0.2);
+    }
+  }
+
+  .ant-input-search .ant-input-search-button {
+    border-radius: 0 24px 24px 0;
+    background: linear-gradient(45deg, #1890ff, #36cfc9);
+    border: none;
+    height: 40px;
+
+    &:hover {
+      background: linear-gradient(45deg, #096dd9, #13c2c2);
+      transform: scale(1.02);
+    }
+  }
+
+  // Tag enhancements
+  .ant-tag {
+    border-radius: 16px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &.ant-tag-success {
+      background: linear-gradient(45deg, #52c41a, #73d13d);
+      color: white;
+    }
+
+    &.ant-tag-error {
+      background: linear-gradient(45deg, #ff4d4f, #ff7875);
+      color: white;
+    }
+
+    &.ant-tag-blue {
+      background: linear-gradient(45deg, #1890ff, #40a9ff);
+      color: white;
+    }
+
+    &.ant-tag-purple {
+      background: linear-gradient(45deg, #722ed1, #9254de);
+      color: white;
+    }
+  }
+
+  // List item animations
+  .ant-list-item {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+
+    &:hover {
+      background-color: rgba(24, 144, 255, 0.05);
+      transform: translateX(4px);
+    }
+  }
+
+  // Drawer enhancements
+  .ant-drawer {
+    .ant-drawer-header {
+      background: linear-gradient(90deg, #f0f9ff 0%, #e6f7ff 100%);
+      border-bottom: 1px solid rgba(24, 144, 255, 0.2);
+    }
+
+    .ant-drawer-body {
+      background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+    }
+  }
+
+  // Empty state enhancements
+  .ant-empty {
+    .ant-empty-image {
+      opacity: 0.8;
+      transition: all 0.3s ease;
+
+      &:hover {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  // Progress bar styling
+  .ant-progress-line {
+    .ant-progress-bg {
+      background: linear-gradient(45deg, #1890ff, #36cfc9);
+      border-radius: 4px;
+    }
+  }
+
+  // Alert enhancements
+  .ant-alert {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+    &.ant-alert-error {
+      background: linear-gradient(135deg, #fff2f0 0%, #ffece6 100%);
+    }
+
+    &.ant-alert-success {
+      background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
+    }
+
+    &.ant-alert-info {
+      background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+    }
+
+    &.ant-alert-warning {
+      background: linear-gradient(135deg, #fffbe6 0%, #fff1b8 100%);
+    }
+  }
+
+  // Statistic styling
+  .ant-statistic {
+    .ant-statistic-title {
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .ant-statistic-content {
+      font-weight: 600;
+    }
+  }
+
+  // Tooltip enhancements
+  .ant-tooltip {
+    .ant-tooltip-inner {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .ant-tooltip-arrow::before {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .ant-card {
+      margin-bottom: 16px;
+
+      .ant-card-body {
+        padding: 16px;
+      }
+    }
+
+    .ant-row {
+      margin: 0;
+
+      .ant-col {
+        padding: 0 8px;
+      }
+    }
+
+    .ant-space {
+      width: 100%;
+
+      .ant-space-item {
+        width: 100%;
+      }
+    }
+
+    .ant-btn-group .ant-btn {
+      flex: 1;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .ant-table {
+      .ant-table-container {
+        .ant-table-content {
+          overflow-x: auto;
+        }
+      }
+    }
+
+    .ant-statistic {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .ant-drawer {
+      .ant-drawer-content-wrapper {
+        width: 100% !important;
+      }
+    }
+  }
+
+  // Dark mode support
+  @media (prefers-color-scheme: dark) {
+    background: linear-gradient(135deg, #1f1f1f 0%, #2d2d2d 100%);
+
+    .ant-card {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .ant-table {
+      background: rgba(255, 255, 255, 0.05);
+      
+      .ant-table-tbody .ant-table-row:hover {
+        background-color: rgba(24, 144, 255, 0.1) !important;
+      }
+    }
+  }
+
+  // Animation keyframes
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  // Apply animations
+  .ant-card {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .ant-table-row {
+    animation: slideInRight 0.4s ease-out;
+  }
+
+  .ant-statistic {
+    animation: fadeInUp 0.8s ease-out;
+  }
+}
+
+// Loading spinner customization
+.ant-spin-dot {
+  .ant-spin-dot-item {
+    background-color: #1890ff;
+  }
+}
+
+.ant-spin-lg .ant-spin-dot {
+  .ant-spin-dot-item {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Custom utility classes
+.gradient-text {
+  background: linear-gradient(45deg, #1890ff, #36cfc9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+}
+
+.shadow-elevated {
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+}
+
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

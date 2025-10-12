@@ -1,3 +1,5 @@
+@use "sass:math";
+
 .admin-not-found-fullscreen {
   position: fixed;
   top: 0;
@@ -287,10 +289,10 @@
 
       @for $i from 1 through 20 {
         &:nth-child(#{$i}) {
-          top: random(100) * 1%;
-          left: random(100) * 1%;
-          animation-delay: random(10) * 0.5s;
-          animation-duration: (8 + random(8)) * 1s;
+          top: math.random(100) * 1%;
+          left: math.random(100) * 1%;
+          animation-delay: math.random(10) * 0.5s;
+          animation-duration: (8 + math.random(8)) * 1s;
         }
       }
     }

@@ -15,6 +15,9 @@ export default defineConfig({
       layouts: path.resolve(__dirname, "./src/layouts"),
       pages: path.resolve(__dirname, "./src/pages"),
       styles: path.resolve(__dirname, "./src/styles"),
+      theme: path.resolve(__dirname, "./src/theme"),
+      api: path.resolve(__dirname, "./src/api"),
+      utils: path.resolve(__dirname, "./src/utils"),
     },
   },
   server: {

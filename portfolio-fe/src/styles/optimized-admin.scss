@@ -1,0 +1,363 @@
+/* =====================================
+   OPTIMIZED ADMIN STYLES - BEST PRACTICES
+   ===================================== */
+
+/* 
+  Nguyên tắc tối ưu:
+  1. Không dùng animation phức tạp
+  2. Transition đơn giản, nhanh (0.2s)
+  3. Box-shadow tối thiểu
+  4. Tránh gradient nhiều lớp
+  5. Sử dụng CSS variables
+*/
+
+:root {
+  /* Colors */
+  --primary-color: #1890ff;
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #ff4d4f;
+  --text-color: #262626;
+  --text-secondary: #8c8c8c;
+  --border-color: #f0f0f0;
+  --bg-color: #ffffff;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  /* Transitions */
+  --transition-fast: all 0.2s ease;
+  --transition-normal: all 0.3s ease;
+}
+
+/* Dark Theme Variables */
+.theme-dark {
+  --text-color: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --border-color: #303030;
+  --bg-color: #141414;
+}
+
+/* =====================================
+   CARD STYLES - Optimized
+   ===================================== */
+
+.optimized-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  transition: var(--transition-fast);
+
+  /* Simple hover - no complex animations */
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+  }
+
+  .card-body {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* =====================================
+   BUTTON STYLES - Optimized
+   ===================================== */
+
+.optimized-button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+
+  /* Simple hover - just opacity change */
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  /* Variants */
+  &.secondary {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+  }
+
+  &.danger {
+    background: var(--error-color);
+  }
+}
+
+/* =====================================
+   TABLE STYLES - Optimized
+   ===================================== */
+
+.optimized-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: #fafafa;
+
+    th {
+      padding: var(--spacing-md);
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  tbody {
+    tr {
+      transition: var(--transition-fast);
+
+      &:hover {
+        background: #fafafa;
+      }
+
+      td {
+        padding: var(--spacing-md);
+        font-size: 14px;
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+      }
+    }
+  }
+}
+
+/* =====================================
+   FORM STYLES - Optimized
+   ===================================== */
+
+.optimized-form {
+  .form-group {
+    margin-bottom: var(--spacing-md);
+
+    label {
+      display: block;
+      margin-bottom: var(--spacing-xs);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      transition: var(--transition-fast);
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+      }
+    }
+  }
+}
+
+/* =====================================
+   TAG STYLES - Optimized
+   ===================================== */
+
+.optimized-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 20px;
+
+  &.primary {
+    background: #e6f7ff;
+    color: var(--primary-color);
+  }
+  &.success {
+    background: #f6ffed;
+    color: var(--success-color);
+  }
+  &.warning {
+    background: #fffbe6;
+    color: var(--warning-color);
+  }
+  &.error {
+    background: #fff2f0;
+    color: var(--error-color);
+  }
+}
+
+/* =====================================
+   LOADING STATES - Optimized
+   ===================================== */
+
+.optimized-loading {
+  /* Simple spinner - no complex animations */
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+}
+
+/* =====================================
+   UTILITY CLASSES
+   ===================================== */
+
+/* Spacing */
+.mt-sm {
+  margin-top: var(--spacing-sm);
+}
+.mt-md {
+  margin-top: var(--spacing-md);
+}
+.mt-lg {
+  margin-top: var(--spacing-lg);
+}
+
+.mb-sm {
+  margin-bottom: var(--spacing-sm);
+}
+.mb-md {
+  margin-bottom: var(--spacing-md);
+}
+.mb-lg {
+  margin-bottom: var(--spacing-lg);
+}
+
+.p-sm {
+  padding: var(--spacing-sm);
+}
+.p-md {
+  padding: var(--spacing-md);
+}
+.p-lg {
+  padding: var(--spacing-lg);
+}
+
+/* Text */
+.text-primary {
+  color: var(--primary-color);
+}
+.text-success {
+  color: var(--success-color);
+}
+.text-warning {
+  color: var(--warning-color);
+}
+.text-error {
+  color: var(--error-color);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+/* Display */
+.flex {
+  display: flex;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.flex-col {
+  flex-direction: column;
+}
+
+/* =====================================
+   RESPONSIVE - Mobile First
+   ===================================== */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .optimized-card .card-body {
+    padding: var(--spacing-md);
+  }
+
+  .optimized-table {
+    font-size: 12px;
+
+    th,
+    td {
+      padding: var(--spacing-sm);
+    }
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .optimized-button {
+    width: 100%;
+    margin-bottom: var(--spacing-sm);
+  }
+}
+
+/* =====================================
+   PERFORMANCE TIPS
+   ===================================== */
+
+/*
+  ✅ DO:
+  - Use simple transitions (0.2s-0.3s)
+  - Use opacity for hover effects
+  - Use transform for animations
+  - Use CSS variables
+  - Keep selectors simple
+  
+  ❌ DON'T:
+  - Complex keyframe animations
+  - Multiple box-shadows
+  - Multiple gradients
+  - Deep nesting (>3 levels)
+  - !important (unless necessary)
+*/

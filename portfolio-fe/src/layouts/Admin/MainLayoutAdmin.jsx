@@ -8,8 +8,10 @@ import {
   MenuUnfoldOutlined,
   MessageOutlined,
   ProjectOutlined,
+  PushpinOutlined,
   QuestionCircleOutlined,
   RocketOutlined,
+  SearchOutlined,
   SettingOutlined,
   StarOutlined,
   TeamOutlined,
@@ -17,32 +19,93 @@ import {
   TranslationOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Badge, Dropdown, Layout, Menu, Space, Typography } from "antd";
+import {
+  Avatar,
+  Badge,
+  Dropdown,
+  Input,
+  Layout,
+  Menu,
+  Space,
+  Tooltip,
+  Typography,
+} from "antd";
 import ThemeToggle from "components/ThemeToggle/ThemeToggle";
 import { useTheme } from "contexts/ThemeContext";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
 import "./MainLayoutAdmin.scss";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
+const { Search } = Input;
 
 const MainLayoutAdmin = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    // Load collapsed state from localStorage
+    const saved = localStorage.getItem("admin-sidebar-collapsed");
+    return saved === "true";
+  });
+  const [searchValue, setSearchValue] = useState("");
+  const [pinnedItems, setPinnedItems] = useState(() => {
+    // Load pinned items from localStorage
+    const saved = localStorage.getItem("admin-pinned-items");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [openKeys, setOpenKeys] = useState([]);
+
   const navigate = useNavigate();
   const location = useLocation();
   const { currentTheme } = useTheme();
 
+  // Save collapsed state to localStorage
+  useEffect(() => {
+    localStorage.setItem("admin-sidebar-collapsed", collapsed);
+  }, [collapsed]);
+
+  // Save pinned items to localStorage
+  useEffect(() => {
+    localStorage.setItem("admin-pinned-items", JSON.stringify(pinnedItems));
+  }, [pinnedItems]);
+
+  // Initialize openKeys based on current path
+  useEffect(() => {
+    setOpenKeys(getOpenKeys());
+  }, [location.pathname]);
+
   // Mock notifications
   const notificationCount = 5;
+
+  // Toggle pin item
+  const togglePin = (key) => {
+    setPinnedItems((prev) =>
+      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]
+    );
+  };
 
   const menuItems = [
     {
       key: ROUTES.ADMIN_DASHBOARD,
       icon: <DashboardOutlined />,
-      label: "Dashboard",
+      label: (
+        <Space className="menu-item-content">
+          <span>Dashboard</span>
+          {!collapsed && (
+            <PushpinOutlined
+              className={`pin-icon ${
+                pinnedItems.includes(ROUTES.ADMIN_DASHBOARD) ? "pinned" : ""
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePin(ROUTES.ADMIN_DASHBOARD);
+              }}
+            />
+          )}
+        </Space>
+      ),
       onClick: () => navigate(ROUTES.ADMIN_DASHBOARD),
+      isPinned: pinnedItems.includes(ROUTES.ADMIN_DASHBOARD),
     },
     {
       key: "hero",
@@ -188,6 +251,36 @@ const MainLayoutAdmin = () => {
     },
   ];
 
+  // Filter menu items based on search
+  const filteredMenuItems = useMemo(() => {
+    if (!searchValue) return menuItems;
+
+    const searchLower = searchValue.toLowerCase();
+    return menuItems.filter((item) => {
+      const labelText =
+        typeof item.label === "string"
+          ? item.label
+          : item.label?.props?.children?.[0]?.props?.children || "";
+      if (labelText.toLowerCase().includes(searchLower)) return true;
+
+      if (item.children) {
+        return item.children.some((child) =>
+          child.label.toLowerCase().includes(searchLower)
+        );
+      }
+      return false;
+    });
+  }, [searchValue, menuItems]);
+
+  // Sort items: pinned first, then alphabetically
+  const sortedMenuItems = useMemo(() => {
+    return [...filteredMenuItems].sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return 0;
+    });
+  }, [filteredMenuItems]);
+
   const notificationItems = [
     {
       key: "1",
@@ -261,13 +354,17 @@ const MainLayoutAdmin = () => {
     return [];
   };
 
+  const handleOpenChange = (keys) => {
+    setOpenKeys(keys);
+  };
+
   return (
     <Layout className={`admin-layout theme-${currentTheme}`}>
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
-        width={240}
+        width={260}
         className="admin-sider"
         breakpoint="lg"
         collapsedWidth={80}
@@ -277,11 +374,24 @@ const MainLayoutAdmin = () => {
           {!collapsed && <Text className="logo-text">Admin Panel</Text>}
         </div>
 
+        {!collapsed && (
+          <div className="sider-search">
+            <Search
+              placeholder="Search menu..."
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              allowClear
+              prefix={<SearchOutlined />}
+            />
+          </div>
+        )}
+
         <Menu
           mode="inline"
           selectedKeys={getSelectedKeys()}
-          defaultOpenKeys={getOpenKeys()}
-          items={menuItems}
+          openKeys={openKeys}
+          onOpenChange={handleOpenChange}
+          items={sortedMenuItems}
           className="admin-menu"
         />
       </Sider>
@@ -289,21 +399,28 @@ const MainLayoutAdmin = () => {
       <Layout>
         <Header className="admin-header">
           <div className="header-left">
-            {collapsed ? (
-              <MenuUnfoldOutlined
-                className="menu-toggle"
-                onClick={() => setCollapsed(false)}
-              />
-            ) : (
-              <MenuFoldOutlined
-                className="menu-toggle"
-                onClick={() => setCollapsed(true)}
-              />
-            )}
+            <Tooltip
+              title={collapsed ? "Expand" : "Collapse"}
+              placement="right"
+            >
+              {collapsed ? (
+                <MenuUnfoldOutlined
+                  className="menu-toggle"
+                  onClick={() => setCollapsed(false)}
+                />
+              ) : (
+                <MenuFoldOutlined
+                  className="menu-toggle"
+                  onClick={() => setCollapsed(true)}
+                />
+              )}
+            </Tooltip>
           </div>
 
           <Space size="middle" className="header-actions">
-            <QuestionCircleOutlined className="action-icon" />
+            <Tooltip title="Help & Documentation">
+              <QuestionCircleOutlined className="action-icon" />
+            </Tooltip>
 
             <Dropdown
               menu={{ items: notificationItems }}
@@ -311,7 +428,9 @@ const MainLayoutAdmin = () => {
               trigger={["click"]}
             >
               <Badge count={notificationCount} size="small">
-                <BellOutlined className="action-icon" />
+                <Tooltip title="Notifications">
+                  <BellOutlined className="action-icon" />
+                </Tooltip>
               </Badge>
             </Dropdown>
 

@@ -1,38 +1,38 @@
-/* Enhanced Hero Management Styles */
+/* Professional Hero Management - Clean & Modern */
 .hero-management-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  // Removed unnecessary gradient background
 
-  /* Deleted Row Styling */
+  /* Deleted Row - Subtle indicator */
   .deleted-row {
     background-color: #fff1f0 !important;
-    opacity: 0.7;
+    opacity: 0.75;
 
     &:hover {
-      background-color: #ffccc7 !important;
+      background-color: #ffe7e7 !important;
     }
   }
 
-  /* Enhanced Card Styles */
+  /* Clean Card Design */
   .ant-card {
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: none;
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
       transform: translateY(-2px);
     }
 
     .ant-card-head {
       border-bottom: 1px solid #f0f0f0;
       padding: 20px 24px;
-      background: linear-gradient(90deg, #fafafa 0%, #f5f5f5 100%);
-      border-radius: 16px 16px 0 0;
+      background: #fafafa;
+      border-radius: 12px 12px 0 0;
 
       .ant-card-head-title {
         font-weight: 600;
+        font-size: 16px;
         color: #262626;
       }
     }
@@ -42,17 +42,18 @@
     }
   }
 
-  /* Enhanced Table Styles */
+  /* Modern Table - Simplified */
   .ant-table {
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
 
     .ant-table-thead > tr > th {
-      background: linear-gradient(90deg, #f0f9ff 0%, #e6f7ff 100%);
-      border-bottom: 2px solid #91d5ff;
+      background: #fafafa;
+      border-bottom: 2px solid #f0f0f0;
       font-weight: 600;
-      color: #1890ff;
+      color: #262626;
       padding: 16px;
+      font-size: 14px;
 
       &::before {
         display: none;
@@ -60,48 +61,49 @@
     }
 
     .ant-table-tbody > tr {
-      transition: all 0.2s ease;
+      transition: background 0.2s;
 
       &:hover > td {
-        background: #f0f9ff;
+        background: #f5f5f5;
       }
 
       > td {
         padding: 16px;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f5f5f5;
       }
     }
   }
 
-  /* Enhanced Drawer Styles */
+  /* Simplified Drawer */
   .ant-drawer {
     .ant-drawer-header {
-      background: linear-gradient(90deg, #f0f9ff 0%, #e6f7ff 100%);
-      border-bottom: 2px solid #91d5ff;
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
       padding: 20px 24px;
     }
 
     .ant-drawer-body {
       padding: 24px;
-      background: #fafafa;
+      background: #fff;
     }
 
     .ant-drawer-footer {
-      border-top: 2px solid #f0f0f0;
+      border-top: 1px solid #f0f0f0;
       padding: 16px 24px;
+      background: #fafafa;
     }
   }
 
-  /* Enhanced Form Styles */
+  /* Clean Form Design */
   .ant-form {
     .ant-form-item {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
 
       .ant-form-item-label {
         padding-bottom: 8px;
 
         > label {
-          font-weight: 600;
+          font-weight: 500;
           color: #262626;
           font-size: 14px;
 
@@ -113,9 +115,9 @@
 
       .ant-input,
       .ant-input-textarea textarea {
-        border-radius: 8px;
+        border-radius: 6px;
         border: 1px solid #d9d9d9;
-        transition: all 0.3s ease;
+        transition: all 0.2s;
 
         &:hover {
           border-color: #40a9ff;
@@ -123,144 +125,62 @@
 
         &:focus {
           border-color: #1890ff;
-          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.08);
         }
       }
     }
   }
 
-  /* Enhanced List Styles */
-  .ant-list {
-    .ant-list-item {
-      border-radius: 8px;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #e6f7ff;
-        transform: translateX(4px);
-      }
-    }
-  }
-
-  /* Enhanced Button Styles */
+  /* Simplified Button Styles */
   .ant-btn {
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s;
 
     &.ant-btn-primary {
-      background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
-      border: none;
-      box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
-
       &:hover {
-        background: linear-gradient(135deg, #40a9ff 0%, #69c0ff 100%);
-        box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
-        transform: translateY(-2px);
-      }
-
-      &:active {
-        transform: translateY(0);
+        transform: translateY(-1px);
       }
     }
 
     &.ant-btn-danger {
-      background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
-      border: none;
-      box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
-
       &:hover {
-        background: linear-gradient(135deg, #ff7875 0%, #ffa39e 100%);
-        box-shadow: 0 4px 12px rgba(255, 77, 79, 0.4);
-        transform: translateY(-2px);
+        transform: translateY(-1px);
       }
     }
   }
 
-  /* Enhanced Badge Styles */
-  .ant-badge {
-    .ant-badge-count {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      font-weight: 600;
-    }
-  }
-
-  /* Enhanced Tag Styles */
+  /* Clean Tag Styles */
   .ant-tag {
-    border-radius: 12px;
+    border-radius: 4px;
     font-weight: 500;
-    border: none;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    padding: 4px 12px;
-
-    &.ant-tag-blue {
-      background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
-    }
-
-    &.ant-tag-green,
-    &.ant-tag-success {
-      background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
-    }
-
-    &.ant-tag-red,
-    &.ant-tag-error {
-      background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
-    }
-
-    &.ant-tag-orange {
-      background: linear-gradient(135deg, #fa8c16 0%, #ffa940 100%);
-    }
-
-    &.ant-tag-purple {
-      background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);
-    }
+    padding: 4px 10px;
+    font-size: 13px;
   }
 
-  /* Enhanced Avatar Styles */
+  /* Simple Avatar */
   .ant-avatar {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 2px solid white;
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    border: 2px solid #fff;
   }
 
-  /* Enhanced Progress Styles */
-  .ant-progress {
-    .ant-progress-bg {
-      border-radius: 4px;
-      background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);
-    }
-
-    &.ant-progress-status-success .ant-progress-bg {
-      background: linear-gradient(90deg, #52c41a 0%, #73d13d 100%);
-    }
-  }
-
-  /* Enhanced Tabs Styles */
+  /* Simplified Tabs */
   .ant-tabs {
     .ant-tabs-nav {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
 
       .ant-tabs-tab {
         font-weight: 500;
-        font-size: 15px;
-        padding: 12px 20px;
-        border-radius: 8px 8px 0 0;
-        transition: all 0.3s ease;
+        font-size: 14px;
+        padding: 10px 16px;
+        border-radius: 6px 6px 0 0;
+        transition: all 0.2s;
 
         &:hover {
-          background: #f0f9ff;
           color: #1890ff;
         }
 
         &.ant-tabs-tab-active {
-          background: white;
-          box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-
           .ant-tabs-tab-btn {
             color: #1890ff;
             font-weight: 600;
@@ -270,20 +190,18 @@
     }
 
     .ant-tabs-content-holder {
-      background: white;
-      border-radius: 0 0 16px 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      padding: 24px;
+      background: #fff;
+      padding: 20px;
     }
   }
 
-  /* Enhanced Modal Styles */
+  /* Clean Modal */
   .ant-modal {
     .ant-modal-header {
-      background: linear-gradient(90deg, #f0f9ff 0%, #e6f7ff 100%);
-      border-bottom: 2px solid #91d5ff;
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
       padding: 20px 24px;
-      border-radius: 16px 16px 0 0;
+      border-radius: 8px 8px 0 0;
     }
 
     .ant-modal-body {

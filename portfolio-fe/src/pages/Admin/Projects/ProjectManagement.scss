@@ -1,0 +1,302 @@
+/* Professional Project Management Styles */
+.project-management-container {
+  .header-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    margin-bottom: 20px;
+
+    .ant-card-body {
+      padding: 24px;
+    }
+  }
+
+  // Modern table styling
+  .modern-table {
+    .ant-table {
+      border-radius: 8px;
+      overflow: hidden;
+
+      .ant-table-thead > tr > th {
+        background: #fafafa;
+        font-weight: 600;
+        font-size: 14px;
+        color: #262626;
+        border-bottom: 2px solid #f0f0f0;
+        padding: 16px 12px;
+
+        &::before {
+          display: none;
+        }
+      }
+
+      .ant-table-tbody {
+        > tr {
+          transition: all 0.2s;
+
+          &:hover > td {
+            background: #f5f5f5;
+          }
+
+          > td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f5f5f5;
+
+            // Image cell
+            .ant-image {
+              border-radius: 6px;
+              overflow: hidden;
+              border: 1px solid #f0f0f0;
+            }
+
+            // Action buttons
+            .ant-space {
+              .ant-btn {
+                border-radius: 6px;
+                font-weight: 500;
+                transition: all 0.2s;
+
+                &:hover {
+                  transform: translateY(-1px);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Pagination styling
+    .ant-pagination {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+
+      .ant-pagination-item {
+        border-radius: 6px;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: #1890ff;
+        }
+
+        &.ant-pagination-item-active {
+          background: #1890ff;
+          border-color: #1890ff;
+
+          a {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+
+  // Filter section
+  .ant-input,
+  .ant-select {
+    border-radius: 6px;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #40a9ff;
+    }
+
+    &:focus,
+    &.ant-select-focused {
+      border-color: #1890ff;
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.08);
+    }
+  }
+
+  // Tags
+  .ant-tag {
+    border-radius: 4px;
+    font-weight: 500;
+    padding: 4px 10px;
+    font-size: 13px;
+    border: none;
+
+    &.ant-tag-orange {
+      background: #fff7e6;
+      color: #d46b08;
+    }
+
+    &.ant-tag-green {
+      background: #f6ffed;
+      color: #389e0d;
+    }
+
+    &.ant-tag-red {
+      background: #fff1f0;
+      color: #cf1322;
+    }
+
+    &.ant-tag-blue {
+      background: #e6f7ff;
+      color: #0958d9;
+    }
+  }
+
+  // Switches
+  .ant-switch {
+    &.ant-switch-disabled {
+      opacity: 0.6;
+    }
+  }
+
+  // Modal styling
+  .ant-modal {
+    .ant-modal-header {
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 20px 24px;
+      border-radius: 8px 8px 0 0;
+
+      .ant-modal-title {
+        font-weight: 600;
+        font-size: 18px;
+        color: #262626;
+      }
+    }
+
+    .ant-modal-body {
+      padding: 24px;
+
+      .ant-form {
+        .ant-form-item {
+          margin-bottom: 20px;
+
+          .ant-form-item-label > label {
+            font-weight: 500;
+            color: #262626;
+            font-size: 14px;
+
+            &::after {
+              display: none;
+            }
+          }
+
+          .ant-input,
+          .ant-input-number,
+          .ant-input-textarea textarea,
+          .ant-select-selector {
+            border-radius: 6px;
+            transition: all 0.2s;
+
+            &:hover {
+              border-color: #40a9ff;
+            }
+
+            &:focus {
+              border-color: #1890ff;
+              box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.08);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Buttons
+  .ant-btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &.ant-btn-lg {
+      height: 40px;
+      padding: 0 20px;
+      font-size: 15px;
+    }
+
+    &.ant-btn-primary {
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+      }
+    }
+
+    &.ant-btn-danger {
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+      }
+    }
+  }
+
+  // Tooltip
+  .ant-tooltip {
+    .ant-tooltip-inner {
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    .header-card {
+      .ant-card-body {
+        padding: 16px;
+      }
+
+      .ant-space {
+        gap: 8px !important;
+
+        .ant-btn-lg {
+          height: 36px;
+          font-size: 14px;
+          padding: 0 12px;
+        }
+      }
+    }
+
+    .modern-table {
+      .ant-table {
+        font-size: 13px;
+
+        .ant-table-thead > tr > th,
+        .ant-table-tbody > tr > td {
+          padding: 12px 8px;
+        }
+
+        .ant-space {
+          flex-direction: column;
+          gap: 4px !important;
+
+          .ant-btn {
+            width: 100%;
+            font-size: 13px;
+          }
+        }
+      }
+
+      .ant-pagination {
+        text-align: center;
+
+        .ant-pagination-options {
+          display: none;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .ant-card-body {
+      padding: 12px !important;
+    }
+
+    .ant-modal {
+      max-width: calc(100vw - 32px);
+      margin: 16px auto;
+
+      .ant-modal-body {
+        padding: 16px;
+      }
+    }
+
+    h3.ant-typography {
+      font-size: 18px !important;
+    }
+  }
+}

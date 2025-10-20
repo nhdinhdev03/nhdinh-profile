@@ -1,32 +1,39 @@
 import {
-    DeleteOutlined,
-    EditOutlined,
-    EyeOutlined,
-    PlusOutlined,
-    ProjectOutlined,
-    UploadOutlined
-} from '@ant-design/icons';
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  FilterOutlined,
+  PlusOutlined,
+  ProjectOutlined,
+  ReloadOutlined,
+  SearchOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import {
-    Button,
-    Card,
-    Form,
-    Image,
-    Input,
-    InputNumber,
-    Modal,
-    Popconfirm,
-    Select,
-    Space,
-    Switch,
-    Table,
-    Tag,
-    Typography,
-    Upload,
-    message
-} from 'antd';
-import { useEffect, useState } from 'react';
+  Button,
+  Card,
+  Col,
+  Form,
+  Image,
+  Input,
+  InputNumber,
+  Modal,
+  Popconfirm,
+  Row,
+  Select,
+  Space,
+  Switch,
+  Table,
+  Tag,
+  Tooltip,
+  Typography,
+  Upload,
+  message,
+} from "antd";
+import { useEffect, useState } from "react";
+import "./ProjectManagement.scss";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -36,12 +43,15 @@ const ProjectManagement = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const [searchText, setSearchText] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterCategory, setFilterCategory] = useState("all");
   const [form] = Form.useForm();
 
   const statusOptions = [
-    { value: 'draft', label: 'Draft', color: 'orange' },
-    { value: 'published', label: 'Published', color: 'green' },
-    { value: 'archived', label: 'Archived', color: 'red' }
+    { value: "draft", label: "Draft", color: "orange" },
+    { value: "published", label: "Published", color: "green" },
+    { value: "archived", label: "Archived", color: "red" },
   ];
 
   useEffect(() => {
@@ -55,39 +65,39 @@ const ProjectManagement = () => {
     setTimeout(() => {
       setProjects([
         {
-          projectId: '1',
-          categoryId: '1',
-          categoryName: 'Web Development',
-          imageUrl: 'https://via.placeholder.com/150',
-          demoUrl: 'https://demo.example.com',
-          sourceUrl: 'https://github.com/example/project',
+          projectId: "1",
+          categoryId: "1",
+          categoryName: "Web Development",
+          imageUrl: "https://via.placeholder.com/150",
+          demoUrl: "https://demo.example.com",
+          sourceUrl: "https://github.com/example/project",
           isFeatured: true,
           isPublic: true,
-          status: 'published',
+          status: "published",
           viewCount: 150,
           sortOrder: 1,
-          createdAt: '2024-01-01',
-          publishedAt: '2024-01-02',
+          createdAt: "2024-01-01",
+          publishedAt: "2024-01-02",
           isDeleted: false,
-          translations: 2
+          translations: 2,
         },
         {
-          projectId: '2',
-          categoryId: '2',
-          categoryName: 'Mobile App',
-          imageUrl: 'https://via.placeholder.com/150',
+          projectId: "2",
+          categoryId: "2",
+          categoryName: "Mobile App",
+          imageUrl: "https://via.placeholder.com/150",
           demoUrl: null,
-          sourceUrl: 'https://github.com/example/mobile-app',
+          sourceUrl: "https://github.com/example/mobile-app",
           isFeatured: false,
           isPublic: true,
-          status: 'draft',
+          status: "draft",
           viewCount: 25,
           sortOrder: 2,
-          createdAt: '2024-01-15',
+          createdAt: "2024-01-15",
           publishedAt: null,
           isDeleted: false,
-          translations: 1
-        }
+          translations: 1,
+        },
       ]);
       setLoading(false);
     }, 1000);
@@ -96,9 +106,9 @@ const ProjectManagement = () => {
   const fetchCategories = async () => {
     // Simulate API call
     setCategories([
-      { categoryId: '1', name: 'Web Development' },
-      { categoryId: '2', name: 'Mobile App' },
-      { categoryId: '3', name: 'Desktop App' }
+      { categoryId: "1", name: "Web Development" },
+      { categoryId: "2", name: "Mobile App" },
+      { categoryId: "3", name: "Desktop App" },
     ]);
   };
 
@@ -108,16 +118,16 @@ const ProjectManagement = () => {
     if (project) {
       form.setFieldsValue({
         ...project,
-        imageFile: project.imageUrl ? [{ url: project.imageUrl }] : []
+        imageFile: project.imageUrl ? [{ url: project.imageUrl }] : [],
       });
     } else {
       form.resetFields();
       form.setFieldsValue({
         isFeatured: false,
         isPublic: true,
-        status: 'draft',
+        status: "draft",
         viewCount: 0,
-        sortOrder: 0
+        sortOrder: 0,
       });
     }
   };
@@ -131,81 +141,85 @@ const ProjectManagement = () => {
   const handleSubmit = async (values) => {
     try {
       if (editingProject) {
-        console.log('Updating project:', values);
-        message.success('Project updated successfully!');
+        console.log("Updating project:", values);
+        message.success("Project updated successfully!");
       } else {
-        console.log('Creating project:', values);
-        message.success('Project created successfully!');
+        console.log("Creating project:", values);
+        message.success("Project created successfully!");
       }
       setModalVisible(false);
       setEditingProject(null);
       form.resetFields();
       fetchProjects();
     } catch (error) {
-      message.error('Operation failed!');
+      message.error("Operation failed!");
     }
   };
 
   const handleDelete = async (projectId) => {
     try {
-      console.log('Deleting project:', projectId);
-      message.success('Project deleted successfully!');
+      console.log("Deleting project:", projectId);
+      message.success("Project deleted successfully!");
       fetchProjects();
     } catch (error) {
-      message.error('Delete failed!');
+      message.error("Delete failed!");
     }
   };
 
   const getStatusColor = (status) => {
-    const statusOption = statusOptions.find(opt => opt.value === status);
-    return statusOption ? statusOption.color : 'default';
+    const statusOption = statusOptions.find((opt) => opt.value === status);
+    return statusOption ? statusOption.color : "default";
   };
 
   const columns = [
     {
-      title: 'Image',
-      dataIndex: 'imageUrl',
-      key: 'imageUrl',
+      title: "Image",
+      dataIndex: "imageUrl",
+      key: "imageUrl",
       width: 80,
-      render: (url) => (
-        url ? <Image src={url} width={50} height={50} style={{ objectFit: 'cover' }} /> : 'No image'
-      ),
+      render: (url) =>
+        url ? (
+          <Image
+            src={url}
+            width={50}
+            height={50}
+            style={{ objectFit: "cover" }}
+          />
+        ) : (
+          "No image"
+        ),
     },
     {
-      title: 'Category',
-      dataIndex: 'categoryName',
-      key: 'categoryName',
+      title: "Category",
+      dataIndex: "categoryName",
+      key: "categoryName",
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       render: (status) => (
-        <Tag color={getStatusColor(status)}>
-          {status.toUpperCase()}
-        </Tag>
+        <Tag color={getStatusColor(status)}>{status.toUpperCase()}</Tag>
       ),
     },
     {
-      title: 'Featured',
-      dataIndex: 'isFeatured',
-      key: 'isFeatured',
+      title: "Featured",
+      dataIndex: "isFeatured",
+      key: "isFeatured",
       render: (isFeatured) => (
         <Switch checked={isFeatured} disabled size="small" />
       ),
     },
     {
-      title: 'Public',
-      dataIndex: 'isPublic',
-      key: 'isPublic',
-      render: (isPublic) => (
-        <Switch checked={isPublic} disabled size="small" />
-      ),
+      title: "Public",
+      dataIndex: "isPublic",
+      key: "isPublic",
+      render: (isPublic) => <Switch checked={isPublic} disabled size="small" />,
     },
     {
-      title: 'Views',
-      dataIndex: 'viewCount',
-      key: 'viewCount',
+      title: "Views",
+      dataIndex: "viewCount",
+      key: "viewCount",
       render: (count) => (
         <Tag color="blue">
           <EyeOutlined /> {count}
@@ -213,25 +227,25 @@ const ProjectManagement = () => {
       ),
     },
     {
-      title: 'Sort',
-      dataIndex: 'sortOrder',
-      key: 'sortOrder',
+      title: "Sort",
+      dataIndex: "sortOrder",
+      key: "sortOrder",
     },
     {
-      title: 'Translations',
-      dataIndex: 'translations',
-      key: 'translations',
+      title: "Translations",
+      dataIndex: "translations",
+      key: "translations",
       render: (count) => `${count} languages`,
     },
     {
-      title: 'Created',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
+      title: "Created",
+      dataIndex: "createdAt",
+      key: "createdAt",
       render: (date) => new Date(date).toLocaleDateString(),
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
         <Space>
           <Button
@@ -262,53 +276,128 @@ const ProjectManagement = () => {
     },
   ];
 
-  return (
-    <Card>
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={3} style={{ margin: 0 }}>
-          <ProjectOutlined /> Project Management
-        </Title>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => showModal()}
-        >
-          Add New Project
-        </Button>
-      </div>
+  // Filter projects
+  const filteredProjects = projects.filter((project) => {
+    const matchSearch = project.categoryName
+      ?.toLowerCase()
+      .includes(searchText.toLowerCase());
+    const matchStatus =
+      filterStatus === "all" || project.status === filterStatus;
+    const matchCategory =
+      filterCategory === "all" || project.categoryId === filterCategory;
+    return matchSearch && matchStatus && matchCategory;
+  });
 
-      <Table
-        columns={columns}
-        dataSource={projects}
-        loading={loading}
-        rowKey="projectId"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          showQuickJumper: true,
-        }}
-        scroll={{ x: 1200 }}
-      />
+  return (
+    <div className="project-management-container">
+      <Card bordered={false} className="header-card">
+        <Row justify="space-between" align="middle" gutter={[16, 16]}>
+          <Col>
+            <Space direction="vertical" size={4}>
+              <Title level={3} style={{ margin: 0 }}>
+                <ProjectOutlined /> Quản lý dự án
+              </Title>
+              <Text type="secondary">
+                {projects.length} dự án • {filteredProjects.length} đang hiển
+                thị
+              </Text>
+            </Space>
+          </Col>
+          <Col>
+            <Space>
+              <Tooltip title="Làm mới">
+                <Button icon={<ReloadOutlined />} onClick={fetchProjects} />
+              </Tooltip>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => showModal()}
+                size="large"
+              >
+                Thêm dự án mới
+              </Button>
+            </Space>
+          </Col>
+        </Row>
+
+        {/* Filters */}
+        <Row gutter={[16, 16]} style={{ marginTop: 20 }}>
+          <Col xs={24} sm={12} md={8}>
+            <Input
+              placeholder="Tìm kiếm theo tên danh mục..."
+              prefix={<SearchOutlined />}
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              allowClear
+            />
+          </Col>
+          <Col xs={12} sm={6} md={4}>
+            <Select
+              style={{ width: "100%" }}
+              placeholder="Trạng thái"
+              value={filterStatus}
+              onChange={setFilterStatus}
+            >
+              <Option value="all">
+                <FilterOutlined /> Tất cả
+              </Option>
+              {statusOptions.map((opt) => (
+                <Option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+          <Col xs={12} sm={6} md={4}>
+            <Select
+              style={{ width: "100%" }}
+              placeholder="Danh mục"
+              value={filterCategory}
+              onChange={setFilterCategory}
+            >
+              <Option value="all">Tất cả danh mục</Option>
+              {categories.map((cat) => (
+                <Option key={cat.categoryId} value={cat.categoryId}>
+                  {cat.name}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+        </Row>
+      </Card>
+
+      <Card bordered={false} style={{ marginTop: 20 }}>
+        <Table
+          columns={columns}
+          dataSource={filteredProjects}
+          loading={loading}
+          rowKey="projectId"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total) => `Tổng ${total} dự án`,
+          }}
+          scroll={{ x: 1200 }}
+          className="modern-table"
+        />
+      </Card>
 
       <Modal
-        title={editingProject ? 'Edit Project' : 'Add New Project'}
+        title={editingProject ? "Edit Project" : "Add New Project"}
         open={modalVisible}
         onCancel={handleCancel}
         footer={null}
         width={800}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
             name="categoryId"
             label="Category"
-            rules={[{ required: true, message: 'Please select a category!' }]}
+            rules={[{ required: true, message: "Please select a category!" }]}
           >
             <Select placeholder="Select category">
-              {categories.map(category => (
+              {categories.map((category) => (
                 <Option key={category.categoryId} value={category.categoryId}>
                   {category.name}
                 </Option>
@@ -316,10 +405,7 @@ const ProjectManagement = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="imageFile"
-            label="Project Image"
-          >
+          <Form.Item name="imageFile" label="Project Image">
             <Upload
               listType="picture-card"
               maxCount={1}
@@ -332,27 +418,21 @@ const ProjectManagement = () => {
             </Upload>
           </Form.Item>
 
-          <Form.Item
-            name="demoUrl"
-            label="Demo URL"
-          >
+          <Form.Item name="demoUrl" label="Demo URL">
             <Input placeholder="Enter demo URL" />
           </Form.Item>
 
-          <Form.Item
-            name="sourceUrl"
-            label="Source URL"
-          >
+          <Form.Item name="sourceUrl" label="Source URL">
             <Input placeholder="Enter source code URL" />
           </Form.Item>
 
           <Form.Item
             name="status"
             label="Status"
-            rules={[{ required: true, message: 'Please select status!' }]}
+            rules={[{ required: true, message: "Please select status!" }]}
           >
             <Select placeholder="Select status">
-              {statusOptions.map(option => (
+              {statusOptions.map((option) => (
                 <Option key={option.value} value={option.value}>
                   {option.label}
                 </Option>
@@ -360,46 +440,33 @@ const ProjectManagement = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="isFeatured"
-            label="Featured"
-            valuePropName="checked"
-          >
+          <Form.Item name="isFeatured" label="Featured" valuePropName="checked">
             <Switch />
           </Form.Item>
 
-          <Form.Item
-            name="isPublic"
-            label="Public"
-            valuePropName="checked"
-          >
+          <Form.Item name="isPublic" label="Public" valuePropName="checked">
             <Switch />
           </Form.Item>
 
-          <Form.Item
-            name="sortOrder"
-            label="Sort Order"
-          >
+          <Form.Item name="sortOrder" label="Sort Order">
             <InputNumber
               min={0}
               placeholder="Enter sort order"
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             />
           </Form.Item>
 
-          <div style={{ textAlign: 'right', marginTop: 24 }}>
+          <div style={{ textAlign: "right", marginTop: 24 }}>
             <Space>
-              <Button onClick={handleCancel}>
-                Cancel
-              </Button>
+              <Button onClick={handleCancel}>Cancel</Button>
               <Button type="primary" htmlType="submit">
-                {editingProject ? 'Update' : 'Create'}
+                {editingProject ? "Update" : "Create"}
               </Button>
             </Space>
           </div>
         </Form>
       </Modal>
-    </Card>
+    </div>
   );
 };
 

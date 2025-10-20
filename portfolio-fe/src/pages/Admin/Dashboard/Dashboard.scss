@@ -1,47 +1,184 @@
-/* Optimized Dashboard - Clean & Fast */
+/* Modern Dashboard - Professional Design System */
 .admin-dashboard {
   padding: 0;
   background: transparent;
 
-  // Stats Cards - Simple & Clean
+  // Professional Stats Cards
   .stats-card {
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid #f0f0f0;
-    transition: box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1890ff, #52c41a);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
 
     &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      transform: translateY(-4px);
+      border-color: #d9d9d9;
+
+      &::before {
+        opacity: 1;
+      }
     }
 
     .ant-card-body {
-      padding: 20px;
+      padding: 24px;
+    }
+
+    .stat-icon {
+      font-size: 24px;
+      margin-right: 8px;
     }
 
     .ant-statistic-title {
-      color: #8c8c8c;
+      color: #595959;
       font-size: 14px;
-      margin-bottom: 8px;
+      font-weight: 500;
+      margin-bottom: 12px;
     }
 
     .ant-statistic-content-value {
-      font-size: 28px;
-      font-weight: 600;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .stat-trend {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .trend-icon {
+        font-size: 12px;
+
+        &.up {
+          color: #52c41a;
+        }
+
+        &.down {
+          color: #ff4d4f;
+        }
+      }
+    }
+
+    .stat-subtitle {
+      font-size: 12px;
+      margin-top: 8px;
+      display: block;
+    }
+
+    // Card variants
+    &.stats-card-primary {
+      &::before {
+        background: #1890ff;
+      }
+    }
+
+    &.stats-card-success {
+      &::before {
+        background: #52c41a;
+      }
+    }
+
+    &.stats-card-warning {
+      &::before {
+        background: #faad14;
+      }
+    }
+
+    &.stats-card-info {
+      &::before {
+        background: #13c2c2;
+      }
     }
   }
 
-  // Data Cards
+  // Clean Data Cards
   .data-card {
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid #f0f0f0;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
     .ant-card-head {
       border-bottom: 1px solid #f0f0f0;
-      padding: 16px 20px;
+      padding: 20px 24px;
+
+      .ant-card-head-title {
+        font-weight: 600;
+      }
     }
 
     .ant-card-body {
-      padding: 20px;
+      padding: 24px;
+    }
+  }
+
+  // Modern Project List
+  .project-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f5f5f5;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #fafafa;
+      border-radius: 8px;
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .status-icon-wrapper {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .project-name {
+      font-size: 15px;
+      color: #262626;
+    }
+
+    .tech-tag {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #d9d9d9;
+      background: #fafafa;
+      color: #595959;
+    }
+
+    .project-progress {
+      width: 100%;
+      margin-top: 4px;
+
+      .small {
+        font-size: 12px;
+      }
+
+      .ant-progress {
+        margin-top: 4px;
+      }
     }
   }
 

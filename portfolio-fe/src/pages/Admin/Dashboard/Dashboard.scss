@@ -3,6 +3,80 @@
   padding: 0;
   background: transparent;
 
+  // Dashboard Header
+  .dashboard-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .dashboard-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+  }
+
+  .dashboard-header__meta {
+    font-size: 14px;
+
+    .ant-tag {
+      border-radius: 999px;
+      padding: 0 12px;
+      font-weight: 500;
+    }
+  }
+
+  .dashboard-header__actions {
+    .ant-segmented {
+      background: rgba(240, 245, 255, 0.85);
+      border-radius: 999px;
+      padding: 4px;
+      box-shadow: inset 0 0 0 1px rgba(24, 144, 255, 0.08);
+
+      .ant-segmented-item-selected {
+        background: #ffffff;
+        box-shadow: 0 6px 18px rgba(24, 144, 255, 0.18);
+      }
+    }
+
+    .ant-btn {
+      border-radius: 999px;
+    }
+  }
+
+  .glass-card {
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.95),
+      rgba(245, 247, 255, 0.85)
+    );
+    border: 1px solid rgba(221, 231, 255, 0.7);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    backdrop-filter: blur(14px);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+    }
+  }
+
+  .stats-row,
+  .metrics-row {
+    margin-bottom: 24px;
+  }
+
+  .range-tag {
+    border-radius: 999px;
+    background: rgba(24, 144, 255, 0.1);
+    color: #1890ff;
+    border: none;
+    font-weight: 500;
+  }
+
   // Professional Stats Cards
   .stats-card {
     border-radius: 12px;
@@ -105,6 +179,51 @@
     }
   }
 
+  .metric-card {
+    .ant-card-body {
+      padding: 24px;
+    }
+
+    .metric-card__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(
+        135deg,
+        rgba(24, 144, 255, 0.18),
+        rgba(82, 196, 26, 0.18)
+      );
+      color: #1890ff;
+
+      svg {
+        font-size: 20px;
+      }
+    }
+
+    .metric-card__trend {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+
+      &.up {
+        color: #52c41a;
+      }
+
+      &.down {
+        color: #f5222d;
+      }
+    }
+
+    .metric-card__description {
+      font-size: 12px;
+      color: #8c8c8c;
+    }
+  }
+
   // Clean Data Cards
   .data-card {
     border-radius: 12px;
@@ -123,6 +242,12 @@
 
     .ant-card-body {
       padding: 24px;
+    }
+  }
+
+  .project-card {
+    .ant-card-body {
+      padding-top: 0;
     }
   }
 
@@ -182,6 +307,124 @@
     }
   }
 
+  .health-card {
+    .ant-card-body {
+      padding: 24px;
+    }
+
+    .health-card__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(
+        135deg,
+        rgba(250, 173, 20, 0.2),
+        rgba(250, 84, 28, 0.16)
+      );
+      color: #fa8c16;
+
+      svg {
+        font-size: 22px;
+      }
+    }
+
+    .health-card__tag {
+      border-radius: 999px;
+      padding: 0 12px;
+      margin-top: 8px;
+    }
+
+    .health-card__notes {
+      .success-icon {
+        color: #52c41a;
+      }
+
+      .processing-icon {
+        color: #1890ff;
+      }
+    }
+  }
+
+  .team-card {
+    .team-activity-item {
+      padding: 16px 0;
+      border-bottom: 1px solid #f5f5f5;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .ant-list-item-meta-title {
+        margin-bottom: 4px;
+      }
+
+      .ant-tag {
+        border-radius: 999px;
+      }
+    }
+  }
+
+  .alerts-card {
+    .alert-item {
+      padding: 12px 0;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid #f5f5f5;
+      }
+
+      .alert-item__badge {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(24, 144, 255, 0.12);
+        color: #1890ff;
+        transition: transform 0.3s ease;
+
+        &.warning {
+          background: rgba(250, 173, 20, 0.16);
+          color: #faad14;
+        }
+
+        &.critical {
+          background: rgba(245, 34, 45, 0.16);
+          color: #f5222d;
+        }
+
+        &.info {
+          background: rgba(24, 144, 255, 0.12);
+          color: #1890ff;
+        }
+
+        &.success {
+          background: rgba(82, 196, 26, 0.16);
+          color: #52c41a;
+        }
+      }
+
+      &:hover .alert-item__badge {
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  .roadmap-card {
+    .ant-timeline {
+      padding: 4px 0;
+    }
+
+    .roadmap-item {
+      .roadmap-item__time {
+        font-size: 12px;
+      }
+    }
+  }
+
   // Table Styles
   .ant-table {
     .ant-table-thead > tr > th {
@@ -233,12 +476,32 @@
       }
     }
 
+    .glass-card {
+      background: #141414;
+      border-color: #303030;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
     .ant-statistic-title {
       color: rgba(255, 255, 255, 0.45);
     }
 
     .ant-card-head {
       border-bottom-color: #303030;
+    }
+
+    .metric-card__description {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .metric-card__icon {
+      background: rgba(24, 144, 255, 0.2);
+      color: #40a9ff;
+    }
+
+    .health-card__icon {
+      background: rgba(250, 173, 20, 0.24);
+      color: #faad14;
     }
 
     .ant-table .ant-table-thead > tr > th {
@@ -248,14 +511,59 @@
     .ant-list-item:hover {
       background: #1f1f1f;
     }
+
+    .alert-item__badge {
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.85);
+
+      &.warning {
+        background: rgba(250, 173, 20, 0.22);
+        color: #ffd666;
+      }
+
+      &.critical {
+        background: rgba(245, 34, 45, 0.26);
+        color: #ff7875;
+      }
+
+      &.info {
+        background: rgba(64, 169, 255, 0.24);
+        color: #69c0ff;
+      }
+
+      &.success {
+        background: rgba(82, 196, 26, 0.24);
+        color: #95de64;
+      }
+    }
+
+    .roadmap-card {
+      .ant-timeline-item-tail,
+      .ant-timeline-item-head {
+        border-color: #303030;
+      }
+    }
   }
 }
 
 // Responsive
 @media (max-width: 768px) {
   .admin-dashboard {
+    .dashboard-header {
+      margin-bottom: 24px;
+    }
+
+    .dashboard-header__actions {
+      width: 100%;
+      justify-content: flex-start;
+    }
+
     .stats-card .ant-statistic-content-value {
       font-size: 24px;
+    }
+
+    .metric-card .ant-card-body {
+      padding: 20px;
     }
   }
 }

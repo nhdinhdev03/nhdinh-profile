@@ -8,21 +8,21 @@
     border-radius: 8px;
     border: 1px solid #f0f0f0;
     transition: box-shadow 0.2s;
-    
+
     &:hover {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
-    
+
     .ant-card-body {
       padding: 20px;
     }
-    
+
     .ant-statistic-title {
       color: #8c8c8c;
       font-size: 14px;
       margin-bottom: 8px;
     }
-    
+
     .ant-statistic-content-value {
       font-size: 28px;
       font-weight: 600;
@@ -34,12 +34,12 @@
     border-radius: 8px;
     border: 1px solid #f0f0f0;
     margin-bottom: 16px;
-    
+
     .ant-card-head {
       border-bottom: 1px solid #f0f0f0;
       padding: 16px 20px;
     }
-    
+
     .ant-card-body {
       padding: 20px;
     }
@@ -56,7 +56,7 @@
   // List Styles
   .ant-list-item {
     padding: 12px 0;
-    
+
     &:hover {
       background: #fafafa;
       padding-left: 8px;
@@ -90,24 +90,24 @@
     .data-card {
       background: #141414;
       border-color: #303030;
-      
+
       &:hover {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
       }
     }
-    
+
     .ant-statistic-title {
       color: rgba(255, 255, 255, 0.45);
     }
-    
+
     .ant-card-head {
       border-bottom-color: #303030;
     }
-    
+
     .ant-table .ant-table-thead > tr > th {
       background: #1f1f1f;
     }
-    
+
     .ant-list-item:hover {
       background: #1f1f1f;
     }

@@ -4,6 +4,7 @@ import {
   EyeOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import { ProTable } from "@ant-design/pro-components";
 import {
   Button,
   message,
@@ -13,7 +14,6 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { ProTable } from "@ant-design/pro-components";
 import { useEffect, useRef, useState } from "react";
 import HeroForm from "./HeroForm";
 
@@ -50,7 +50,11 @@ const HeroManagement = () => {
             },
           ],
           subHeadings: [
-            { languageCode: "vi", text: "Phát triển ứng dụng web", sortOrder: 1 },
+            {
+              languageCode: "vi",
+              text: "Phát triển ứng dụng web",
+              sortOrder: 1,
+            },
             { languageCode: "en", text: "Web Development", sortOrder: 1 },
           ],
         },

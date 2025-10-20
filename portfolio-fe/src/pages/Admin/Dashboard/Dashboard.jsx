@@ -197,7 +197,11 @@ const Dashboard = () => {
               <List.Item.Meta
                 avatar={getStatusIcon(project.status)}
                 title={
-                  <Space direction="vertical" size={4} style={{ width: "100%" }}>
+                  <Space
+                    direction="vertical"
+                    size={4}
+                    style={{ width: "100%" }}
+                  >
                     <Space>
                       <Text strong>{project.name}</Text>
                       <Tag color={getStatusColor(project.status)}>
@@ -214,7 +218,11 @@ const Dashboard = () => {
                   </Space>
                 }
                 description={
-                  <Space direction="vertical" size={8} style={{ width: "100%" }}>
+                  <Space
+                    direction="vertical"
+                    size={8}
+                    style={{ width: "100%" }}
+                  >
                     <Space>
                       <Text type="secondary">{project.views} lượt xem</Text>
                     </Space>
@@ -225,7 +233,9 @@ const Dashboard = () => {
                       <Progress
                         percent={project.completion}
                         size="small"
-                        status={project.completion === 100 ? "success" : "active"}
+                        status={
+                          project.completion === 100 ? "success" : "active"
+                        }
                         style={{ marginTop: 4 }}
                       />
                     </div>

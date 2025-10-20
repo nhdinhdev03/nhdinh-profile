@@ -21,42 +21,27 @@ import {
 import {
   Avatar,
   Badge,
-  Button,
   Dropdown,
-  Input,
   Layout,
   Menu,
-  Progress,
   Space,
-  Tooltip,
   Typography,
 } from "antd";
 import ThemeToggle from "components/ThemeToggle/ThemeToggle";
 import { useTheme } from "contexts/ThemeContext";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "router/routeConstants";
 import "./MainLayoutAdmin.scss";
 
 const { Header, Sider, Content } = Layout;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const MainLayoutAdmin = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [searchVisible, setSearchVisible] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { currentTheme } = useTheme();
-
-  // Scroll detection for header effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Mock notifications
   const notificationCount = 5;
@@ -218,7 +203,7 @@ const MainLayoutAdmin = () => {
       label: (
         <div className="notification-item">
           <Text strong>New project created</Text>
-          <Text type="secondary" style={{ fontSize: 12 }}>
+          <Text type="secondary" className="notification-time">
             2 minutes ago
           </Text>
         </div>
@@ -229,7 +214,7 @@ const MainLayoutAdmin = () => {
       label: (
         <div className="notification-item">
           <Text strong>Blog post published</Text>
-          <Text type="secondary" style={{ fontSize: 12 }}>
+          <Text type="secondary" className="notification-time">
             1 hour ago
           </Text>
         </div>
@@ -286,37 +271,19 @@ const MainLayoutAdmin = () => {
   };
 
   return (
-    <Layout
-      className={`admin-layout theme-${currentTheme}`}
-      style={{ minHeight: "100vh" }}
-    >
+    <Layout className={`admin-layout theme-${currentTheme}`}>
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
-        width={260}
+        width={240}
         className="admin-sider"
         breakpoint="lg"
         collapsedWidth={80}
       >
         <div className="sider-logo">
-          {!collapsed ? (
-            <div className="logo-full">
-              <div className="logo-icon">
-                <RocketOutlined />
-              </div>
-              <div className="logo-text">
-                <Title level={4} className="logo-title">
-                  Admin Panel
-                </Title>
-                <Text className="logo-subtitle">Portfolio CMS</Text>
-              </div>
-            </div>
-          ) : (
-            <div className="logo-collapsed">
-              <RocketOutlined className="logo-icon-collapsed" />
-            </div>
-          )}
+          <RocketOutlined className="logo-icon" />
+          {!collapsed && <Text className="logo-text">Admin Panel</Text>}
         </div>
 
         <Menu
@@ -326,141 +293,58 @@ const MainLayoutAdmin = () => {
           items={menuItems}
           className="admin-menu"
         />
-
-        {!collapsed && (
-          <div className="sider-footer">
-            <div className="footer-stats">
-              <div className="stat-item">
-                <div className="stat-content">
-                  <Text className="stat-label">Total Views</Text>
-                  <Text className="stat-value">12.5K</Text>
-                </div>
-                <Progress
-                  percent={75}
-                  showInfo={false}
-                  strokeColor={{
-                    "0%": "#667eea",
-                    "100%": "#764ba2",
-                  }}
-                  trailColor="rgba(102, 126, 234, 0.1)"
-                  strokeWidth={4}
-                />
-              </div>
-              <div className="stat-item">
-                <div className="stat-content">
-                  <Text className="stat-label">Projects</Text>
-                  <Text className="stat-value">24</Text>
-                </div>
-                <Progress
-                  percent={60}
-                  showInfo={false}
-                  strokeColor={{
-                    "0%": "#667eea",
-                    "100%": "#764ba2",
-                  }}
-                  trailColor="rgba(102, 126, 234, 0.1)"
-                  strokeWidth={4}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </Sider>
 
-      <Layout className="admin-main-layout">
-        <Header className={`admin-header ${scrolled ? "scrolled" : ""}`}>
+      <Layout>
+        <Header className="admin-header">
           <div className="header-left">
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
-              className="menu-toggle-btn"
-            />
-
-            {/* Search Bar */}
-            <div className="header-search">
-              {searchVisible ? (
-                <Input
-                  placeholder="Search anything..."
-                  prefix={<SearchOutlined />}
-                  className="search-input"
-                  autoFocus
-                  onBlur={() => setSearchVisible(false)}
-                />
-              ) : (
-                <Tooltip title="Search (Ctrl+K)">
-                  <Button
-                    type="text"
-                    icon={<SearchOutlined />}
-                    onClick={() => setSearchVisible(true)}
-                    className="search-btn"
-                  />
-                </Tooltip>
-              )}
-            </div>
+            {collapsed ? (
+              <MenuUnfoldOutlined
+                className="menu-toggle"
+                onClick={() => setCollapsed(false)}
+              />
+            ) : (
+              <MenuFoldOutlined
+                className="menu-toggle"
+                onClick={() => setCollapsed(true)}
+              />
+            )}
           </div>
 
           <Space size="middle" className="header-actions">
-            {/* Quick Help */}
-            <Tooltip title="Help Center">
-              <Button
-                type="text"
-                icon={<QuestionCircleOutlined />}
-                className="action-btn"
-              />
-            </Tooltip>
-
-            {/* Notifications */}
+            <QuestionCircleOutlined className="action-icon" />
+            
             <Dropdown
               menu={{ items: notificationItems }}
               placement="bottomRight"
               trigger={["click"]}
-              overlayClassName="notification-dropdown"
             >
               <Badge count={notificationCount} size="small">
-                <Button
-                  type="text"
-                  icon={<BellOutlined />}
-                  className="action-btn notification-btn"
-                />
+                <BellOutlined className="action-icon" />
               </Badge>
             </Dropdown>
 
-            {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* User Menu */}
             <Dropdown
               menu={{ items: userMenuItems }}
               placement="bottomRight"
               trigger={["click"]}
-              overlayClassName="user-dropdown"
             >
-              <Space className="user-info" style={{ cursor: "pointer" }}>
-                <Avatar
-                  size="default"
-                  icon={<UserOutlined />}
-                  className="user-avatar"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  }}
-                />
-                <div className="user-details">
-                  <Text strong className="user-name">
-                    Admin User
-                  </Text>
-                  <Text className="user-role">Administrator</Text>
-                </div>
+              <Space className="user-info">
+                <Avatar size="small" icon={<UserOutlined />} />
+                {!collapsed && (
+                  <div className="user-details">
+                    <Text strong>Admin User</Text>
+                  </div>
+                )}
               </Space>
             </Dropdown>
           </Space>
         </Header>
 
         <Content className="admin-content">
-          <div className="content-wrapper">
-            <Outlet />
-          </div>
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

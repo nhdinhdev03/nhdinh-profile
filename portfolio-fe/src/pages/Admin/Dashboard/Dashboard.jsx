@@ -1,13 +1,12 @@
 import {
-  ArrowDownOutlined,
   ArrowUpOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   DashboardOutlined,
-  DownloadOutlined,
   EyeOutlined,
   ProjectOutlined,
   SyncOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import {
   Card,
@@ -28,16 +27,16 @@ const { Text, Title } = Typography;
 const Dashboard = () => {
   const [loading] = useState(false);
 
-  // Mock data
+  // Mock data - Professional dashboard metrics
   const stats = {
     totalProjects: 24,
     activeProjects: 18,
     monthlyViews: 3250,
-    downloads: 890,
+    totalVisitors: 1840,
     growth: {
       projects: 15.5,
       views: 12.3,
-      downloads: -2.1,
+      visitors: 8.7,
     },
   };
 
@@ -125,123 +124,140 @@ const Dashboard = () => {
         <Text type="secondary">Tổng quan hoạt động hệ thống</Text>
       </div>
 
-      {/* Statistics Cards */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+      {/* Statistics Cards - Modern Design */}
+      <Row gutter={[20, 20]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
-          <Card className="stats-card">
+          <Card className="stats-card stats-card-primary" hoverable>
             <Statistic
               title="Tổng số dự án"
               value={stats.totalProjects}
-              prefix={<ProjectOutlined />}
-              suffix={
-                <Tag color="green" icon={<ArrowUpOutlined />}>
-                  +{stats.growth.projects}%
-                </Tag>
-              }
+              prefix={<ProjectOutlined className="stat-icon" />}
+              valueStyle={{ color: "#1890ff", fontWeight: 600 }}
             />
+            <div className="stat-trend">
+              <ArrowUpOutlined className="trend-icon up" />
+              <Text type="success">+{stats.growth.projects}%</Text>
+            </div>
           </Card>
         </Col>
 
         <Col xs={24} sm={12} lg={6}>
-          <Card className="stats-card">
+          <Card className="stats-card stats-card-success" hoverable>
             <Statistic
-              title="Dự án đang hoạt động"
+              title="Dự án hoạt động"
               value={stats.activeProjects}
-              prefix={<SyncOutlined />}
-              valueStyle={{ color: "#52c41a" }}
+              prefix={<SyncOutlined spin className="stat-icon" />}
+              valueStyle={{ color: "#52c41a", fontWeight: 600 }}
             />
+            <Text type="secondary" className="stat-subtitle">
+              Đang triển khai
+            </Text>
           </Card>
         </Col>
 
         <Col xs={24} sm={12} lg={6}>
-          <Card className="stats-card">
+          <Card className="stats-card stats-card-warning" hoverable>
             <Statistic
               title="Lượt xem tháng này"
               value={stats.monthlyViews}
-              prefix={<EyeOutlined />}
-              suffix={
-                <Tag color="green" icon={<ArrowUpOutlined />}>
-                  +{stats.growth.views}%
-                </Tag>
-              }
+              prefix={<EyeOutlined className="stat-icon" />}
+              valueStyle={{ color: "#faad14", fontWeight: 600 }}
             />
+            <div className="stat-trend">
+              <ArrowUpOutlined className="trend-icon up" />
+              <Text type="success">+{stats.growth.views}%</Text>
+            </div>
           </Card>
         </Col>
 
         <Col xs={24} sm={12} lg={6}>
-          <Card className="stats-card">
+          <Card className="stats-card stats-card-info" hoverable>
             <Statistic
-              title="Lượt tải xuống"
-              value={stats.downloads}
-              prefix={<DownloadOutlined />}
-              suffix={
-                <Tag color="red" icon={<ArrowDownOutlined />}>
-                  {stats.growth.downloads}%
-                </Tag>
-              }
+              title="Tổng người truy cập"
+              value={stats.totalVisitors}
+              prefix={<UserOutlined className="stat-icon" />}
+              valueStyle={{ color: "#13c2c2", fontWeight: 600 }}
             />
+            <div className="stat-trend">
+              <ArrowUpOutlined className="trend-icon up" />
+              <Text type="success">+{stats.growth.visitors}%</Text>
+            </div>
           </Card>
         </Col>
       </Row>
 
-      {/* Recent Projects */}
+      {/* Recent Projects - Clean & Modern */}
       <Card
-        title={<Title level={4}>Dự án gần đây</Title>}
+        title={
+          <Space>
+            <ProjectOutlined />
+            <Title level={4} style={{ margin: 0 }}>
+              Dự án gần đây
+            </Title>
+          </Space>
+        }
         className="data-card"
+        bordered={false}
       >
         <List
           loading={loading}
           dataSource={recentProjects}
           renderItem={(project) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={getStatusIcon(project.status)}
-                title={
-                  <Space
-                    direction="vertical"
-                    size={4}
-                    style={{ width: "100%" }}
-                  >
-                    <Space>
-                      <Text strong>{project.name}</Text>
-                      <Tag color={getStatusColor(project.status)}>
-                        {getStatusText(project.status)}
-                      </Tag>
-                    </Space>
-                    <Space size={4} wrap>
-                      {project.technologies.map((tech) => (
-                        <Tag key={tech} color="blue">
-                          {tech}
-                        </Tag>
-                      ))}
-                    </Space>
-                  </Space>
-                }
-                description={
+            <List.Item className="project-item" key={project.id}>
+              <Row style={{ width: "100%" }} gutter={16} align="middle">
+                <Col flex="none">
+                  <div className="status-icon-wrapper">
+                    {getStatusIcon(project.status)}
+                  </div>
+                </Col>
+                <Col flex="auto">
                   <Space
                     direction="vertical"
                     size={8}
                     style={{ width: "100%" }}
                   >
                     <Space>
-                      <Text type="secondary">{project.views} lượt xem</Text>
-                    </Space>
-                    <div>
-                      <Text type="secondary" style={{ fontSize: "12px" }}>
-                        Tiến độ: {project.completion}%
+                      <Text strong className="project-name">
+                        {project.name}
                       </Text>
+                      <Tag color={getStatusColor(project.status)}>
+                        {getStatusText(project.status)}
+                      </Tag>
+                    </Space>
+                    <Space size={6} wrap>
+                      {project.technologies.map((tech) => (
+                        <Tag key={tech} className="tech-tag">
+                          {tech}
+                        </Tag>
+                      ))}
+                    </Space>
+                    <div className="project-progress">
+                      <Space
+                        style={{
+                          width: "100%",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Text type="secondary" className="small">
+                          <EyeOutlined /> {project.views} lượt xem
+                        </Text>
+                        <Text type="secondary" className="small">
+                          {project.completion}%
+                        </Text>
+                      </Space>
                       <Progress
                         percent={project.completion}
                         size="small"
-                        status={
-                          project.completion === 100 ? "success" : "active"
-                        }
-                        style={{ marginTop: 4 }}
+                        strokeColor={{
+                          "0%": "#108ee9",
+                          "100%": "#87d068",
+                        }}
+                        showInfo={false}
                       />
                     </div>
                   </Space>
-                }
-              />
+                </Col>
+              </Row>
             </List.Item>
           )}
         />

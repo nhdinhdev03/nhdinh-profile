@@ -1,0 +1,269 @@
+/* Professional Hero Management - Clean & Modern Design */
+.hero-management-container {
+  // Professional card design
+  .ant-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .ant-card-head {
+      border-bottom: 1px solid #f0f0f0;
+      padding: 20px 24px;
+      background: #fafafa;
+      border-radius: 12px 12px 0 0;
+
+      .ant-card-head-title {
+        font-weight: 600;
+        font-size: 16px;
+        color: #262626;
+      }
+    }
+
+    .ant-card-body {
+      padding: 24px;
+    }
+  }
+
+  // Modern table design
+  .ant-table {
+    border-radius: 8px;
+
+    .ant-table-thead > tr > th {
+      background: #fafafa;
+      border-bottom: 2px solid #f0f0f0;
+      font-weight: 600;
+      color: #262626;
+      padding: 16px;
+      font-size: 14px;
+
+      &::before {
+        display: none;
+      }
+    }
+
+    .ant-table-tbody > tr {
+      transition: background 0.2s;
+
+      &:hover > td {
+        background: #f5f5f5;
+      }
+
+      > td {
+        padding: 16px;
+        border-bottom: 1px solid #f5f5f5;
+      }
+
+      &.deleted-row {
+        background-color: #fff1f0 !important;
+        opacity: 0.75;
+
+        &:hover > td {
+          background-color: #ffe7e7 !important;
+        }
+      }
+    }
+  }
+
+  // Clean drawer design
+  .ant-drawer {
+    .ant-drawer-header {
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 20px 24px;
+    }
+
+    .ant-drawer-body {
+      padding: 24px;
+      background: #fff;
+    }
+
+    .ant-drawer-footer {
+      border-top: 1px solid #f0f0f0;
+      padding: 16px 24px;
+      background: #fafafa;
+    }
+  }
+
+  // Professional form styling
+  .ant-form {
+    .ant-form-item {
+      margin-bottom: 20px;
+
+      .ant-form-item-label > label {
+        font-weight: 500;
+        color: #262626;
+        font-size: 14px;
+
+        &::after {
+          display: none;
+        }
+      }
+
+      .ant-input,
+      .ant-input-textarea textarea,
+      .ant-select-selector {
+        border-radius: 6px;
+        border: 1px solid #d9d9d9;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: #40a9ff;
+        }
+
+        &:focus {
+          border-color: #1890ff;
+          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.08);
+        }
+      }
+    }
+  }
+
+  // Simple button styling
+  .ant-btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &.ant-btn-primary:hover,
+    &.ant-btn-danger:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  // Clean tag design
+  .ant-tag {
+    border-radius: 4px;
+    font-weight: 500;
+    padding: 4px 10px;
+    font-size: 13px;
+  }
+
+  // Simple tabs
+  .ant-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 20px;
+
+      .ant-tabs-tab {
+        font-weight: 500;
+        font-size: 14px;
+        padding: 10px 16px;
+        border-radius: 6px 6px 0 0;
+        transition: all 0.2s;
+
+        &:hover {
+          color: #1890ff;
+        }
+
+        &.ant-tabs-tab-active .ant-tabs-tab-btn {
+          color: #1890ff;
+          font-weight: 600;
+        }
+      }
+
+      .ant-tabs-ink-bar {
+        height: 3px;
+        border-radius: 3px;
+      }
+    }
+
+    .ant-tabs-content-holder {
+      background: #fff;
+      padding: 20px;
+    }
+  }
+
+  // Clean modal
+  .ant-modal {
+    .ant-modal-header {
+      background: #fff;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 20px 24px;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .ant-modal-body {
+      padding: 24px;
+    }
+
+    .ant-modal-footer {
+      border-top: 1px solid #f0f0f0;
+      padding: 16px 24px;
+    }
+  }
+
+  // Simplified collapse
+  .ant-collapse {
+    border: none;
+    background: transparent;
+
+    .ant-collapse-item {
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+      border: 1px solid #f0f0f0;
+
+      .ant-collapse-header {
+        padding: 14px 20px;
+        background: #fafafa;
+        font-weight: 500;
+        transition: background 0.2s;
+
+        &:hover {
+          background: #f5f5f5;
+        }
+      }
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    .ant-card {
+      margin-bottom: 16px;
+      border-radius: 8px;
+
+      .ant-card-head {
+        padding: 16px;
+      }
+
+      .ant-card-body {
+        padding: 16px;
+      }
+    }
+
+    .ant-table {
+      .ant-table-thead > tr > th,
+      .ant-table-tbody > tr > td {
+        padding: 12px 8px;
+        font-size: 13px;
+      }
+    }
+
+    .ant-drawer {
+      .ant-drawer-body {
+        padding: 16px;
+      }
+    }
+
+    .ant-form .ant-form-item {
+      margin-bottom: 16px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .ant-btn {
+      font-size: 13px;
+      height: 36px;
+    }
+
+    .ant-card-head-title {
+      font-size: 15px !important;
+    }
+  }
+}

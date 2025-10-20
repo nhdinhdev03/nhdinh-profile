@@ -10,7 +10,6 @@ import {
   ProjectOutlined,
   QuestionCircleOutlined,
   RocketOutlined,
-  SearchOutlined,
   SettingOutlined,
   StarOutlined,
   TeamOutlined,
@@ -18,15 +17,7 @@ import {
   TranslationOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import {
-  Avatar,
-  Badge,
-  Dropdown,
-  Layout,
-  Menu,
-  Space,
-  Typography,
-} from "antd";
+import { Avatar, Badge, Dropdown, Layout, Menu, Space, Typography } from "antd";
 import ThemeToggle from "components/ThemeToggle/ThemeToggle";
 import { useTheme } from "contexts/ThemeContext";
 import { useState } from "react";
@@ -313,7 +304,7 @@ const MainLayoutAdmin = () => {
 
           <Space size="middle" className="header-actions">
             <QuestionCircleOutlined className="action-icon" />
-            
+
             <Dropdown
               menu={{ items: notificationItems }}
               placement="bottomRight"

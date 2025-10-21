@@ -2,9 +2,12 @@ import {
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
+  FilterOutlined,
   GlobalOutlined,
   MenuOutlined,
   PlusOutlined,
+  ReloadOutlined,
+  SearchOutlined,
   StarOutlined,
   TranslationOutlined,
 } from "@ant-design/icons";
@@ -14,25 +17,34 @@ import {
   Card,
   Col,
   Collapse,
+  Input,
   message,
   Modal,
   Popconfirm,
   Row,
+  Select,
   Space,
+  Statistic,
   Switch,
   Table,
   Tabs,
   Tag,
+  Tooltip,
   Typography,
 } from "antd";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import HeroForm from "./HeroForm";
 import "./HeroManagement.scss";
 
 const { Title, Text } = Typography;
 const { Panel } = Collapse;
+const { Search } = Input;
+const { Option } = Select;
 
 const HeroManagement = () => {
+  // ===================================
+  // State Management
+  // ===================================
   const [heroes, setHeroes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
@@ -41,18 +53,29 @@ const HeroManagement = () => {
   const [editingHero, setEditingHero] = useState(null);
   const [viewingHero, setViewingHero] = useState(null);
 
+  // Filter & Search States
+  const [searchText, setSearchText] = useState("");
+  const [filterLanguage, setFilterLanguage] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+
   const languages = [
     { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
     { code: "en", name: "English", flag: "🇺🇸" },
     { code: "en-US", name: "English (US)", flag: "🇺🇸" },
   ];
 
-  // Mock data - replace with API calls
+  // ===================================
+  // Effects
+  // ===================================
   useEffect(() => {
     fetchHeroes();
   }, []);
 
-  const fetchHeroes = async () => {
+  // ===================================
+  // Handlers - useCallback for optimization
+  // ===================================
+  const fetchHeroes = useCallback(async () => {
     setLoading(true);
     // Simulate API call with more comprehensive data structure
     setTimeout(() => {
@@ -110,65 +133,117 @@ const HeroManagement = () => {
       ]);
       setLoading(false);
     }, 1000);
-  };
+  }, []);
 
-  const showModal = (hero = null) => {
+  const showModal = useCallback((hero = null) => {
     setEditingHero(hero);
     setModalVisible(true);
-  };
+  }, []);
 
-  const showDetailModal = (hero) => {
+  const showDetailModal = useCallback((hero) => {
     setViewingHero(hero);
     setDetailModalVisible(true);
-  };
+  }, []);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setModalVisible(false);
     setEditingHero(null);
-  };
+  }, []);
 
-  const handleDetailCancel = () => {
+  const handleDetailCancel = useCallback(() => {
     setDetailModalVisible(false);
     setViewingHero(null);
-  };
+  }, []);
 
-  const handleSubmit = async (heroData) => {
-    setFormLoading(true);
-    try {
-      if (editingHero) {
-        // Update hero
-        console.log("Updating hero:", {
-          ...heroData,
-          heroId: editingHero.heroId,
-        });
-        message.success("Hero updated successfully!");
-      } else {
-        // Create hero
-        console.log("Creating hero:", heroData);
-        message.success("Hero created successfully!");
+  const handleSubmit = useCallback(
+    async (heroData) => {
+      setFormLoading(true);
+      try {
+        if (editingHero) {
+          // Update hero
+          console.log("Updating hero:", {
+            ...heroData,
+            heroId: editingHero.heroId,
+          });
+          message.success("Hero updated successfully!");
+        } else {
+          // Create hero
+          console.log("Creating hero:", heroData);
+          message.success("Hero created successfully!");
+        }
+        setModalVisible(false);
+        setEditingHero(null);
+        fetchHeroes();
+      } catch (error) {
+        message.error("Operation failed!");
+        console.error("Hero operation error:", error);
+      } finally {
+        setFormLoading(false);
       }
-      setModalVisible(false);
-      setEditingHero(null);
-      fetchHeroes();
-    } catch (error) {
-      message.error("Operation failed!");
-      console.error("Hero operation error:", error);
-    } finally {
-      setFormLoading(false);
-    }
-  };
+    },
+    [editingHero, fetchHeroes]
+  );
 
-  const handleDelete = async (heroId) => {
-    try {
-      console.log("Deleting hero:", heroId);
-      message.success("Hero deleted successfully!");
-      fetchHeroes();
-    } catch (error) {
-      console.error("Delete failed:", error);
-      message.error("Delete failed!");
-    }
-  };
+  const handleDelete = useCallback(
+    async (heroId) => {
+      try {
+        console.log("Deleting hero:", heroId);
+        message.success("Hero deleted successfully!");
+        fetchHeroes();
+      } catch (error) {
+        console.error("Delete failed:", error);
+        message.error("Delete failed!");
+      }
+    },
+    [fetchHeroes]
+  );
 
+  // ===================================
+  // Filtered and Sorted Data with useMemo
+  // ===================================
+  const filteredHeroes = useMemo(() => {
+    return heroes.filter((hero) => {
+      // Search filter
+      const searchLower = searchText.toLowerCase();
+      const matchesSearch =
+        !searchText ||
+        hero.translations?.some(
+          (t) =>
+            t.heading?.toLowerCase().includes(searchLower) ||
+            t.preHeading?.toLowerCase().includes(searchLower)
+        );
+
+      // Language filter
+      const matchesLanguage =
+        filterLanguage === "all" ||
+        hero.translations?.some((t) => t.languageCode === filterLanguage);
+
+      // Status filter
+      const matchesStatus =
+        filterStatus === "all" ||
+        (filterStatus === "active" && !hero.isDeleted) ||
+        (filterStatus === "deleted" && hero.isDeleted);
+
+      return matchesSearch && matchesLanguage && matchesStatus;
+    });
+  }, [heroes, searchText, filterLanguage, filterStatus]);
+
+  // Statistics
+  const statistics = useMemo(() => {
+    return {
+      total: heroes.length,
+      active: heroes.filter((h) => !h.isDeleted).length,
+      deleted: heroes.filter((h) => h.isDeleted).length,
+      translations: heroes.reduce(
+        (sum, h) => sum + (h.translations?.length || 0),
+        0
+      ),
+    };
+  }, [heroes]);
+
+  // ===================================
+  // Table Columns
+  // ===================================
   const columns = [
     {
       title: "Hero Information",
@@ -303,38 +378,163 @@ const HeroManagement = () => {
   ];
 
   return (
-    <div>
+    <div className="hero-management-container">
+      {/* Statistics Cards */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="Total Heroes"
+              value={statistics.total}
+              prefix={<StarOutlined />}
+              valueStyle={{ color: "#1890ff" }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="Active"
+              value={statistics.active}
+              prefix={<StarOutlined />}
+              valueStyle={{ color: "#52c41a" }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="Deleted"
+              value={statistics.deleted}
+              prefix={<DeleteOutlined />}
+              valueStyle={{ color: "#ff4d4f" }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="Translations"
+              value={statistics.translations}
+              prefix={<GlobalOutlined />}
+              valueStyle={{ color: "#722ed1" }}
+            />
+          </Card>
+        </Col>
+      </Row>
+
       <Card>
+        {/* Header with Actions */}
         <div
           style={{
             marginBottom: 16,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            flexWrap: "wrap",
+            gap: 16,
           }}
         >
           <Title level={3} style={{ margin: 0 }}>
             <StarOutlined /> Hero Management
           </Title>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => showModal()}
-          >
-            Add New Hero
-          </Button>
+          <Space>
+            <Tooltip title="Refresh Data">
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={fetchHeroes}
+                loading={loading}
+              />
+            </Tooltip>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => showModal()}
+            >
+              Add New Hero
+            </Button>
+          </Space>
         </div>
+
+        {/* Filters */}
+        <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+          <Col xs={24} md={12} lg={8}>
+            <Search
+              placeholder="Search by heading..."
+              allowClear
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              prefix={<SearchOutlined />}
+            />
+          </Col>
+          <Col xs={24} sm={12} md={6} lg={4}>
+            <Select
+              style={{ width: "100%" }}
+              value={filterLanguage}
+              onChange={setFilterLanguage}
+              placeholder="Filter by Language"
+            >
+              <Option value="all">All Languages</Option>
+              {languages.map((lang) => (
+                <Option key={lang.code} value={lang.code}>
+                  {lang.flag} {lang.name}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+          <Col xs={24} sm={12} md={6} lg={4}>
+            <Select
+              style={{ width: "100%" }}
+              value={filterStatus}
+              onChange={setFilterStatus}
+              placeholder="Filter by Status"
+            >
+              <Option value="all">All Status</Option>
+              <Option value="active">Active Only</Option>
+              <Option value="deleted">Deleted Only</Option>
+            </Select>
+          </Col>
+          <Col xs={24} md={24} lg={8}>
+            <Space>
+              <Badge count={filteredHeroes.length} showZero>
+                <Tag icon={<FilterOutlined />} color="blue">
+                  Filtered Results
+                </Tag>
+              </Badge>
+              {(searchText ||
+                filterLanguage !== "all" ||
+                filterStatus !== "all") && (
+                <Button
+                  size="small"
+                  onClick={() => {
+                    setSearchText("");
+                    setFilterLanguage("all");
+                    setFilterStatus("all");
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              )}
+            </Space>
+          </Col>
+        </Row>
 
         <Table
           columns={columns}
-          dataSource={heroes}
+          dataSource={filteredHeroes}
           loading={loading}
           rowKey="heroId"
+          rowClassName={(record) => (record.isDeleted ? "deleted-row" : "")}
+          expandedRowKeys={expandedRowKeys}
+          onExpandedRowsChange={setExpandedRowKeys}
           pagination={{
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`,
           }}
+          scroll={{ x: 1000 }}
           expandable={{
             expandedRowRender: (record) => (
               <Card size="small" style={{ margin: "8px 0" }}>

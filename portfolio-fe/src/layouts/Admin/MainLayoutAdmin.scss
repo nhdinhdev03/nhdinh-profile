@@ -1,10 +1,43 @@
 /* ===================================
-   Enhanced Admin Layout - Modern & Smooth
+   Enhanced Admin Layout - Modern & Smooth with Advanced Features
    =================================== */
 
 .admin-layout {
   min-height: 100vh;
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  // Command Palette Modal Styling
+  .command-palette-modal {
+    .ant-modal-header {
+      border-bottom: 2px solid #f0f0f0;
+      background: linear-gradient(135deg, #f6f9fc 0%, #ffffff 100%);
+    }
+
+    .ant-modal-body {
+      padding: 24px;
+      max-height: 500px;
+      overflow-y: auto;
+
+      .recent-pages,
+      .all-pages {
+        .ant-menu {
+          border: none;
+          background: transparent;
+
+          .ant-menu-item {
+            border-radius: 6px;
+            margin: 4px 0;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background: rgba(24, 144, 255, 0.08);
+              transform: translateX(4px);
+            }
+          }
+        }
+      }
+    }
+  }
 
   // Sider Styles with Enhanced Features
   .admin-sider {
@@ -240,6 +273,11 @@
     transition: all 0.3s ease;
 
     .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+
       .menu-toggle {
         font-size: 20px;
         cursor: pointer;
@@ -256,6 +294,22 @@
 
         &:active {
           transform: scale(0.95);
+        }
+      }
+
+      .header-breadcrumb {
+        .ant-breadcrumb-link {
+          color: #595959;
+          transition: all 0.2s ease;
+          text-transform: capitalize;
+
+          &:hover {
+            color: #1890ff;
+          }
+        }
+
+        .ant-breadcrumb-separator {
+          color: #bfbfbf;
         }
       }
     }
@@ -400,6 +454,62 @@
 
 // Dark Theme with Enhanced Visuals
 .admin-layout.theme-dark {
+  .command-palette-modal {
+    .ant-modal-content {
+      background: #1f1f1f;
+    }
+
+    .ant-modal-header {
+      background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+      border-bottom-color: #303030;
+
+      .ant-modal-title {
+        color: #fff;
+      }
+    }
+
+    .ant-modal-body {
+      background: #1f1f1f;
+
+      .ant-typography {
+        color: rgba(255, 255, 255, 0.65);
+      }
+
+      .ant-menu {
+        background: transparent;
+
+        .ant-menu-item {
+          color: rgba(255, 255, 255, 0.85);
+
+          &:hover {
+            background: rgba(64, 169, 255, 0.15);
+            color: #40a9ff;
+          }
+        }
+      }
+
+      .ant-input-search {
+        .ant-input {
+          background: #141414;
+          border-color: #303030;
+          color: #fff;
+
+          &::placeholder {
+            color: #595959;
+          }
+        }
+      }
+    }
+
+    .ant-modal-close {
+      color: rgba(255, 255, 255, 0.65);
+
+      &:hover {
+        color: #40a9ff;
+      }
+    }
+  }
+
   .admin-sider {
     background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.8);
@@ -534,7 +644,31 @@
     border-bottom-color: #303030;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 
-    .header-left .menu-toggle,
+    .header-left {
+      .menu-toggle {
+        color: rgba(255, 255, 255, 0.65);
+
+        &:hover {
+          color: #40a9ff;
+          background: rgba(64, 169, 255, 0.15);
+        }
+      }
+
+      .header-breadcrumb {
+        .ant-breadcrumb-link {
+          color: rgba(255, 255, 255, 0.65);
+
+          &:hover {
+            color: #40a9ff;
+          }
+        }
+
+        .ant-breadcrumb-separator {
+          color: #595959;
+        }
+      }
+    }
+
     .header-actions .action-icon {
       color: rgba(255, 255, 255, 0.65);
 
